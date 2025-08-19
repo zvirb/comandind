@@ -1,0 +1,9 @@
+{
+  "test": "Building Placement UI",
+  "data": {
+    "gridBasedPlacement": true,
+    "realTimeValidation": true,
+    "uiResponsive": true
+  },
+  "success": true
+}

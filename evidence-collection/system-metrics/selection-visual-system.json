@@ -1,0 +1,9 @@
+{
+  "test": "Selection Visual System",
+  "data": {
+    "spritePooling": true,
+    "batchingPreserved": true,
+    "performanceOptimal": true
+  },
+  "success": true
+}

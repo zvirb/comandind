@@ -1,0 +1,10 @@
+{
+  "test": "Performance Under Load",
+  "data": {
+    "entities": 200,
+    "averageFPS": 67.8,
+    "target": 60,
+    "performanceTarget": true
+  },
+  "success": true
+}

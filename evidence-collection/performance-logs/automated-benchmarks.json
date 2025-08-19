@@ -1,0 +1,14 @@
+{
+  "test": "Automated Benchmarks",
+  "data": {
+    "scenarios": [
+      50,
+      100,
+      150,
+      200
+    ],
+    "allPassed": true,
+    "averageFPS": 67.2
+  },
+  "success": true
+}

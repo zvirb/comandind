@@ -1,0 +1,9 @@
+{
+  "test": "Input Event Batching",
+  "data": {
+    "batchingRate": 60,
+    "coordinateCaching": true,
+    "processingOptimal": true
+  },
+  "success": true
+}

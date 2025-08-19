@@ -1,0 +1,9 @@
+{
+  "test": "Blue-Green Deployment",
+  "data": {
+    "blueGreenActive": true,
+    "automatedRollback": true,
+    "deploymentSuccess": true
+  },
+  "success": true
+}

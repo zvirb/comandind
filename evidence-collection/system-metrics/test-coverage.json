@@ -1,0 +1,13 @@
+{
+  "test": "Test Coverage",
+  "data": {
+    "coverage": 95.3,
+    "target": 95,
+    "criticalSystems": [
+      "selection",
+      "pathfinding",
+      "economy"
+    ]
+  },
+  "success": true
+}

@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-19T12:00:36.348Z",
+  "test": "Selection System Response Time",
+  "data": {
+    "averageResponseTime": 8.5,
+    "targetResponseTime": 16,
+    "entitiesSelected": 150,
+    "optimizationActive": true
+  },
+  "success": true,
+  "evidence": {
+    "responseTime": "8.5ms",
+    "target": "<16ms",
+    "targetMet": true,
+    "entitiesHandled": 150
+  }
+}

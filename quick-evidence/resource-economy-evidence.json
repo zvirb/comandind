@@ -1,0 +1,18 @@
+{
+  "test": "C&C Authentic Resource Economy",
+  "timestamp": "2025-08-19T12:09:54.423Z",
+  "metrics": {
+    "creditsPerBail": 25,
+    "harvesterCapacity": 700,
+    "totalCreditsHarvested": 3500,
+    "harvestingCycles": 5,
+    "averageCreditsPerCycle": 700
+  },
+  "success": true,
+  "evidence": {
+    "cncAuthenticCreditsPerBail": "25 credits/bail",
+    "cncAuthenticCapacity": "700 credits capacity",
+    "economicBalance": "Balanced according to C&C Tiberian Dawn",
+    "authenticityVerified": true
+  }
+}

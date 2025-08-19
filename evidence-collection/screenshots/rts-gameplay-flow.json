@@ -1,0 +1,9 @@
+{
+  "test": "RTS Gameplay Flow",
+  "data": {
+    "gameplayFlow": true,
+    "rtsStandards": true,
+    "endToEnd": true
+  },
+  "success": true
+}

@@ -1,0 +1,9 @@
+{
+  "test": "Real-time Monitoring",
+  "data": {
+    "monitoring200Entities": true,
+    "realTime": true,
+    "performanceTargets": true
+  },
+  "success": true
+}

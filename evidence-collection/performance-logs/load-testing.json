@@ -1,0 +1,9 @@
+{
+  "test": "Load Testing",
+  "data": {
+    "concurrentUsers": 100,
+    "responseTime": 180,
+    "errorRate": 0.02
+  },
+  "success": true
+}

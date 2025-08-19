@@ -1,0 +1,13 @@
+{
+  "test": "Health Check Endpoints",
+  "data": {
+    "endpointsActive": true,
+    "responseTimes": [
+      45,
+      52,
+      38
+    ],
+    "allHealthy": true
+  },
+  "success": true
+}

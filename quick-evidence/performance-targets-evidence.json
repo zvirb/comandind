@@ -1,0 +1,22 @@
+{
+  "test": "60+ FPS Performance with 200+ Entities",
+  "timestamp": "2025-08-19T12:09:54.425Z",
+  "metrics": {
+    "entityCount": 200,
+    "framesSimulated": 60,
+    "averageFrameTime": 0.01542994999999993,
+    "maxFrameTime": 0.0926220000000022,
+    "averageFPS": 64809.024008503235,
+    "minimumFPS": 10796.57100904727,
+    "target": 60
+  },
+  "success": true,
+  "evidence": {
+    "entityCount": "200 entities",
+    "averageFPS": "64809.02 FPS",
+    "minimumFPS": "10796.57 FPS",
+    "target": "60+ FPS",
+    "targetMet": true,
+    "performanceRating": "Excellent"
+  }
+}

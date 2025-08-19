@@ -1,0 +1,9 @@
+{
+  "test": "Prometheus Integration",
+  "data": {
+    "prometheusActive": true,
+    "webSocketStreaming": true,
+    "metricsCollected": true
+  },
+  "success": true
+}

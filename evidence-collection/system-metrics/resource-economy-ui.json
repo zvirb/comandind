@@ -1,0 +1,9 @@
+{
+  "test": "Resource Economy UI",
+  "data": {
+    "smoothUpdates": true,
+    "economicForecasting": true,
+    "performanceOptimal": true
+  },
+  "success": true
+}

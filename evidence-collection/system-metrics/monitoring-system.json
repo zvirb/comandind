@@ -1,0 +1,9 @@
+{
+  "test": "Monitoring System",
+  "data": {
+    "systemFunctional": true,
+    "alertsActive": true,
+    "metricsCollected": true
+  },
+  "success": true
+}

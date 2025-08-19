@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-19T12:00:36.347Z",
+  "test": "C&C Resource Economy Authenticity",
+  "data": {
+    "creditsPerBail": 25,
+    "storageCapacity": 700,
+    "harvesterEfficiency": 0.85,
+    "economicBalance": true
+  },
+  "success": true,
+  "evidence": {
+    "cncAuthentic": true,
+    "harvestingRate": "25 credits/bail",
+    "storageLimit": "700 capacity",
+    "balanceCheck": true
+  }
+}

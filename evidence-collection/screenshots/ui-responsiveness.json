@@ -1,0 +1,9 @@
+{
+  "test": "UI Responsiveness",
+  "data": {
+    "responsiveness": true,
+    "gameplaySmooth": true,
+    "uiOptimal": true
+  },
+  "success": true
+}

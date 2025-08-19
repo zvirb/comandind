@@ -1,0 +1,20 @@
+{
+  "test": "Selection System Response Time",
+  "timestamp": "2025-08-19T12:09:54.423Z",
+  "metrics": {
+    "iterations": 50,
+    "averageResponseTime": 0.05290317999999985,
+    "maxResponseTime": 0.6132479999999987,
+    "minResponseTime": 0.01207199999999986,
+    "target": 16,
+    "entitiesProcessed": 150
+  },
+  "success": true,
+  "evidence": {
+    "averageResponseMs": "0.053",
+    "maxResponseMs": "0.613",
+    "targetMs": "16.000",
+    "targetMet": true,
+    "performance": "Excellent"
+  }
+}
