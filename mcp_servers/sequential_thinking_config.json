@@ -1,0 +1,74 @@
+{
+  "sequential_thinking": {
+    "description": "Dynamic and reflective problem-solving through thought sequences",
+    "installation_methods": {
+      "npm": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      },
+      "python": {
+        "command": "python",
+        "args": ["python-sequential-thinking-mcp/sequential-thinking-mcp/main.py"]
+      },
+      "docker": {
+        "command": "docker",
+        "args": ["run", "--rm", "-i", "mcp/sequentialthinking"]
+      }
+    },
+    "tool_capabilities": {
+      "name": "sequential_thinking",
+      "description": "Facilitates detailed, step-by-step thinking process",
+      "parameters": {
+        "thought": "Current thinking step (string)",
+        "thoughtNumber": "Current thought number (integer)",
+        "totalThoughts": "Estimated total thoughts needed (integer)",
+        "nextThoughtNeeded": "Whether another thought step is needed (boolean)",
+        "isRevision": "Whether this revises previous thinking (boolean, optional)",
+        "revisesThought": "Which thought is being reconsidered (integer, optional)",
+        "branchFromThought": "Branching point thought number (integer, optional)",
+        "branchId": "Branch identifier (string, optional)",
+        "needsMoreThoughts": "If more thoughts are needed (boolean, optional)"
+      }
+    },
+    "use_cases": [
+      "Breaking down complex problems into steps",
+      "Planning and design with room for revision",
+      "Analysis that might need course correction",
+      "Problems where the full scope might not be clear initially",
+      "Tasks that need to maintain context over multiple steps",
+      "Situations where irrelevant information needs to be filtered out"
+    ],
+    "integration_with_workflow": {
+      "phases": [
+        {
+          "phase": "Phase 2",
+          "usage": "Strategic Intelligence Planning - Break down complex orchestration tasks"
+        },
+        {
+          "phase": "Phase 3",
+          "usage": "Multi-Domain Research - Structure research approach systematically"
+        },
+        {
+          "phase": "Phase 5",
+          "usage": "Implementation - Plan implementation steps with revision capability"
+        },
+        {
+          "phase": "Phase 7",
+          "usage": "Decision & Iteration - Analyze validation results and plan corrections"
+        },
+        {
+          "phase": "Phase 9",
+          "usage": "Meta-Orchestration Audit - Reflect on workflow and identify improvements"
+        }
+      ]
+    },
+    "resources": {
+      "history": "thoughts://history",
+      "branches": "thoughts://branches/{branch_id}",
+      "summary": "thoughts://summary"
+    },
+    "environment_variables": {
+      "DISABLE_THOUGHT_LOGGING": "Set to 'true' to disable logging of thought information"
+    }
+  }
+}
