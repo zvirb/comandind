@@ -1,0 +1,27 @@
+{
+    "package_type": "Database",
+    "token_limit": 4000,
+    "key_findings": [
+        "PostgreSQL Performance Configuration",
+        "Schema Optimization Opportunities",
+        "Query Pattern Analysis"
+    ],
+    "critical_files": [
+        "/app/api/database/schema.py",
+        "/app/api/database/models.py",
+        "/docker-compose.yml (database service)"
+    ],
+    "performance_bottlenecks": [
+        "Identify N+1 query patterns",
+        "Implement database connection pooling",
+        "Optimize large result set handling"
+    ],
+    "coordination_metadata": {
+        "specialists": ["schema-database-expert", "performance-profiler"],
+        "validation_requirements": [
+            "Benchmark query performance",
+            "Test connection pooling efficiency",
+            "Validate schema normalization"
+        ]
+    }
+}

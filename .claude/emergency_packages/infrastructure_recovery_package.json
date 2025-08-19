@@ -1,0 +1,33 @@
+{
+    "package_type": "infrastructure_recovery",
+    "docker_socket_fixes": [
+        {
+            "issue": "Docker socket permission problems",
+            "resolution": [
+                "sudo chmod 666 /var/run/docker.sock",
+                "sudo chown root:docker /var/run/docker.sock"
+            ]
+        },
+        {
+            "issue": "Docker daemon unresponsive",
+            "resolution": [
+                "sudo systemctl restart docker",
+                "sudo dockerd --debug"
+            ]
+        }
+    ],
+    "auto_recovery_configuration": {
+        "restart_policy": "always",
+        "max_restart_attempts": 5,
+        "restart_delay_seconds": 10
+    },
+    "monitoring_configuration": {
+        "health_endpoints": [
+            "http://localhost:9090/metrics",
+            "http://localhost:3000/health"
+        ],
+        "alert_channels": ["email", "slack"]
+    },
+    "recovery_priority": "MEDIUM",
+    "estimated_recovery_time": "10-15 minutes"
+}

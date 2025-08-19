@@ -1,0 +1,347 @@
+agent_metadata:
+  # Enhanced agent metadata with comprehensive capabilities from AIWFE
+  codebase-research-analyst:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: research
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  context-compression-agent:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - research
+    - implementation
+    - database
+    - ui
+    - api
+    - context-optimization
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  enhanced-nexus-synthesis-agent:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: synthesis
+    capabilities:
+    - strategic-intelligence
+    - historical-analysis
+    - pattern-recognition
+    - cross-domain-integration
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+  atomic-git-synchronizer:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - version-control
+    - atomic-commits
+    - remote-sync
+    - git-operations
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  k8s-architecture-specialist:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: infrastructure
+    capabilities:
+    - kubernetes
+    - cluster-management
+    - service-mesh
+    - container-orchestration
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+  project-structure-mapper:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: analysis
+    capabilities:
+    - structure-analysis
+    - dependency-mapping
+    - organization-visualization
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  data-orchestrator:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  deployment-orchestrator:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  documentation-specialist:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+  execution-conflict-detector:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  execution-simulator:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  fullstack-communication-auditor:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: research
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  google-services-integrator:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  nexus-synthesis-agent:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: synthesis
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+  performance-profiler:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  schema-database-expert:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: implementation
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  security-orchestrator:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+  test-automation-engineer:
+    added_date: '2025-08-13T00:00:00.000000'
+    agent_type: validation
+    capabilities:
+    - research
+    - implementation
+    - testing
+    - documentation
+    - security
+    - performance
+    - database
+    - ui
+    - api
+    - deployment
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+
+last_updated: '2025-08-13T00:00:00.000000'
+
+# Enhanced workflow phases for ai_workflow_engine context
+workflow_phases:
+  documentation:
+    agents:
+    - documentation-specialist
+    - project-structure-mapper
+    execution_mode: sequential
+    timeout: 180
+  implementation:
+    agents:
+    - performance-profiler
+    - context-compression-agent
+    - deployment-orchestrator
+    - execution-conflict-detector
+    - google-services-integrator
+    - security-orchestrator
+    - schema-database-expert
+    - execution-simulator
+    - data-orchestrator
+    - k8s-architecture-specialist
+    execution_mode: parallel
+    timeout: 600
+  research:
+    agents:
+    - codebase-research-analyst
+    - fullstack-communication-auditor
+    - project-structure-mapper
+    execution_mode: parallel
+    timeout: 300
+  synthesis:
+    agents:
+    - nexus-synthesis-agent
+    - enhanced-nexus-synthesis-agent
+    execution_mode: sequential
+    timeout: 180
+  validation:
+    agents:
+    - ui-regression-debugger
+    - test-automation-engineer
+    - user-experience-auditor
+    execution_mode: sequential
+    timeout: 300
+  version_control:
+    agents:
+    - atomic-git-synchronizer
+    execution_mode: sequential
+    timeout: 120
+
+# AI Workflow Engine specific configuration
+project_context:
+  name: "AI Workflow Engine"
+  primary_technologies: ["python", "fastapi", "docker", "postgresql", "redis", "svelte"]
+  key_domains: ["calendar", "oauth", "authentication", "task_management", "ai_integration"]
+  deployment_targets: ["docker-compose", "kubernetes"]
+  security_requirements: ["mtls", "oauth2", "jwt", "ssl"]

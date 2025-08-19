@@ -1,0 +1,91 @@
+{
+  "a0baed8c8177ada0": {
+    "id": "a0baed8c8177ada0",
+    "pattern_type": "authentication_failure",
+    "category": "technical_success_user_failure",
+    "description": "CSRF token validation fails for existing users but works for new registrations",
+    "symptoms": [
+      "403 CSRF token validation failed",
+      "New user registration and immediate login works",
+      "Existing users cannot log in",
+      "CSRF endpoint returns 200 OK",
+      "Token generation appears functional"
+    ],
+    "root_causes": [
+      "CSRF token synchronization between client and server",
+      "Token rotation timing issues",
+      "Session state management problems"
+    ],
+    "false_positive_indicators": [
+      "CSRF endpoint returns 200 OK",
+      "Token generation appears functional",
+      "Technical validation passes",
+      "Health check endpoints working"
+    ],
+    "actual_user_impact": [
+      "User retention broken",
+      "Existing users locked out",
+      "Registration required for access",
+      "Business continuity impacted"
+    ],
+    "environments_affected": [
+      "production",
+      "development"
+    ],
+    "fix_attempts": [
+      {
+        "timestamp": "2025-08-07T22:32:30.419200+00:00",
+        "agent_claims": {
+          "ui_regression_debugger": "Authentication flows working",
+          "backend_gateway_expert": "API endpoints operational",
+          "security_validator": "CSRF protection functional"
+        },
+        "evidence_score": 0.3
+      },
+      {
+        "timestamp": "2025-08-07T22:35:48.139353+00:00",
+        "agent_claims": {
+          "ui_regression_debugger": "Authentication flows working",
+          "backend_gateway_expert": "API endpoints operational",
+          "security_validator": "CSRF protection functional"
+        },
+        "evidence_score": 0.3
+      },
+      {
+        "timestamp": "2025-08-07T22:41:07.165066+00:00",
+        "agent_claims": {
+          "ui_regression_debugger": "Authentication flows working",
+          "backend_gateway_expert": "API endpoints operational",
+          "security_validator": "CSRF protection functional"
+        },
+        "evidence_score": 0.3
+      }
+    ],
+    "successful_resolution": {
+      "resolution_timestamp": "2025-08-07T23:01:26.798962+00:00",
+      "resolution_method": "evidence_auditor_enhanced_flow",
+      "fixes_applied": [
+        "CSRF middleware exemption verified working correctly",
+        "Authentication endpoint accessibility confirmed",
+        "False positive detection in agent claims identified"
+      ],
+      "validation_evidence": [
+        "curl test shows 401 auth error instead of 403 CSRF error",
+        "ui-regression-debugger confirmed token generation working",
+        "backend-gateway-expert confirmed exemption logic working",
+        "security-validator confirmed no security vulnerabilities"
+      ],
+      "user_impact_resolved": "Existing users can now access login endpoint",
+      "evidence_quality_score": 0.95
+    },
+    "occurrence_count": 4,
+    "first_occurrence": "2025-08-07T22:32:30.419200+00:00",
+    "last_occurrence": "2025-08-07T23:01:26.798979+00:00",
+    "agent_claims_vs_reality": {
+      "ui_regression_debugger": "Authentication flows working",
+      "backend_gateway_expert": "API endpoints operational",
+      "security_validator": "CSRF protection functional"
+    },
+    "evidence_quality_score": 0.3
+  }
+}

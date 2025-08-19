@@ -1,0 +1,264 @@
+{
+  "package_id": "ctx_database_deployment_20250817",
+  "package_type": "database_context",
+  "workflow_id": "deployment_completion_cycle",
+  "max_tokens": 3500,
+  "compression_level": "moderate",
+  "generated_at": "2025-08-17T21:45:00Z",
+  "coordination_metadata": {
+    "phase": "4",
+    "next_phase": "5_parallel_implementation",
+    "target_agents": ["schema-database-expert", "backend-gateway-expert"],
+    "database_focus": "redis_integration_optimization"
+  },
+  "content": {
+    "mission_statement": "Optimize database and caching infrastructure for service deployment, focusing on Redis connectivity, authentication, and data integration for voice and chat services.",
+    
+    "database_infrastructure": {
+      "redis_configuration": {
+        "current_status": "connectivity_issues_identified",
+        "deployment_status": "container_running_auth_needed",
+        "connection_string": "redis://redis:6379",
+        "authentication": {
+          "requirement": "password_protection_required",
+          "config_location": "docker-compose.yml environment",
+          "validation_command": "redis-cli -a <password> ping"
+        },
+        "performance_settings": {
+          "maxmemory": "512mb",
+          "maxmemory_policy": "allkeys-lru",
+          "save": "300 1",
+          "appendonly": "yes",
+          "appendfsync": "everysec"
+        }
+      },
+      
+      "postgresql_integration": {
+        "current_status": "operational",
+        "connection_health": "verified_functional",
+        "database_name": "ai_workflow_engine",
+        "critical_tables": [
+          "users",
+          "sessions", 
+          "chat_history",
+          "voice_interactions",
+          "system_logs"
+        ],
+        "performance_notes": "No issues identified in current audit"
+      }
+    },
+    
+    "data_integration_requirements": {
+      "voice_service_data": {
+        "session_storage": {
+          "backend": "Redis",
+          "key_pattern": "voice_session:{user_id}:{session_id}",
+          "ttl": "3600 seconds",
+          "data_structure": "JSON serialized objects"
+        },
+        "cache_strategy": {
+          "user_preferences": "Redis hash with 24h TTL",
+          "voice_models": "Redis strings with 1h TTL",
+          "processing_queue": "Redis lists for job queuing"
+        },
+        "database_writes": {
+          "interaction_logs": "PostgreSQL voice_interactions table",
+          "user_analytics": "Async batch writes every 5 minutes",
+          "error_tracking": "Immediate writes to system_logs"
+        }
+      },
+      
+      "chat_service_data": {
+        "conversation_storage": {
+          "recent_messages": "Redis lists (last 50 messages)",
+          "full_history": "PostgreSQL chat_history table",
+          "context_window": "Redis with 30min TTL"
+        },
+        "ai_model_cache": {
+          "ollama_responses": "Redis with 1h TTL",
+          "prompt_templates": "Redis hash with 24h TTL",
+          "model_configs": "Redis strings with 12h TTL"
+        },
+        "database_integration": {
+          "conversation_persistence": "Async writes to PostgreSQL",
+          "user_preferences": "Immediate updates to users table",
+          "analytics_data": "Batch processing every 10 minutes"
+        }
+      }
+    },
+    
+    "redis_optimization_tasks": [
+      {
+        "priority": "critical",
+        "task": "Enable Redis authentication",
+        "implementation": [
+          "Add REDIS_PASSWORD environment variable",
+          "Update requirepass in redis.conf",
+          "Restart Redis container",
+          "Update application connection strings"
+        ],
+        "validation": [
+          "redis-cli ping (should fail)",
+          "redis-cli -a password ping (should succeed)",
+          "Application connection tests"
+        ],
+        "config_files": [
+          "docker-compose.yml",
+          "app/config/redis_config.py"
+        ]
+      },
+      {
+        "priority": "high",
+        "task": "Optimize Redis memory usage",
+        "implementation": [
+          "Configure maxmemory limit (512MB)",
+          "Set eviction policy to allkeys-lru",
+          "Enable data compression for large values",
+          "Implement key expiration strategies"
+        ],
+        "validation": [
+          "redis-cli config get maxmemory",
+          "redis-cli info memory",
+          "Monitor memory usage patterns"
+        ]
+      },
+      {
+        "priority": "high",
+        "task": "Configure Redis persistence",
+        "implementation": [
+          "Enable AOF (Append Only File)",
+          "Configure RDB snapshots",
+          "Set up backup strategies",
+          "Optimize fsync settings"
+        ],
+        "validation": [
+          "redis-cli config get save",
+          "redis-cli config get appendonly",
+          "Verify backup file creation"
+        ]
+      },
+      {
+        "priority": "medium",
+        "task": "Set up Redis monitoring",
+        "implementation": [
+          "Configure Redis metrics export",
+          "Add Prometheus monitoring",
+          "Create Grafana dashboards",
+          "Set up alerting rules"
+        ],
+        "validation": [
+          "curl http://localhost:9121/metrics (redis_exporter)",
+          "Verify metrics in Prometheus",
+          "Check Grafana dashboard display"
+        ]
+      }
+    ],
+    
+    "database_schema_updates": {
+      "new_tables_required": [
+        {
+          "table": "voice_interactions",
+          "purpose": "Store voice service interaction logs",
+          "schema": {
+            "id": "SERIAL PRIMARY KEY",
+            "user_id": "INTEGER REFERENCES users(id)",
+            "session_id": "VARCHAR(255)",
+            "input_text": "TEXT",
+            "output_audio": "TEXT",
+            "processing_time": "INTEGER",
+            "created_at": "TIMESTAMP DEFAULT NOW()"
+          }
+        },
+        {
+          "table": "chat_sessions",
+          "purpose": "Enhanced chat session tracking",
+          "schema": {
+            "id": "SERIAL PRIMARY KEY", 
+            "user_id": "INTEGER REFERENCES users(id)",
+            "session_token": "VARCHAR(255) UNIQUE",
+            "context_data": "JSONB",
+            "last_activity": "TIMESTAMP",
+            "created_at": "TIMESTAMP DEFAULT NOW()"
+          }
+        }
+      ],
+      
+      "index_optimization": [
+        "CREATE INDEX idx_voice_interactions_user_id ON voice_interactions(user_id)",
+        "CREATE INDEX idx_voice_interactions_session_id ON voice_interactions(session_id)",
+        "CREATE INDEX idx_chat_sessions_user_id ON chat_sessions(user_id)",
+        "CREATE INDEX idx_chat_sessions_token ON chat_sessions(session_token)"
+      ]
+    },
+    
+    "data_migration_strategy": {
+      "existing_data": {
+        "backup_requirement": "Full PostgreSQL backup before schema changes",
+        "migration_scripts": "SQL scripts for table creation",
+        "rollback_plan": "Database restore from backup if needed"
+      },
+      "redis_data": {
+        "initialization": "Empty Redis with auth configuration", 
+        "test_data": "Populate with sample session data",
+        "validation": "Verify data persistence and retrieval"
+      }
+    },
+    
+    "connection_management": {
+      "redis_connections": {
+        "pool_size": "20 connections",
+        "timeout": "5 seconds",
+        "retry_policy": "3 attempts with exponential backoff",
+        "health_checks": "Every 30 seconds"
+      },
+      "postgresql_connections": {
+        "current_status": "functional",
+        "pool_maintenance": "No changes required",
+        "monitoring": "Continue existing health checks"
+      }
+    },
+    
+    "performance_monitoring": {
+      "redis_metrics": [
+        "connected_clients",
+        "used_memory",
+        "keyspace_hits/misses",
+        "ops_per_sec",
+        "avg_ttl"
+      ],
+      "postgresql_metrics": [
+        "active_connections",
+        "query_performance",
+        "table_sizes",
+        "index_usage"
+      ],
+      "integration_metrics": [
+        "cache_hit_ratio",
+        "data_sync_latency",
+        "error_rates"
+      ]
+    },
+    
+    "troubleshooting_procedures": {
+      "redis_connection_issues": [
+        "Check Redis container status: docker ps | grep redis",
+        "Verify network connectivity: docker network inspect",
+        "Test authentication: redis-cli -a password ping",
+        "Check logs: docker logs redis"
+      ],
+      "data_consistency_issues": [
+        "Compare Redis vs PostgreSQL data",
+        "Check sync job status and logs",
+        "Verify data TTL settings",
+        "Monitor replication lag"
+      ],
+      "performance_degradation": [
+        "Analyze slow query logs",
+        "Check Redis memory usage",
+        "Monitor connection pool status",
+        "Review indexing strategy"
+      ]
+    }
+  },
+  "estimated_tokens": 3445
+}

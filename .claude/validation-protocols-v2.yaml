@@ -1,0 +1,138 @@
+validation_protocols:
+  version: "2.0"
+  last_updated: "2025-08-13"
+  incident_reference: "20-hour-outage-cosmic-hero-deployment"
+  
+  mandatory_validation_phases:
+    phase_6_enhanced:
+      name: "Comprehensive Infrastructure & User Validation"
+      required_validators:
+        - production-endpoint-validator
+        - user-experience-auditor
+        - infrastructure-recovery-agent
+        - performance-profiler
+        - security-validator
+      
+      validation_requirements:
+        infrastructure:
+          docker_health:
+            - all_containers_running: true
+            - health_checks_passing: true
+            - evidence_required: "docker ps output"
+          service_dependencies:
+            - database_accessible: true
+            - redis_accessible: true
+            - backend_responding: true
+            - evidence_required: "curl health endpoints"
+          network_connectivity:
+            - production_url_accessible: true
+            - ssl_certificate_valid: true
+            - dns_resolution_working: true
+            - evidence_required: "curl -I responses"
+        
+        user_experience:
+          end_to_end_testing:
+            - login_workflow_functional: true
+            - critical_features_accessible: true
+            - ui_rendering_correctly: true
+            - evidence_required: "playwright screenshots"
+          performance_validation:
+            - page_load_time: "<3s"
+            - api_response_time: "<500ms"
+            - evidence_required: "performance metrics"
+          browser_automation:
+            - actual_user_interactions: true
+            - workflow_completion: true
+            - evidence_required: "interaction logs"
+    
+    phase_9_audit_enhanced:
+      name: "Evidence-Based Orchestration Audit"
+      validation_criteria:
+        infrastructure_health:
+          - verify_all_services_operational: true
+          - check_monitoring_metrics: true
+          - validate_user_accessibility: true
+        success_correlation:
+          - match_claims_to_evidence: true
+          - verify_production_functionality: true
+          - validate_no_service_degradation: true
+        failure_detection:
+          - identify_any_service_failures: true
+          - detect_partial_outages: true
+          - flag_false_positives: true
+      
+      audit_requirements:
+        evidence_verification:
+          - all_validation_claims_have_evidence: true
+          - evidence_timestamps_current: true
+          - evidence_shows_actual_success: true
+        continuous_monitoring:
+          - real_time_health_checks: true
+          - alert_generation_on_failure: true
+          - automatic_incident_creation: true
+
+  validation_execution_rules:
+    parallel_validation:
+      enabled: true
+      timeout: 300  # seconds
+      failure_threshold: 1  # any single failure triggers iteration
+    
+    evidence_collection:
+      mandatory: true
+      formats:
+        - screenshots
+        - curl_outputs
+        - docker_logs
+        - health_check_results
+        - performance_metrics
+        - user_interaction_logs
+    
+    iteration_control:
+      max_iterations: 3
+      iteration_trigger:
+        - any_validation_failure
+        - missing_evidence
+        - service_unavailable
+        - user_inaccessible
+      
+      escalation:
+        after_max_iterations: "meta-orchestrator"
+        immediate_escalation:
+          - complete_service_outage
+          - database_unreachable
+          - production_url_down
+
+  recovery_procedures:
+    automatic_recovery:
+      enabled: true
+      actions:
+        - restart_failed_containers
+        - restore_service_configurations
+        - rollback_deployments
+        - clear_cache_and_retry
+    
+    manual_intervention_triggers:
+      - recovery_attempts_exceeded
+      - critical_data_corruption
+      - security_breach_detected
+      - infrastructure_failure
+
+  monitoring_integration:
+    real_time_checks:
+      interval: 60  # seconds
+      endpoints:
+        - https://aiwfe.com/health
+        - https://aiwfe.com/api/v1/status
+        - http://localhost:3001/health
+      
+    alert_channels:
+      - orchestration_audit_log
+      - system_notifications
+      - recovery_agent_queue
+    
+    metrics_collection:
+      - container_uptime
+      - service_response_times
+      - error_rates
+      - user_session_counts
+      - api_request_volumes

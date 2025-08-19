@@ -1,0 +1,13 @@
+{
+  "package_id": "api_restoration_package",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"api_restoration\",\n  \"priority\": \"HIGH\",\n  \"target_agents\": [\"backend-gateway-expert\", \"python-refactoring-architect\"],\n  \"token_count\": 3300,\n  \"created\": \"2025-08-16T10:15:00Z\",\n  \"iteration\": 7,\n  \"endpoints\": {\n    \"critical\": [\n      \"/api/chat/\",\n      \"/api/documents/\",\n      \"/api/calendar/\",\n      \"/api/workflows/\"\n    ],\n    \"status\": \"All returning 404 errors\"\n  },\n  \"root_cause\": {\n    \"backend\": \"Double mounting and incorrect route registration\",\n    \"nginx\": \"Proxy configuration adding duplicate prefixes\",\n    \"frontend\": \"API client using wrong base paths\"\n  },\n  \"fixes\": {\n    \"route_registration\": {\n      \"file\": \"app/main.py\",\n      \"pattern\": \"Direct registration with /api prefix, no double mounting\"\n    },\n    \"router_creation\": {\n      \"files\": [\"app/routers/chat.py\", \"app/routers/documents.py\"],\n      \"pattern\": \"FastAPI routers with proper authentication\"\n    },\n    \"frontend_client\": {\n      \"file\": \"webui-next/api/client.js\",\n      \"pattern\": \"Consistent /api base path for all endpoints\"\n    }\n  },\n  \"testing\": {\n    \"health_check\": \"curl https://aiwfe.com/api/health\",\n    \"authenticated_test\": \"curl https://aiwfe.com/api/chat/conversations -H 'Cookie: session=token'\",\n    \"all_endpoints\": [\"chat\", \"documents\", \"calendar\", \"workflows\"]\n  },\n  \"success_criteria\": [\n    \"All 4 priority endpoints return data\",\n    \"Authentication required and validated\",\n    \"Frontend can access all APIs\",\n    \"No routing conflicts\",\n    \"API docs at /docs\"\n  ],\n  \"coordination\": {\n    \"dependencies\": [\"session_management\"],\n    \"parallel_work\": true,\n    \"validation_by\": \"fullstack-communication-auditor\"\n  }\n}",
+  "tokens": 189,
+  "created_at": "2025-08-18T15:14:25.304531",
+  "last_accessed": "2025-08-18T15:14:25.304541",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

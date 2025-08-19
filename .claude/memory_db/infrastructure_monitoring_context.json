@@ -1,0 +1,13 @@
+{
+  "package_id": "infrastructure_monitoring_context",
+  "package_type": "migrated-context",
+  "content": "{\n    \"package_type\": \"INFRASTRUCTURE_MONITORING\",\n    \"priority\": \"HIGH\",\n    \"token_limit\": 3000,\n    \"deployment_strategy\": {\n        \"tools\": [\"Prometheus\", \"Grafana\"],\n        \"container_management\": \"Docker Compose\",\n        \"network_configuration\": \"Isolated monitoring network\"\n    },\n    \"monitoring_objectives\": [\n        \"Real-time system health tracking\",\n        \"Automated alerting for critical metrics\",\n        \"Comprehensive dashboard visualization\"\n    ],\n    \"alert_configuration\": {\n        \"critical_thresholds\": [\n            \"CPU Usage > 80%\",\n            \"Memory Utilization > 85%\", \n            \"Disk I/O Saturation\",\n            \"Network Latency Spikes\"\n        ],\n        \"notification_channels\": [\n            \"Email\",\n            \"Slack Integration\",\n            \"PagerDuty Escalation\"\n        ]\n    },\n    \"dashboard_components\": [\n        \"System Resource Utilization\",\n        \"Service Health Status\", \n        \"Request Latency Heatmap\",\n        \"Error Rate Tracking\"\n    ],\n    \"health_check_integration\": {\n        \"endpoint_monitoring\": \"/health\",\n        \"service_dependency_tracking\": true,\n        \"automatic_recovery_attempts\": true\n    }\n}\n",
+  "tokens": 114,
+  "created_at": "2025-08-18T15:14:25.330680",
+  "last_accessed": "2025-08-18T15:14:25.330694",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

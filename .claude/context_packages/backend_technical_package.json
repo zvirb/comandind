@@ -1,0 +1,119 @@
+{
+  "package_type": "backend_technical",
+  "max_tokens": 4000,
+  "timestamp": "2025-08-15T21:15:00Z",
+  "priority": "CRITICAL",
+  
+  "authentication_architecture": {
+    "current_state": {
+      "router_fragmentation": {
+        "count": 8,
+        "locations": [
+          "app/api/routes/auth_routes.py",
+          "app/webui/routers/auth.py",
+          "app/webui/routers/oauth.py",
+          "app/webui/routers/auths.py",
+          "app/webui/apps/oauth/__init__.py",
+          "app/webui/apps/rag/main.py",
+          "app/webui/apps/retrieval/main.py",
+          "app/webui/main.py"
+        ],
+        "conflicts": "Multiple JWT implementations, inconsistent token formats"
+      },
+      "jwt_issues": {
+        "enhanced_format": "Uses 'id' claim with user_id string",
+        "standard_format": "Uses 'sub' claim with User object",
+        "token_expiry": "Inconsistent across routers (30min to 7days)",
+        "validation": "Different middleware in each router"
+      }
+    },
+    
+    "target_architecture": {
+      "unified_router": "app/api/routes/unified_auth.py",
+      "centralized_jwt": "app/core/auth/jwt_manager.py",
+      "session_manager": "app/core/auth/session_manager.py",
+      "middleware": "app/core/middleware/auth_middleware.py"
+    },
+    
+    "implementation_tasks": [
+      {
+        "task": "Create unified authentication router",
+        "location": "app/api/routes/unified_auth.py",
+        "endpoints": ["/login", "/logout", "/refresh", "/validate", "/session"],
+        "priority": 1
+      },
+      {
+        "task": "Centralize JWT token management",
+        "location": "app/core/auth/jwt_manager.py",
+        "requirements": "Single token format, consistent expiry, unified validation",
+        "priority": 2
+      },
+      {
+        "task": "Implement session-JWT bridge",
+        "location": "app/core/auth/session_manager.py",
+        "requirements": "Database sessions linked to JWT tokens",
+        "priority": 3
+      },
+      {
+        "task": "Create authentication middleware",
+        "location": "app/core/middleware/auth_middleware.py",
+        "requirements": "Single validation point for all routes",
+        "priority": 4
+      }
+    ],
+    
+    "critical_fixes": {
+      "jwt_format": "Standardize on 'sub' claim with user_id string",
+      "token_expiry": "Set consistent 30-minute access, 7-day refresh",
+      "logout_mechanism": "Implement token blacklist with Redis",
+      "websocket_auth": "Add header-based authentication support"
+    }
+  },
+  
+  "technical_specifications": {
+    "jwt_standard": {
+      "header": {"alg": "HS256", "typ": "JWT"},
+      "payload": {
+        "sub": "user_id_string",
+        "exp": "30_minutes",
+        "iat": "issued_at",
+        "jti": "unique_token_id"
+      }
+    },
+    "session_schema": {
+      "table": "user_sessions",
+      "fields": ["id", "user_id", "token_jti", "created_at", "expires_at", "is_active"],
+      "indexes": ["user_id", "token_jti", "expires_at"]
+    },
+    "redis_structure": {
+      "blacklist": "auth:blacklist:{jti}",
+      "session": "auth:session:{user_id}",
+      "ttl": "match_token_expiry"
+    }
+  },
+  
+  "dependencies": {
+    "internal": ["database_service", "redis_service", "user_service"],
+    "external": ["pyjwt", "passlib", "python-multipart"],
+    "coordination": ["frontend_auth_update", "database_migration", "security_validation"]
+  },
+  
+  "success_criteria": {
+    "functional": [
+      "Single authentication endpoint handles all auth flows",
+      "Consistent JWT format across all services",
+      "Logout invalidates tokens immediately",
+      "WebSocket authentication works with headers"
+    ],
+    "performance": [
+      "Login response < 100ms",
+      "Token validation < 10ms",
+      "Session lookup < 5ms"
+    ],
+    "security": [
+      "No debug endpoints exposed",
+      "CSRF protection enabled",
+      "Token blacklist functional"
+    ]
+  }
+}

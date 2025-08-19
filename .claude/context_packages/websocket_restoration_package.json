@@ -1,0 +1,44 @@
+{
+  "package_type": "websocket_restoration",
+  "priority": "CRITICAL",
+  "target_agent": "backend-gateway-expert",
+  "token_count": 3200,
+  "created": "2025-08-16T10:15:00Z",
+  "iteration": 7,
+  "issue": {
+    "description": "Chat system completely blocked by WebSocket 404 errors",
+    "root_cause": "Double prefix routing (/app/app/) in nginx proxy configuration",
+    "impact": "100% chat functionality loss"
+  },
+  "fixes": {
+    "nginx_config": {
+      "file": "/etc/nginx/sites-available/aiwfe.com",
+      "change": "Remove duplicate /app prefix in proxy_pass for WebSocket location"
+    },
+    "backend_handler": {
+      "file": "app/main.py",
+      "change": "Ensure WebSocket endpoint matches nginx routing"
+    },
+    "authentication": {
+      "requirement": "Validate session tokens for WebSocket connections",
+      "method": "Use existing SessionMiddleware"
+    }
+  },
+  "testing": {
+    "connection_test": "wscat -c wss://aiwfe.com/app/chat/ws -H 'Cookie: session=valid_token'",
+    "message_test": "Send/receive JSON messages through WebSocket",
+    "auth_test": "Verify invalid tokens are rejected"
+  },
+  "success_criteria": [
+    "WebSocket connects without 404 errors",
+    "Chat messages send/receive successfully",
+    "Authentication validates properly",
+    "No duplicate prefix in routing",
+    "Production chat fully functional"
+  ],
+  "coordination": {
+    "dependencies": ["session_management"],
+    "parallel_work": true,
+    "validation_by": "user-experience-auditor"
+  }
+}

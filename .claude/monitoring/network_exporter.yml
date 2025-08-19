@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 60s
+
+scrape_configs:
+  - job_name: 'network_validation'
+    static_configs:
+      - targets: ['localhost:9100']
+    metrics_path: '/metrics'
+    scrape_interval: 5m
+    
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '(.*)'
+        replacement: '/home/marku/ai_workflow_engine/.claude/monitoring/network_validation.sh'
+        target_label: instance
+
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'network_(health_score|passed_tests|failed_tests)'
+        action: keep

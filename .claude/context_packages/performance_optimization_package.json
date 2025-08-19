@@ -1,0 +1,113 @@
+{
+  "package_type": "performance_optimization",
+  "priority": "high",
+  "token_limit": 3000,
+  "synthesis_timestamp": "2025-08-15T10:32:00Z",
+  
+  "resource_allocation": {
+    "container_resources": {
+      "text-to-speech-service": {
+        "memory": "2G",
+        "cpu": "1.0",
+        "optimization": "GPU acceleration if available"
+      },
+      "voice-to-text-service": {
+        "memory": "2G",
+        "cpu": "1.0",
+        "optimization": "Batch processing for multiple requests"
+      },
+      "voice-cloning-service": {
+        "memory": "3G",
+        "cpu": "1.5",
+        "optimization": "Model caching in memory"
+      },
+      "advanced-text-generation-service": {
+        "memory": "4G",
+        "cpu": "2.0",
+        "optimization": "Token streaming for long outputs"
+      },
+      "llm-assistant-service": {
+        "memory": "2G",
+        "cpu": "1.0",
+        "optimization": "Context window management"
+      },
+      "image-generation-service": {
+        "memory": "4G",
+        "cpu": "2.0",
+        "optimization": "VRAM allocation for GPU models"
+      }
+    },
+    
+    "scaling_strategy": {
+      "horizontal_scaling": {
+        "min_replicas": 1,
+        "max_replicas": 3,
+        "cpu_threshold": "70%",
+        "memory_threshold": "80%"
+      },
+      "vertical_scaling": {
+        "auto_adjust": true,
+        "max_memory": "8G",
+        "max_cpu": "4.0"
+      }
+    }
+  },
+  
+  "caching_strategy": {
+    "redis_caching": {
+      "tts_cache": {
+        "ttl": 3600,
+        "max_size": "1GB",
+        "key_pattern": "tts:{text_hash}:{voice_id}"
+      },
+      "stt_cache": {
+        "ttl": 1800,
+        "max_size": "500MB",
+        "key_pattern": "stt:{audio_hash}:{language}"
+      },
+      "text_generation_cache": {
+        "ttl": 7200,
+        "max_size": "2GB",
+        "key_pattern": "gen:{prompt_hash}:{model}"
+      }
+    },
+    
+    "model_caching": {
+      "preload_models": true,
+      "shared_memory": true,
+      "model_quantization": "int8 for inference"
+    }
+  },
+  
+  "optimization_techniques": {
+    "request_batching": {
+      "enabled": true,
+      "max_batch_size": 10,
+      "max_wait_time": "100ms"
+    },
+    "connection_pooling": {
+      "database_pool_size": 20,
+      "redis_pool_size": 50,
+      "http_connection_pool": 100
+    },
+    "async_processing": {
+      "use_celery": true,
+      "worker_concurrency": 4,
+      "prefetch_multiplier": 2
+    }
+  },
+  
+  "performance_targets": {
+    "latency": {
+      "p50": "< 200ms",
+      "p95": "< 1s",
+      "p99": "< 2s"
+    },
+    "throughput": {
+      "tts": "100 requests/minute",
+      "stt": "50 requests/minute",
+      "text_generation": "30 requests/minute"
+    },
+    "availability": "99.9%"
+  }
+}

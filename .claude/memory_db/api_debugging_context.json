@@ -1,0 +1,13 @@
+{
+  "package_id": "api_debugging_context",
+  "package_type": "migrated-context",
+  "content": "{\n    \"package_type\": \"API_DEBUGGING\",\n    \"priority\": \"HIGHEST\",\n    \"token_limit\": 3500,\n    \"core_objectives\": [\n        \"Enhance normalize_chat_request() with robust validation\",\n        \"Implement graceful error handling for 422 errors\",\n        \"Create comprehensive request normalization middleware\"\n    ],\n    \"key_implementation_strategies\": [\n        {\n            \"function\": \"normalize_chat_request()\",\n            \"enhancement_areas\": [\n                \"Complete field validation\",\n                \"Type coercion for ambiguous inputs\", \n                \"Strict schema enforcement\"\n            ],\n            \"error_handling\": {\n                \"strategy\": \"Middleware-based validation\",\n                \"fallback_mechanisms\": [\n                    \"Partial request reconstruction\",\n                    \"Detailed error logging\",\n                    \"Client-friendly error responses\"\n                ]\n            }\n        }\n    ],\n    \"logging_requirements\": {\n        \"error_capture\": \"Comprehensive 422 error context\",\n        \"normalization_traces\": \"Full request transformation steps\",\n        \"performance_overhead\": \"Minimal processing impact\"\n    },\n    \"validation_checks\": [\n        \"Schema validation against OpenAPI specification\",\n        \"Type consistency verification\",\n        \"Input sanitization\",\n        \"Cross-field dependency validation\"\n    ]\n}",
+  "tokens": 130,
+  "created_at": "2025-08-18T15:14:25.550284",
+  "last_accessed": "2025-08-18T15:14:25.550290",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

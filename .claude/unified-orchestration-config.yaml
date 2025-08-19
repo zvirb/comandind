@@ -1,0 +1,1193 @@
+# Unified Agentic Orchestration Configuration
+# Integrates ML-enhanced orchestration with production-grade patterns
+# Version: 4.0 - ML-Enhanced Production Integration
+# Last Updated: 2025-08-17
+
+# ===== ML ORCHESTRATION ACTIVATION =====
+ml_orchestration:
+  enabled: true
+  neural_routing: true
+  graph_coordination: true
+  reinforcement_learning: true
+  failure_detection: advanced
+  
+  # Production-grade ML patterns from research
+  performance_targets:
+    agent_selection_accuracy: 0.863  # 86.3% vs 25% baseline
+    conflict_free_success_rate: 0.925  # 92.5% parallel execution
+    resource_efficiency: 0.919  # 91.9% vs 52% baseline  
+    failure_detection_accuracy: 0.95  # 95% vs 60% baseline
+    
+  algorithms:
+    neural_orchestration: "multi_layer_feedforward"
+    graph_coordination: "GHNN_ACO"  # Graph Neural Network + Ant Colony
+    resource_optimization: "GA_PPO"  # Genetic Algorithm + Proximal Policy
+    failure_detection: "MAST_taxonomy"  # Multi-Agent System Failure Taxonomy
+    
+  learning_systems:
+    experience_replay: "prioritized"
+    pattern_storage: "neural_turing_machine" 
+    adaptation_speed: "sub_1_second"
+    sample_efficiency_improvement: "2x_to_3x"
+
+# ===== UNIFIED STEP-BASED WORKFLOW CONFIGURATION =====
+
+workflow_steps:
+  step_0_todo_integration:
+    name: "Todo Context Integration"
+    agents: [general-purpose]
+    execution_mode: sequential
+    timeout_seconds: 180
+    mandatory: true
+    triggers: ["start flow", "orchestration", "agentic flow", "agentic orchestration", "start agent", "start agents"]
+    purpose: "Cross-session todo management and context continuity"
+    resource_pool: memory_intensive
+    quality_gates:
+      - todo_relevance_validation
+      - priority_scoring_check
+    outputs:
+      - persistent_todo_context
+      - priority_integration
+      - ongoing_issue_analysis
+
+  step_1_ecosystem_validation:
+    name: "Agent Ecosystem Validation"
+    agents: [agent-integration-orchestrator]
+    execution_mode: sequential
+    timeout_seconds: 120
+    mandatory: true
+    depends_on: [step_0_todo_integration]
+    purpose: "Agent discovery, integration, and ecosystem health"
+    resource_pool: io_intensive
+    quality_gates:
+      - agent_availability_check
+      - capability_validation
+    outputs:
+      - agent_registry_updates
+      - ecosystem_status
+      - integration_validation
+
+  step_2_strategic_intelligence:
+    name: "Strategic Intelligence Planning"
+    agents: 
+      - project-orchestrator
+      - enhanced-nexus-synthesis-agent
+    execution_mode: ml_enhanced_sequential
+    lead_agent: project-orchestrator
+    timeout_seconds: 300
+    mandatory: true
+    depends_on: [step_1_ecosystem_validation]
+    purpose: "Historical pattern analysis and strategic coordination"
+    resource_pool: memory_intensive
+    
+    # ML Enhancement for Step 2
+    ml_enhancements:
+      neural_agent_selection: true
+      confidence_threshold: 0.7
+      fuzzy_evaluation_dimensions: ["completeness", "relevance", "confidence"]
+      supervised_learning_pipeline: true
+      
+    quality_gates:
+      - strategy_validation
+      - pattern_verification
+      - ml_selection_confidence_check
+    outputs:
+      - strategic_master_plan
+      - historical_pattern_insights
+      - coordinated_approach
+      - ml_agent_recommendations
+
+  step_3_research_discovery:
+    name: "Multi-Domain Research Discovery with Critical Pattern Analysis"
+    agents:
+      - enhanced-research-coordinator
+      - codebase-research-analyst
+      - schema-database-expert
+      - security-validator
+      - performance-profiler
+      - smart-search-agent
+    execution_mode: graph_neural_parallel
+    lead_agent: enhanced-research-coordinator
+    max_concurrent: 5
+    timeout_seconds: 600
+    mandatory: true
+    depends_on: [step_2_strategic_intelligence]
+    purpose: "Historical pattern-informed comprehensive system analysis with critical failure prevention"
+    resource_pools: [cpu_intensive, network_intensive, memory_intensive]
+    completion_threshold: 0.75
+    critical_pattern_validation: true
+    infrastructure_first_required: true
+    
+    # ML Enhancement for Step 3 - Graph Neural Network Coordination
+    ml_enhancements:
+      graph_neural_coordination: true
+      algorithm: "GHNN_ACO"  # Graph Neural Network + Ant Colony Optimization
+      node_types: ["tasks", "agents", "resources"]
+      edge_types: ["compatibility", "dependency", "communication"]
+      conflict_resolution: true
+      success_rate_target: 0.925  # 92.5%
+      message_passing_neural_network: true
+      
+    quality_gates:
+      - research_completeness
+      - data_consistency_validation
+      - critical_pattern_analysis
+      - infrastructure_health_validation
+      - historical_pattern_integration
+      - graph_coordination_validation
+    outputs:
+      - enhanced_research_brief
+      - research_findings
+      - system_analysis
+      - security_assessment
+      - performance_baseline
+      - critical_risk_assessment
+      - infrastructure_validation_requirements
+      - coordination_graph_analysis
+
+  step_4_context_synthesis:
+    name: "Context Synthesis & Compression"
+    agents:
+      - nexus-synthesis-agent
+      - context-compression-agent
+      - content-compressor
+    execution_mode: sequential
+    lead_agent: nexus-synthesis-agent
+    timeout_seconds: 240
+    mandatory: true
+    depends_on: [step_3_research_discovery]
+    purpose: "Research integration with intelligent compression"
+    resource_pool: memory_intensive
+    quality_gates:
+      - context_package_validation
+      - token_limit_compliance
+    max_tokens_per_package: 4000
+    outputs:
+      - integrated_context_packages
+      - compressed_documentation
+      - agent_specific_instructions
+
+  step_5_implementation_execution:
+    name: "Parallel Implementation Execution"
+    execution_mode: reinforcement_learning_parallel
+    timeout_seconds: 1800
+    mandatory: true
+    depends_on: [step_4_context_synthesis]
+    purpose: "Coordinated implementation across all domains"
+    cross_stream_sync: true
+    
+    # ML Enhancement for Step 5 - Reinforcement Learning Coordination
+    ml_enhancements:
+      reinforcement_learning: true
+      algorithm: "GA_PPO"  # Genetic Algorithm + Proximal Policy Optimization
+      resource_efficiency_target: 0.919  # 91.9% vs 52% baseline
+      dynamic_agent_spawning: true
+      agent_count_range: [1, 10]  # 1-10+ agents based on complexity
+      multi_objective_optimization: true
+      centralized_training_decentralized_execution: true
+    
+    streams:
+      backend_stream:
+        max_concurrent: 3
+        agents:
+          - backend-gateway-expert
+          - schema-database-expert
+          - google-services-integrator
+        resource_pool: cpu_intensive
+        
+      frontend_stream:
+        max_concurrent: 3
+        agents:
+          - webui-architect
+          - frictionless-ux-architect
+          - whimsy-ui-creator
+        resource_pool: io_intensive
+        
+      quality_stream:
+        max_concurrent: 4
+        agents:
+          - test-automation-engineer
+          - security-validator
+          - fullstack-communication-auditor
+          - rapid-testing-agent
+        resource_pool: network_intensive
+        
+      infrastructure_stream:
+        max_concurrent: 3
+        agents:
+          - infrastructure-orchestrator
+          - monitoring-analyst
+          - dependency-analyzer
+        resource_pool: network_intensive
+        
+      documentation_stream:
+        max_concurrent: 2
+        agents:
+          - documentation-specialist
+          - project-janitor
+        resource_pool: io_intensive
+
+    quality_gates:
+      - implementation_validation
+      - integration_health_check
+      - security_clearance
+    outputs:
+      - implementation_artifacts
+      - test_suites
+      - documentation_updates
+      - infrastructure_configs
+
+  step_6_evidence_validation:
+    name: "Comprehensive Evidence-Based Validation"
+    agents:
+      - production-endpoint-validator
+      - user-experience-auditor
+      - ui-regression-debugger
+      - performance-profiler
+      - code-quality-guardian
+    execution_mode: ml_enhanced_parallel
+    max_concurrent: 5
+    timeout_seconds: 800
+    mandatory: true
+    depends_on: [step_5_implementation_execution]
+    purpose: "Evidence-based validation with real user testing"
+    resource_pools: [network_intensive, memory_intensive]
+    
+    # ML Enhancement for Step 6 - Advanced Failure Detection
+    ml_enhancements:
+      failure_detection: true
+      taxonomy: "MAST"  # Multi-Agent System Failure Taxonomy
+      failure_modes: 14  # Specification issues, inter-agent misalignment, task verification
+      detection_accuracy_target: 0.95  # 95% vs 60% baseline
+      response_time: "sub_100ms"
+      lstm_loop_detection: true
+      autoencoder_anomaly_detection: true
+      circuit_breaker_protection: true
+    
+    evidence_requirements:
+      mandatory_evidence: true
+      production_accessibility: required
+      user_workflow_validation: required
+      infrastructure_health: required
+      concrete_proof_required: true
+      docker_service_validation: required
+      service_dependency_verification: required
+      end_to_end_accessibility_proof: required
+      infrastructure_first_validation: required
+      critical_pattern_prevention: true
+      
+      deployment_verification:
+        stages:
+          - container_rebuild_check
+          - cache_invalidation_verification
+          - production_endpoint_testing
+          - multi_stage_build_validation
+        success_criteria:
+          - fresh_build_context_confirmation
+          - http_https_endpoint_accessibility
+          - container_health_log_review
+          - deployment_timing_validation
+        mandatory_proofs:
+          - curl_test_http
+          - curl_test_https
+          - container_health_logs
+          - service_dependency_map
+      
+    completion_gates:
+      security_clearance: security-validator
+      performance_threshold: performance-profiler
+      integration_health: production-endpoint-validator
+      user_experience: user-experience-auditor
+      
+    quality_gates:
+      - evidence_collection_validation
+      - user_interaction_verification
+      - infrastructure_health_check
+    outputs:
+      - validation_evidence
+      - user_interaction_logs
+      - performance_metrics
+      - quality_reports
+
+  step_7_decision_control:
+    name: "Decision & Iteration Control"
+    agents: [orchestration-auditor]
+    execution_mode: sequential
+    timeout_seconds: 180
+    mandatory: true
+    depends_on: [step_6_evidence_validation]
+    purpose: "Evaluate validation evidence and determine completion"
+    resource_pool: memory_intensive
+    
+    decision_criteria:
+      validation_success: continue_to_step_8
+      validation_failure: restart_at_step_0
+      iteration_limit: 3
+      escalation_threshold: meta-orchestrator
+      
+    quality_gates:
+      - evidence_based_decision_validation
+    outputs:
+      - success_failure_determination
+      - iteration_requirements
+      - evidence_summary
+
+  step_8_version_control:
+    name: "Atomic Version Control Synchronization"
+    agents: [atomic-git-synchronizer]
+    execution_mode: sequential
+    timeout_seconds: 300
+    mandatory: true
+    depends_on: [step_7_decision_control]
+    conditional: validation_success_only
+    purpose: "Atomic commit creation and remote synchronization"
+    resource_pool: io_intensive
+    quality_gates:
+      - commit_atomicity_check
+      - sync_validation
+      - branch_health_check
+    outputs:
+      - atomic_commits
+      - remote_sync_confirmation
+      - version_control_updates
+
+  step_9_meta_audit:
+    name: "Meta-Orchestration Audit & Learning"
+    agents:
+      - orchestration-auditor
+      - execution-conflict-detector
+      - general-purpose
+    execution_mode: memory_augmented_sequential
+    timeout_seconds: 240
+    mandatory: true
+    always_executes: true
+    depends_on: [step_8_version_control, step_7_decision_control]
+    purpose: "Workflow analysis and continuous improvement"
+    resource_pool: memory_intensive
+    enforcement: non_optional
+    
+    # ML Enhancement for Step 9 - Memory-Augmented Learning
+    ml_enhancements:
+      memory_augmented_learning: true
+      neural_turing_machine: true
+      experience_replay: "prioritized"
+      pattern_storage: true
+      adaptation_speed: "sub_1_second"
+      classification_accuracy_target: 0.82
+      sample_efficiency_improvement: "2x_to_3x"
+      continuous_learning: true
+      workflow_pattern_analysis: true
+      
+    quality_gates:
+      - audit_completeness
+      - improvement_identification
+      - pattern_learning_validation
+    outputs:
+      - workflow_improvement_recommendations
+      - learning_insights
+      - audit_reports
+      - learned_patterns
+      - performance_predictions
+
+# ===== AGENT METADATA WITH UNIFIED STEP ASSIGNMENTS =====
+
+agent_metadata:
+  # Step 0 Agents
+  general-purpose-todo-manager:
+    step_assignment: [step_0_todo_integration]
+    agent_type: research
+    capabilities: [cross_session_management, todo_coordination, context_integration, multi_step_tasks, complex_research]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 2
+    timeout: 180
+
+  # Step 1 Agents  
+  agent-integration-orchestrator:
+    step_assignment: [step_1_ecosystem_validation]
+    agent_type: orchestrator
+    capabilities: [agent_discovery, ecosystem_management, integration_validation]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 2
+    timeout: 120
+
+  # Step 2 Agents
+  project-orchestrator:
+    step_assignment: [step_2_strategic_intelligence]
+    agent_type: orchestrator
+    capabilities: [strategic_planning, coordination, task_breakdown]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 1
+    timeout: 300
+
+  enhanced-nexus-synthesis-agent:
+    step_assignment: [step_2_strategic_intelligence, step_4_context_synthesis]
+    agent_type: synthesis
+    capabilities: [strategic_intelligence, historical_analysis, pattern_recognition]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+
+  # Step 3 Agents (Research Discovery)
+  codebase-research-analyst:
+    step_assignment: [step_3_research_discovery]
+    agent_type: research
+    capabilities: [code_analysis, research, implementation_discovery]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  schema-database-expert:
+    step_assignment: [step_3_research_discovery, step_5_implementation_execution]
+    agent_type: implementation
+    capabilities: [database_analysis, schema_optimization, performance_tuning]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  security-validator:
+    step_assignment: [step_3_research_discovery, step_5_implementation_execution, step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [security_analysis, vulnerability_assessment, compliance_validation]
+    mandatory: true
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+
+  performance-profiler:
+    step_assignment: [step_3_research_discovery, step_6_evidence_validation]
+    agent_type: specialist
+    capabilities: [performance_analysis, optimization, bottleneck_identification]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  smart-search-agent:
+    step_assignment: [step_3_research_discovery]
+    agent_type: specialist
+    capabilities: [intelligent_search, content_discovery, relevance_filtering]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  # Step 4 Agents (Context Synthesis)
+  nexus-synthesis-agent:
+    step_assignment: [step_4_context_synthesis]
+    agent_type: synthesis
+    capabilities: [cross_domain_integration, pattern_synthesis, architectural_solutions]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 2
+    timeout: 240
+
+  context-compression-agent:
+    step_assignment: [step_4_context_synthesis]
+    agent_type: specialist
+    capabilities: [content_compression, context_optimization, token_management]
+    mandatory: true
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  document-compression-agent:
+    step_assignment: [step_4_context_synthesis]
+    agent_type: specialist
+    capabilities: [document_compression, large_content_handling, intelligent_compression]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  # Step 5 Agents (Implementation)
+  backend-gateway-expert:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: implementation
+    capabilities: [backend_development, api_design, server_architecture]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  google-services-integrator:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [google_api_integration, oauth_setup, service_configuration]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  webui-architect:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: implementation
+    capabilities: [frontend_architecture, ui_development, component_systems]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  frictionless-ux-architect:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [ux_optimization, friction_elimination, user_experience]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  whimsy-ui-creator:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [creative_ui_enhancement, micro_interactions, delightful_design]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  test-automation-engineer:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: validation
+    capabilities: [test_automation, quality_assurance, ci_cd_integration]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  fullstack-communication-auditor:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: research
+    capabilities: [communication_auditing, integration_validation, api_contract_validation]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  rapid-testing-agent:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [rapid_testing, fast_feedback, parallel_validation]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  infrastructure-orchestrator:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: orchestrator
+    capabilities: [devops_coordination, containerization, service_orchestration]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  monitoring-analyst:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [system_monitoring, observability, alerting]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  dependency-analyzer:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [package_analysis, vulnerability_scanning, dependency_management]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  documentation-specialist:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [live_documentation, knowledge_management, automated_documentation]
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+
+  project-janitor:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [project_maintenance, cleanup_automation, environment_hygiene]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  # Step 6 Agents (Evidence Validation)
+  production-endpoint-validator:
+    step_assignment: [step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [endpoint_validation, infrastructure_validation, evidence_collection]
+    mandatory: true
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+
+  user-experience-auditor:
+    step_assignment: [step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [user_interaction_testing, workflow_validation, browser_automation]
+    mandatory: true
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+
+  ui-regression-debugger:
+    step_assignment: [step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [visual_regression_testing, ui_validation, browser_automation]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  code-quality-guardian:
+    step_assignment: [step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [code_quality_enforcement, style_validation, standards_compliance]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 240
+
+  # Step 7 Agents (Decision Control)
+  orchestration-auditor-v2:
+    step_assignment: [step_7_decision_control]
+    agent_type: auditor
+    capabilities: [evidence_analysis, decision_validation, false_positive_detection]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 1
+    timeout: 180
+
+  # Step 8 Agents (Version Control)
+  atomic-git-synchronizer:
+    step_assignment: [step_8_version_control]
+    agent_type: specialist
+    capabilities: [atomic_commits, version_control, remote_synchronization]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+
+  # Step 9 Agents (Meta Audit)
+  orchestration-auditor:
+    step_assignment: [step_9_meta_audit]
+    agent_type: auditor
+    capabilities: [meta_analysis, workflow_improvement, learning_integration]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 1
+    timeout: 240
+
+  execution-conflict-detector:
+    step_assignment: [step_9_meta_audit]
+    agent_type: specialist
+    capabilities: [conflict_analysis, execution_comparison, quality_assurance]
+    mandatory: true
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  evidence-auditor:
+    step_assignment: [step_9_meta_audit]
+    agent_type: auditor
+    capabilities: [evidence_validation, pattern_verification, validation_verification]
+    mandatory: true
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  # ADDITIONAL AGENTS - COMPREHENSIVE COVERAGE (ALL 48 AGENTS)
+  
+  # Meta-Orchestration Agents
+  meta-orchestrator:
+    step_assignment: [step_2_strategic_intelligence, step_7_decision_control]
+    agent_type: orchestrator
+    capabilities: [multi_domain_coordination, resource_allocation, strategic_planning, risk_management]
+    mandatory: false
+    parallel_execution: false
+    retry_count: 1
+    timeout: 600
+
+  orchestration-phase0:
+    step_assignment: [step_0_todo_integration]
+    agent_type: orchestrator
+    capabilities: [phase_coordination, ecosystem_validation, transition_management]
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 180
+
+  enhanced-research-coordinator:
+    step_assignment: [step_3_research_discovery]
+    agent_type: research
+    capabilities: [research_coordination, knowledge_graph_integration, historical_pattern_analysis, critical_failure_prevention, infrastructure_first_validation]
+    mandatory: true
+    parallel_execution: false
+    retry_count: 2
+    timeout: 300
+    priority: high
+    critical_pattern_integration: true
+    infrastructure_validation_required: true
+
+  # Development Specialists
+  python-refactoring-architect:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: implementation
+    capabilities: [code_refactoring, architectural_analysis, maintainability_improvements]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  data-orchestrator:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: orchestrator
+    capabilities: [data_pipelines, etl_coordination, ml_infrastructure, data_governance]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  # Additional Frontend/UX Specialists
+  # (webui-architect, frictionless-ux-architect, whimsy-ui-creator already included)
+
+  # Additional Quality Assurance Agents
+  # (test-automation-engineer, fullstack-communication-auditor already included)
+
+  # Additional Security Specialists
+  security-orchestrator:
+    step_assignment: [step_5_implementation_execution, step_6_evidence_validation]
+    agent_type: orchestrator
+    capabilities: [security_strategy, compliance_frameworks, risk_assessment, security_architecture]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+
+  security-vulnerability-scanner:
+    step_assignment: [step_3_research_discovery, step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [vulnerability_detection, security_code_analysis, exploit_assessment]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  # Infrastructure & DevOps Specialists
+  k8s-architecture-specialist:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: infrastructure
+    capabilities: [kubernetes_deployment, cluster_management, service_mesh, container_orchestration]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  # Documentation & Knowledge Management
+  project-structure-mapper:
+    step_assignment: [step_3_research_discovery, step_5_implementation_execution]
+    agent_type: analysis
+    capabilities: [structure_analysis, dependency_mapping, organization_visualization]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  # Context Optimization Agents (CRITICAL FOR EFFICIENCY)
+  code-execution-agent:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [lightweight_execution, context_efficiency, precise_operations]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  parallel-file-manager:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [batch_file_operations, concurrent_execution, efficiency_optimization]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  # Maintenance & Quality Agents
+  code-quality-guardian:
+    step_assignment: [step_5_implementation_execution, step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [code_quality_enforcement, linting, formatting, standards_compliance]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 240
+
+  # Integration Specialists
+  langgraph-ollama-analyst:
+    step_assignment: [step_3_research_discovery, step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [langgraph_workflows, ollama_integration, local_llm_orchestration]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+  # ADDITIONAL SPECIALIZED AGENTS FOR COMPREHENSIVE COVERAGE
+
+  # Advanced Analysis Agents
+  batch-file-operations-manager:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [parallel_file_operations, bulk_operations, context_efficiency]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  general-purpose:
+    step_assignment: [step_3_research_discovery, step_5_implementation_execution]
+    agent_type: research
+    capabilities: [multi_step_tasks, complex_research, code_search, task_execution]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+
+  statusline-setup:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [claude_code_configuration, status_line_setup, development_environment]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 120
+
+  output-mode-setup:
+    step_assignment: [step_5_implementation_execution]
+    agent_type: specialist
+    capabilities: [claude_code_output_mode, development_configuration, mode_creation]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 120
+
+  content-compressor:
+    step_assignment: [step_4_context_synthesis]
+    agent_type: specialist
+    capabilities: [content_compression, token_optimization, context_preservation]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 180
+
+  parallel-test-executor:
+    step_assignment: [step_5_implementation_execution, step_6_evidence_validation]
+    agent_type: validation
+    capabilities: [parallel_testing, fast_feedback, validation_checks]
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+
+# ===== UNIFIED RESOURCE MANAGEMENT =====
+
+resource_management:
+  max_concurrent_agents: 8
+  
+  resource_pools:
+    cpu_intensive:
+      agents: [performance-profiler, codebase-research-analyst, test-automation-engineer, backend-gateway-expert]
+      max_concurrent: 2
+      priority: high
+      timeout_multiplier: 1.5
+      
+    io_intensive:
+      agents: [schema-database-expert, documentation-specialist, dependency-analyzer, agent-integration-orchestrator, atomic-git-synchronizer]
+      max_concurrent: 3
+      priority: medium
+      timeout_multiplier: 1.2
+      
+    network_intensive:
+      agents: [security-validator, dependency-analyzer, monitoring-analyst, production-endpoint-validator, user-experience-auditor]
+      max_concurrent: 2
+      priority: medium
+      timeout_multiplier: 1.8
+      
+    memory_intensive:
+      agents: [nexus-synthesis-agent, enhanced-nexus-synthesis-agent, general-purpose, orchestration-auditor, orchestration-auditor-v2]
+      max_concurrent: 2
+      priority: high
+      timeout_multiplier: 2.0
+
+  step_resource_allocation:
+    step_0_todo_integration: [memory_intensive]
+    step_1_ecosystem_validation: [io_intensive]
+    step_2_strategic_intelligence: [memory_intensive]
+    step_3_research_discovery: [cpu_intensive, network_intensive]
+    step_4_context_synthesis: [memory_intensive]
+    step_5_implementation_execution: [cpu_intensive, io_intensive, network_intensive]
+    step_6_evidence_validation: [network_intensive, memory_intensive]
+    step_7_decision_control: [memory_intensive]
+    step_8_version_control: [io_intensive]
+    step_9_meta_audit: [memory_intensive]
+
+# ===== QUALITY GATES CONFIGURATION =====
+
+quality_gates:
+  pre_step_validation:
+    checks:
+      - agent_availability_check
+      - resource_allocation_validation
+      - dependency_resolution_verification
+      - context_package_size_validation
+    timeout_seconds: 60
+    
+  during_step_monitoring:
+    monitoring_interval_seconds: 30
+    checks:
+      - progress_monitoring
+      - resource_usage_tracking
+      - inter_agent_communication_health
+      - partial_result_validation
+    alert_thresholds:
+      resource_usage_percent: 85
+      failure_rate_percent: 25
+      response_time_seconds: 120
+      
+  post_step_validation:
+    checks:
+      - step_completion_verification
+      - output_quality_validation
+      - integration_health_check
+      - evidence_collection_validation
+    timeout_seconds: 180
+
+# ===== COLLABORATION HUB =====
+
+collaboration_hub:
+  communication_channels:
+    - type: shared_context
+      persistence: memory
+      max_size_mb: 100
+      ttl_seconds: 3600
+      
+    - type: result_exchange
+      persistence: redis
+      max_entries: 1000
+      ttl_seconds: 7200
+      
+    - type: progress_tracking
+      persistence: database
+      update_interval_seconds: 15
+      
+  synchronization_points:
+    - name: step_0_complete
+      step: step_0_todo_integration
+      required_agents: [general-purpose]
+      timeout_seconds: 60
+      
+    - name: step_3_research_complete
+      step: step_3_research_discovery
+      required_agents: [codebase-research-analyst, schema-database-expert]
+      completion_rate: 0.75
+      timeout_seconds: 300
+      
+    - name: step_5_implementation_streams_sync
+      step: step_5_implementation_execution
+      required_streams: [backend, frontend, quality, infrastructure]
+      cross_stream_sync: true
+      timeout_seconds: 600
+      
+    - name: step_6_evidence_validation
+      step: step_6_evidence_validation
+      required_agents: [production-endpoint-validator, user-experience-auditor]
+      evidence_requirement: mandatory
+      timeout_seconds: 400
+
+# ===== PERFORMANCE MONITORING =====
+
+performance_monitoring:
+  metrics:
+    - name: step_execution_time
+      type: histogram
+      labels: [step_number, agent_count, resource_pool]
+      
+    - name: agent_success_rate
+      type: gauge
+      labels: [agent_name, step, domain]
+      
+    - name: resource_utilization
+      type: gauge
+      labels: [resource_pool, step, agent_name]
+      
+    - name: evidence_validation_score
+      type: gauge
+      labels: [validation_type, step, success_rate]
+      
+    - name: deployment_verification_metrics
+      type: gauge
+      labels: [verification_stage, success_rate, evidence_type]
+      
+    - name: container_rebuild_validation
+      type: counter
+      labels: [build_context, cache_invalidation, rebuild_success]
+      
+    # ML-Enhanced Metrics
+    - name: ml_agent_selection_accuracy
+      type: gauge
+      labels: [step, algorithm, confidence_level]
+      target: 0.863
+      
+    - name: ml_conflict_free_success_rate
+      type: gauge
+      labels: [step, coordination_algorithm]
+      target: 0.925
+      
+    - name: ml_resource_efficiency
+      type: gauge
+      labels: [step, optimization_algorithm]
+      target: 0.919
+      
+    - name: ml_failure_detection_accuracy
+      type: gauge
+      labels: [step, detection_algorithm, failure_type]
+      target: 0.95
+      
+    - name: ml_pattern_learning_effectiveness
+      type: gauge
+      labels: [learning_algorithm, adaptation_speed]
+      target: 0.82
+      
+  alerting:
+    rules:
+      - name: step_execution_failure
+        condition: agent_success_rate < 0.8
+        severity: high
+        
+      - name: resource_exhaustion
+        condition: resource_utilization > 0.9
+        severity: critical
+        
+      - name: evidence_validation_failure
+        condition: evidence_validation_score < 0.7
+        severity: high
+        
+      - name: workflow_iteration_overflow
+        condition: iteration_count > 3
+        severity: critical
+        
+      # ML-Enhanced Alerting Rules
+      - name: ml_agent_selection_accuracy_degradation
+        condition: ml_agent_selection_accuracy < 0.7
+        severity: high
+        action: retrain_neural_orchestration_model
+        
+      - name: ml_coordination_conflict_spike
+        condition: ml_conflict_free_success_rate < 0.8
+        severity: high
+        action: recalibrate_graph_neural_network
+        
+      - name: ml_resource_efficiency_drop
+        condition: ml_resource_efficiency < 0.7
+        severity: medium
+        action: adjust_ga_ppo_parameters
+        
+      - name: ml_failure_detection_degradation
+        condition: ml_failure_detection_accuracy < 0.85
+        severity: critical
+        action: update_mast_taxonomy_patterns
+
+# ===== FAILURE HANDLING AND RECOVERY =====
+
+failure_handling:
+  strategies:
+    resource_exhaustion:
+      action: sequential_degradation
+      priority_order: [security, performance, testing, documentation]
+      ml_enhancement: dynamic_resource_reallocation
+      
+    agent_failure:
+      action: task_redistribution
+      backup_agents: [nexus-synthesis-agent, codebase-research-analyst]
+      retry_attempts: 2
+      retry_delay_seconds: 30
+      ml_enhancement: failure_pattern_learning
+      
+    step_timeout:
+      action: partial_completion
+      minimum_completion_rate: 0.6
+      escalation_threshold: 0.4
+      escalation_target: meta-orchestrator
+      ml_enhancement: timeout_prediction
+      
+    validation_failure:
+      action: iteration_restart
+      restart_step: step_0_todo_integration
+      context_integration: failure_analysis
+      iteration_tracking: true
+      max_iterations: 3
+      ml_enhancement: failure_root_cause_analysis
+      
+    # ML-Enhanced Failure Handling
+    ml_model_degradation:
+      action: model_rollback
+      fallback_to: baseline_orchestration
+      retrain_trigger: true
+      pattern_analysis: failure_mode_detection
+      
+    coordination_deadlock:
+      action: graph_topology_reset
+      algorithm: conflict_resolution_protocol
+      timeout: "sub_100ms"
+      ml_enhancement: deadlock_prevention_learning
+      
+    deployment_verification_failure:
+      action: specific_recovery
+      recovery_stages:
+        - force_cache_invalidation
+        - container_rebuild_with_fresh_context
+        - dns_cache_reset
+        - rollback_to_previous_stable_version
+      failure_retry_limit: 2
+      mandatory_evidence_regeneration: true
+      notify_infrastructure_team: true
+
+# ===== PROJECT CONTEXT =====
+
+project_context:
+  name: "AI Workflow Engine"
+  primary_technologies: ["python", "fastapi", "docker", "postgresql", "redis", "svelte"]
+  key_domains: ["calendar", "oauth", "authentication", "task_management", "ai_integration"]
+  deployment_targets: ["docker-compose", "kubernetes"]
+  security_requirements: ["mtls", "oauth2", "jwt", "ssl"]
+  orchestration_version: "4.0-ml-enhanced"
+  last_updated: "2025-08-17"
+  ml_integration: "production-ready"
+  research_integration: "advanced-ml-patterns"
+
+# ===== TRIGGER CONFIGURATION =====
+
+trigger_system:
+  automatic_orchestration_triggers:
+    - "start flow"
+    - "orchestration" 
+    - "agentic flow"
+    - "agentic orchestration"
+    - "start agent"
+    - "start agents"
+  
+  action: start_step_0_todo_integration
+  immediate_execution: true
+  bypass_validation: false

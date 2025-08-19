@@ -1,0 +1,213 @@
+{
+  "package_id": "user_functionality_validation",
+  "priority": "CRITICAL",
+  "token_count": 3600,
+  "iteration": 7,
+  "focus": "UX restoration validation through browser automation",
+  "coordination_metadata": {
+    "phase": 6,
+    "stream": "validation",
+    "dependencies": ["websocket_fixes", "session_fixes", "api_restoration"],
+    "estimated_duration": "20 minutes",
+    "risk_level": "NONE",
+    "parallel_execution": false
+  },
+  "playwright_automation": {
+    "objective": "Validate UX restoration fixes through comprehensive browser automation",
+    "test_environment": "Production (https://aiwfe.com) - direct user perspective testing",
+    "browser_config": {
+      "headless": false,
+      "screenshot_on_failure": true,
+      "video_recording": true,
+      "viewport": {"width": 1920, "height": 1080}
+    }
+  },
+  "critical_user_workflows": [
+    {
+      "workflow": "User Authentication",
+      "priority": "CRITICAL",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "http://localhost:8002",
+          "validation": "Login page visible"
+        },
+        {
+          "action": "type",
+          "selector": "input[name='username']",
+          "text": "admin",
+          "validation": "Username field populated"
+        },
+        {
+          "action": "type",
+          "selector": "input[name='password']",
+          "text": "admin",
+          "validation": "Password field populated"
+        },
+        {
+          "action": "click",
+          "selector": "button[type='submit']",
+          "validation": "Login button clicked"
+        },
+        {
+          "action": "wait_for",
+          "selector": ".dashboard",
+          "validation": "Dashboard loaded successfully"
+        },
+        {
+          "action": "screenshot",
+          "name": "dashboard_loaded.png",
+          "validation": "Visual confirmation of dashboard"
+        }
+      ],
+      "expected_result": "User successfully logged in and dashboard accessible"
+    },
+    {
+      "workflow": "Chat Interaction",
+      "priority": "HIGH",
+      "steps": [
+        {
+          "action": "click",
+          "selector": "nav a[href='/chat']",
+          "validation": "Navigate to chat"
+        },
+        {
+          "action": "wait_for",
+          "selector": ".chat-interface",
+          "validation": "Chat interface loaded"
+        },
+        {
+          "action": "type",
+          "selector": "textarea.chat-input",
+          "text": "Hello, this is a test message",
+          "validation": "Message typed"
+        },
+        {
+          "action": "click",
+          "selector": "button.send-message",
+          "validation": "Send button clicked"
+        },
+        {
+          "action": "wait_for",
+          "selector": ".chat-response",
+          "timeout": 10000,
+          "validation": "Response received"
+        },
+        {
+          "action": "screenshot",
+          "name": "chat_interaction.png",
+          "validation": "Chat conversation visible"
+        }
+      ],
+      "expected_result": "Chat messages sent and responses received"
+    },
+    {
+      "workflow": "Document Management",
+      "priority": "MEDIUM",
+      "steps": [
+        {
+          "action": "click",
+          "selector": "nav a[href='/documents']",
+          "validation": "Navigate to documents"
+        },
+        {
+          "action": "wait_for",
+          "selector": ".documents-list",
+          "validation": "Documents page loaded"
+        },
+        {
+          "action": "click",
+          "selector": "button.upload-document",
+          "validation": "Upload button clicked"
+        },
+        {
+          "action": "upload_file",
+          "selector": "input[type='file']",
+          "file": "test_document.pdf",
+          "validation": "File selected"
+        },
+        {
+          "action": "click",
+          "selector": "button.confirm-upload",
+          "validation": "Upload confirmed"
+        },
+        {
+          "action": "wait_for",
+          "selector": ".upload-success",
+          "validation": "Upload successful"
+        },
+        {
+          "action": "screenshot",
+          "name": "document_uploaded.png",
+          "validation": "Document in list"
+        }
+      ],
+      "expected_result": "Documents can be uploaded and viewed"
+    }
+  ],
+  "production_validation": {
+    "urls": {
+      "http": "http://aiwfe.com",
+      "https": "https://aiwfe.com"
+    },
+    "tests": [
+      {
+        "name": "Production Accessibility",
+        "commands": [
+          "curl -I http://aiwfe.com",
+          "curl -I https://aiwfe.com",
+          "curl -k https://aiwfe.com/health"
+        ],
+        "expected": "200 OK responses",
+        "evidence": "Response headers and status codes"
+      },
+      {
+        "name": "SSL Certificate Validation",
+        "command": "openssl s_client -connect aiwfe.com:443 -servername aiwfe.com < /dev/null",
+        "expected": "Valid certificate chain",
+        "evidence": "Certificate details screenshot"
+      },
+      {
+        "name": "Cloudflare Integration",
+        "command": "dig aiwfe.com",
+        "expected": "Cloudflare nameservers",
+        "evidence": "DNS resolution output"
+      }
+    ]
+  },
+  "automated_test_suite": {
+    "location": "tests/e2e/user_workflows.spec.js",
+    "framework": "Playwright",
+    "execution": "npx playwright test tests/e2e/user_workflows.spec.js",
+    "report_format": "HTML with screenshots",
+    "ci_integration": "GitHub Actions workflow"
+  },
+  "success_metrics": {
+    "authentication": "100% login success rate",
+    "navigation": "All main sections accessible",
+    "core_features": "Chat, Documents, Calendar functional",
+    "performance": "Page loads < 3 seconds",
+    "error_rate": "0% critical errors",
+    "production": "Both HTTP and HTTPS accessible"
+  },
+  "evidence_artifacts": {
+    "screenshots": [
+      "login_page.png",
+      "dashboard_loaded.png",
+      "chat_interaction.png",
+      "document_management.png",
+      "calendar_view.png"
+    ],
+    "videos": [
+      "complete_user_journey.mp4"
+    ],
+    "logs": [
+      "playwright_test_results.log",
+      "network_requests.har"
+    ],
+    "reports": [
+      "test_execution_report.html",
+      "coverage_report.json"
+    ]
+  }
+}

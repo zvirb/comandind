@@ -1,0 +1,136 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-08-18T21:49:19.988615",
+    "report_version": "1.0.0",
+    "system_hostname": "ai-workflow-engine",
+    "reporting_agent": "performance-profiler"
+  },
+  "performance_summary": {
+    "overall_average_response_time_ms": 37.05,
+    "total_services_monitored": 5,
+    "healthy_services": 5,
+    "system_memory_utilization_percent": 16.3,
+    "prometheus_availability_percent": 100.0
+  },
+  "service_performance_benchmarks": {
+    "api": {
+      "average_ms": 45.64,
+      "min_ms": 37.22,
+      "max_ms": 55.24,
+      "p95_ms": 58.69,
+      "requests_tested": 10,
+      "success_rate": 100.0
+    },
+    "coordination-service": {
+      "average_ms": 23.47,
+      "min_ms": 11.96,
+      "max_ms": 49.85,
+      "p95_ms": 51.91,
+      "requests_tested": 10,
+      "success_rate": 100.0
+    },
+    "hybrid-memory-service": {
+      "average_ms": 37.6,
+      "min_ms": 36.76,
+      "max_ms": 39.6,
+      "p95_ms": 40.35,
+      "requests_tested": 10,
+      "success_rate": 100.0
+    },
+    "reasoning-service": {
+      "average_ms": 56.24,
+      "min_ms": 49.72,
+      "max_ms": 82.29,
+      "p95_ms": 89.48,
+      "requests_tested": 10,
+      "success_rate": 100.0
+    },
+    "gpu-monitor": {
+      "average_ms": 22.28,
+      "min_ms": 2.5,
+      "max_ms": 191.97,
+      "p95_ms": 276.69,
+      "requests_tested": 10,
+      "success_rate": 100.0
+    }
+  },
+  "system_resource_utilization": {
+    "cpu": {
+      "utilization_percent": 2.6,
+      "cpu_cores": 16,
+      "load_average": 0.42
+    },
+    "memory": {
+      "total_gb": 31.23,
+      "used_gb": 4.6,
+      "available_gb": 26.13,
+      "utilization_percent": 16.3,
+      "pressure_level": "low"
+    },
+    "disk": {
+      "total_gb": 5542.84,
+      "used_gb": 122.67,
+      "free_gb": 5140.75,
+      "utilization_percent": 2.2
+    }
+  },
+  "gpu_performance_metrics": {
+    "gpu_utilization_avg": 0.0,
+    "gpu_memory_utilization_avg": 0.056966145833333336,
+    "inference_performance": {
+      "service_name": "ollama",
+      "inference_time_avg": 2.378443717956543,
+      "inference_time_p95": 2.378443717956543,
+      "requests_per_second": 0.42044299490893866,
+      "active_models": 9,
+      "memory_usage_mb": 0.0
+    },
+    "status": "monitored"
+  },
+  "prometheus_monitoring": {
+    "total_services": 25,
+    "services_up": 25,
+    "availability_percent": 100.0,
+    "prometheus_status": "operational"
+  },
+  "performance_targets_analysis": {
+    "authentication_response_time": {
+      "target": 50,
+      "achieved": 37.05,
+      "status": "\u2705 ACHIEVED"
+    },
+    "memory_utilization": {
+      "target": 85,
+      "achieved": 16.3,
+      "status": "\u2705 OPTIMAL"
+    },
+    "service_availability": {
+      "target": 95,
+      "achieved": 100.0,
+      "status": "\u2705 EXCELLENT"
+    }
+  },
+  "optimization_recommendations": [
+    {
+      "category": "response_time",
+      "priority": "low",
+      "issue": "Response times are within acceptable limits",
+      "recommendation": "Monitor response time trends and maintain current optimization level",
+      "expected_improvement": "Maintain current performance"
+    },
+    {
+      "category": "memory",
+      "priority": "low",
+      "issue": "Memory utilization is optimal",
+      "recommendation": "Continue monitoring memory usage patterns",
+      "expected_improvement": "Maintain current efficiency"
+    },
+    {
+      "category": "gpu",
+      "priority": "medium",
+      "issue": "GPU utilization (0.0%) is low",
+      "recommendation": "Consider optimizing ML workloads, enable GPU acceleration for compatible services, or reduce GPU allocation if unused",
+      "expected_improvement": "Better resource allocation and potential cost savings"
+    }
+  ]
+}

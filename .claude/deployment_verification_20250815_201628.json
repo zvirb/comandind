@@ -1,0 +1,99 @@
+{
+  "timestamp": "2025-08-15T20:16:28.010187",
+  "local_services": {
+    "api": {
+      "status": "healthy",
+      "response_code": 200,
+      "response_time": 0.030711,
+      "evidence": "{\"status\":\"ok\",\"redis_connection\":\"ok\"}"
+    },
+    "webui": {
+      "status": "healthy",
+      "response_code": 200,
+      "response_time": 0.006909,
+      "evidence": "{\"status\":\"ok\",\"service\":\"webui-next\"}"
+    },
+    "perception": {
+      "status": "unreachable",
+      "error": "HTTPConnectionPool(host='localhost', port=8001): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75448ade28d0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "memory": {
+      "status": "unreachable",
+      "error": "HTTPConnectionPool(host='localhost', port=8002): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75448a944ef0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "reasoning": {
+      "status": "unreachable",
+      "error": "HTTPConnectionPool(host='localhost', port=8003): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75448a9456d0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "coordination": {
+      "status": "unreachable",
+      "error": "HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75448a945ee0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "learning": {
+      "status": "unreachable",
+      "error": "HTTPConnectionPool(host='localhost', port=8005): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75448a946750>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    }
+  },
+  "production_endpoints": {
+    "http://aiwfe.com": {
+      "status": "accessible",
+      "http_code": "308",
+      "response_time": 0.014696,
+      "evidence": "curl output: 308:0.014696",
+      "final_url": "https://aiwfe.com/",
+      "content_length": 714
+    },
+    "https://aiwfe.com": {
+      "status": "accessible",
+      "http_code": "200",
+      "response_time": 0.077873,
+      "evidence": "curl output: 200:0.077873",
+      "final_url": "https://aiwfe.com/",
+      "content_length": 714
+    }
+  },
+  "ssl_certificates": {
+    "https://aiwfe.com": {
+      "status": "valid",
+      "issuer": {
+        "countryName": "US",
+        "organizationName": "Let's Encrypt",
+        "commonName": "E6"
+      },
+      "subject": {
+        "commonName": "aiwfe.com"
+      },
+      "notAfter": "Nov  8 20:58:39 2025 GMT",
+      "evidence": "SSL certificate valid until Nov  8 20:58:39 2025 GMT"
+    }
+  },
+  "deployment_gaps": [
+    "Port 5432 is not accessible",
+    "Port 6379 is not accessible"
+  ],
+  "evidence": {
+    "docker_containers": [
+      "NAMES                                      STATUS                       PORTS",
+      "ai_workflow_engine-blackbox_exporter-1     Up 22 minutes (healthy)      9115/tcp",
+      "ai_workflow_engine-redis_exporter-1        Up 22 minutes (healthy)      ",
+      "ai_workflow_engine-postgres_exporter-1     Up 22 minutes (healthy)      ",
+      "ai_workflow_engine-cadvisor-1              Up 22 minutes (healthy)      8080/tcp",
+      "ai_workflow_engine-pgbouncer_exporter-1    Up 22 minutes (healthy)      ",
+      "ai_workflow_engine-api-1                   Up About an hour (healthy)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp",
+      "redis-mcp                                  Up About an hour (healthy)   0.0.0.0:6380->6379/tcp, [::]:6380->6379/tcp",
+      "ai_workflow_engine-pgbouncer-1             Up About an hour (healthy)   5432/tcp",
+      "ai_workflow_engine-postgres-1              Up About an hour (healthy)   5432/tcp",
+      "ai_workflow_engine-qdrant-1                Up About an hour (healthy)   6333-6334/tcp",
+      "ai_workflow_engine-ollama-1                Up About an hour (healthy)   0.0.0.0:11434->11434/tcp, [::]:11434->11434/tcp",
+      "ai_workflow_engine-webui-1                 Up 42 minutes (healthy)      0.0.0.0:3001->3001/tcp, [::]:3001->3001/tcp",
+      "ai_workflow_engine-grafana-1               Up 17 minutes (healthy)      0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp",
+      "ai_workflow_engine-alertmanager-1          Up 32 minutes (healthy)      0.0.0.0:9093->9093/tcp, [::]:9093->9093/tcp",
+      "ai_workflow_engine-prometheus-1            Up 20 minutes (healthy)      0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp",
+      "ai_workflow_engine-node_exporter-1         Up 2 hours (healthy)         9100/tcp",
+      "ai_workflow_engine-worker-1                Up 2 hours (healthy)         ",
+      "ai_workflow_engine-caddy_reverse_proxy-1   Up 2 hours (healthy)         0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp, 0.0.0.0:8443->8443/tcp, [::]:8443->8443/tcp, 443/udp, 2019/tcp",
+      "ai_workflow_engine-redis-1                 Up 2 hours (healthy)         6379/tcp"
+    ],
+    "dns_aiwfe.com": "220.235.169.31"
+  }
+}

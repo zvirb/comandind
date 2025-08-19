@@ -1,0 +1,270 @@
+{
+  "coordination_id": "3b66a9097ece9ab2",
+  "package_id": "test_package_security-validator_1755174339",
+  "agent_target": "security-validator",
+  "domain": "security",
+  "execution_phase": "phase_5_parallel_implementation",
+  "creation_timestamp": 1755174339.7505925,
+  "last_updated": 1755174339.7505925,
+  "agent_capabilities": [
+    {
+      "capability_id": "security-validator_capability",
+      "capability_name": "Security Validator",
+      "domain_expertise": [
+        "security",
+        "authentication",
+        "encryption",
+        "threats"
+      ],
+      "tool_requirements": [
+        "Read",
+        "Bash",
+        "Grep",
+        "Browser"
+      ],
+      "input_formats": [
+        "code",
+        "configuration",
+        "security_policies"
+      ],
+      "output_formats": [
+        "security_reports",
+        "recommendations",
+        "fixes"
+      ],
+      "performance_metrics": {
+        "accuracy": 0.95,
+        "speed": 0.7,
+        "thoroughness": 0.9
+      },
+      "resource_requirements": {
+        "memory": "3GB",
+        "cpu": "2 cores",
+        "storage": "2GB"
+      }
+    }
+  ],
+  "required_tools": [
+    "Read",
+    "Bash",
+    "Grep",
+    "Browser"
+  ],
+  "resource_allocations": [
+    {
+      "allocation_id": "memory_1755174339",
+      "resource_type": "memory",
+      "allocated_amount": 3072.0,
+      "allocation_unit": "MB",
+      "allocation_duration": 3600.0,
+      "sharing_policy": "exclusive",
+      "optimization_hints": [
+        "garbage_collection",
+        "memory_pooling"
+      ]
+    },
+    {
+      "allocation_id": "cpu_1755174339",
+      "resource_type": "computational",
+      "allocated_amount": 2.0,
+      "allocation_unit": "cores",
+      "allocation_duration": 3600.0,
+      "sharing_policy": "shared",
+      "optimization_hints": [
+        "load_balancing",
+        "cpu_affinity"
+      ]
+    },
+    {
+      "allocation_id": "storage_1755174339",
+      "resource_type": "storage",
+      "allocated_amount": 2048.0,
+      "allocation_unit": "MB",
+      "allocation_duration": 7200.0,
+      "sharing_policy": "exclusive",
+      "optimization_hints": [
+        "ssd_preferred",
+        "compression"
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "dependency_id": "research_data_1755174339",
+      "source_agent": "codebase-research-analyst",
+      "target_agent": "security-validator",
+      "dependency_type": "data",
+      "required_outputs": [
+        "research_findings",
+        "analysis_results"
+      ],
+      "timing_constraints": {
+        "max_wait_time": 600,
+        "preferred_delivery": 300
+      },
+      "priority_level": "high",
+      "resolution_strategy": "parallel_execution"
+    },
+    {
+      "dependency_id": "authentication_dependency_1755174339",
+      "source_agent": "security-validator",
+      "target_agent": "security-validator",
+      "dependency_type": "completion",
+      "required_outputs": [
+        "authentication_setup",
+        "authentication_configuration"
+      ],
+      "timing_constraints": {
+        "max_wait_time": 300,
+        "preferred_delivery": 180
+      },
+      "priority_level": "medium",
+      "resolution_strategy": "sequential_execution"
+    },
+    {
+      "dependency_id": "encryption_dependency_1755174339",
+      "source_agent": "backend-gateway-expert",
+      "target_agent": "security-validator",
+      "dependency_type": "completion",
+      "required_outputs": [
+        "encryption_setup",
+        "encryption_configuration"
+      ],
+      "timing_constraints": {
+        "max_wait_time": 300,
+        "preferred_delivery": 180
+      },
+      "priority_level": "medium",
+      "resolution_strategy": "sequential_execution"
+    },
+    {
+      "dependency_id": "audit_logging_dependency_1755174339",
+      "source_agent": "backend-gateway-expert",
+      "target_agent": "security-validator",
+      "dependency_type": "completion",
+      "required_outputs": [
+        "audit_logging_setup",
+        "audit_logging_configuration"
+      ],
+      "timing_constraints": {
+        "max_wait_time": 300,
+        "preferred_delivery": 180
+      },
+      "priority_level": "medium",
+      "resolution_strategy": "sequential_execution"
+    }
+  ],
+  "coordination_status": "initialized",
+  "parallel_execution_support": true,
+  "cross_stream_coordination": true,
+  "token_allocation": 3212,
+  "actual_token_usage": 2.6,
+  "compression_applied": false,
+  "optimization_strategy": "balanced_compression_optimization",
+  "performance_targets": {
+    "efficiency": 0.8,
+    "quality": 0.85
+  },
+  "validation_criteria": [
+    {
+      "criteria_id": "vulnerability_assessment",
+      "validation_type": "security",
+      "success_metrics": {
+        "vulnerability_score": 8.0,
+        "penetration_resistance": 0.95
+      },
+      "failure_thresholds": {
+        "critical_vulnerabilities": 0,
+        "high_risk_issues": 2
+      },
+      "validation_methods": [
+        "vulnerability_scanning",
+        "penetration_testing"
+      ],
+      "evidence_requirements": [
+        "security_scan_results",
+        "penetration_test_reports"
+      ],
+      "automation_level": "semi_automated"
+    }
+  ],
+  "evidence_requirements": [
+    "vulnerability_assessments",
+    "penetration_test_reports",
+    "security_scan_results"
+  ],
+  "quality_gates": {
+    "minimum_quality": 0.7,
+    "minimum_performance": 0.75
+  },
+  "success_metrics": {},
+  "intelligence_metadata": {
+    "intelligence_features": [
+      "automated_response",
+      "automated_coordination",
+      "threat_prediction",
+      "predictive_optimization",
+      "behavioral_analysis"
+    ],
+    "prediction_models": {},
+    "automation_level": 0.8,
+    "learning_integration": true,
+    "adaptation_capabilities": [
+      "parameter_tuning",
+      "strategy_adjustment",
+      "pattern_recognition"
+    ],
+    "feedback_loops": [
+      "performance_feedback",
+      "quality_feedback",
+      "user_feedback"
+    ],
+    "optimization_algorithms": [
+      "gradient_descent",
+      "genetic_algorithm",
+      "reinforcement_learning"
+    ]
+  },
+  "automation_features": [],
+  "predictive_capabilities": [],
+  "priority_level": "high",
+  "timeout_constraints": {
+    "execution": 300,
+    "validation": 120
+  },
+  "retry_policies": {
+    "max_retries": 3,
+    "backoff_factor": 2
+  },
+  "fallback_strategies": [
+    "compression_fallback",
+    "simplified_execution"
+  ],
+  "context_version": "v1.0",
+  "state_checkpoints": [],
+  "rollback_points": [],
+  "recovery_procedures": [
+    "checkpoint_recovery",
+    "graceful_degradation"
+  ],
+  "monitoring_endpoints": [],
+  "logging_configuration": {
+    "level": "INFO",
+    "format": "json"
+  },
+  "alert_thresholds": {
+    "error_rate": 0.1,
+    "latency_p95": 1000
+  },
+  "performance_metrics": {},
+  "api_contracts": [],
+  "event_subscriptions": [],
+  "data_sharing_protocols": [
+    "json",
+    "protobuf"
+  ],
+  "security_requirements": [
+    "authentication",
+    "authorization"
+  ]
+}

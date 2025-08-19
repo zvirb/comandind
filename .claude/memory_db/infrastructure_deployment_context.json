@@ -1,0 +1,13 @@
+{
+  "package_id": "infrastructure_deployment_context",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_metadata\": {\n    \"specialist_focus\": \"deployment-orchestrator\",\n    \"token_count\": 1250,\n    \"compression_ratio\": 0.68,\n    \"critical_info_preserved\": true\n  },\n  \"strategic_context\": {\n    \"high_priority_objectives\": [\n      \"Implement resilient Kubernetes deployment\",\n      \"Create zero-downtime deployment strategy\",\n      \"Develop comprehensive monitoring infrastructure\"\n    ],\n    \"key_constraints\": {\n      \"availability_target\": \"99.99% uptime\",\n      \"deployment_frequency\": \"Multiple times per day\",\n      \"rollback_capability\": \"Instant, zero-data-loss\"\n    },\n    \"implementation_guidelines\": {\n      \"deployment_strategy\": \"Blue-Green with Canary releases\",\n      \"infrastructure_as_code\": \"Terraform with GitOps principles\"\n    }\n  },\n  \"technical_details\": {\n    \"core_requirements\": {\n      \"container_orchestration\": \"Kubernetes with Istio service mesh\",\n      \"monitoring_stack\": \"Prometheus, Grafana, ELK integration\",\n      \"secrets_management\": \"HashiCorp Vault with automatic rotation\"\n    },\n    \"optimization_targets\": {\n      \"cluster_autoscaling\": \"Dynamic node pool management\",\n      \"network_optimization\": \"Service mesh traffic control\"\n    },\n    \"potential_risks\": [\n      \"Complex networking configuration\",\n      \"Potential service discovery challenges\",\n      \"Cross-region synchronization complexities\"\n    ]\n  },\n  \"coordination_touchpoints\": {\n    \"dependencies\": [\n      \"security-validator for infrastructure security\",\n      \"performance-profiler for resource monitoring\"\n    ],\n    \"validation_requirements\": {\n      \"disaster_recovery_testing\": \"Bi-annual full system failover\",\n      \"security_compliance_audit\": \"Regular infrastructure security scan\"\n    },\n    \"inter_agent_communication_notes\": {\n      \"deployment_safety\": \"Implement comprehensive pre-deployment validation\",\n      \"scalability_planning\": \"Develop predictive scaling models\"\n    }\n  }\n}",
+  "tokens": 191,
+  "created_at": "2025-08-18T15:14:25.387277",
+  "last_accessed": "2025-08-18T15:14:25.387294",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

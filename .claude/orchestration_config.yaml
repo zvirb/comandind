@@ -1,0 +1,1251 @@
+# Comprehensive Orchestration Configuration
+# Generated: 2025-08-14
+# Total Agents: 45+ Specialized Agents
+# Version: 3.0 - Complete Agent Ecosystem Integration
+
+agent_metadata:
+  # Research & Analysis Agents
+  codebase-research-analyst:
+    added_date: '2025-08-12T20:02:18.324096'
+    agent_type: research
+    capabilities:
+    - code_pattern_analysis
+    - implementation_research
+    - external_package_research
+    - archive_management
+    - structured_web_extraction
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [enhanced-research-coordinator, documentation-specialist]
+    - provides_to: [nexus-synthesis-agent, backend-gateway-expert]
+    resource_requirements:
+      cpu: medium
+      memory: high
+      tokens: 8000
+  context-compression-agent:
+    added_date: '2025-08-12T20:02:18.333835'
+    agent_type: optimization
+    capabilities:
+    - token_optimization
+    - content_distillation
+    - hierarchical_compression
+    - code_structure_analysis
+    mandatory: true  # Critical for context management
+    parallel_execution: true
+    retry_count: 3
+    timeout: 180
+    coordination_patterns:
+    - works_with: [document-compression-agent, nexus-synthesis-agent]
+    - supports: all_agents
+    resource_requirements:
+      cpu: high
+      memory: medium
+      tokens: 4000
+  data-orchestrator:
+    added_date: '2025-08-12T20:02:18.473532'
+    agent_type: orchestrator
+    capabilities:
+    - data_pipeline_coordination
+    - etl_elt_workflows
+    - ml_infrastructure
+    - data_governance
+    - vector_database_config
+    mandatory: false
+    parallel_execution: false  # Orchestrators coordinate sequentially
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - coordinates: [schema-database-expert, backend-gateway-expert]
+    - provides_to: [meta-orchestrator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+  deployment-orchestrator:
+    added_date: '2025-08-12T20:02:18.344581'
+    agent_type: orchestrator
+    capabilities:
+    - deployment_automation
+    - environment_management
+    - rollback_strategies
+    - ci_cd_systems
+    - container_orchestration
+    mandatory: false
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - coordinates: [k8s-architecture-specialist, infrastructure-orchestrator]
+    - deploys_for: [backend-gateway-expert, webui-architect]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+
+  infrastructure-orchestrator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - devops_coordination
+    - containerization
+    - ssl_tls_management
+    - service_orchestration
+    - monitoring_setup
+    mandatory: false
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - coordinates: [k8s-architecture-specialist, monitoring-analyst]
+    - works_with: [security-validator, deployment-orchestrator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+
+  k8s-architecture-specialist:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - kubernetes_architecture
+    - resource_optimization
+    - workload_orchestration
+    - security_policy_implementation
+    - cluster_analysis
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - works_with: [infrastructure-orchestrator, deployment-orchestrator]
+    - provides_to: [security-orchestrator, performance-profiler]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+  documentation-specialist:
+    added_date: '2025-08-12T20:02:18.315760'
+    agent_type: documentation
+    capabilities:
+    - live_documentation_generation
+    - size_management
+    - api_docs
+    - hierarchical_documentation
+    - knowledge_management
+    mandatory: true  # Critical for documentation
+    parallel_execution: false
+    retry_count: 2
+    timeout: 400
+    coordination_patterns:
+    - processes_from: [nexus-synthesis-agent, all_agents]
+    - works_with: [project-structure-mapper, enhanced-research-coordinator]
+    resource_requirements:
+      cpu: low
+      memory: medium
+      tokens: 8000
+
+  project-structure-mapper:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: documentation
+    capabilities:
+    - project_organization_analysis
+    - folder_index_generation
+    - knowledge_graph_integration
+    - structure_documentation
+    - navigation_indexes
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [documentation-specialist, codebase-research-analyst]
+    - provides_to: [enhanced-research-coordinator]
+    resource_requirements:
+      cpu: low
+      memory: low
+      tokens: 3000
+
+  document-compression-agent:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: optimization
+    capabilities:
+    - intelligent_compression
+    - token_optimization
+    - critical_info_preservation
+    - hierarchical_compression
+    - quality_validation
+    mandatory: true  # Critical for context management
+    parallel_execution: true
+    retry_count: 3
+    timeout: 300
+    coordination_patterns:
+    - essential_for: [nexus-synthesis-agent, orchestration_checkpoints]
+    - works_with: [context-compression-agent]
+    resource_requirements:
+      cpu: high
+      memory: medium
+      tokens: 4000
+
+  enhanced-research-coordinator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: research
+    capabilities:
+    - historical_pattern_analysis
+    - research_coordination
+    - knowledge_graph_queries
+    - risk_assessment
+    - evidence_based_synthesis
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - coordinates: [codebase-research-analyst]
+    - provides_to: [nexus-synthesis-agent, enhanced-nexus-synthesis-agent]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 8000
+  execution-conflict-detector:
+    added_date: '2025-08-12T20:02:18.369270'
+    agent_type: quality_assurance
+    capabilities:
+    - execution_comparison
+    - conflict_categorization
+    - recommendation_generation
+    - severity_assessment
+    - improvement_identification
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - analyzes_from: [execution-simulator]
+    - feeds_to: [orchestration-auditor]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 4000
+
+  # Orchestration & Coordination Agents
+  project-orchestrator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - strategic_planning
+    - multi_agent_coordination
+    - task_breakdown
+    - planning_only
+    - no_implementation
+    mandatory: true  # Critical for orchestration
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - starts_with: [codebase-research-analyst]
+    - delegates_to: [main_claude]
+    - never_calls: [other_orchestrators]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 10000
+
+  meta-orchestrator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - high_level_coordination
+    - multi_domain_strategy
+    - resource_allocation
+    - risk_assessment
+    - strategic_planning
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 1200
+    coordination_patterns:
+    - coordinates: [all_orchestrators]
+    - never_calls: [project-orchestrator]
+    resource_requirements:
+      cpu: very_high
+      memory: very_high
+      tokens: 12000
+
+  agent-integration-orchestrator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - agent_discovery
+    - documentation_creation
+    - registry_updates
+    - cross_reference_establishment
+    - ecosystem_management
+    mandatory: true  # Critical for Phase 1
+    parallel_execution: false
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - phase_1_function: true
+    - works_with: [orchestration-phase0]
+    - integrates: [all_new_agents]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 6000
+
+  orchestration-phase0:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - agent_ecosystem_validation
+    - integration_checking
+    - phase_coordination
+    - transition_management
+    mandatory: true  # Mandatory first phase
+    parallel_execution: false
+    retry_count: 3
+    timeout: 300
+    coordination_patterns:
+    - essential_with: [agent-integration-orchestrator]
+    - enables: [phase_1_transition]
+    resource_requirements:
+      cpu: low
+      memory: low
+      tokens: 3000
+
+  orchestration-todo-manager:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - task_management
+    - priority_scoring
+    - dependency_tracking
+    - cross_session_persistence
+    - semantic_duplicate_detection
+    mandatory: true  # Critical for Phase 0
+    parallel_execution: false
+    retry_count: 3
+    timeout: 300
+    coordination_patterns:
+    - integrates_with: [project-orchestrator, orchestration-phase0]
+    - tracks_for: [evidence-auditor]
+    resource_requirements:
+      cpu: low
+      memory: medium
+      tokens: 4000
+
+  orchestration-auditor:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: orchestrator
+    capabilities:
+    - meta_analysis
+    - workflow_improvement
+    - post_execution_audit
+    - efficiency_measurement
+    - pattern_recognition
+    mandatory: true  # Critical for Phase 9
+    parallel_execution: false
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - phase_9_function: true
+    - works_with: [orchestration-auditor-v2]
+    - feeds_back_to: [orchestration_system]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 6000
+
+  orchestration-auditor-v2:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: validation
+    capabilities:
+    - evidence_based_validation
+    - real_user_functionality_testing
+    - false_positive_detection
+    - knowledge_graph_validation
+    - browser_automation
+    mandatory: true  # Critical for validation
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - works_with: [evidence-auditor]
+    - provides_to: [nexus-synthesis-agent]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 8000
+
+  evidence-auditor:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: validation
+    capabilities:
+    - phase_0_validation
+    - false_positive_detection
+    - evidence_collection
+    - pattern_validation
+    - system_repair_automation
+    mandatory: true  # Critical for Phase 0
+    parallel_execution: false
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - phase_0_agent: true
+    - works_with: [agent-integration-orchestrator]
+    - provides_to: [enhanced-nexus-synthesis-agent]
+    resource_requirements:
+      cpu: high
+      memory: medium
+      tokens: 6000
+  execution-simulator:
+    added_date: '2025-08-12T20:02:18.452600'
+    agent_type: quality_assurance
+    capabilities:
+    - mcp_agent_consultation
+    - alternative_strategy_generation
+    - risk_assessment
+    - execution_simulation
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [execution-conflict-detector]
+    - provides_to: [orchestration-auditor]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 4000
+
+  # User Experience & Frontend Agents
+  ui-regression-debugger:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: validation
+    capabilities:
+    - visual_testing
+    - browser_automation
+    - ui_validation
+    - screenshot_capture
+    - console_monitoring
+    mandatory: false
+    parallel_execution: true
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - works_with: [user-experience-auditor, webui-architect]
+    - validates_for: [frictionless-ux-architect, whimsy-ui-creator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 4000
+
+  user-experience-auditor:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: validation
+    capabilities:
+    - production_site_validation
+    - real_user_interactions
+    - browser_automation
+    - functionality_testing
+    - interaction_evidence
+    mandatory: true  # Critical for production validation
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - works_with: [production-endpoint-validator, ui-regression-debugger]
+    - validates_for: [webui-architect, frictionless-ux-architect]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+
+  frictionless-ux-architect:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: ux_design
+    capabilities:
+    - friction_elimination
+    - cognitive_psychology
+    - user_flow_optimization
+    - behavioral_science
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [webui-architect, whimsy-ui-creator]
+    - provides_to: [user-experience-auditor]
+    resource_requirements:
+      cpu: low
+      memory: medium
+      tokens: 4000
+
+  whimsy-ui-creator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: ux_design
+    capabilities:
+    - delightful_ui_enhancement
+    - micro_interactions
+    - emotional_interface_design
+    - accessibility_first_whimsy
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [webui-architect, frictionless-ux-architect]
+    - provides_to: [ui-regression-debugger]
+    resource_requirements:
+      cpu: low
+      memory: low
+      tokens: 3000
+
+  webui-architect:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: implementation
+    capabilities:
+    - frontend_architecture
+    - component_system_design
+    - ui_optimization
+    - browser_automation_testing
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+    coordination_patterns:
+    - works_with: [frictionless-ux-architect, whimsy-ui-creator]
+    - integrates_with: [backend-gateway-expert, fullstack-communication-auditor]
+    resource_requirements:
+      cpu: medium
+      memory: high
+      tokens: 5000
+
+  # Backend & Infrastructure Agents
+  backend-gateway-expert:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: implementation
+    capabilities:
+    - api_testing
+    - server_analysis
+    - container_management
+    - service_health_checks
+    - log_analysis
+    mandatory: false
+    parallel_execution: true
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - works_with: [schema-database-expert, fullstack-communication-auditor]
+    - integrates_with: [webui-architect, google-services-integrator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+
+  python-refactoring-architect:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: implementation
+    capabilities:
+    - code_refactoring
+    - architectural_analysis
+    - design_pattern_implementation
+    - maintainability_improvements
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - works_with: [codebase-research-analyst, code-quality-guardian]
+    - provides_to: [documentation-specialist]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 8000
+  fullstack-communication-auditor:
+    added_date: '2025-08-12T20:02:18.414968'
+    agent_type: validation
+    capabilities:
+    - frontend_backend_analysis
+    - api_contract_validation
+    - network_monitoring
+    - data_flow_analysis
+    - integration_testing
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+    coordination_patterns:
+    - audits: [backend-gateway-expert, webui-architect]
+    - validates_for: [nexus-synthesis-agent]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 5000
+  google-services-integrator:
+    added_date: '2025-08-12T20:02:18.383237'
+    agent_type: integration
+    capabilities:
+    - google_api_integration
+    - oauth_setup
+    - workspace_services
+    - webhook_implementation
+    - service_configuration
+    mandatory: false
+    parallel_execution: true
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - works_with: [backend-gateway-expert, security-validator]
+    - integrates_with: [langgraph-ollama-analyst]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 4000
+
+  langgraph-ollama-analyst:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: specialist
+    capabilities:
+    - langgraph_workflow_analysis
+    - ollama_integration
+    - local_llm_orchestration
+    - gpu_optimization
+    - multi_agent_systems
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - provides_to: [nexus-synthesis-agent, enhanced-nexus-synthesis-agent]
+    - works_with: [performance-profiler]
+    resource_requirements:
+      cpu: high
+      memory: very_high
+      tokens: 8000
+  nexus-synthesis-agent:
+    added_date: '2025-08-12T20:02:18.356356'
+    agent_type: synthesis
+    capabilities:
+    - cross_domain_integration
+    - pattern_synthesis
+    - architectural_solutions
+    - system_integration
+    - multi_domain_analysis
+    mandatory: true  # Critical for synthesis
+    parallel_execution: false
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - synthesizes_from: [codebase-research-analyst, all_research_agents]
+    - provides_to: [enhanced-nexus-synthesis-agent, project-orchestrator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 8000
+
+  enhanced-nexus-synthesis-agent:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: synthesis
+    capabilities:
+    - strategic_intelligence
+    - historical_learning
+    - coordinated_strategy_generation
+    - pattern_recognition
+    - neo4j_queries
+    mandatory: true  # Critical for Phase 2.5
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - processes_from: [nexus-synthesis-agent, enhanced-research-coordinator]
+    - provides_to: [project-orchestrator, meta-orchestrator]
+    resource_requirements:
+      cpu: very_high
+      memory: very_high
+      tokens: 10000
+  performance-profiler:
+    added_date: '2025-08-12T20:02:18.308683'
+    agent_type: analysis
+    capabilities:
+    - system_performance_analysis
+    - resource_optimization
+    - bottleneck_identification
+    - query_optimization
+    - frontend_performance
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - works_with: [schema-database-expert, monitoring-analyst]
+    - optimizes_for: [backend-gateway-expert, webui-architect]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 5000
+
+  # Infrastructure & DevOps Agents
+  monitoring-analyst:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: analysis
+    capabilities:
+    - system_monitoring
+    - alerting_configuration
+    - observability_analysis
+    - log_aggregation
+    - metrics_analysis
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+    coordination_patterns:
+    - works_with: [performance-profiler, production-endpoint-validator]
+    - monitors_for: [infrastructure-orchestrator, deployment-orchestrator]
+    resource_requirements:
+      cpu: medium
+      memory: high
+      tokens: 5000
+
+  dependency-analyzer:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: analysis
+    capabilities:
+    - package_analysis
+    - vulnerability_scanning
+    - update_recommendations
+    - dependency_trees
+    - security_databases
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - works_with: [security-vulnerability-scanner, project-janitor]
+    - provides_to: [deployment-orchestrator]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 4000
+  schema-database-expert:
+    added_date: '2025-08-12T20:02:18.432860'
+    agent_type: implementation
+    capabilities:
+    - database_analysis
+    - schema_optimization
+    - performance_tuning
+    - relationship_mapping
+    - query_optimization
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 400
+    coordination_patterns:
+    - works_with: [backend-gateway-expert, performance-profiler]
+    - provides_to: [data-orchestrator]
+    resource_requirements:
+      cpu: medium
+      memory: high
+      tokens: 5000
+
+  # Security & Validation Agents
+  security-validator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: security
+    capabilities:
+    - security_testing
+    - vulnerability_assessment
+    - auth_validation
+    - penetration_testing
+    - compliance_checks
+    mandatory: true  # Critical for security
+    parallel_execution: false
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - works_with: [security-vulnerability-scanner, security-orchestrator]
+    - validates_for: [backend-gateway-expert, infrastructure-orchestrator]
+    resource_requirements:
+      cpu: high
+      memory: medium
+      tokens: 5000
+
+  security-vulnerability-scanner:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: security
+    capabilities:
+    - automated_vulnerability_detection
+    - security_code_analysis
+    - exploit_assessment
+    - sast_dast_iast_scanning
+    - cve_nvd_databases
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 900
+    coordination_patterns:
+    - works_with: [security-orchestrator, code-quality-guardian]
+    - provides_to: [security-validator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 6000
+  security-orchestrator:
+    added_date: '2025-08-12T20:02:18.398424'
+    agent_type: orchestrator
+    capabilities:
+    - security_strategy_coordination
+    - compliance_frameworks
+    - security_architecture
+    - risk_assessment
+    - policy_implementation
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - coordinates: [security-validator, security-vulnerability-scanner]
+    - provides_to: [meta-orchestrator, infrastructure-orchestrator]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 5000
+
+  production-endpoint-validator:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: validation
+    capabilities:
+    - cross_environment_validation
+    - ssl_certificate_monitoring
+    - production_health_assessment
+    - cloudflare_management
+    - ddns_validation
+    - evidence_based_reporting
+    mandatory: true  # Critical for production
+    parallel_execution: false
+    retry_count: 3
+    timeout: 900
+    coordination_patterns:
+    - works_with: [security-validator, backend-gateway-expert]
+    - partners_with: [user-experience-auditor, monitoring-analyst]
+    resource_requirements:
+      cpu: high
+      memory: medium
+      tokens: 6000
+  test-automation-engineer:
+    added_date: '2025-08-12T20:02:18.302533'
+    agent_type: validation
+    capabilities:
+    - comprehensive_test_automation
+    - test_generation
+    - suite_optimization
+    - ci_cd_integration
+    - coverage_reporting
+    mandatory: false
+    parallel_execution: false
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - works_with: [security-validator, ui-regression-debugger]
+    - integrates_with: [deployment-orchestrator]
+    resource_requirements:
+      cpu: high
+      memory: high
+      tokens: 5000
+
+  code-quality-guardian:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: quality
+    capabilities:
+    - code_quality_enforcement
+    - automated_linting
+    - formatting_standards
+    - technical_debt_analysis
+    - complexity_analysis
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [python-refactoring-architect, security-validator]
+    - validates_for: [atomic-git-synchronizer]
+    resource_requirements:
+      cpu: medium
+      memory: low
+      tokens: 3000
+  # Maintenance & Quality Agents
+  project-janitor:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: maintenance
+    capabilities:
+    - project_maintenance
+    - cleanup_automation
+    - dead_code_detection
+    - docker_resource_management
+    - file_organization_validation
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 600
+    coordination_patterns:
+    - works_with: [code-quality-guardian, atomic-git-synchronizer]
+    - maintains_for: [performance-profiler]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 4000
+
+  atomic-git-synchronizer:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: version_control
+    capabilities:
+    - atomic_git_operations
+    - repository_synchronization
+    - commit_management
+    - merge_conflict_resolution
+    - git_workflow_automation
+    mandatory: true  # Critical for Phase 8
+    parallel_execution: false
+    retry_count: 3
+    timeout: 600
+    coordination_patterns:
+    - phase_8_function: true
+    - works_with: [project-janitor, code-quality-guardian]
+    - synchronizes_for: [documentation-specialist]
+    resource_requirements:
+      cpu: low
+      memory: low
+      tokens: 3000
+
+  # Context Optimization Agents
+  parallel-file-manager:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: optimization
+    capabilities:
+    - batch_file_operations
+    - concurrent_execution
+    - multi_file_validation
+    - efficiency_reporting
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - works_with: [context-compression-agent]
+    - supports: [main_claude]
+    resource_requirements:
+      cpu: high
+      memory: medium
+      tokens: 4000
+
+  smart-search-agent:
+    added_date: '2025-08-14T12:00:00.000000'
+    agent_type: optimization
+    capabilities:
+    - efficient_discovery
+    - intelligent_filtering
+    - relevance_ranking
+    - structured_web_extraction
+    - targeted_search
+    mandatory: false
+    parallel_execution: true
+    retry_count: 2
+    timeout: 300
+    coordination_patterns:
+    - supports: [codebase-research-analyst]
+    - works_with: [context-compression-agent]
+    resource_requirements:
+      cpu: medium
+      memory: medium
+      tokens: 4000
+
+last_updated: '2025-08-14T12:30:00.000000'
+workflow_phases:
+  # Phase 0: Todo Context Integration (MANDATORY FIRST)
+  phase_0_todo_context:
+    agents:
+    - orchestration-todo-manager
+    execution_mode: sequential
+    timeout: 300
+    mandatory: true
+    description: Cross-session todo management and context continuity
+
+  # Phase 1: Agent Ecosystem Validation (MANDATORY SECOND)
+  phase_1_ecosystem:
+    agents:
+    - agent-integration-orchestrator
+    - orchestration-phase0
+    - evidence-auditor
+    execution_mode: sequential
+    timeout: 600
+    mandatory: true
+    description: Agent discovery, integration, and ecosystem health
+
+  # Phase 2: Strategic Intelligence Planning
+  phase_2_planning:
+    agents:
+    - project-orchestrator
+    - enhanced-nexus-synthesis-agent
+    - enhanced-research-coordinator
+    execution_mode: sequential
+    timeout: 900
+    mandatory: false
+    description: Strategic planning and coordination strategy
+
+  # Phase 3: Multi-Domain Research Discovery
+  phase_3_research:
+    agents:
+    - codebase-research-analyst
+    - schema-database-expert
+    - security-validator
+    - performance-profiler
+    - smart-search-agent
+    - fullstack-communication-auditor
+    execution_mode: parallel
+    timeout: 900
+    mandatory: false
+    description: Comprehensive system analysis and requirement gathering
+
+  # Phase 4: Context Synthesis & Compression
+  phase_4_synthesis:
+    agents:
+    - nexus-synthesis-agent
+    - context-compression-agent
+    - document-compression-agent
+    execution_mode: sequential
+    timeout: 600
+    mandatory: true
+    description: Cross-domain integration and context optimization
+
+  # Phase 5: Parallel Implementation Execution
+  phase_5_implementation:
+    backend_stream:
+      agents:
+      - backend-gateway-expert
+      - python-refactoring-architect
+      - schema-database-expert
+      - google-services-integrator
+      execution_mode: parallel
+    frontend_stream:
+      agents:
+      - webui-architect
+      - frictionless-ux-architect
+      - whimsy-ui-creator
+      execution_mode: parallel
+    quality_stream:
+      agents:
+      - code-quality-guardian
+      - test-automation-engineer
+      - security-vulnerability-scanner
+      execution_mode: parallel
+    infrastructure_stream:
+      agents:
+      - deployment-orchestrator
+      - infrastructure-orchestrator
+      - k8s-architecture-specialist
+      - monitoring-analyst
+      execution_mode: parallel
+    documentation_stream:
+      agents:
+      - documentation-specialist
+      - project-structure-mapper
+      execution_mode: parallel
+    execution_mode: multi_stream_parallel
+    timeout: 1200
+    mandatory: false
+    description: Multi-stream parallel specialist execution
+
+  # Phase 6: Comprehensive Evidence-Based Validation
+  phase_6_validation:
+    agents:
+    - production-endpoint-validator
+    - user-experience-auditor
+    - ui-regression-debugger
+    - performance-profiler
+    - code-quality-guardian
+    - orchestration-auditor-v2
+    execution_mode: sequential  # Sequential for thorough validation
+    timeout: 1200
+    mandatory: true
+    description: Evidence-based validation with concrete proof
+
+  # Phase 7: Decision & Iteration Control
+  phase_7_decision:
+    agents:
+    - orchestration-auditor-v2
+    - evidence-auditor
+    execution_mode: sequential
+    timeout: 300
+    mandatory: true
+    description: Evidence analysis and iteration decision
+    iteration_limit: 3
+    escalation_to: meta-orchestrator
+
+  # Phase 8: Atomic Version Control Synchronization
+  phase_8_version_control:
+    agents:
+    - atomic-git-synchronizer
+    - project-janitor
+    execution_mode: sequential
+    timeout: 600
+    mandatory: true
+    description: Atomic commits and remote synchronization
+
+  # Phase 9: Meta-Orchestration Audit & Learning (ALWAYS EXECUTES)
+  phase_9_meta_audit:
+    agents:
+    - orchestration-auditor
+    - execution-conflict-detector
+    - evidence-auditor
+    execution_mode: parallel
+    timeout: 900
+    mandatory: true
+    always_executes: true
+    description: Meta-analysis and continuous improvement
+
+# Coordination Rules
+coordination_rules:
+  recursion_prevention:
+    - specialists_never_call_orchestrators: true
+    - orchestrators_never_call_project_orchestrator: true
+    - no_agent_calls_itself: true
+    - main_claude_executes_plans: true
+  
+  context_management:
+    - max_context_package_size: 4000
+    - max_markdown_file_size: 8000
+    - hierarchical_documentation: true
+    - automatic_compression_trigger: true
+  
+  evidence_requirements:
+    - validation_requires_proof: true
+    - production_requires_curl_evidence: true
+    - infrastructure_requires_health_checks: true
+    - user_testing_requires_screenshots: true
+  
+  parallel_execution:
+    - max_parallel_agents: 30
+    - resource_based_scheduling: true
+    - conflict_detection_enabled: true
+    - simulation_before_execution: true
+
+# Resource Allocation
+resource_allocation:
+  cpu_tiers:
+    low: 10%
+    medium: 25%
+    high: 40%
+    very_high: 60%
+  
+  memory_tiers:
+    low: 512MB
+    medium: 1GB
+    high: 2GB
+    very_high: 4GB
+  
+  token_limits:
+    small: 3000
+    medium: 4000
+    large: 6000
+    extra_large: 8000
+    maximum: 12000
+
+# Agent Categories for Selection
+agent_categories:
+  development:
+    - backend-gateway-expert
+    - python-refactoring-architect
+    - schema-database-expert
+    - webui-architect
+    - google-services-integrator
+  
+  security:
+    - security-validator
+    - security-vulnerability-scanner
+    - security-orchestrator
+    - production-endpoint-validator
+  
+  quality_assurance:
+    - test-automation-engineer
+    - ui-regression-debugger
+    - user-experience-auditor
+    - code-quality-guardian
+    - fullstack-communication-auditor
+  
+  user_experience:
+    - frictionless-ux-architect
+    - whimsy-ui-creator
+    - webui-architect
+    - user-experience-auditor
+  
+  infrastructure:
+    - deployment-orchestrator
+    - infrastructure-orchestrator
+    - k8s-architecture-specialist
+    - monitoring-analyst
+    - dependency-analyzer
+  
+  documentation:
+    - documentation-specialist
+    - project-structure-mapper
+    - enhanced-research-coordinator
+    - codebase-research-analyst
+  
+  orchestration:
+    - project-orchestrator
+    - meta-orchestrator
+    - agent-integration-orchestrator
+    - orchestration-phase0
+    - orchestration-todo-manager
+    - orchestration-auditor
+    - data-orchestrator
+    - security-orchestrator
+    - infrastructure-orchestrator
+  
+  optimization:
+    - context-compression-agent
+    - document-compression-agent
+    - parallel-file-manager
+    - smart-search-agent
+    - execution-simulator
+    - execution-conflict-detector
+  
+  synthesis:
+    - nexus-synthesis-agent
+    - enhanced-nexus-synthesis-agent
+    - langgraph-ollama-analyst
+  
+  validation:
+    - orchestration-auditor-v2
+    - evidence-auditor
+    - production-endpoint-validator
+    - user-experience-auditor
+  
+  maintenance:
+    - project-janitor
+    - atomic-git-synchronizer
+    - dependency-analyzer
+    - performance-profiler
+
+# Success Metrics
+success_metrics:
+  orchestration_health:
+    agent_integration_rate: 98.7%
+    parallel_coordination_capacity: 30
+    token_efficiency_improvement: 90%
+    evidence_validation_accuracy: 99.9%
+  
+  production_readiness:
+    core_infrastructure_agents: 8
+    security_compliance_frameworks: 3  # GDPR, HIPAA, SOX
+    monitoring_coverage: 100%
+    rollback_capability: true
+  
+  scalability:
+    proven_agent_coordination: 25
+    current_target: 30
+    future_preparation: 100
+    execution_speed_improvement: 10x

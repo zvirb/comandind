@@ -1,0 +1,83 @@
+{
+  "timestamp": 1755485412.776079,
+  "success_rate": 60.0,
+  "test_results": [
+    [
+      "ML Agent Routing Execution",
+      true
+    ],
+    [
+      "ML Validation Escalation Execution",
+      true
+    ],
+    [
+      "ML Parallel Safety Execution",
+      true
+    ],
+    [
+      "ML Learning Impact Execution",
+      false
+    ],
+    [
+      "ML Decision Consistency Execution",
+      false
+    ]
+  ],
+  "execution_logs": [
+    {
+      "timestamp": 1755485412.7757523,
+      "step": "Security Task Routing",
+      "decision": "Selected security-validator (confidence: 0.500)",
+      "impact": "Security specialist prioritized: True"
+    },
+    {
+      "timestamp": 1755485412.7758121,
+      "step": "Backend Task Routing",
+      "decision": "Selected backend-gateway-expert (confidence: 0.710)",
+      "impact": "Backend specialist prioritized: True"
+    },
+    {
+      "timestamp": 1755485412.7758586,
+      "step": "Low Risk Validation",
+      "decision": "Risk: 0.400",
+      "impact": "Validation levels: 1"
+    },
+    {
+      "timestamp": 1755485412.7758908,
+      "step": "High Risk Validation",
+      "decision": "Risk: 0.400",
+      "impact": "Validation levels: 3"
+    },
+    {
+      "timestamp": 1755485412.7758946,
+      "step": "Validation Escalation",
+      "decision": "Low: 1 \u2192 High: 3",
+      "impact": "Escalation working: True"
+    },
+    {
+      "timestamp": 1755485412.7759476,
+      "step": "Safe Parallel Coordination",
+      "decision": "Groups: 1",
+      "impact": "Safe parallel groups: 1"
+    },
+    {
+      "timestamp": 1755485412.776013,
+      "step": "Conflict Parallel Coordination",
+      "decision": "Groups: 3",
+      "impact": "Safe: 0, Sequential: 3"
+    },
+    {
+      "timestamp": 1755485412.7760158,
+      "step": "Parallel Safety Logic",
+      "decision": "Conflict detection working",
+      "impact": "Safety logic functional: True"
+    },
+    {
+      "timestamp": 1755485412.7760282,
+      "step": "Performance Learning",
+      "decision": "Recorded 4 performance samples",
+      "impact": "Updated ML performance matrix"
+    }
+  ],
+  "conclusion": "NEEDS_IMPROVEMENT"
+}

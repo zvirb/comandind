@@ -1,0 +1,56 @@
+{
+  "package_type": "validation_framework",
+  "priority": "CRITICAL",
+  "token_limit": 4000,
+  "created_at": "2025-08-15T21:10:00Z",
+  "iteration": 5,
+  "phase": 4,
+  
+  "false_positive_prevention": {
+    "problem": "70% false positive validation rate in previous iterations",
+    "root_cause": "Validation without concrete evidence",
+    "solution": "Evidence-based validation with mandatory proof"
+  },
+  
+  "evidence_requirements": {
+    "infrastructure_validation": {
+      "container_health": "docker ps status for all services",
+      "endpoint_testing": "curl commands with actual responses",
+      "connectivity_proof": "Network connectivity tests between services",
+      "log_evidence": "Actual error/success logs from containers"
+    },
+    
+    "functional_validation": {
+      "api_testing": "Postman/curl with request/response bodies",
+      "database_operations": "Query results showing data persistence",
+      "authentication_flow": "Token generation and validation proof",
+      "user_workflows": "End-to-end journey completion"
+    },
+    
+    "production_validation": {
+      "public_endpoints": "https://aiwfe.com accessibility",
+      "cloudflare_routing": "DNS and SSL certificate validation",
+      "user_experience": "Playwright automated testing with screenshots",
+      "performance_metrics": "Response times and resource usage"
+    }
+  },
+  
+  "validation_checklist": {
+    "mandatory_evidence": [
+      "Container status screenshot/output",
+      "Health endpoint curl responses",
+      "Service interaction logs",
+      "Database connectivity proof",
+      "Authentication token validation",
+      "Production site accessibility"
+    ],
+    
+    "validation_gates": {
+      "gate_1": "All containers running (docker ps evidence)",
+      "gate_2": "All health endpoints responding 200 OK",
+      "gate_3": "Database operations successful",
+      "gate_4": "Authentication flow working",
+      "gate_5": "Production site accessible with HTTPS"
+    }
+  }
+}

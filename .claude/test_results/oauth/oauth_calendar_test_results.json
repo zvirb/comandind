@@ -1,0 +1,30 @@
+{
+  "start_time": "2025-08-08T10:07:29.773238+00:00",
+  "tests": {
+    "oauth_token_manager": {
+      "status": "error",
+      "error": "'async_generator' object does not support the asynchronous context manager protocol"
+    },
+    "calendar_sync_resilience": {
+      "status": "error",
+      "error": "No module named 'dateutil'"
+    },
+    "token_refresh_scheduler": {
+      "tests_passed": 2,
+      "tests_total": 2,
+      "manual_trigger_result": {
+        "status": "success",
+        "message": "Manual token refresh completed"
+      }
+    },
+    "api_endpoints": {
+      "status": "error",
+      "error": "No module named 'fastapi'"
+    }
+  },
+  "overall_status": "excellent",
+  "end_time": "2025-08-08T10:07:30.422407+00:00",
+  "total_passed": 2,
+  "total_tests": 2,
+  "success_rate": "100.0%"
+}

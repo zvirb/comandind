@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-08-10T06:33:45.489184",
+  "base_url": "https://aiwfe.com",
+  "tests": {
+    "oauth_configuration": {
+      "status": "success",
+      "configured": true,
+      "issues": [],
+      "client_id_present": true,
+      "client_secret_present": true
+    },
+    "oauth_status_endpoint": {
+      "status": "expected_unauthorized",
+      "message": "Endpoint correctly requires authentication"
+    },
+    "calendar_sync_endpoint": {
+      "status": "csrf_required",
+      "message": "CSRF token required (security working)"
+    },
+    "oauth_health_check": {
+      "status": "expected_unauthorized",
+      "message": "Health check endpoint correctly requires authentication"
+    },
+    "oauth_connection_flow": {
+      "status": "expected_unauthorized",
+      "message": "OAuth connect endpoint correctly requires authentication"
+    }
+  },
+  "diagnosis": {
+    "overall_status": "healthy",
+    "issues_found": [],
+    "recommendations": [],
+    "oauth_configured": true,
+    "endpoints_secure": true,
+    "authentication_working": true
+  }
+}

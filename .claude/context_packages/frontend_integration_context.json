@@ -1,0 +1,82 @@
+{
+  "phase": "integration_adaptation",
+  "priority": "high",
+  "agent": "webui-architect",
+  "focus": "Adapt frontend to work with normalized backend responses",
+  
+  "required_updates": {
+    "auth_context": {
+      "location": "/app/webui-next/src/context/AuthContext.jsx",
+      "changes": [
+        "Update checkAuth() to handle normalized session format",
+        "Add fallback UI state for degraded mode",
+        "Ensure token refresh works with dual formats"
+      ],
+      "expected_response_format": {
+        "valid": "boolean",
+        "user_id": "string",
+        "email": "string", 
+        "expires_at": "number",
+        "session_id": "string",
+        "metadata": "object"
+      }
+    },
+    
+    "websocket_client": {
+      "location": "/app/webui-next/src/services/websocket.js",
+      "changes": [
+        "Add JWT token to WebSocket connection params",
+        "Handle auth rejection before connection",
+        "Implement reconnect with fresh token"
+      ],
+      "auth_flow": "Get token from AuthContext → Attach to WS URL → Handle auth errors"
+    },
+    
+    "csrf_handling": {
+      "location": "/app/webui-next/src/services/api.js",
+      "changes": [
+        "Consistent CSRF token handling across environments",
+        "Add development mode detection",
+        "Handle CSRF token refresh on 403"
+      ]
+    },
+    
+    "error_boundaries": {
+      "location": "/app/webui-next/src/components/ErrorBoundary.jsx",
+      "changes": [
+        "Add specific handling for session errors",
+        "Show degraded mode indicator",
+        "Provide manual session refresh option"
+      ]
+    }
+  },
+  
+  "degraded_mode_ui": {
+    "indicators": [
+      "Orange banner: 'Running in offline mode - some features limited'",
+      "Disable real-time features gracefully",
+      "Show last sync timestamp",
+      "Provide manual sync button"
+    ],
+    "behavior": [
+      "Continue working with cached data",
+      "Queue actions for when connection restored",
+      "Auto-retry connection every 30 seconds"
+    ]
+  },
+  
+  "testing_scenarios": [
+    "Login with legacy token format (email as sub)",
+    "Login with enhanced token format (user_id as sub)",
+    "Navigate while Redis is down (fallback mode)",
+    "WebSocket connection with valid/invalid auth",
+    "CSRF token handling in dev vs prod"
+  ],
+  
+  "success_criteria": [
+    "No logout on Documents/Calendar navigation",
+    "WebSocket connects with authentication",
+    "Graceful degradation when Redis unavailable",
+    "Consistent behavior dev/prod environments"
+  ]
+}

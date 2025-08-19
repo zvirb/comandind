@@ -1,0 +1,51 @@
+{
+  "package_type": "frontend_implementation",
+  "priority": "critical",
+  "scope": "websocket_url_fix",
+  "target_specialists": ["webui-architect", "ui-regression-debugger"],
+  "coordination_metadata": {
+    "phase": "5_parallel_implementation",
+    "dependencies": ["backend_validation"],
+    "success_trigger": "backend_validation_complete"
+  },
+  "implementation_context": {
+    "issue": "WebSocket URL syntax error preventing chat functionality",
+    "root_cause": "Extra colon in WebSocket URL construction in Chat.jsx",
+    "impact": "Chat messages fail to send/receive",
+    "file_target": "/home/marku/ai_workflow_engine/app/webui-next/src/pages/Chat.jsx",
+    "fix_type": "syntax_correction"
+  },
+  "technical_specifications": {
+    "current_issue": "Malformed WebSocket URL with redundant colon",
+    "fix_approach": "Remove extra colon from URL construction",
+    "validation_method": "Browser WebSocket connection test",
+    "testing_scope": "Chat message send/receive functionality"
+  },
+  "evidence_requirements": {
+    "mandatory_evidence": [
+      "Browser console showing successful WebSocket connection",
+      "Chat message send confirmation in UI",
+      "Chat message receive confirmation in UI",
+      "Network tab showing proper WebSocket handshake"
+    ],
+    "validation_commands": [
+      "Open browser developer tools",
+      "Monitor Network → WS tab",
+      "Send test chat message",
+      "Verify message appears in chat interface",
+      "Confirm no console errors"
+    ]
+  },
+  "tools_required": [
+    "Read (examine current Chat.jsx)",
+    "Edit (fix WebSocket URL syntax)",
+    "Bash (run development server for testing)",
+    "Browser tools (validate WebSocket connection)"
+  ],
+  "success_criteria": {
+    "functional": "Chat messages successfully send and receive",
+    "technical": "Clean WebSocket connection in network logs",
+    "user_experience": "No error messages in chat interface",
+    "performance": "No degradation in message latency"
+  }
+}

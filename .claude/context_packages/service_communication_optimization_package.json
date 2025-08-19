@@ -1,0 +1,86 @@
+{
+  "package_type": "SERVICE_COMMUNICATION_PRIORITY_2",
+  "size_limit": 3200,
+  "target_agents": [
+    "fullstack-communication-auditor",
+    "backend-gateway-expert",
+    "webui-architect"
+  ],
+  "coordination_metadata": {
+    "resource_allocation": "SECONDARY_OPTIMIZATION_FOCUS",
+    "conflict_prevention": "COMPLEMENT_GPU_OPTIMIZATION",
+    "execution_priority": 2,
+    "expected_improvement": "25% latency reduction, 50% error rate reduction"
+  },
+  "current_baseline": {
+    "response_times": "13-16ms average",
+    "availability": "100% current",
+    "error_rates": "Baseline measurement needed",
+    "communication_architecture": "PgBouncer foundation established"
+  },
+  "optimization_opportunities": {
+    "gateway_load_balancing": {
+      "current_status": "Single gateway configuration",
+      "optimization": "Implement round-robin and health-aware routing",
+      "expected_improvement": "15-20% latency reduction"
+    },
+    "circuit_breakers": {
+      "current_status": "Basic error handling",
+      "optimization": "Implement circuit breaker pattern for service calls",
+      "expected_improvement": "30-40% error rate reduction"
+    },
+    "dynamic_discovery": {
+      "current_status": "Static service configuration",
+      "optimization": "Health-check based service discovery",
+      "expected_improvement": "Improved fault tolerance"
+    },
+    "connection_pooling": {
+      "current_status": "PgBouncer optimized",
+      "optimization": "Extend pooling to inter-service communication",
+      "expected_improvement": "10-15% connection efficiency"
+    }
+  },
+  "implementation_strategy": {
+    "approach": "INCREMENTAL_ENHANCEMENT",
+    "risk_level": "LOW (15%)",
+    "success_probability": "85%",
+    "timeline": "30-45 minutes parallel execution",
+    "coordination_note": "Run parallel with GPU optimization"
+  },
+  "architecture_enhancements": {
+    "api_gateway_optimization": {
+      "load_balancing": "Round-robin with health checks",
+      "retry_policies": "Exponential backoff for failed requests",
+      "timeout_configuration": "Optimized request timeouts",
+      "monitoring_integration": "Enhanced metrics collection"
+    },
+    "service_mesh_considerations": {
+      "current_setup": "Docker network communication",
+      "enhancement": "Service discovery and health monitoring",
+      "monitoring": "Request tracing and metrics",
+      "security": "mTLS consideration for future"
+    }
+  },
+  "evidence_validation": {
+    "latency_measurements": "Before/after response time analysis",
+    "error_rate_tracking": "Service communication failure rates",
+    "throughput_testing": "Load testing with optimizations",
+    "monitoring_dashboards": "Updated Grafana dashboards for service metrics"
+  },
+  "agent_coordination": {
+    "fullstack-communication-auditor": "End-to-end communication analysis and optimization",
+    "backend-gateway-expert": "API gateway and service routing optimization",
+    "webui-architect": "Frontend communication pattern optimization"
+  },
+  "historical_patterns": {
+    "pgbouncer_success": "Database connection optimization achieved 85% efficiency",
+    "circuit_breaker_pattern": "Successfully implemented in authentication system",
+    "health_monitoring": "Existing monitoring infrastructure ready for extension"
+  },
+  "success_metrics": {
+    "latency_target": "10-12ms average response time (25% improvement)",
+    "error_reduction": "50% reduction in communication errors",
+    "availability_maintenance": "Maintain 100% service availability",
+    "monitoring_coverage": "100% service communication visibility"
+  }
+}

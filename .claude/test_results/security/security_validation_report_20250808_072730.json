@@ -1,0 +1,209 @@
+{
+  "csrf_protection": {
+    "token_generation": {
+      "status": "PASS",
+      "header_token": "1754602049:aIObEKmbw...",
+      "cookie_token": "1754602049:aIObEKmbw..."
+    },
+    "missing_token_protection": {
+      "status": "PASS",
+      "blocked": true
+    },
+    "token_format_validation": {
+      "status": "PASS",
+      "blocked": true
+    }
+  },
+  "jwt_security": {
+    "structure_validation": {
+      "status": "INFO",
+      "login_attempt_status": 401,
+      "response_structure": "jwt_based"
+    },
+    "expiration_handling": {
+      "status": "FAIL",
+      "properly_rejected": false
+    }
+  },
+  "ssl_tls": {
+    "certificate_validation": {
+      "status": "PASS",
+      "certificate_present": true,
+      "subject": [
+        [
+          [
+            "commonName",
+            "aiwfe.com"
+          ]
+        ]
+      ],
+      "issuer": [
+        [
+          [
+            "countryName",
+            "US"
+          ]
+        ],
+        [
+          [
+            "organizationName",
+            "Google Trust Services"
+          ]
+        ],
+        [
+          [
+            "commonName",
+            "WE1"
+          ]
+        ]
+      ],
+      "not_after": "Nov  3 04:05:57 2025 GMT"
+    },
+    "tls_configuration": {
+      "status": "PASS",
+      "connection_successful": true
+    }
+  },
+  "security_headers": {
+    "header_validation": {
+      "status": "PASS",
+      "headers_present": 6,
+      "total_expected": 7,
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ws: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()",
+        "Strict-Transport-Security": null
+      }
+    }
+  },
+  "input_validation": {
+    "xss_protection": {
+      "status": "PASS",
+      "blocked": 5,
+      "total_tested": 5,
+      "results": [
+        {
+          "payload": "<script>alert('xss')</script>...",
+          "blocked": true,
+          "status_code": 401
+        },
+        {
+          "payload": "javascript:alert('xss')...",
+          "blocked": true,
+          "status_code": 401
+        },
+        {
+          "payload": "<img src=x onerror=alert('xss'...",
+          "blocked": true,
+          "status_code": 401
+        },
+        {
+          "payload": "onmouseover='alert(1)'...",
+          "blocked": true,
+          "status_code": 401
+        },
+        {
+          "payload": "<iframe src='javascript:alert(...",
+          "blocked": true,
+          "status_code": 401
+        }
+      ]
+    }
+  },
+  "authentication_flow": {
+    "brute_force_protection": {
+      "status": "NEEDS_REVIEW",
+      "failed_attempts_tracked": 0
+    },
+    "session_management": {
+      "status": "NEEDS_REVIEW",
+      "sessions_different": false
+    }
+  },
+  "penetration_testing": {
+    "sql_injection": {
+      "status": "CRITICAL",
+      "blocked": 0,
+      "total_tested": 5,
+      "results": [
+        {
+          "payload": "' OR '1'='1",
+          "status_code": 401,
+          "sql_error_detected": true,
+          "blocked": false
+        },
+        {
+          "payload": "'; DROP TABLE users; --",
+          "status_code": 401,
+          "sql_error_detected": true,
+          "blocked": false
+        },
+        {
+          "payload": "1' UNION SELECT * FROM users --",
+          "status_code": 401,
+          "sql_error_detected": true,
+          "blocked": false
+        },
+        {
+          "payload": "admin'--",
+          "status_code": 401,
+          "sql_error_detected": true,
+          "blocked": false
+        },
+        {
+          "payload": "' OR 1=1--",
+          "status_code": 401,
+          "sql_error_detected": true,
+          "blocked": false
+        }
+      ]
+    },
+    "authentication_bypass": {
+      "status": "CRITICAL",
+      "blocked": 0,
+      "total_tested": 5,
+      "results": [
+        {
+          "headers": {
+            "Authorization": "Bearer fake_token"
+          },
+          "blocked": false,
+          "status_code": 404
+        },
+        {
+          "headers": {
+            "Authorization": "Bearer "
+          },
+          "blocked": false,
+          "status_code": 404
+        },
+        {
+          "headers": {
+            "Authorization": ""
+          },
+          "blocked": false,
+          "status_code": 404
+        },
+        {
+          "headers": {
+            "X-User-ID": "1"
+          },
+          "blocked": false,
+          "status_code": 404
+        },
+        {
+          "headers": {
+            "X-Admin": "true"
+          },
+          "blocked": false,
+          "status_code": 404
+        }
+      ]
+    }
+  },
+  "overall_score": 70.0
+}

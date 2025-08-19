@@ -1,0 +1,64 @@
+{
+  "package_id": "service_health_monitoring",
+  "priority": "HIGH",
+  "token_count": 2500,
+  "coordination_metadata": {
+    "phase": 5,
+    "stream": 2,
+    "dependencies": ["infrastructure_fix_qdrant_tls"],
+    "estimated_duration": "20 minutes",
+    "risk_level": "LOW"
+  },
+  "health_monitoring_framework": {
+    "objective": "Implement comprehensive health monitoring for all cognitive services",
+    "current_status": {
+      "healthy_services": ["monitoring_service", "memory_service"],
+      "unhealthy_services": ["learning_service", "worker_service", "reasoning_service"],
+      "missing_health_endpoints": ["calendar_service", "documents_service", "chat_service"]
+    }
+  },
+  "health_endpoint_implementation": {
+    "standard_pattern": {
+      "endpoint": "/health",
+      "response_format": {
+        "status": "healthy|unhealthy",
+        "service": "service_name",
+        "version": "1.0.0",
+        "dependencies": {
+          "qdrant": "connected|disconnected",
+          "redis": "connected|disconnected",
+          "database": "connected|disconnected"
+        },
+        "timestamp": "ISO-8601"
+      }
+    },
+    "implementation_template": "async def health_check():\n    try:\n        # Check Qdrant connection\n        qdrant_status = await check_qdrant_connection()\n        # Check other dependencies\n        redis_status = await check_redis_connection()\n        \n        return JSONResponse({\n            'status': 'healthy' if all([qdrant_status, redis_status]) else 'unhealthy',\n            'service': 'service_name',\n            'dependencies': {\n                'qdrant': 'connected' if qdrant_status else 'disconnected',\n                'redis': 'connected' if redis_status else 'disconnected'\n            }\n        })\n    except Exception as e:\n        return JSONResponse({'status': 'unhealthy', 'error': str(e)}, status_code=503)"
+  },
+  "monitoring_dashboard": {
+    "endpoint": "http://localhost:8008/health-dashboard",
+    "aggregated_view": "All service health statuses in single view",
+    "refresh_interval": "30 seconds",
+    "alert_thresholds": {
+      "critical": "Any service unhealthy for > 5 minutes",
+      "warning": "Any service unhealthy for > 2 minutes"
+    }
+  },
+  "validation_commands": [
+    "curl http://localhost:8001/health  # API Gateway",
+    "curl http://localhost:8002/health  # WebUI",
+    "curl http://localhost:8003/health  # Learning Service",
+    "curl http://localhost:8004/health  # Worker Service",
+    "curl http://localhost:8005/health  # Memory Service",
+    "curl http://localhost:8006/health  # Reasoning Service",
+    "curl http://localhost:8008/health  # Monitoring Service"
+  ],
+  "evidence_collection": {
+    "required_screenshots": [
+      "Health dashboard showing all services green",
+      "Individual health endpoint responses",
+      "Docker container status (docker ps output)",
+      "Service logs showing successful connections"
+    ],
+    "automated_testing": "while true; do for port in 8001 8002 8003 8004 8005 8006 8008; do echo \"Testing :$port\"; curl -s http://localhost:$port/health | jq '.status'; done; sleep 5; done"
+  }
+}

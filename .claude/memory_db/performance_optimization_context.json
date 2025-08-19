@@ -1,0 +1,13 @@
+{
+  "package_id": "performance_optimization_context",
+  "package_type": "migrated-context",
+  "content": "{\n    \"package_type\": \"PERFORMANCE_OPTIMIZATION\",\n    \"priority\": \"MEDIUM\",\n    \"token_limit\": 4000,\n    \"optimization_targets\": [\n        \"Galaxy Animation Frame Management\",\n        \"WebGL Context Performance\",\n        \"Rendering Pipeline Efficiency\"\n    ],\n    \"performance_strategies\": {\n        \"frame_management\": {\n            \"techniques\": [\n                \"Dynamic Frame Skipping\",\n                \"Adaptive Quality Reduction\",\n                \"Progressive Rendering\"\n            ],\n            \"implementation_approach\": {\n                \"detection_mechanism\": \"Real-time performance monitoring\",\n                \"quality_scaling\": {\n                    \"min_threshold\": 30,\n                    \"max_threshold\": 60,\n                    \"default_fps\": 45\n                }\n            }\n        },\n        \"webgl_optimization\": {\n            \"context_recovery\": {\n                \"automatic_reset_strategy\": true,\n                \"fallback_rendering_modes\": [\n                    \"Software Rendering\",\n                    \"Low-Resolution Mode\"\n                ]\n            },\n            \"memory_management\": {\n                \"buffer_cleanup_frequency\": \"Per Frame\",\n                \"aggressive_garbage_collection\": true\n            }\n        }\n    },\n    \"monitoring_integration\": {\n        \"performance_metrics\": [\n            \"Frames Per Second\",\n            \"GPU Utilization\",\n            \"Memory Consumption\",\n            \"Render Time\"\n        ],\n        \"alerting_thresholds\": {\n            \"fps_drop\": 20,\n            \"render_time_spike\": 100,\n            \"memory_leak\": \"50MB/minute\"\n        }\n    },\n    \"fallback_mechanisms\": {\n        \"performance_degradation_handling\": [\n            \"Automatic Quality Reduction\",\n            \"Frame Rate Stabilization\",\n            \"Partial Rendering Suspension\"\n        ]\n    }\n}\n",
+  "tokens": 150,
+  "created_at": "2025-08-18T15:14:25.677189",
+  "last_accessed": "2025-08-18T15:14:25.677197",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

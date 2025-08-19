@@ -1,0 +1,58 @@
+{
+    "package_type": "Infrastructure Context",
+    "token_limit": 2500,
+    "package_version": "1.0",
+    "compression_strategy": "Infrastructure Resilience Optimization",
+    "core_components": {
+        "docker_configuration": {
+            "container_orchestration_strategy": [
+                "Modular service isolation",
+                "Independent scaling capabilities",
+                "Minimal dependency coupling"
+            ],
+            "health_check_enhancements": {
+                "readiness_probes": [
+                    "Database connection validation",
+                    "External service connectivity",
+                    "Critical path functionality"
+                ],
+                "liveness_probes": [
+                    "Resource utilization monitoring",
+                    "Request handling capacity",
+                    "Error rate thresholds"
+                ]
+            }
+        },
+        "monitoring_setup": {
+            "observability_requirements": [
+                "Distributed tracing",
+                "Performance metric collection",
+                "Anomaly detection framework"
+            ],
+            "alert_configuration": [
+                "Critical service downtime",
+                "Performance degradation",
+                "Unusual error rate spikes"
+            ]
+        },
+        "rollback_procedures": {
+            "recovery_strategies": [
+                "Container-level rollback",
+                "Configuration state restoration",
+                "Minimal service interruption"
+            ]
+        }
+    },
+    "implementation_guidance": {
+        "key_focus_areas": [
+            "Container resilience",
+            "Comprehensive monitoring",
+            "Rapid recovery mechanisms"
+        ],
+        "recommended_tools": [
+            "Docker health check configurations",
+            "Distributed tracing frameworks",
+            "Automated rollback scripts"
+        ]
+    }
+}

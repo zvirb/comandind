@@ -1,0 +1,187 @@
+{
+  "package_id": "ctx_performance_deployment_20250817",
+  "package_type": "performance_context",
+  "workflow_id": "deployment_completion_cycle",
+  "max_tokens": 3000,
+  "compression_level": "moderate",
+  "generated_at": "2025-08-17T21:45:00Z",
+  "coordination_metadata": {
+    "phase": "4",
+    "next_phase": "5_parallel_implementation",
+    "target_agents": ["performance-profiler", "monitoring-analyst"],
+    "performance_focus": "deployment_optimization"
+  },
+  "content": {
+    "mission_statement": "Optimize performance and monitoring for newly deployed services while maintaining system stability and efficient resource utilization.",
+    
+    "performance_objectives": {
+      "service_performance": {
+        "voice_interaction_service": {
+          "target_response_time": "< 500ms",
+          "memory_limit": "256MB",
+          "cpu_limit": "0.5 cores",
+          "concurrent_connections": "50 max",
+          "health_check_interval": "30s"
+        },
+        "chat_service": {
+          "target_response_time": "< 1000ms",
+          "memory_limit": "512MB", 
+          "cpu_limit": "1.0 cores",
+          "concurrent_connections": "100 max",
+          "health_check_interval": "30s"
+        }
+      },
+      
+      "system_optimization": {
+        "redis_performance": {
+          "max_memory": "512MB",
+          "eviction_policy": "allkeys-lru",
+          "connection_pool": "20 connections",
+          "persistence": "RDB snapshots every 300s"
+        },
+        "monitoring_overhead": {
+          "prometheus_retention": "15 days",
+          "scrape_interval": "15s",
+          "metric_collection": "Essential metrics only"
+        }
+      }
+    },
+    
+    "performance_monitoring": {
+      "key_metrics": [
+        {
+          "metric": "service_response_time",
+          "target": "voice: <500ms, chat: <1000ms",
+          "collection": "Prometheus histogram",
+          "alert_threshold": ">2s response time"
+        },
+        {
+          "metric": "memory_usage",
+          "target": "voice: <256MB, chat: <512MB",
+          "collection": "Docker stats + cAdvisor",
+          "alert_threshold": ">80% memory limit"
+        },
+        {
+          "metric": "cpu_utilization",
+          "target": "voice: <50%, chat: <100%",
+          "collection": "System metrics",
+          "alert_threshold": ">90% sustained"
+        },
+        {
+          "metric": "error_rate",
+          "target": "<1% error rate",
+          "collection": "Application logs",
+          "alert_threshold": ">5% errors"
+        }
+      ],
+      
+      "monitoring_endpoints": [
+        "http://localhost:8006/metrics (voice service)",
+        "http://localhost:8007/metrics (chat service)",
+        "http://localhost:9090/api/v1/query (Prometheus)",
+        "http://localhost:3000/api/health (Grafana)"
+      ]
+    },
+    
+    "optimization_tasks": [
+      {
+        "priority": "high",
+        "task": "Configure resource limits for new services",
+        "implementation": "Add memory/CPU limits to docker-compose.yml",
+        "validation": "docker stats shows limits enforced",
+        "expected_impact": "Prevent resource exhaustion"
+      },
+      {
+        "priority": "high",
+        "task": "Optimize Redis configuration for new workload",
+        "implementation": "Tune Redis memory and connection settings",
+        "validation": "redis-cli info memory and clients",
+        "expected_impact": "Improved cache performance"
+      },
+      {
+        "priority": "medium",
+        "task": "Set up performance dashboards for new services",
+        "implementation": "Create Grafana panels for service metrics",
+        "validation": "Dashboards show real-time metrics",
+        "expected_impact": "Better performance visibility"
+      },
+      {
+        "priority": "medium",
+        "task": "Configure performance alerting",
+        "implementation": "Add Prometheus alerting rules",
+        "validation": "Test alerts trigger on threshold breach",
+        "expected_impact": "Proactive performance management"
+      }
+    ],
+    
+    "benchmarking_tests": [
+      {
+        "test": "Voice Service Load Test",
+        "tool": "curl + concurrent requests",
+        "command": "for i in {1..10}; do curl -w '%{time_total}\\n' http://localhost:8006/health & done; wait",
+        "target": "All responses < 500ms",
+        "frequency": "After deployment"
+      },
+      {
+        "test": "Chat Service Load Test", 
+        "tool": "curl + message simulation",
+        "command": "curl -X POST -H 'Content-Type: application/json' -d '{\"message\":\"test\"}' -w '%{time_total}\\n' http://localhost:8007/api/v1/chat",
+        "target": "Response < 1000ms",
+        "frequency": "After deployment"
+      },
+      {
+        "test": "Redis Performance Test",
+        "tool": "redis-benchmark",
+        "command": "redis-benchmark -h localhost -p 6379 -t set,get -n 10000 -q",
+        "target": ">10000 ops/sec",
+        "frequency": "After Redis config changes"
+      },
+      {
+        "test": "System Resource Baseline",
+        "tool": "docker stats",
+        "command": "docker stats --no-stream --format 'table {{.Name}}\\t{{.CPUPerc}}\\t{{.MemUsage}}'",
+        "target": "Baseline resource usage",
+        "frequency": "Before and after deployment"
+      }
+    ],
+    
+    "performance_troubleshooting": {
+      "common_issues": [
+        {
+          "issue": "High response times",
+          "investigation": ["Check CPU/memory usage", "Analyze application logs", "Monitor database connections"],
+          "solutions": ["Scale resources", "Optimize queries", "Add caching"]
+        },
+        {
+          "issue": "Memory leaks",
+          "investigation": ["Monitor memory growth", "Check for unreleased connections", "Analyze heap dumps"],
+          "solutions": ["Restart service", "Fix application code", "Tune garbage collection"]
+        },
+        {
+          "issue": "Connection timeouts",
+          "investigation": ["Check connection pools", "Monitor network latency", "Analyze traffic patterns"],
+          "solutions": ["Increase timeouts", "Optimize connection handling", "Load balancing"]
+        }
+      ]
+    },
+    
+    "resource_optimization": {
+      "docker_optimization": [
+        "Use multi-stage builds for smaller images",
+        "Configure appropriate restart policies",
+        "Set memory and CPU limits"
+      ],
+      "network_optimization": [
+        "Use internal Docker networks",
+        "Minimize external port exposure",
+        "Configure connection pooling"
+      ],
+      "storage_optimization": [
+        "Configure log rotation",
+        "Use efficient data formats",
+        "Implement data compression"
+      ]
+    }
+  },
+  "estimated_tokens": 2978
+}

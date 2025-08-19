@@ -1,0 +1,13 @@
+{
+  "package_id": "security_validation_context",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_metadata\": {\n    \"specialist_focus\": \"security-validator\",\n    \"token_count\": 1300,\n    \"compression_ratio\": 0.7,\n    \"critical_info_preserved\": true\n  },\n  \"strategic_context\": {\n    \"high_priority_objectives\": [\n      \"Implement comprehensive security scanning\",\n      \"Develop robust authentication mechanisms\",\n      \"Create proactive vulnerability detection\"\n    ],\n    \"key_constraints\": {\n      \"compliance_requirements\": \"OWASP Top 10 Mitigation\",\n      \"minimal_false_positive_rate\": \"< 5%\"\n    },\n    \"implementation_guidelines\": {\n      \"security_scanning\": \"Multi-layered approach\",\n      \"threat_modeling\": \"Continuous risk assessment\"\n    }\n  },\n  \"technical_details\": {\n    \"core_requirements\": {\n      \"authentication\": \"Multi-factor, adaptive authentication\",\n      \"encryption\": \"AES-256 for data at rest and transit\",\n      \"access_control\": \"Role-based, attribute-driven permissions\"\n    },\n    \"optimization_targets\": {\n      \"vulnerability_scanning\": \"Automated static and dynamic analysis\",\n      \"anomaly_detection\": \"Machine learning-based behavioral analysis\"\n    },\n    \"potential_risks\": [\n      \"Potential OAuth implementation vulnerabilities\",\n      \"Third-party library security dependencies\",\n      \"Possible side-channel attack vectors\"\n    ]\n  },\n  \"coordination_touchpoints\": {\n    \"dependencies\": [\n      \"backend-gateway for auth integration\",\n      \"production-endpoint-validator for live testing\"\n    ],\n    \"validation_requirements\": {\n      \"penetration_testing\": \"Full external security audit\",\n      \"compliance_verification\": \"Detailed OWASP compliance report\"\n    },\n    \"inter_agent_communication_notes\": {\n      \"infrastructure_security\": \"Share network security configuration\",\n      \"incident_response\": \"Develop comprehensive threat response playbook\"\n    }\n  }\n}",
+  "tokens": 187,
+  "created_at": "2025-08-18T15:14:25.892102",
+  "last_accessed": "2025-08-18T15:14:25.892114",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

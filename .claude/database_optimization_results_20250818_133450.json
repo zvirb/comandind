@@ -1,0 +1,341 @@
+{
+  "timestamp": "2025-08-18T13:34:35.192838",
+  "optimizations_applied": {
+    "indexes": {
+      "indexes_created": [
+        {
+          "table": "users",
+          "columns": "username",
+          "sql": "CREATE INDEX CONCURRENTLY idx_users_username ON users (username);"
+        },
+        {
+          "table": "user_oauth_tokens",
+          "columns": "(user_id, service)",
+          "sql": "CREATE INDEX CONCURRENTLY idx_oauth_tokens_user_service ON user_oauth_tokens (user_id, service);"
+        },
+        {
+          "table": "users",
+          "columns": "email",
+          "sql": "CREATE INDEX CONCURRENTLY idx_users_email ON users (email);"
+        },
+        {
+          "table": "user_oauth_tokens",
+          "columns": "token_expiry",
+          "sql": "CREATE INDEX CONCURRENTLY idx_oauth_tokens_expiry ON user_oauth_tokens (token_expiry);"
+        }
+      ],
+      "indexes_failed": [],
+      "performance_impact_expected": "High"
+    },
+    "pgbouncer": {
+      "configuration_updated": true,
+      "parameters_changed": [
+        {
+          "parameter": "default_pool_size",
+          "old_value": "60",
+          "new_value": "80"
+        },
+        {
+          "parameter": "max_client_conn",
+          "old_value": "500",
+          "new_value": "600"
+        },
+        {
+          "parameter": "reserve_pool_size",
+          "old_value": "20",
+          "new_value": "30"
+        },
+        {
+          "parameter": "query_timeout",
+          "old_value": "90",
+          "new_value": "60"
+        },
+        {
+          "parameter": "query_wait_timeout",
+          "old_value": "20",
+          "new_value": "15"
+        },
+        {
+          "parameter": "server_idle_timeout",
+          "old_value": "300",
+          "new_value": "600"
+        },
+        {
+          "parameter": "server_check_delay",
+          "old_value": "15",
+          "new_value": "10"
+        },
+        {
+          "parameter": "tcp_keepidle",
+          "old_value": "300",
+          "new_value": "600"
+        },
+        {
+          "parameter": "tcp_keepintvl",
+          "old_value": "15",
+          "new_value": "10"
+        },
+        {
+          "parameter": "listen_backlog",
+          "old_value": "8192",
+          "new_value": "12288"
+        }
+      ],
+      "restart_required": true
+    },
+    "postgresql": {
+      "configuration_updated": true,
+      "parameters_changed": [
+        {
+          "parameter": "work_mem",
+          "old_value": "4MB",
+          "new_value": "16MB"
+        },
+        {
+          "parameter": "maintenance_work_mem",
+          "old_value": "64MB",
+          "new_value": "128MB"
+        },
+        {
+          "parameter": "effective_cache_size",
+          "old_value": "4GB",
+          "new_value": "6GB"
+        },
+        {
+          "parameter": "random_page_cost",
+          "old_value": "4",
+          "new_value": "1.1"
+        },
+        {
+          "parameter": "seq_page_cost",
+          "old_value": "1",
+          "new_value": "1.0"
+        },
+        {
+          "parameter": "effective_io_concurrency",
+          "old_value": "1",
+          "new_value": "200"
+        }
+      ],
+      "restart_required": false
+    },
+    "caching": {
+      "query_cache_enabled": false,
+      "connection_cache_optimized": false,
+      "recommendations_documented": [
+        {
+          "type": "Redis Query Cache",
+          "implementation": "Add Redis caching layer for frequent queries",
+          "expected_improvement": "30-50% reduction in database load",
+          "priority": "High"
+        },
+        {
+          "type": "Connection Pool Caching",
+          "implementation": "Optimize connection reuse and warming",
+          "expected_improvement": "20-30% improvement in connection efficiency",
+          "priority": "Medium"
+        },
+        {
+          "type": "Query Result Caching",
+          "implementation": "Cache authentication and user profile queries",
+          "expected_improvement": "40-60% improvement in auth response time",
+          "priority": "High"
+        },
+        {
+          "type": "Session Data Caching",
+          "implementation": "Move session storage to Redis",
+          "expected_improvement": "25-35% improvement in session validation",
+          "priority": "Medium"
+        }
+      ]
+    }
+  },
+  "performance_improvements": {
+    "post_optimization_metrics": {
+      "avg_query_response_ms": 83.4165261068847,
+      "min_response_ms": 68.37743101641536,
+      "max_response_ms": 99.56134401727468,
+      "p95_response_ms": 99.56134401727468
+    },
+    "improvement_summary": {
+      "baseline_avg_ms": 86.57646879728418,
+      "optimized_avg_ms": 83.4165261068847,
+      "improvement_percentage": 3.6498863193396955,
+      "improvement_ms": 3.1599426903994754
+    },
+    "target_achievement": {
+      "target_ms": 100,
+      "achieved": true,
+      "margin_ms": 16.583473893115297
+    }
+  },
+  "validation_results": {
+    "indexes_validation": {
+      "indexes_found": 37,
+      "indexes_list": [
+        {
+          "table": "agent_registry",
+          "index": "idx_agent_registry_capabilities"
+        },
+        {
+          "table": "agent_registry",
+          "index": "idx_agent_registry_category"
+        },
+        {
+          "table": "agent_registry",
+          "index": "idx_agent_registry_deleted_at"
+        },
+        {
+          "table": "agent_registry",
+          "index": "idx_agent_registry_name"
+        },
+        {
+          "table": "agent_registry",
+          "index": "idx_agent_registry_status"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_relationship_type"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_source_entity_id"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_source_target"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_source_user"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_target_entity_id"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_target_user"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_user_id"
+        },
+        {
+          "table": "graph_edges",
+          "index": "idx_graph_edges_user_type"
+        },
+        {
+          "table": "graph_nodes",
+          "index": "idx_graph_nodes_entity_id"
+        },
+        {
+          "table": "graph_nodes",
+          "index": "idx_graph_nodes_entity_type"
+        },
+        {
+          "table": "graph_nodes",
+          "index": "idx_graph_nodes_entity_user"
+        },
+        {
+          "table": "graph_nodes",
+          "index": "idx_graph_nodes_user_id"
+        },
+        {
+          "table": "graph_nodes",
+          "index": "idx_graph_nodes_user_type"
+        },
+        {
+          "table": "memory_records",
+          "index": "idx_memory_records_content_hash"
+        },
+        {
+          "table": "memory_records",
+          "index": "idx_memory_records_operation"
+        },
+        {
+          "table": "memory_records",
+          "index": "idx_memory_records_user_hash"
+        },
+        {
+          "table": "memory_records",
+          "index": "idx_memory_records_user_id"
+        },
+        {
+          "table": "processing_jobs",
+          "index": "idx_processing_jobs_created_at"
+        },
+        {
+          "table": "processing_jobs",
+          "index": "idx_processing_jobs_status"
+        },
+        {
+          "table": "processing_jobs",
+          "index": "idx_processing_jobs_user_id"
+        },
+        {
+          "table": "system_prompts",
+          "index": "idx_system_prompts_prompt_category"
+        },
+        {
+          "table": "system_prompts",
+          "index": "idx_system_prompts_prompt_key"
+        },
+        {
+          "table": "system_prompts",
+          "index": "idx_system_prompts_user_id"
+        },
+        {
+          "table": "user_history_summaries",
+          "index": "idx_user_history_summaries_user_id"
+        },
+        {
+          "table": "user_oauth_tokens",
+          "index": "idx_oauth_tokens_expiry"
+        },
+        {
+          "table": "user_oauth_tokens",
+          "index": "idx_oauth_tokens_service_lookup"
+        },
+        {
+          "table": "user_oauth_tokens",
+          "index": "idx_oauth_tokens_user_service"
+        },
+        {
+          "table": "users",
+          "index": "idx_users_email"
+        },
+        {
+          "table": "users",
+          "index": "idx_users_username"
+        },
+        {
+          "table": "workflow_states",
+          "index": "idx_workflow_states_created_at"
+        },
+        {
+          "table": "workflow_states",
+          "index": "idx_workflow_states_state"
+        },
+        {
+          "table": "workflow_states",
+          "index": "idx_workflow_states_workflow_id"
+        }
+      ]
+    },
+    "configuration_validation": {
+      "work_mem": "16MB",
+      "effective_cache_size": "6GB",
+      "maintenance_work_mem": "128MB"
+    },
+    "performance_validation": {}
+  },
+  "rollback_info": {
+    "timestamp": "2025-08-18T13:34:35.193298",
+    "backup_type": "configuration_snapshot",
+    "files_backed_up": [
+      "/home/marku/ai_workflow_engine/config/pgbouncer/pgbouncer.ini.backup_20250818_133435"
+    ],
+    "schema_backup": "/tmp/schema_backup.sql"
+  }
+}
