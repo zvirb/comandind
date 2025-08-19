@@ -62,4 +62,15 @@ export class PerformanceMonitor {
             memory: this.memoryUsage.toFixed(2)
         };
     }
+    
+    stop() {
+        // Reset performance tracking
+        this.frameCount = 0;
+        this.fps = 0;
+        this.frameTime = 0;
+        this.memoryUsage = 0;
+        this.frameTimes.fill(16.67);
+        this.frameTimeIndex = 0;
+        console.log('📊 PerformanceMonitor stopped and reset');
+    }
 }
