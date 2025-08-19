@@ -1,0 +1,9 @@
+[submodule "mcp_servers/mcp-official-servers"]
+	path = mcp_servers/mcp-official-servers
+	url = https://github.com/modelcontextprotocol/servers.git
+[submodule "mcp_servers/python-sequential-thinking-mcp"]
+	path = mcp_servers/python-sequential-thinking-mcp
+	url = https://github.com/clinebot/python-sequential-thinking-mcp.git
+[submodule "tools/CnC_Tiberian_Dawn"]
+	path = tools/CnC_Tiberian_Dawn
+	url = https://github.com/OpenRA/OpenRA.git
