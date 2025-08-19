@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js';
-// Enable CSP support for unsafe-eval restrictions
+// Enable CSP support for unsafe-eval restrictions - MUST import before PixiJS
 import '@pixi/unsafe-eval';
+import * as PIXI from 'pixi.js';
 import { WebGLContextManager } from '../rendering/WebGLContextManager.js';
 
 export class Application {

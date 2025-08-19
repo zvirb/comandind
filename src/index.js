@@ -1,3 +1,5 @@
+// Enable CSP support for unsafe-eval restrictions - loaded early
+import '@pixi/unsafe-eval';
 import { Application } from './core/Application.js';
 import { GameLoop } from './core/GameLoop.js';
 import { Camera } from './core/Camera.js';
