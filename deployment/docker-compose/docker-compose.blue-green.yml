@@ -1,0 +1,176 @@
+# Blue-Green Deployment Configuration for Command & Independent Thought
+# This configuration supports zero-downtime deployments with automatic rollback
+
+x-game-service: &game-service
+  build:
+    context: ../..
+    dockerfile: Dockerfile
+  networks:
+    - game-network
+  environment:
+    - NODE_ENV=production
+    - DEPLOYMENT_SLOT=${DEPLOYMENT_SLOT:-blue}
+    - VERSION=${VERSION:-0.1.0}
+  healthcheck:
+    test: ["CMD", "/usr/local/bin/health-check.sh"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 60s
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges:true
+  read_only: true
+  tmpfs:
+    - /var/cache/nginx:noexec,nosuid,size=100m
+    - /var/run:noexec,nosuid,size=100m
+    - /tmp:noexec,nosuid,size=100m
+
+services:
+  # Load Balancer / Reverse Proxy
+  nginx-lb:
+    image: nginx:1.25-alpine
+    container_name: game-loadbalancer
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/loadbalancer.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/upstream.conf:/etc/nginx/conf.d/upstream.conf:ro
+      - ./certificates:/etc/nginx/certificates:ro
+    networks:
+      - game-network
+    depends_on:
+      - game-blue
+      - game-green
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.game.rule=Host(`game.localhost`)"
+
+  # Blue Environment (Current Production)
+  game-blue:
+    <<: *game-service
+    container_name: game-blue
+    environment:
+      - NODE_ENV=production
+      - DEPLOYMENT_SLOT=blue
+      - VERSION=${BLUE_VERSION:-0.1.0}
+    labels:
+      - "deployment.slot=blue"
+      - "deployment.status=active"
+      - "traefik.enable=false"
+
+  # Green Environment (New Version for Testing)  
+  game-green:
+    <<: *game-service
+    container_name: game-green
+    environment:
+      - NODE_ENV=production
+      - DEPLOYMENT_SLOT=green
+      - VERSION=${GREEN_VERSION:-0.1.0-next}
+    labels:
+      - "deployment.slot=green"
+      - "deployment.status=standby"
+      - "traefik.enable=false"
+
+  # Monitoring and Alerting
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: game-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - game-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  # Metrics Collection
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: game-cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro
+    ports:
+      - "8081:8080"
+    networks:
+      - game-network
+    restart: unless-stopped
+
+  # Log Aggregation
+  fluentd:
+    image: fluent/fluentd:v1.16-1
+    container_name: game-fluentd
+    volumes:
+      - ./monitoring/fluentd.conf:/fluentd/etc/fluent.conf:ro
+      - fluentd-logs:/fluentd/log
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - game-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Health Check Service
+  health-monitor:
+    build:
+      context: ../..
+      dockerfile: deployment/monitoring/Dockerfile.health
+    container_name: game-health-monitor
+    environment:
+      - BLUE_ENDPOINT=http://game-blue:8080
+      - GREEN_ENDPOINT=http://game-green:8080
+      - CHECK_INTERVAL=30
+      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
+    volumes:
+      - ./monitoring:/app/config:ro
+    networks:
+      - game-network
+    restart: unless-stopped
+    depends_on:
+      - game-blue
+      - game-green
+
+networks:
+  game-network:
+    driver: bridge
+    name: game-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  prometheus-data:
+    driver: local
+  fluentd-logs:
+    driver: local
+
+# Environment-specific overrides
+# Use: docker-compose -f docker-compose.blue-green.yml -f docker-compose.production.yml up

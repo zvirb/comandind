@@ -1,0 +1,75 @@
+# Prometheus Configuration for Command & Independent Thought Game Monitoring
+
+global:
+  scrape_interval: 30s
+  scrape_timeout: 10s
+  evaluation_interval: 30s
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Game application monitoring
+  - job_name: 'game-blue'
+    static_configs:
+      - targets: ['game-blue:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: deployment_slot
+        replacement: 'blue'
+
+  - job_name: 'game-green'
+    static_configs:
+      - targets: ['game-green:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: deployment_slot
+        replacement: 'green'
+
+  # Load balancer monitoring
+  - job_name: 'nginx-loadbalancer'
+    static_configs:
+      - targets: ['nginx-lb:80']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Container resource monitoring
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # Health check monitoring
+  - job_name: 'health-monitor'
+    static_configs:
+      - targets: ['health-monitor:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  # Custom game metrics (if implemented)
+  - job_name: 'game-metrics'
+    static_configs:
+      - targets: ['game-blue:8080', 'game-green:8080']
+    metrics_path: '/game-metrics'
+    scrape_interval: 60s
+    scrape_timeout: 30s

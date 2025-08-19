@@ -1,0 +1,30 @@
+# Health Monitor Service Dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Copy health monitoring script
+COPY deployment/monitoring/health-monitor.js ./health-monitor.js
+COPY package*.json ./
+
+# Install minimal dependencies for health monitoring
+RUN npm ci --only=production --no-audit --no-fund
+
+# Create non-root user
+RUN addgroup -g 1001 -S healthmon && \
+    adduser -S -D -H -u 1001 -h /app -s /sbin/nologin -G healthmon -g healthmon healthmon && \
+    chown -R healthmon:healthmon /app
+
+USER healthmon
+
+# Expose metrics port
+EXPOSE 8080
+
+# Health check for the health monitor itself
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+CMD ["node", "health-monitor.js"]

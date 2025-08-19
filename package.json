@@ -25,6 +25,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@pixi/unsafe-eval": "^7.4.3",
     "@tensorflow/tfjs": "^4.15.0",
     "colyseus": "^0.15.0",
     "colyseus.js": "^0.15.0",

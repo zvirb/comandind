@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js';
+// Enable CSP support for unsafe-eval restrictions
+import '@pixi/unsafe-eval';
 import { WebGLContextManager } from '../rendering/WebGLContextManager.js';
 
 export class Application {
@@ -71,7 +73,8 @@ export class Application {
         // Store references (in v7, app is ready immediately)
         this.renderer = this.app.renderer;
         this.stage = this.app.stage;
-        this.view = this.app.view; // In v7.4.3, this should be 'view'
+        // PixiJS v7 canvas access - use renderer.view or app.canvas
+        this.view = this.app.canvas || this.app.view || this.renderer.view;
         
         // Complete the initialization process
         return this.completeInitialization();
@@ -283,7 +286,7 @@ export class Application {
         // Continue with standard initialization
         this.renderer = this.app.renderer;
         this.stage = this.app.stage;
-        this.view = this.app.view;
+        this.view = this.app.canvas || this.app.view || this.renderer.view;
         
         // Add fallback indicator
         this.addFallbackIndicator();
