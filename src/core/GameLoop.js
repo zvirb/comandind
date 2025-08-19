@@ -61,44 +61,68 @@ export class GameLoop {
     loop(timestamp) {
         if (!this.isRunning) return;
         
-        // Calculate delta time
-        const deltaTime = Math.min(timestamp - this.lastTime, 250); // Cap at 250ms to prevent huge jumps
-        this.lastTime = timestamp;
-        
-        // Update FPS counter
-        this.updateFPS(timestamp);
-        
-        // Add to accumulator
-        this.accumulator += deltaTime;
-        
-        // Fixed timestep update loop
-        let updateSteps = 0;
-        while (this.accumulator >= this.fixedDeltaTime && updateSteps < this.maxUpdateSteps) {
-            // Call update with fixed delta time
-            this.updateCallback(this.fixedDeltaTime / 1000); // Convert to seconds
+        try {
+            // Calculate delta time
+            const deltaTime = Math.min(timestamp - this.lastTime, 250); // Cap at 250ms to prevent huge jumps
+            this.lastTime = timestamp;
             
-            this.accumulator -= this.fixedDeltaTime;
-            updateSteps++;
+            // Update FPS counter
+            this.updateFPS(timestamp);
+            
+            // Add to accumulator
+            this.accumulator += deltaTime;
+            
+            // Fixed timestep update loop
+            let updateSteps = 0;
+            while (this.accumulator >= this.fixedDeltaTime && updateSteps < this.maxUpdateSteps) {
+                try {
+                    // Call update with fixed delta time
+                    this.updateCallback(this.fixedDeltaTime / 1000); // Convert to seconds
+                } catch (updateError) {
+                    console.error('Error in update callback:', updateError);
+                    console.error('Stack trace:', updateError.stack);
+                    this.stop();
+                    return;
+                }
+                
+                this.accumulator -= this.fixedDeltaTime;
+                updateSteps++;
+            }
+            
+            // Warn if we're falling behind
+            if (updateSteps >= this.maxUpdateSteps) {
+                console.warn(`Game loop is falling behind! ${updateSteps} updates in one frame`);
+                // Reset accumulator to prevent spiral of death
+                this.accumulator = 0;
+            }
+            
+            // Calculate interpolation value for smooth rendering
+            const interpolation = this.accumulator / this.fixedDeltaTime;
+            
+            try {
+                // Render with interpolation
+                this.renderCallback(interpolation);
+            } catch (renderError) {
+                console.error('Error in render callback:', renderError);
+                console.error('Stack trace:', renderError.stack);
+                this.stop();
+                return;
+            }
+            
+            // Increment frame counter
+            this.frameCount++;
+            
+            // Request next frame
+            this.rafId = requestAnimationFrame(this.loop);
+            
+        } catch (loopError) {
+            console.error('Critical error in game loop:', loopError);
+            console.error('Stack trace:', loopError.stack);
+            this.stop();
+            
+            // Prevent endless error loops
+            throw loopError;
         }
-        
-        // Warn if we're falling behind
-        if (updateSteps >= this.maxUpdateSteps) {
-            console.warn(`Game loop is falling behind! ${updateSteps} updates in one frame`);
-            // Reset accumulator to prevent spiral of death
-            this.accumulator = 0;
-        }
-        
-        // Calculate interpolation value for smooth rendering
-        const interpolation = this.accumulator / this.fixedDeltaTime;
-        
-        // Render with interpolation
-        this.renderCallback(interpolation);
-        
-        // Increment frame counter
-        this.frameCount++;
-        
-        // Request next frame
-        this.rafId = requestAnimationFrame(this.loop);
     }
     
     updateFPS(timestamp) {
