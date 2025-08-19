@@ -21,6 +21,9 @@ npm run dev
 
 # Build for production
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
 ## 🕹️ Controls
@@ -57,6 +60,54 @@ npm run build
 - **Memory Usage**: <200MB baseline, <500MB maximum
 - **Unit Count**: 200+ units on screen simultaneously
 - **Draw Calls**: Optimized batching with <10 draw calls for 1000 sprites
+
+## 🚀 Deployment
+
+### Production Build
+
+The production build creates optimized, minified assets for deployment:
+
+```bash
+# Install dependencies (including terser for minification)
+npm install
+
+# Create production build
+npm run build
+
+# Test production build locally
+npm run preview
+```
+
+### Build Output
+
+- **Total Size**: ~2.3MB (including assets)
+- **JavaScript Bundles**:
+  - `pixi-CsMBq2CO.js`: 456KB (133KB gzipped) - PixiJS library
+  - `game-core-C4ActvUn.js`: 8KB (2.5KB gzipped) - Core game systems
+  - `index-DDUGy_1C.js`: 8KB (2.7KB gzipped) - Main application entry
+
+### Deployment Configuration
+
+- **Build Tool**: Vite with Terser minification
+- **Source Maps**: Generated for debugging
+- **Module Chunks**: Separated for optimal caching
+- **Console Logs**: Stripped in production
+- **Assets**: Copied with cache-busting hashes
+
+### Health Checks
+
+Production deployment should verify:
+- HTTP 200 response for main page
+- All JavaScript bundles load successfully
+- WebGL context initializes
+- Performance metrics within targets
+- Assets (sprites, audio, maps) accessible
+
+### Environment Requirements
+
+- **Node.js**: >=18.0.0
+- **Web Server**: Any static file server
+- **Browser Support**: Modern browsers with ES6+ and WebGL support
 
 ## 🗂️ Project Structure
 
