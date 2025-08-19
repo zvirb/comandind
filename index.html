@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ws: wss:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Command and Independent Thought - RTS Game</title>
@@ -83,9 +91,71 @@
         .hidden {
             display: none !important;
         }
+        
+        /* Security Notice */
+        .security-notice {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 10px;
+            padding: 5px;
+            z-index: 999;
+            user-select: none;
+        }
+        
+        /* Navigation Controls */
+        .navigation-controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 15px;
+            z-index: 1001;
+            min-width: 250px;
+            border-radius: 5px;
+        }
+        
+        .navigation-controls .nav-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #ff0;
+        }
+        
+        .navigation-controls label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        
+        .navigation-controls input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .navigation-controls .nav-status {
+            margin: 10px 0;
+            font-weight: bold;
+            color: #0ff;
+        }
+        
+        .navigation-controls .nav-help {
+            font-size: 10px;
+            color: #888;
+            margin-top: 10px;
+            line-height: 1.3;
+        }
     </style>
 </head>
 <body>
+    <!-- Game Container -->
     <div id="game-container">
         <div id="loading-screen">
             <div id="loading-text">INITIALIZING COMMAND AND INDEPENDENT THOUGHT...</div>
@@ -100,6 +170,111 @@
             <div>Memory: <span id="memory">0</span> MB</div>
         </div>
     </div>
-    <script type="module" src="/src/index.js"></script>
+
+    <!-- Security Notice -->
+    <div class="security-notice">
+        🛡️ Secure Error Handling Active
+    </div>
+    
+    <!-- Navigation Controls -->
+    <div id="navigation-controls" class="navigation-controls hidden">
+        <div class="nav-title">Navigation Settings</div>
+        <label><input type="checkbox" id="nav-protection" checked> Navigation Protection</label>
+        <label><input type="checkbox" id="allow-shortcuts" checked> Allow Browser Shortcuts</label>
+        <div class="nav-status">Status: <span id="nav-status">Protected</span></div>
+        <div class="nav-help">Press F5, Ctrl+R to refresh | Alt+← → for back/forward</div>
+    </div>
+
+    <!-- Secure Error Handling System -->
+    <script type="module">
+        console.log('🛡️ Initializing Secure Error Handling System...');
+        
+        // Import secure error handling modules
+        import { secureErrorHandler } from '/src/utils/SecureErrorHandler.js';
+        import { secureErrorDisplay } from '/src/utils/SecureErrorDisplay.js';
+        
+        // Initialize secure components
+        secureErrorDisplay.initialize();
+        
+        console.log('✅ Secure Error Handling System ready');
+    </script>
+
+    <!-- Load game with secure error protection -->
+    <script type="module">
+        console.log('🎮 Loading game module with secure error protection...');
+        
+        // Import secure error handling
+        const { secureErrorHandler } = await import('/src/utils/SecureErrorHandler.js');
+        
+        try {
+            console.log('Importing game module...');
+            await import('/src/index.js');
+            console.log('✅ Game module loaded successfully');
+            
+            // Setup navigation controls after game loads
+            setupNavigationControls();
+            
+        } catch (error) {
+            console.error('❌ Failed to load game module:', error);
+            secureErrorHandler.captureError(error, 'module_load', {
+                moduleUrl: '/src/index.js',
+                importError: true
+            });
+        }
+        
+        function setupNavigationControls() {
+            // Show navigation controls
+            const navControls = document.getElementById('navigation-controls');
+            const navProtection = document.getElementById('nav-protection');
+            const allowShortcuts = document.getElementById('allow-shortcuts');
+            const navStatus = document.getElementById('nav-status');
+            
+            // Show controls after a delay
+            setTimeout(() => {
+                navControls.classList.remove('hidden');
+                console.log('🎛️ Navigation controls activated');
+            }, 2000);
+            
+            // Setup event listeners
+            navProtection.addEventListener('change', (e) => {
+                if (window.navigationUtils) {
+                    window.navigationUtils.setNavigationProtection(e.target.checked);
+                    updateNavStatus();
+                }
+            });
+            
+            allowShortcuts.addEventListener('change', (e) => {
+                console.log(`🔧 Browser shortcuts: ${e.target.checked ? 'enabled' : 'disabled'}`);
+                updateNavStatus();
+            });
+            
+            // Update status display
+            function updateNavStatus() {
+                const isProtected = navProtection.checked;
+                const shortcutsAllowed = allowShortcuts.checked;
+                
+                if (!isProtected) {
+                    navStatus.textContent = 'Unprotected';
+                    navStatus.style.color = '#f00';
+                } else if (shortcutsAllowed) {
+                    navStatus.textContent = 'Friendly';
+                    navStatus.style.color = '#0f0';
+                } else {
+                    navStatus.textContent = 'Protected';
+                    navStatus.style.color = '#ff0';
+                }
+            }
+            
+            // Keyboard shortcut to toggle navigation controls (Alt+N)
+            document.addEventListener('keydown', (e) => {
+                if (e.altKey && e.key === 'n') {
+                    e.preventDefault();
+                    navControls.classList.toggle('hidden');
+                }
+            });
+            
+            updateNavStatus();
+        }
+    </script>
 </body>
 </html>

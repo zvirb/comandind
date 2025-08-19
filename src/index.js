@@ -3,7 +3,21 @@ import { GameLoop } from './core/GameLoop.js';
 import { Camera } from './core/Camera.js';
 import { PerformanceMonitor } from './utils/PerformanceMonitor.js';
 import { InputHandler } from './core/InputHandler.js';
+import { createEventManager } from './utils/EventListenerManager.js';
 import { TestSprites } from './rendering/TestSprites.js';
+import { CnCAssetLoader } from './rendering/CnCAssetLoader.js';
+import { UIUpdateManager } from './core/UIUpdateManager.js';
+import { 
+    World, 
+    EntityFactory,
+    MovementSystem,
+    RenderingSystem,
+    UnitMovementSystem,
+    CombatSystem,
+    AISystem,
+    SelectionSystem
+} from './ecs/index.js';
+import { PathfindingSystem } from './ecs/PathfindingSystem.js';
 
 class CommandAndIndependentThought {
     constructor() {
@@ -13,7 +27,14 @@ class CommandAndIndependentThought {
         this.performanceMonitor = null;
         this.inputHandler = null;
         this.testSprites = null;
+        this.cncAssets = null;
+        this.world = null;
+        this.entityFactory = null;
+        this.uiUpdateManager = null;
         this.isInitialized = false;
+        
+        // Create event listener manager for this game instance
+        this.eventManager = createEventManager('GameInstance');
     }
 
     async initialize() {
@@ -62,25 +83,82 @@ class CommandAndIndependentThought {
             // Initialize performance monitor
             this.performanceMonitor = new PerformanceMonitor();
             
+            // Initialize UI update manager with optimized settings
+            this.uiUpdateManager = new UIUpdateManager({
+                updateHz: 10, // 10Hz for performance stats
+                enableVirtualDOM: true // Enable virtual DOM for better performance
+            });
+            
+            this.updateLoadingProgress(85, 'Loading C&C assets...');
+            
+            // Initialize C&C asset loader
+            this.cncAssets = new CnCAssetLoader();
+            await this.cncAssets.loadGameData();
+            
+            this.updateLoadingProgress(87, 'Initializing ECS world...');
+            
+            // Initialize ECS World and Systems
+            this.world = new World();
+            this.entityFactory = new EntityFactory(this.world, this.cncAssets);
+            
+            // Add systems to world (order matters for priority)
+            this.world.addSystem(new MovementSystem(this.world));
+            this.pathfindingSystem = new PathfindingSystem(this.world, 2000, 2000);
+            this.world.addSystem(this.pathfindingSystem);
+            this.world.addSystem(new UnitMovementSystem(this.world));
+            this.selectionSystem = new SelectionSystem(
+                this.world, 
+                this.inputHandler, 
+                this.camera, 
+                this.application.stage
+            );
+            this.world.addSystem(this.selectionSystem);
+            this.world.addSystem(new CombatSystem(this.world));
+            this.world.addSystem(new AISystem(this.world));
+            this.world.addSystem(new RenderingSystem(this.world, this.application.stage));
+            
             this.updateLoadingProgress(90, 'Creating test sprites...');
             
             // Create test sprites for demonstration
             this.testSprites = new TestSprites(this.application);
             await this.testSprites.createTestSprites(100); // Start with 100 sprites
             
+            // Add some C&C units for testing
+            this.createCnCTestUnits();
+            
             this.updateLoadingProgress(95, 'Finalizing...');
             
-            // Setup window resize handler
-            window.addEventListener('resize', this.handleResize.bind(this));
+            // Setup window resize handler using event manager
+            this.eventManager.addEventListener(window, 'resize', this.handleResize.bind(this));
+            
+            // Setup cleanup handler
+            window.addEventListener('beforeunload', this.cleanup.bind(this));
             
             // Hide loading screen and show performance monitor
             setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('performance-monitor').classList.remove('hidden');
-                this.isInitialized = true;
-                
-                // Start the game loop
-                this.gameLoop.start();
+                // Double-check that everything is properly initialized before hiding loading screen
+                if (this.application && this.application.view && this.gameLoop) {
+                    console.log('🎮 All systems ready - hiding loading screen');
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('performance-monitor').classList.remove('hidden');
+                    this.isInitialized = true;
+                    
+                    // Start the game loop
+                    this.gameLoop.start();
+                    
+                    // Start the UI update manager
+                    this.uiUpdateManager.start();
+                    console.log('✅ Game is now running!');
+                } else {
+                    console.error('❌ Cannot start game - critical systems not initialized');
+                    console.error('Application:', !!this.application);
+                    console.error('Application.view:', !!this.application?.view);
+                    console.error('GameLoop:', !!this.gameLoop);
+                    
+                    // Keep loading screen visible and show error
+                    document.getElementById('loading-text').textContent = 'ERROR: Failed to initialize game systems';
+                    document.getElementById('loading-text').style.color = '#f00';
+                }
             }, 500);
             
             this.updateLoadingProgress(100, 'Ready!');
@@ -104,6 +182,50 @@ class CommandAndIndependentThought {
         if (loadingText && message) {
             loadingText.textContent = message;
         }
+    }
+    
+    createCnCTestUnits() {
+        if (!this.cncAssets || !this.entityFactory) return;
+        
+        console.log('🎮 Creating C&C test units with ECS...');
+        
+        // Create some GDI units using ECS
+        const gdiUnits = this.cncAssets.getUnitsByFaction('gdi').slice(0, 3);
+        gdiUnits.forEach((unit, index) => {
+            const entity = this.entityFactory.createUnit(unit.key, 200 + index * 60, 200, 'gdi');
+            if (entity) {
+                console.log(`Created GDI unit entity: ${unit.name} (ID: ${entity.id})`);
+            }
+        });
+        
+        // Create some NOD units using ECS
+        const nodUnits = this.cncAssets.getUnitsByFaction('nod').slice(0, 3);
+        nodUnits.forEach((unit, index) => {
+            const entity = this.entityFactory.createUnit(unit.key, 200 + index * 60, 300, 'nod');
+            if (entity) {
+                console.log(`Created NOD unit entity: ${unit.name} (ID: ${entity.id})`);
+            }
+        });
+        
+        // Create some buildings using ECS
+        const gdiBuildings = this.cncAssets.getBuildingsByFaction('gdi').slice(0, 2);
+        gdiBuildings.forEach((building, index) => {
+            const entity = this.entityFactory.createBuilding(building.key, 400 + index * 80, 200, 'gdi');
+            if (entity) {
+                console.log(`Created GDI building entity: ${building.name} (ID: ${entity.id})`);
+            }
+        });
+        
+        const nodBuildings = this.cncAssets.getBuildingsByFaction('nod').slice(0, 2);
+        nodBuildings.forEach((building, index) => {
+            const entity = this.entityFactory.createBuilding(building.key, 400 + index * 80, 320, 'nod');
+            if (entity) {
+                console.log(`Created NOD building entity: ${building.name} (ID: ${entity.id})`);
+            }
+        });
+        
+        // Display ECS world stats
+        console.log('🔧 ECS World Stats:', this.world.getStats());
     }
     
     setupInputHandlers() {
@@ -168,6 +290,15 @@ class CommandAndIndependentThought {
                     // Clear all sprites
                     this.testSprites.clearSprites();
                     break;
+                // Debug controls
+                case 'p':
+                case 'P':
+                    // Toggle pathfinding debug visualization
+                    if (this.pathfindingSystem) {
+                        this.pathfindingSystem.toggleDebugMode(this.application.stage);
+                        console.log('Pathfinding debug mode:', this.pathfindingSystem.debugMode);
+                    }
+                    break;
             }
         });
         
@@ -192,12 +323,34 @@ class CommandAndIndependentThought {
             }
         });
         
-        // Mouse wheel zoom
+        // Pinch zoom (trackpad/touch)
+        this.inputHandler.on('pinchzoom', (event) => {
+            this.camera.zoomToPoint(
+                this.camera.scale + event.delta,
+                event.clientX,
+                event.clientY
+            );
+        });
+        
+        // Wheel zoom (mouse wheel)
+        this.inputHandler.on('wheelzoom', (event) => {
+            this.camera.zoomToPoint(
+                this.camera.scale + event.delta,
+                event.clientX,
+                event.clientY
+            );
+        });
+        
+        // Trackpad pan (two-finger swipe)
+        this.inputHandler.on('trackpadpan', (event) => {
+            // Move camera based on trackpad pan
+            this.camera.targetX += event.deltaX;
+            this.camera.targetY += event.deltaY;
+        });
+        
+        // Legacy wheel event for backwards compatibility
         this.inputHandler.on('wheel', (event) => {
-            event.preventDefault();
-            const zoomSpeed = 0.1;
-            const delta = event.deltaY > 0 ? -zoomSpeed : zoomSpeed;
-            this.camera.zoom(this.camera.scale + delta);
+            // Handled by the new events above
         });
     }
     
@@ -207,6 +360,11 @@ class CommandAndIndependentThought {
         // Update camera
         this.camera.update(deltaTime);
         
+        // Update ECS world
+        if (this.world) {
+            this.world.update(deltaTime);
+        }
+        
         // Animate test sprites
         if (this.testSprites) {
             this.testSprites.animateSprites(deltaTime);
@@ -215,21 +373,39 @@ class CommandAndIndependentThought {
         // Update performance monitor
         this.performanceMonitor.update();
         
-        // Update performance display
+        // Queue UI updates through UIUpdateManager (throttled at 10Hz)
+        this.updatePerformanceUI();
+    }
+    
+    /**
+     * Update performance UI through UIUpdateManager (optimized DOM updates)
+     */
+    updatePerformanceUI() {
+        if (!this.uiUpdateManager || !this.performanceMonitor) return;
+        
         const fps = Math.round(this.performanceMonitor.getFPS());
         const memory = Math.round(this.performanceMonitor.getMemoryUsage());
         const drawCalls = this.application.renderer.gl?.drawingBufferHeight ? 
             this.application.renderer.drawCalls || 0 : 0;
         const sprites = this.application.stage.children.length;
+        const ecsEntities = this.world ? this.world.entities.size : 0;
         
-        document.getElementById('fps').textContent = fps;
-        document.getElementById('draw-calls').textContent = drawCalls;
-        document.getElementById('sprite-count').textContent = sprites;
-        document.getElementById('memory').textContent = memory;
+        // Queue batched updates through UIUpdateManager
+        this.uiUpdateManager.updatePerformanceStats({
+            fps: fps,
+            drawCalls: drawCalls,
+            spriteCount: `${sprites} (${ecsEntities} ECS)`,
+            memory: memory
+        });
     }
     
     render(interpolation) {
         if (!this.isInitialized) return;
+        
+        // Render ECS world
+        if (this.world) {
+            this.world.render(interpolation);
+        }
         
         // Render with interpolation for smooth visuals
         this.application.render(interpolation);
@@ -242,19 +418,194 @@ class CommandAndIndependentThought {
         this.application.resize(width, height);
         this.camera.resize(width, height);
     }
+    
+    /**
+     * Clean up resources when the game is shutting down
+     */
+    cleanup() {
+        console.log('🧹 Starting game cleanup...');
+        
+        try {
+            // Stop UI update manager
+            if (this.uiUpdateManager) {
+                this.uiUpdateManager.stop();
+            }
+            
+            // Stop game loop
+            if (this.gameLoop) {
+                this.gameLoop.stop();
+            }
+            
+            // Stop performance monitor
+            if (this.performanceMonitor) {
+                this.performanceMonitor.stop();
+            }
+            
+            // Clean up ECS world
+            if (this.world) {
+                this.world.cleanup();
+            }
+            
+            // Remove event listeners
+            if (this.inputHandler && this.inputHandler.destroy) {
+                this.inputHandler.destroy();
+            } else if (this.inputHandler && this.inputHandler.cleanup) {
+                this.inputHandler.cleanup();
+            }
+            
+            // Destroy event manager (removes all managed listeners)
+            if (this.eventManager) {
+                this.eventManager.destroy();
+                this.eventManager = null;
+            }
+            
+            // Destroy selection system
+            if (this.selectionSystem && this.selectionSystem.destroy) {
+                this.selectionSystem.destroy();
+            }
+            
+            // Destroy PIXI application
+            if (this.application) {
+                this.application.destroy();
+            }
+            
+            console.log('✅ Game cleanup completed');
+        } catch (error) {
+            console.error('❌ Error during cleanup:', error);
+        }
+    }
 }
 
-// Initialize game when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGame);
-} else {
-    initGame();
+// Global error logging to localStorage
+function logError(error, context = 'unknown') {
+    try {
+        const errors = JSON.parse(localStorage.getItem('comandind_errors') || '[]');
+        errors.push({
+            timestamp: new Date().toISOString(),
+            message: error.message || 'Unknown error',
+            stack: error.stack || 'No stack trace',
+            context: context,
+            url: window.location.href,
+            userAgent: navigator.userAgent
+        });
+        
+        // Keep only last 10 errors
+        if (errors.length > 10) {
+            errors.splice(0, errors.length - 10);
+        }
+        
+        localStorage.setItem('comandind_errors', JSON.stringify(errors));
+        console.error(`[${context}] Error logged:`, error);
+    } catch (logError) {
+        console.error('Failed to log error:', logError);
+    }
+}
+
+// Initialize game state
+let gameInitialized = false;
+
+// Navigation protection configuration
+let navigationProtectionEnabled = true;
+let hasUnsavedChanges = false;
+
+// Navigation protection utilities
+window.navigationUtils = {
+    setUnsavedChanges: (hasChanges) => {
+        hasUnsavedChanges = hasChanges;
+        console.log(`📝 Unsaved changes: ${hasChanges}`);
+    },
+    
+    setNavigationProtection: (enabled) => {
+        navigationProtectionEnabled = enabled;
+        console.log(`🛡️ Navigation protection: ${enabled ? 'enabled' : 'disabled'}`);
+    },
+    
+    isNavigationProtected: () => navigationProtectionEnabled && hasUnsavedChanges,
+    
+    // Disable protection temporarily for programmatic navigation
+    disableProtectionTemporarily: (callback) => {
+        const wasEnabled = navigationProtectionEnabled;
+        navigationProtectionEnabled = false;
+        try {
+            callback();
+        } finally {
+            navigationProtectionEnabled = wasEnabled;
+        }
+    }
+};
+
+// Initialize global error handlers only in browser environment
+if (typeof window !== 'undefined') {
+    // Capture all unhandled errors (but allow navigation)
+    window.addEventListener('error', (e) => {
+        logError(e, 'global_error');
+        // Don't prevent default - allow browser to handle navigation
+        console.warn('🚨 Error occurred but navigation allowed:', e.message);
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+        logError(new Error(`Promise rejection: ${e.reason}`), 'promise_rejection');
+        // Don't prevent default - allow browser to handle navigation
+        console.warn('🚨 Promise rejection occurred but navigation allowed:', e.reason);
+    });
+    
+    // Add proper beforeunload handler for user confirmation
+    window.addEventListener('beforeunload', (e) => {
+        if (navigationProtectionEnabled && hasUnsavedChanges) {
+            // Modern browsers ignore returnValue, but set it for compatibility
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            return e.returnValue;
+        }
+        // If no unsaved changes or protection disabled, allow navigation
+    });
+    
+    // Add unload handler for cleanup
+    window.addEventListener('unload', () => {
+        // Cleanup code when page is actually unloading
+        if (window.game && typeof window.game.cleanup === 'function') {
+            window.game.cleanup();
+        }
+        console.log('🧹 Page unloaded, cleanup performed');
+    });
+
+    // Initialize game when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGame);
+    } else {
+        initGame();
+    }
 }
 
 async function initGame() {
-    const game = new CommandAndIndependentThought();
-    window.game = game; // Expose for debugging
-    await game.initialize();
+    // Prevent multiple initialization
+    if (gameInitialized) {
+        console.warn('Game already initialized, skipping...');
+        return;
+    }
+    gameInitialized = true;
+    
+    try {
+        console.log('🎮 Initializing Command and Independent Thought...');
+        const game = new CommandAndIndependentThought();
+        window.game = game; // Expose for debugging
+        
+        await game.initialize();
+        console.log('✅ Game initialized successfully!');
+        
+    } catch (error) {
+        logError(error, 'game_initialization');
+        console.error('❌ Failed to initialize game:', error);
+        console.error('Stack trace:', error.stack);
+        gameInitialized = false; // Allow retry
+        
+        // Show error to user
+        const loadingText = document.getElementById('loading-text');
+        if (loadingText) {
+            loadingText.textContent = `ERROR: ${error.message}`;
+            loadingText.style.color = '#f00';
+        }
+    }
 }
 
 export { CommandAndIndependentThought };
