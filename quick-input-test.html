@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Input Config Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #0f0;
+            line-height: 1.6;
+        }
+        .console-output {
+            background: #000;
+            padding: 15px;
+            border: 1px solid #0f0;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .warning { color: #ff0; }
+        .info { color: #0ff; }
+    </style>
+</head>
+<body>
+    <h1>InputConfig Detection Test</h1>
+    <p>This test loads the updated InputConfig.js and shows the detection results.</p>
+    
+    <div id="output" class="console-output">Loading...</div>
+    
+    <script>
+        const output = document.getElementById('output');
+        let logContent = '';
+        
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logContent += `[${timestamp}] ${message}\n`;
+            output.textContent = logContent;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('ERROR: ' + args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog('WARN: ' + args.join(' '), 'warning');
+        };
+        
+        // Load and test InputConfig
+        import('./src/core/InputConfig.js')
+            .then(({ InputConfig, inputConfig }) => {
+                addLog('InputConfig module loaded successfully');
+                addLog('Testing InputConfig instantiation...');
+                
+                // Test the singleton instance
+                addLog(`Singleton Touch: ${inputConfig.hasTouch}, Trackpad: ${inputConfig.isTrackpad}`);
+                
+                // Create a new instance
+                addLog('Creating new InputConfig instance...');
+                const newConfig = new InputConfig();
+                addLog(`New instance Touch: ${newConfig.hasTouch}, Trackpad: ${newConfig.isTrackpad}`);
+                
+                // Add wheel event listener to test dynamic detection
+                let wheelEventCount = 0;
+                document.addEventListener('wheel', (e) => {
+                    wheelEventCount++;
+                    if (wheelEventCount <= 3) {
+                        addLog(`Wheel event ${wheelEventCount}: deltaY=${e.deltaY}, deltaX=${e.deltaX}, fractional=${e.deltaY % 1 !== 0}`);
+                        
+                        // Test the update method
+                        const wasTrackpad = newConfig.isTrackpad;
+                        newConfig.updateTrackpadDetection(e);
+                        
+                        if (newConfig.isTrackpad !== wasTrackpad) {
+                            addLog('Trackpad detection changed due to wheel event!');
+                        }
+                    }
+                });
+                
+                addLog('Test completed! Try scrolling/using trackpad to test dynamic detection.');
+                
+            })
+            .catch(error => {
+                addLog(`Failed to load InputConfig: ${error.message}`, 'error');
+                originalError('InputConfig load error:', error);
+            });
+    </script>
+</body>
+</html>

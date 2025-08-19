@@ -1,0 +1,64 @@
+{
+  "GDI_CONSTRUCTION_YARD": {
+    "name": "Construction Yard",
+    "cost": 5000,
+    "health": 800,
+    "power": 0,
+    "faction": "GDI"
+  },
+  "GDI_POWER_PLANT": {
+    "name": "Power Plant",
+    "cost": 300,
+    "health": 400,
+    "power": 100,
+    "faction": "GDI"
+  },
+  "GDI_BARRACKS": {
+    "name": "Barracks",
+    "cost": 400,
+    "health": 500,
+    "power": -20,
+    "faction": "GDI",
+    "produces": "infantry"
+  },
+  "GDI_REFINERY": {
+    "name": "Refinery",
+    "cost": 2000,
+    "health": 450,
+    "power": -40,
+    "faction": "GDI",
+    "special": "harvester_included"
+  },
+  "NOD_CONSTRUCTION_YARD": {
+    "name": "Construction Yard",
+    "cost": 5000,
+    "health": 800,
+    "power": 0,
+    "faction": "NOD"
+  },
+  "NOD_POWER_PLANT": {
+    "name": "Power Plant",
+    "cost": 300,
+    "health": 400,
+    "power": 100,
+    "faction": "NOD"
+  },
+  "NOD_HAND_OF_NOD": {
+    "name": "Hand of Nod",
+    "cost": 400,
+    "health": 500,
+    "power": -20,
+    "faction": "NOD",
+    "produces": "infantry"
+  },
+  "NOD_OBELISK": {
+    "name": "Obelisk of Light",
+    "cost": 1500,
+    "health": 400,
+    "power": -150,
+    "faction": "NOD",
+    "weapon": "laser",
+    "damage": 200,
+    "range": 7.5
+  }
+}

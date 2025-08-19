@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Device Detection Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #0f0;
+            line-height: 1.4;
+        }
+        .test-section {
+            background: #000;
+            padding: 15px;
+            border: 1px solid #0f0;
+            margin: 10px 0;
+        }
+        .result {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .success { color: #0f0; }
+        .failure { color: #f00; }
+        .warning { color: #ff0; }
+        .info { color: #0ff; }
+        button {
+            background: #333;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Input Device Detection Analysis</h1>
+    
+    <div class="test-section">
+        <h3>Browser Environment Check</h3>
+        <div id="browser-env"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Touch Detection Test</h3>
+        <div id="touch-detection"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Trackpad Detection Test</h3>
+        <div id="trackpad-detection"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Platform Analysis</h3>
+        <div id="platform-analysis"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Live Event Testing</h3>
+        <button onclick="startEventTesting()">Start Event Monitoring</button>
+        <button onclick="clearEventLog()">Clear Log</button>
+        <div id="event-log" style="max-height: 300px; overflow-y: auto; background: #111; padding: 10px; margin-top: 10px;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>InputConfig.js Test</h3>
+        <button onclick="testInputConfig()">Test InputConfig Detection</button>
+        <div id="inputconfig-results"></div>
+    </div>
+
+    <script type="module">
+        // Test browser environment
+        function testBrowserEnvironment() {
+            const results = [];
+            
+            results.push(`window defined: ${typeof window !== 'undefined'}`);
+            results.push(`navigator defined: ${typeof navigator !== 'undefined'}`);
+            results.push(`document defined: ${typeof document !== 'undefined'}`);
+            
+            if (typeof navigator !== 'undefined') {
+                results.push(`navigator.userAgent: ${navigator.userAgent || 'undefined'}`);
+                results.push(`navigator.platform: ${navigator.platform || 'undefined'}`);
+                results.push(`navigator.maxTouchPoints: ${navigator.maxTouchPoints || 'undefined'}`);
+            }
+            
+            document.getElementById('browser-env').innerHTML = results.map(r => `<div class="info">${r}</div>`).join('');
+        }
+        
+        // Test touch detection methods
+        function testTouchDetection() {
+            const results = [];
+            
+            // Method 1: ontouchstart in window
+            const hasOntouchstart = 'ontouchstart' in window;
+            results.push(`'ontouchstart' in window: ${hasOntouchstart}`);
+            
+            // Method 2: navigator.maxTouchPoints
+            const maxTouchPoints = navigator.maxTouchPoints || 0;
+            results.push(`navigator.maxTouchPoints: ${maxTouchPoints}`);
+            
+            // Method 3: Combined check
+            const hasTouchSupport = hasOntouchstart || maxTouchPoints > 0;
+            results.push(`Combined touch support: ${hasTouchSupport}`);
+            
+            // Method 4: Touch events available
+            const hasTouchEvents = window.TouchEvent !== undefined;
+            results.push(`TouchEvent constructor available: ${hasTouchEvents}`);
+            
+            // Method 5: Media query
+            let matchesMediaQuery = false;
+            try {
+                matchesMediaQuery = window.matchMedia('(pointer: coarse)').matches;
+            } catch (e) {
+                results.push(`Media query error: ${e.message}`);
+            }
+            results.push(`Media query (pointer: coarse): ${matchesMediaQuery}`);
+            
+            const finalResult = hasTouchSupport ? 
+                '<div class="result success">✓ Touch support detected</div>' :
+                '<div class="result failure">✗ No touch support detected</div>';
+            
+            document.getElementById('touch-detection').innerHTML = 
+                results.map(r => `<div class="info">${r}</div>`).join('') + finalResult;
+        }
+        
+        // Test trackpad detection methods
+        function testTrackpadDetection() {
+            const results = [];
+            
+            if (typeof navigator === 'undefined') {
+                results.push('<div class="failure">Navigator not available</div>');
+                document.getElementById('trackpad-detection').innerHTML = results.join('');
+                return;
+            }
+            
+            const platform = (navigator.platform || '').toLowerCase();
+            const userAgent = (navigator.userAgent || '').toLowerCase();
+            
+            results.push(`Platform (lowercase): ${platform}`);
+            results.push(`UserAgent (lowercase): ${userAgent}`);
+            
+            // Platform-based detection
+            const isMac = platform.includes('mac');
+            results.push(`Mac detected: ${isMac}`);
+            
+            const hasLaptopIndicators = userAgent.includes('laptop') || userAgent.includes('notebook');
+            results.push(`Laptop indicators: ${hasLaptopIndicators}`);
+            
+            const isTrackpad = isMac || hasLaptopIndicators;
+            
+            const finalResult = isTrackpad ? 
+                '<div class="result warning">⚠ Trackpad likely (platform-based)</div>' :
+                '<div class="result info">? Trackpad detection needs wheel events</div>';
+            
+            document.getElementById('trackpad-detection').innerHTML = 
+                results.map(r => `<div class="info">${r}</div>`).join('') + finalResult;
+        }
+        
+        // Analyze platform details
+        function analyzePlatform() {
+            const results = [];
+            
+            if (typeof navigator !== 'undefined') {
+                const nav = navigator;
+                
+                results.push(`User Agent: ${nav.userAgent}`);
+                results.push(`Platform: ${nav.platform}`);
+                results.push(`App Name: ${nav.appName}`);
+                results.push(`App Version: ${nav.appVersion}`);
+                
+                // Check for specific OS indicators
+                const ua = nav.userAgent.toLowerCase();
+                results.push(`Windows detected: ${ua.includes('windows')}`);
+                results.push(`Mac detected: ${ua.includes('mac')}`);
+                results.push(`Linux detected: ${ua.includes('linux')}`);
+                results.push(`Mobile detected: ${ua.includes('mobile')}`);
+                results.push(`Tablet detected: ${ua.includes('tablet')}`);
+                
+                // Check for browser indicators
+                results.push(`Chrome detected: ${ua.includes('chrome')}`);
+                results.push(`Firefox detected: ${ua.includes('firefox')}`);
+                results.push(`Safari detected: ${ua.includes('safari')}`);
+                results.push(`Edge detected: ${ua.includes('edge')}`);
+            }
+            
+            document.getElementById('platform-analysis').innerHTML = 
+                results.map(r => `<div class="info">${r}</div>`).join('');
+        }
+        
+        // Event testing
+        let eventTesting = false;
+        let wheelEventCount = 0;
+        
+        window.startEventTesting = function() {
+            if (eventTesting) return;
+            
+            eventTesting = true;
+            wheelEventCount = 0;
+            
+            const log = document.getElementById('event-log');
+            log.innerHTML = '<div class="info">Event monitoring started...</div>';
+            
+            // Wheel event listener
+            function handleWheel(e) {
+                wheelEventCount++;
+                const logEntry = document.createElement('div');
+                logEntry.className = 'info';
+                logEntry.innerHTML = `
+                    <strong>Wheel Event #${wheelEventCount}:</strong><br>
+                    deltaX: ${e.deltaX}, deltaY: ${e.deltaY}, deltaZ: ${e.deltaZ}<br>
+                    deltaMode: ${e.deltaMode}, ctrlKey: ${e.ctrlKey}, metaKey: ${e.metaKey}<br>
+                    Fractional deltaY: ${e.deltaY % 1 !== 0}, Fractional deltaX: ${e.deltaX % 1 !== 0}<br>
+                    Has horizontal scroll: ${Math.abs(e.deltaX) > 0}<br>
+                    Trackpad-like: ${(e.deltaY % 1 !== 0) || (e.deltaX % 1 !== 0) || Math.abs(e.deltaX) > 0}
+                `;
+                log.appendChild(logEntry);
+                log.scrollTop = log.scrollHeight;
+                
+                if (wheelEventCount <= 5) {
+                    // Update trackpad detection based on wheel events
+                    if ((e.deltaY % 1 !== 0) || (e.deltaX % 1 !== 0) || Math.abs(e.deltaX) > 0) {
+                        const trackpadResult = document.createElement('div');
+                        trackpadResult.className = 'success';
+                        trackpadResult.textContent = `✓ Trackpad behavior detected in wheel event #${wheelEventCount}`;
+                        log.appendChild(trackpadResult);
+                        log.scrollTop = log.scrollHeight;
+                    }
+                }
+            }
+            
+            // Touch event listeners
+            function handleTouchStart(e) {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'success';
+                logEntry.textContent = `Touch Start: ${e.touches.length} touch(es)`;
+                log.appendChild(logEntry);
+                log.scrollTop = log.scrollHeight;
+            }
+            
+            function handleTouchMove(e) {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'info';
+                logEntry.textContent = `Touch Move: ${e.touches.length} touch(es)`;
+                log.appendChild(logEntry);
+                log.scrollTop = log.scrollHeight;
+            }
+            
+            document.addEventListener('wheel', handleWheel, { passive: false });
+            document.addEventListener('touchstart', handleTouchStart);
+            document.addEventListener('touchmove', handleTouchMove);
+            
+            // Store cleanup function
+            window.eventTestingCleanup = () => {
+                document.removeEventListener('wheel', handleWheel);
+                document.removeEventListener('touchstart', handleTouchStart);
+                document.removeEventListener('touchmove', handleTouchMove);
+                eventTesting = false;
+            };
+        };
+        
+        window.clearEventLog = function() {
+            document.getElementById('event-log').innerHTML = '';
+        };
+        
+        // Test InputConfig directly
+        window.testInputConfig = async function() {
+            const resultsDiv = document.getElementById('inputconfig-results');
+            resultsDiv.innerHTML = '<div class="info">Loading InputConfig...</div>';
+            
+            try {
+                // Import the InputConfig module directly
+                const { InputConfig } = await import('./src/core/InputConfig.js');
+                
+                // Create a new instance
+                const inputConfig = new InputConfig();
+                
+                // Display results
+                const results = [
+                    `Touch detection: ${inputConfig.hasTouch}`,
+                    `Trackpad detection: ${inputConfig.isTrackpad}`,
+                    `Zoom method: ${inputConfig.config.camera.zoomMethod}`,
+                    `Pan method: ${inputConfig.config.camera.panMethod}`,
+                    `Trackpad enabled: ${inputConfig.config.camera.trackpadEnabled}`,
+                    `Pinch zoom enabled: ${inputConfig.config.camera.pinchToZoomEnabled}`,
+                    `Two finger pan enabled: ${inputConfig.config.camera.twoFingerPanEnabled}`
+                ];
+                
+                const touchClass = inputConfig.hasTouch ? 'success' : 'failure';
+                const trackpadClass = inputConfig.isTrackpad ? 'success' : 'warning';
+                
+                resultsDiv.innerHTML = `
+                    <div class="result ${touchClass}">Touch: ${inputConfig.hasTouch}</div>
+                    <div class="result ${trackpadClass}">Trackpad: ${inputConfig.isTrackpad}</div>
+                    <div class="info">Configuration:</div>
+                    ${results.map(r => `<div class="info">  ${r}</div>`).join('')}
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="result failure">Error: ${error.message}</div>`;
+                console.error('InputConfig test error:', error);
+            }
+        };
+        
+        // Run initial tests
+        testBrowserEnvironment();
+        testTouchDetection();
+        testTrackpadDetection();
+        analyzePlatform();
+    </script>
+</body>
+</html>

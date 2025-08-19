@@ -1,0 +1,230 @@
+{
+  "units": {
+    "MEDIUM_TANK": {
+      "name": "Medium Tank",
+      "cost": 800,
+      "health": 400,
+      "armor": "heavy",
+      "speed": 18,
+      "weapon": "105mm",
+      "damage": 30,
+      "range": 4.75,
+      "faction": "GDI"
+    },
+    "MAMMOTH_TANK": {
+      "name": "Mammoth Tank",
+      "cost": 1500,
+      "health": 600,
+      "armor": "heavy",
+      "speed": 12,
+      "weapon": "120mm_dual",
+      "damage": 40,
+      "range": 6,
+      "faction": "GDI"
+    },
+    "ORCA": {
+      "name": "Orca",
+      "cost": 1200,
+      "health": 125,
+      "armor": "light",
+      "speed": 40,
+      "weapon": "rockets",
+      "damage": 50,
+      "range": 5,
+      "faction": "GDI"
+    },
+    "LIGHT_TANK": {
+      "name": "Light Tank",
+      "cost": 600,
+      "health": 300,
+      "armor": "heavy",
+      "speed": 18,
+      "weapon": "75mm",
+      "damage": 25,
+      "range": 4,
+      "faction": "NOD"
+    },
+    "STEALTH_TANK": {
+      "name": "Stealth Tank",
+      "cost": 900,
+      "health": 110,
+      "armor": "light",
+      "speed": 30,
+      "weapon": "rockets",
+      "damage": 60,
+      "range": 5,
+      "faction": "NOD",
+      "special": "cloaking"
+    },
+    "RECON_BIKE": {
+      "name": "Recon Bike",
+      "cost": 500,
+      "health": 160,
+      "armor": "none",
+      "speed": 40,
+      "weapon": "rockets",
+      "damage": 20,
+      "range": 4,
+      "faction": "NOD"
+    }
+  },
+  "buildings": {
+    "GDI_CONSTRUCTION_YARD": {
+      "name": "Construction Yard",
+      "cost": 5000,
+      "health": 800,
+      "power": 0,
+      "faction": "GDI"
+    },
+    "GDI_POWER_PLANT": {
+      "name": "Power Plant",
+      "cost": 300,
+      "health": 400,
+      "power": 100,
+      "faction": "GDI"
+    },
+    "GDI_BARRACKS": {
+      "name": "Barracks",
+      "cost": 400,
+      "health": 500,
+      "power": -20,
+      "faction": "GDI",
+      "produces": "infantry"
+    },
+    "GDI_REFINERY": {
+      "name": "Refinery",
+      "cost": 2000,
+      "health": 450,
+      "power": -40,
+      "faction": "GDI",
+      "special": "harvester_included"
+    },
+    "NOD_CONSTRUCTION_YARD": {
+      "name": "Construction Yard",
+      "cost": 5000,
+      "health": 800,
+      "power": 0,
+      "faction": "NOD"
+    },
+    "NOD_POWER_PLANT": {
+      "name": "Power Plant",
+      "cost": 300,
+      "health": 400,
+      "power": 100,
+      "faction": "NOD"
+    },
+    "NOD_HAND_OF_NOD": {
+      "name": "Hand of Nod",
+      "cost": 400,
+      "health": 500,
+      "power": -20,
+      "faction": "NOD",
+      "produces": "infantry"
+    },
+    "NOD_OBELISK": {
+      "name": "Obelisk of Light",
+      "cost": 1500,
+      "health": 400,
+      "power": -150,
+      "faction": "NOD",
+      "weapon": "laser",
+      "damage": 200,
+      "range": 7.5
+    }
+  },
+  "sprites": {
+    "basePath": "/assets/sprites/",
+    "sheets": {
+      "MEDIUM_TANK": {
+        "path": "units/gdi/medium-tank.png",
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": 32,
+            "speed": 0
+          },
+          "turret": {
+            "frames": 32,
+            "speed": 0
+          }
+        }
+      },
+      "MAMMOTH_TANK": {
+        "path": "units/gdi/mammoth-tank.png",
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": 32,
+            "speed": 0
+          },
+          "turret": {
+            "frames": 32,
+            "speed": 0
+          }
+        }
+      },
+      "ORCA": {
+        "path": "units/gdi/orca.png",
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": 32,
+            "speed": 0
+          },
+          "turret": {
+            "frames": 32,
+            "speed": 0
+          }
+        }
+      },
+      "LIGHT_TANK": {
+        "path": "units/nod/light-tank.png",
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": 32,
+            "speed": 0
+          },
+          "turret": {
+            "frames": 32,
+            "speed": 0
+          }
+        }
+      },
+      "STEALTH_TANK": {
+        "path": "units/nod/stealth-tank.png",
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": 32,
+            "speed": 0
+          },
+          "turret": {
+            "frames": 32,
+            "speed": 0
+          }
+        }
+      },
+      "RECON_BIKE": {
+        "path": "units/nod/recon-bike.png",
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": 32,
+            "speed": 0
+          },
+          "turret": {
+            "frames": 32,
+            "speed": 0
+          }
+        }
+      }
+    }
+  }
+}

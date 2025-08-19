@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test - Command and Independent Thought</title>
+    <style>
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: monospace;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        
+        .test-title {
+            color: #ff0;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .test-item {
+            margin: 10px 0;
+            padding: 5px;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .pass {
+            color: #0f0;
+        }
+        
+        .fail {
+            color: #f00;
+        }
+        
+        .pending {
+            color: #ff0;
+        }
+        
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+        
+        button:hover {
+            background: #0a0;
+        }
+        
+        #test-results {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #0f0;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        input[type="text"] {
+            background: #111;
+            color: #0f0;
+            border: 1px solid #333;
+            padding: 5px;
+            margin: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Navigation Fix Test Suite</h1>
+    <p>This page tests the navigation improvements implemented in the Command and Independent Thought game.</p>
+    
+    <div class="test-section">
+        <div class="test-title">📋 Manual Tests - Try These Actions:</div>
+        
+        <div class="test-item">
+            <strong>✅ F5 Key:</strong> Press F5 - should refresh the page normally
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Ctrl+R:</strong> Press Ctrl+R - should refresh the page normally
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Ctrl+Shift+R:</strong> Press Ctrl+Shift+R - should hard refresh
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Alt+← →:</strong> Press Alt+Left/Right - should navigate back/forward
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Ctrl+W:</strong> Press Ctrl+W - should close tab/window
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Ctrl+L:</strong> Press Ctrl+L - should focus address bar
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Right Click:</strong> Right-click here - should show browser context menu
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">🎮 Game-Specific Tests:</div>
+        
+        <div class="test-item">
+            <strong>✅ Ctrl+A Text Selection:</strong> 
+            <input type="text" value="Select this text with Ctrl+A" style="width: 300px;">
+            <br><small>Ctrl+A should select this text, not interfere with browser behavior</small>
+        </div>
+        
+        <div class="test-item">
+            <strong>✅ Context Menu on Text:</strong> Right-click on this text to see normal browser context menu
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">🔧 Configuration Test:</div>
+        <button onclick="testNavigationUtils()">Test Navigation Utils</button>
+        <button onclick="simulateUnsavedChanges()">Simulate Unsaved Changes</button>
+        <button onclick="clearUnsavedChanges()">Clear Unsaved Changes</button>
+        <button onclick="openMainGame()">Open Main Game</button>
+        
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">📊 Expected Behavior:</div>
+        
+        <div class="test-item">
+            <strong>BEFORE FIX (❌ Bad):</strong>
+            <ul>
+                <li>F5/Ctrl+R blocked completely</li>
+                <li>Ctrl+A always intercepted by game</li>
+                <li>Context menu blocked everywhere</li>
+                <li>Browser shortcuts not working</li>
+                <li>Page navigation prevented aggressively</li>
+            </ul>
+        </div>
+        
+        <div class="test-item">
+            <strong>AFTER FIX (✅ Good):</strong>
+            <ul>
+                <li>F5/Ctrl+R work normally</li>
+                <li>Ctrl+A works for text selection</li>
+                <li>Context menu available on non-game elements</li>
+                <li>Browser shortcuts preserved</li>
+                <li>User confirmation dialog for unsaved changes only</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let testResults = document.getElementById('test-results');
+        
+        function log(message, type = 'info') {
+            const colors = {
+                pass: '#0f0',
+                fail: '#f00', 
+                info: '#0ff',
+                warn: '#ff0'
+            };
+            
+            const div = document.createElement('div');
+            div.style.color = colors[type] || '#fff';
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            testResults.appendChild(div);
+        }
+        
+        function testNavigationUtils() {
+            log('Testing navigation utilities...', 'info');
+            
+            if (typeof window.navigationUtils !== 'undefined') {
+                log('✅ navigationUtils available', 'pass');
+                
+                // Test functions
+                try {
+                    const isProtected = window.navigationUtils.isNavigationProtected();
+                    log(`Current protection status: ${isProtected}`, 'info');
+                    
+                    window.navigationUtils.setNavigationProtection(true);
+                    log('✅ setNavigationProtection() works', 'pass');
+                    
+                    window.navigationUtils.setUnsavedChanges(false);
+                    log('✅ setUnsavedChanges() works', 'pass');
+                    
+                } catch (error) {
+                    log(`❌ Error testing navigation utils: ${error.message}`, 'fail');
+                }
+            } else {
+                log('❌ navigationUtils not available (load main game first)', 'warn');
+            }
+        }
+        
+        function simulateUnsavedChanges() {
+            if (window.navigationUtils) {
+                window.navigationUtils.setUnsavedChanges(true);
+                log('✅ Simulated unsaved changes - try navigating away now', 'warn');
+            } else {
+                log('❌ navigationUtils not available', 'fail');
+            }
+        }
+        
+        function clearUnsavedChanges() {
+            if (window.navigationUtils) {
+                window.navigationUtils.setUnsavedChanges(false);
+                log('✅ Cleared unsaved changes', 'pass');
+            } else {
+                log('❌ navigationUtils not available', 'fail');
+            }
+        }
+        
+        function openMainGame() {
+            log('🎮 Opening main game...', 'info');
+            window.open('/', '_blank');
+        }
+        
+        // Test keyboard events
+        document.addEventListener('keydown', (e) => {
+            const combo = [];
+            if (e.ctrlKey) combo.push('Ctrl');
+            if (e.altKey) combo.push('Alt');
+            if (e.shiftKey) combo.push('Shift');
+            combo.push(e.key);
+            
+            log(`Key detected: ${combo.join('+')} - Event should propagate normally`, 'info');
+        });
+        
+        // Test page beforeunload
+        window.addEventListener('beforeunload', (e) => {
+            log('Beforeunload triggered - this should only show confirmation if unsaved changes exist', 'warn');
+        });
+        
+        log('Navigation test page loaded successfully! 🚀', 'pass');
+        log('Try the manual tests above to verify navigation fixes work properly', 'info');
+    </script>
+</body>
+</html>

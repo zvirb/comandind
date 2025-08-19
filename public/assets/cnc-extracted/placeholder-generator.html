@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>C&C Placeholder Generator</title>
+</head>
+<body>
+    <h1>C&C Placeholder Sprite Generator</h1>
+    <p>Run this in a browser to generate placeholder images:</p>
+    
+    <script>
+        const placeholders = {
+        "structures/gdi/construction-yard.png": {
+                "width": 48,
+                "height": 48,
+                "color": "#0066ff"
+        },
+        "structures/gdi/power-plant.png": {
+                "width": 48,
+                "height": 48,
+                "color": "#00aa00"
+        },
+        "structures/gdi/barracks.png": {
+                "width": 48,
+                "height": 48,
+                "color": "#ffaa00"
+        },
+        "structures/nod/hand-of-nod.png": {
+                "width": 48,
+                "height": 48,
+                "color": "#ff0000"
+        },
+        "structures/nod/obelisk-of-light.png": {
+                "width": 24,
+                "height": 48,
+                "color": "#ff00ff"
+        },
+        "units/gdi/medium-tank.png": {
+                "width": 24,
+                "height": 24,
+                "color": "#0088ff"
+        },
+        "units/gdi/mammoth-tank.png": {
+                "width": 32,
+                "height": 32,
+                "color": "#0044aa"
+        },
+        "units/nod/recon-bike.png": {
+                "width": 24,
+                "height": 24,
+                "color": "#ff4400"
+        },
+        "resources/tiberium-green.png": {
+                "width": 24,
+                "height": 24,
+                "color": "#00ff00"
+        },
+        "terrain/sand-01.png": {
+                "width": 24,
+                "height": 24,
+                "color": "#ffdd88"
+        }
+};
+        
+        function generateSprite(filename, config) {
+            const canvas = document.createElement('canvas');
+            canvas.width = config.width;
+            canvas.height = config.height;
+            const ctx = canvas.getContext('2d');
+            
+            // Fill with color
+            ctx.fillStyle = config.color;
+            ctx.fillRect(0, 0, config.width, config.height);
+            
+            // Add border
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0, 0, config.width, config.height);
+            
+            // Add text label
+            ctx.fillStyle = '#fff';
+            ctx.font = '8px Arial';
+            ctx.textAlign = 'center';
+            const name = filename.split('/').pop().replace('.png', '');
+            ctx.fillText(name.substring(0, 8), config.width/2, config.height/2 + 3);
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Generate download links
+        Object.entries(placeholders).forEach(([filename, config]) => {
+            const dataUrl = generateSprite(filename, config);
+            const link = document.createElement('a');
+            link.download = filename.replace(/\//g, '_');
+            link.href = dataUrl;
+            link.textContent = `Download ${filename}`;
+            link.style.display = 'block';
+            link.style.margin = '5px 0';
+            document.body.appendChild(link);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+{
+  "structures": {
+    "gdi": {
+      "construction-yard": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "damaged": {
+            "frames": [
+              4
+            ],
+            "speed": 0
+          }
+        }
+      },
+      "power-plant": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "barracks": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          }
+        }
+      },
+      "refinery": {
+        "frameWidth": 72,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          }
+        }
+      }
+    },
+    "nod": {
+      "hand-of-nod": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          }
+        }
+      },
+      "obelisk-of-light": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          },
+          "charging": {
+            "frames": [
+              0,
+              1,
+              2
+            ],
+            "speed": 0.3
+          },
+          "fire": {
+            "frames": [
+              3,
+              4,
+              5
+            ],
+            "speed": 0.5
+          }
+        }
+      }
+    }
+  },
+  "units": {
+    "gdi": {
+      "medium-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "directions": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        }
+      },
+      "mammoth-tank": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "directions": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        }
+      }
+    },
+    "nod": {
+      "recon-bike": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "directions": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        }
+      }
+    }
+  },
+  "tiberium": {
+    "green": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.05
+        }
+      }
+    },
+    "blue": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.05
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic - Command and Independent Thought</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #0f0;
+        }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .warning { color: #ff0; }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+        button:hover {
+            background: #0a0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Game Diagnostic Tool</h1>
+    
+    <div class="section">
+        <h2>System Check</h2>
+        <div id="systemCheck"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Module Loading Test</h2>
+        <button onclick="testModules()">Test Module Loading</button>
+        <div id="moduleTest"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Component Test</h2>
+        <button onclick="testComponents()">Test ECS Components</button>
+        <div id="componentTest"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Safe Game Start</h2>
+        <button onclick="startGameSafely()">Start Game (Safe Mode)</button>
+        <div id="gameStatus"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Console Output</h2>
+        <div id="console" style="background: #000; padding: 10px; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+    
+    <script type="module">
+        const consoleDiv = document.getElementById('console');
+        const systemDiv = document.getElementById('systemCheck');
+        
+        // Capture console
+        const log = (msg, type = 'log') => {
+            const line = document.createElement('div');
+            line.className = type === 'error' ? 'error' : type === 'warn' ? 'warning' : 'success';
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        };
+        
+        // Override console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = (...args) => {
+            originalLog(...args);
+            log(args.join(' '), 'log');
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            log(args.join(' '), 'error');
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            log(args.join(' '), 'warn');
+        };
+        
+        // System checks
+        const checks = [
+            { name: 'WebGL Support', test: () => {
+                const canvas = document.createElement('canvas');
+                return !!(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+            }},
+            { name: 'ES6 Modules', test: () => typeof import === 'function' },
+            { name: 'Local Storage', test: () => {
+                try {
+                    localStorage.setItem('test', 'test');
+                    localStorage.removeItem('test');
+                    return true;
+                } catch { return false; }
+            }},
+            { name: 'Touch Support', test: () => 'ontouchstart' in window },
+            { name: 'Device Memory', test: () => navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'Unknown' }
+        ];
+        
+        // Run system checks
+        systemDiv.innerHTML = checks.map(check => {
+            const result = check.test();
+            const status = result === true ? '✅' : result === false ? '❌' : '📊';
+            const value = typeof result === 'boolean' ? (result ? 'Yes' : 'No') : result;
+            return `<div>${status} ${check.name}: <span class="${result ? 'success' : 'error'}">${value}</span></div>`;
+        }).join('');
+        
+        // Module test function
+        window.testModules = async function() {
+            const testDiv = document.getElementById('moduleTest');
+            testDiv.innerHTML = 'Testing modules...<br>';
+            
+            const modules = [
+                { name: 'PIXI.js', path: 'pixi.js', test: () => window.PIXI },
+                { name: 'InputConfig', path: './src/core/InputConfig.js' },
+                { name: 'InputHandler', path: './src/core/InputHandler.js' },
+                { name: 'Camera', path: './src/core/Camera.js' },
+                { name: 'Application', path: './src/core/Application.js' },
+                { name: 'ECS Entity', path: './src/ecs/Entity.js' },
+                { name: 'ECS World', path: './src/ecs/World.js' },
+                { name: 'NavigationGrid', path: './src/pathfinding/NavigationGrid.js' },
+                { name: 'AStar', path: './src/pathfinding/AStar.js' }
+            ];
+            
+            for (const mod of modules) {
+                try {
+                    const module = await import(mod.path);
+                    testDiv.innerHTML += `✅ ${mod.name} loaded<br>`;
+                    log(`${mod.name} loaded successfully`, 'log');
+                } catch (err) {
+                    testDiv.innerHTML += `❌ ${mod.name}: ${err.message}<br>`;
+                    log(`Failed to load ${mod.name}: ${err.message}`, 'error');
+                }
+            }
+        };
+        
+        // Component test function
+        window.testComponents = async function() {
+            const testDiv = document.getElementById('componentTest');
+            testDiv.innerHTML = 'Testing ECS components...<br>';
+            
+            try {
+                const { Entity } = await import('./src/ecs/Entity.js');
+                const { Component } = await import('./src/ecs/Component.js');
+                
+                // Test entity creation
+                const entity = new Entity();
+                testDiv.innerHTML += `✅ Entity created (ID: ${entity.id})<br>`;
+                
+                // Test component as class
+                class TestComponent extends Component {
+                    constructor() { super(); this.value = 42; }
+                }
+                
+                entity.addComponent(new TestComponent());
+                const comp = entity.getComponent(TestComponent);
+                testDiv.innerHTML += `✅ Component added and retrieved (value: ${comp?.value})<br>`;
+                
+                // Test component by string
+                const compByString = entity.getComponent('TestComponent');
+                testDiv.innerHTML += `✅ Component retrieved by string (value: ${compByString?.value})<br>`;
+                
+                log('ECS components working correctly', 'log');
+            } catch (err) {
+                testDiv.innerHTML += `❌ Error: ${err.message}<br>`;
+                log(`Component test failed: ${err.message}`, 'error');
+            }
+        };
+        
+        // Safe game start
+        window.startGameSafely = async function() {
+            const statusDiv = document.getElementById('gameStatus');
+            statusDiv.innerHTML = 'Starting game in safe mode...<br>';
+            
+            try {
+                // Remove any existing game container
+                const existingContainer = document.getElementById('game-container');
+                if (existingContainer) {
+                    existingContainer.remove();
+                }
+                
+                // Create new container
+                const container = document.createElement('div');
+                container.id = 'game-container';
+                container.style.position = 'fixed';
+                container.style.top = '0';
+                container.style.left = '0';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                container.style.zIndex = '1000';
+                container.style.background = '#1a1a1a';
+                document.body.appendChild(container);
+                
+                // Add loading screen
+                container.innerHTML = `
+                    <div id="loading-screen" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #0f0;">
+                        <h2>Loading Game...</h2>
+                        <div id="loading-progress" style="width: 200px; height: 20px; border: 1px solid #0f0; margin: 20px auto;">
+                            <div style="width: 0%; height: 100%; background: #0f0; transition: width 0.3s;"></div>
+                        </div>
+                        <div id="loading-text">Initializing...</div>
+                    </div>
+                    <div id="performance-monitor" class="hidden" style="position: absolute; top: 10px; right: 10px; color: #0f0; font-family: monospace;">
+                        FPS: <span id="fps">0</span> | 
+                        Draw Calls: <span id="draw-calls">0</span> | 
+                        Sprites: <span id="sprite-count">0</span> | 
+                        Memory: <span id="memory">0</span>MB
+                    </div>
+                `;
+                
+                statusDiv.innerHTML += '✅ Game container created<br>';
+                
+                // Import and start game
+                const { CommandAndIndependentThought } = await import('./src/index.js');
+                statusDiv.innerHTML += '✅ Game module imported<br>';
+                
+                // Check if game already exists
+                if (window.game) {
+                    statusDiv.innerHTML += '⚠️ Existing game instance found, cleaning up...<br>';
+                    if (window.game.application) {
+                        window.game.application.destroy();
+                    }
+                    window.game = null;
+                }
+                
+                // Create new game instance
+                const game = new CommandAndIndependentThought();
+                window.game = game;
+                statusDiv.innerHTML += '✅ Game instance created<br>';
+                
+                // Initialize with error handling
+                await game.initialize();
+                statusDiv.innerHTML += '✅ Game initialized successfully!<br>';
+                
+                // Add close button
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = 'Close Game';
+                closeBtn.style.position = 'fixed';
+                closeBtn.style.top = '10px';
+                closeBtn.style.left = '10px';
+                closeBtn.style.zIndex = '1001';
+                closeBtn.onclick = () => {
+                    container.remove();
+                    if (window.game && window.game.application) {
+                        window.game.application.destroy();
+                    }
+                    window.game = null;
+                    statusDiv.innerHTML += 'Game closed<br>';
+                };
+                container.appendChild(closeBtn);
+                
+                log('Game started successfully in safe mode', 'log');
+                
+            } catch (err) {
+                statusDiv.innerHTML += `❌ Error: ${err.message}<br>`;
+                log(`Failed to start game: ${err.message}\n${err.stack}`, 'error');
+                
+                // Clean up on error
+                const container = document.getElementById('game-container');
+                if (container) container.remove();
+            }
+        };
+        
+        // Catch all errors
+        window.addEventListener('error', (e) => {
+            log(`Uncaught error: ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`, 'error');
+            e.preventDefault();
+        });
+        
+        window.addEventListener('unhandledrejection', (e) => {
+            log(`Unhandled promise rejection: ${e.reason}`, 'error');
+            e.preventDefault();
+        });
+        
+        log('Diagnostic tool ready', 'log');
+    </script>
+</body>
+</html>

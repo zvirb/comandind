@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECS Memory Leak Fixes Test</title>
+    <style>
+        body { 
+            font-family: monospace; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: #00ff00; 
+        }
+        .console { 
+            background: #000; 
+            border: 1px solid #333; 
+            padding: 15px; 
+            margin: 10px 0; 
+            white-space: pre-wrap; 
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        button { 
+            background: #333; 
+            color: #fff; 
+            border: 1px solid #555; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            margin: 5px; 
+        }
+        button:hover { background: #555; }
+        .warning { color: #ffaa00; }
+        .error { color: #ff0000; }
+        .success { color: #00ff00; }
+    </style>
+</head>
+<body>
+    <h1>🧪 ECS Memory Leak Fixes Test</h1>
+    <p>This page tests the memory leak fixes implemented in the ECS system.</p>
+    
+    <div>
+        <button onclick="runTests()">🚀 Run All Tests</button>
+        <button onclick="clearConsole()">🧹 Clear Console</button>
+        <button onclick="showMemoryUsage()">💾 Show Memory Usage</button>
+    </div>
+
+    <div id="console" class="console">
+        Console output will appear here...
+    </div>
+
+    <script type="module">
+        // Redirect console to our display
+        const consoleDiv = document.getElementById('console');
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+
+        function formatLogMessage(type, args) {
+            const timestamp = new Date().toISOString().substr(11, 8);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            const className = type === 'warn' ? 'warning' : type === 'error' ? 'error' : 'success';
+            return `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+        }
+
+        console.log = (...args) => {
+            consoleDiv.innerHTML += formatLogMessage('log', args);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            originalLog(...args);
+        };
+
+        console.warn = (...args) => {
+            consoleDiv.innerHTML += formatLogMessage('warn', args);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            originalWarn(...args);
+        };
+
+        console.error = (...args) => {
+            consoleDiv.innerHTML += formatLogMessage('error', args);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            originalError(...args);
+        };
+
+        // Global functions for buttons
+        window.clearConsole = () => {
+            consoleDiv.innerHTML = '';
+        };
+
+        window.showMemoryUsage = () => {
+            if (performance.memory) {
+                const used = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024 * 100) / 100;
+                const total = Math.round(performance.memory.totalJSHeapSize / 1024 / 1024 * 100) / 100;
+                const limit = Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024 * 100) / 100;
+                console.log(`💾 Memory Usage: ${used}MB used / ${total}MB total / ${limit}MB limit`);
+            } else {
+                console.warn('Memory usage information not available in this browser');
+            }
+        };
+
+        // Test runner
+        window.runTests = async () => {
+            console.log('🔧 Loading ECS modules...');
+            
+            try {
+                // Import the test demo
+                const { default: MemoryLeakTestDemo } = await import('./src/utils/MemoryLeakTestDemo.js');
+                
+                console.log('✅ Modules loaded successfully');
+                
+                // Run the tests
+                const testDemo = new MemoryLeakTestDemo();
+                await testDemo.runAllTests();
+                
+            } catch (error) {
+                console.error('❌ Failed to run tests:', error);
+                console.error('Stack trace:', error.stack);
+            }
+        };
+
+        // Initial log
+        console.log('🎮 ECS Memory Leak Test Environment Ready');
+        console.log('Click "Run All Tests" to start testing the memory leak fixes.');
+        
+        // Show initial memory usage
+        window.showMemoryUsage();
+    </script>
+</body>
+</html>
