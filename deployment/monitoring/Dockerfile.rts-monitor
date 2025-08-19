@@ -1,0 +1,55 @@
+FROM node:18-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    bash \
+    python3 \
+    py3-pip \
+    && rm -rf /var/cache/apk/*
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy monitoring scripts
+COPY deployment/monitoring/ ./monitoring/
+COPY src/monitoring/ ./src-monitoring/
+
+# Copy health check script
+COPY deployment/scripts/health-check.sh /usr/local/bin/health-check.sh
+RUN chmod +x /usr/local/bin/health-check.sh
+
+# Create non-root user
+RUN addgroup -g 1001 -S rtsmonitor && \
+    adduser -S -u 1001 -G rtsmonitor rtsmonitor
+
+# Create log directory
+RUN mkdir -p /app/logs && \
+    chown -R rtsmonitor:rtsmonitor /app
+
+# Switch to non-root user
+USER rtsmonitor
+
+# Expose ports
+EXPOSE 8082
+
+# Environment variables
+ENV NODE_ENV=production
+ENV PORT=8082
+ENV GAME_ENDPOINT=http://game-blue:8080
+ENV GAME_WS_ENDPOINT=ws://game-blue:8080/ws
+ENV CHECK_INTERVAL=5
+ENV LOG_LEVEL=info
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8082/health || exit 1
+
+# Start RTS performance monitor
+CMD ["node", "monitoring/rts-performance-monitor.js"]

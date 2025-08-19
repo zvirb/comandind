@@ -1,370 +1,537 @@
-# Production Deployment Guide
-## Command & Independent Thought Game - Blue-Green Deployment System
+# Command & Independent Thought - Infrastructure Documentation
 
-This document provides comprehensive instructions for deploying and managing the Command & Independent Thought game in a production environment using a blue-green deployment strategy.
+## 🏗️ Infrastructure Overview
 
-## 🏗️ Architecture Overview
+This directory contains the complete infrastructure setup for Command & Independent Thought, including deployment orchestration, monitoring systems, and production validation tools specifically designed for RTS gameplay at scale.
 
-The deployment system uses a **blue-green deployment strategy** with the following components:
+## 🎮 RTS-Specific Infrastructure Features
 
-- **Blue Environment**: Current production version
-- **Green Environment**: New version for testing and deployment
-- **Load Balancer**: Nginx reverse proxy for traffic routing
-- **Health Monitor**: Continuous health checking and alerting
-- **Monitoring Stack**: Prometheus, cAdvisor, and Fluentd for observability
-- **Automatic Rollback**: Intelligent rollback on deployment failures
+### Performance Monitoring
+- **Real-time FPS monitoring** with 200+ entity scenarios
+- **Selection system response time tracking** (<16ms target)  
+- **Pathfinding performance metrics** (<5ms per path target)
+- **Memory usage monitoring** (<200MB target)
+- **Resource economy balance tracking** and reporting
 
-## 📋 Prerequisites
+### Deployment Pipeline
+- **Blue-green deployment** for zero-downtime updates
+- **RTS performance validation** during deployments
+- **Automated rollback** triggers if performance targets not met (60+ FPS)
+- **Container orchestration** support for scaled testing environments
 
-### System Requirements
-- Docker Engine 20.10+
-- Docker Compose 2.0+
+### Health Monitoring
+- **Production health checks** for gameplay systems
+- **Comprehensive system validation** covering all RTS components
+- **Real-time alerting** for performance degradation
+- **Historical performance tracking** and analysis
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+```bash
+# Required tools
+- Docker & Docker Compose
+- Node.js 18+
 - Git
-- curl and jq (for health checks)
-- Minimum 2GB RAM, 10GB disk space
+- curl, bc, python3
 
-### Network Requirements
-- Ports 80, 443 (web traffic)
-- Port 9090 (Prometheus metrics)
-- Port 8081 (cAdvisor metrics)
-- Port 24224 (Fluentd logging)
-
-## 🚀 Quick Start Deployment
-
-### 1. Initial Setup
-
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd command-and-independent-thought
-
-# Copy environment configuration
-cp deployment/config/production.env .env
-cp deployment/config/secrets.env.example deployment/config/secrets.env
-
-# Edit secrets.env with your actual secrets
-nano deployment/config/secrets.env
+# Optional for development
+- kubectl (for Kubernetes deployment)
+- Prometheus & Grafana (for advanced monitoring)
 ```
 
-### 2. First-Time Deployment
+### Basic Deployment
 
 ```bash
-# Build and start the initial blue-green infrastructure
-docker compose -f deployment/docker-compose/docker-compose.blue-green.yml up -d
+# Clone and setup
+cd /path/to/comandind
 
-# Wait for services to be ready (2-3 minutes)
-sleep 120
+# Deploy with RTS validation
+./deployment/scripts/rts-deploy.sh deploy
 
 # Check deployment status
-./deployment/scripts/deploy.sh status
+./deployment/scripts/rts-deploy.sh status
+
+# Perform RTS health check
+./deployment/scripts/rts-deploy.sh rts-check
 ```
 
-### 3. Deploy New Version
+### Advanced Deployment with Custom Targets
 
 ```bash
-# Set version (optional - uses git commit hash by default)
-export VERSION=v1.0.0
+# Set custom RTS performance targets
+export RTS_MIN_FPS=50
+export RTS_MAX_MEMORY=150
+export RTS_MAX_ENTITIES=150
 
-# Deploy to production
-./deployment/scripts/deploy.sh deploy
+# Deploy with custom targets
+./deployment/scripts/rts-deploy.sh deploy
 
-# Monitor deployment progress
-watch -n 5 './deployment/scripts/deploy.sh status'
+# Force deployment to specific slot
+./deployment/scripts/rts-deploy.sh deploy green
 ```
 
-## 🔧 Deployment Commands
+## 📊 Monitoring Architecture
 
-### Core Deployment Operations
+### Service Structure
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Game Blue     │    │   Game Green    │    │  Load Balancer  │
+│   Port: 8080    │    │   Port: 8080    │    │   Port: 80/443  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ Health Monitor  │    │ RTS Monitor     │    │   Prometheus    │
+│   Port: 8080    │    │   Port: 8082    │    │   Port: 9090    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### Monitoring Endpoints
+
+| Service | Endpoint | Purpose |
+|---------|----------|---------|
+| Game Health | `/health` | Basic health check |
+| Game Performance | `/api/performance-stats` | RTS performance metrics |
+| RTS Monitor Dashboard | `:8082/rts-dashboard` | Comprehensive RTS metrics |
+| Prometheus Metrics | `:8082/metrics` | Prometheus-compatible metrics |
+| Health History | `:8082/historical` | Performance trends |
+
+## 🔍 Monitoring Systems
+
+### 1. RTS Performance Monitor (`/monitoring/rts-performance-monitor.js`)
+
+**Features:**
+- Real-time RTS gameplay metrics collection
+- WebSocket integration with game client
+- Performance alert system with thresholds
+- Prometheus metrics export
+- Historical data storage
+
+**Key Metrics:**
+```javascript
+{
+  fps: 60,                    // Current FPS
+  frameTime: 16.67,          // Frame time in ms
+  entityCount: 150,          // Active entities
+  memoryUsage: 180,          // Memory usage in MB
+  pathfindingTime: 3.2,      // Average pathfinding time
+  selectionTime: 12.5,       // Selection response time
+  cacheHitRatio: 0.85        // Pathfinding cache efficiency
+}
+```
+
+### 2. RTS Profiler (`/src/monitoring/RTSProfiler.js`)
+
+**Features:**
+- Client-side performance profiling
+- Pathfinding and selection system analysis
+- Memory leak detection
+- Performance bottleneck identification
+- Real-time metrics broadcasting
+
+**Usage in Game Code:**
+```javascript
+import { rtsProfiler } from './monitoring/RTSProfiler.js';
+
+// Profile pathfinding operation
+const start = performance.now();
+const path = pathfinder.findPath(startPos, endPos);
+const end = performance.now();
+rtsProfiler.profilePathfinding('A*', start, end, path.length, cached);
+
+// Profile selection operation
+const selectionStart = performance.now();
+const selectedEntities = selectionSystem.selectInArea(rect);
+const selectionEnd = performance.now();
+rtsProfiler.profileSelection('drag', selectedEntities.length, selectionStart, selectionEnd);
+```
+
+### 3. RTS Diagnostics (`/src/monitoring/RTSDiagnostics.js`)
+
+**Features:**
+- Comprehensive error tracking and logging
+- Gameplay event logging
+- System diagnostics and health assessment
+- Automated error reporting
+- Diagnostic data export
+
+**Usage:**
+```javascript
+import { rtsDiagnostics } from './monitoring/RTSDiagnostics.js';
+
+// Log gameplay events
+rtsDiagnostics.logGameplayEvent('unit_created', { unitType: 'tank', player: 1 });
+
+// Log performance issues
+rtsDiagnostics.logPerformanceEvent('fps_drop', { fps: 35, expectedFps: 60 });
+
+// Export diagnostic report
+rtsDiagnostics.exportDiagnosticData();
+```
+
+### 4. RTS Health Monitor (`/src/monitoring/RTSHealthMonitor.js`)
+
+**Features:**
+- Production health validation
+- Multi-system health checks (performance, gameplay, resources, network)
+- Alert management with cooldown periods
+- Health scoring and recommendations
+- Historical health tracking
+
+**Health Check Categories:**
+- **System Health** (30% weight): Browser compatibility, memory, error rates
+- **Performance Health** (25% weight): FPS, frame times, memory usage
+- **Gameplay Health** (25% weight): Pathfinding, selection, entity systems
+- **Resource Health** (10% weight): Asset loading, texture memory
+- **Network Health** (10% weight): Connection status, WebSocket health
+
+## 🚦 Performance Targets
+
+### Default Performance Targets
 
 ```bash
-# Deploy new version with automatic slot detection
-./deployment/scripts/deploy.sh deploy
+# FPS Targets
+RTS_MIN_FPS=45           # Minimum acceptable FPS
+RTS_TARGET_FPS=60        # Target FPS for optimal gameplay
+RTS_CRITICAL_FPS=30      # Critical threshold triggering alerts
 
-# Deploy to specific slot
-./deployment/scripts/deploy.sh deploy green
+# Response Time Targets  
+RTS_MAX_FRAME_TIME=22    # Maximum frame time (ms)
+RTS_MAX_PATHFINDING_TIME=5   # Maximum pathfinding time per path (ms)
+RTS_MAX_SELECTION_TIME=16    # Maximum selection response time (ms)
 
-# Check deployment status
-./deployment/scripts/deploy.sh status
-
-# Perform health check
-./deployment/scripts/deploy.sh health
-
-# Clean up old Docker images
-./deployment/scripts/deploy.sh cleanup
+# Resource Limits
+RTS_MAX_MEMORY=200       # Maximum memory usage (MB)
+RTS_MAX_ENTITIES=200     # Maximum recommended entity count
 ```
 
-### Rollback Operations
+### Customizing Performance Targets
 
 ```bash
-# Automatic rollback (if active slot is unhealthy)
-./deployment/scripts/rollback.sh auto
+# Environment variables for deployment
+export RTS_MIN_FPS=50
+export RTS_MAX_MEMORY=150
+export RTS_MAX_ENTITIES=300
 
-# Manual rollback to specific slot
-./deployment/scripts/rollback.sh manual blue "emergency rollback"
-
-# Quick rollback shortcuts
-./deployment/scripts/rollback.sh blue
-./deployment/scripts/rollback.sh green
-
-# Check rollback status and history
-./deployment/scripts/rollback.sh status
-
-# Validate slot before rollback
-./deployment/scripts/rollback.sh validate green
+# Or in docker-compose.yml
+environment:
+  - RTS_MIN_FPS=50
+  - RTS_MAX_MEMORY=150
+  - RTS_MAX_ENTITIES=300
 ```
 
-## 📊 Monitoring and Health Checks
+## 🐳 Container Architecture
 
-### Health Check Endpoints
+### Service Isolation Principles
+
+**Each new functionality = separate container/service**
+
+✅ **Correct Approach:**
+- New Service = New Container
+- Independent API endpoints (`/health`, `/api/v1/...`)
+- Graceful degradation ("Service offline" messages)
+- No cascading failures
+
+❌ **Forbidden:**
+- Modifying existing working containers
+- Integrating new features into existing services
+- Creating tight coupling between components
+
+### Blue-Green Deployment Process
+
+1. **Build Phase**: Create production build with RTS optimizations
+2. **Deploy Phase**: Deploy to standby slot (blue/green)
+3. **Validation Phase**: Comprehensive RTS performance validation
+4. **Traffic Switch**: Atomic traffic switching via load balancer
+5. **Monitor Phase**: Post-deployment monitoring and rollback if needed
+
+### Deployment Validation Pipeline
 
 ```bash
-# Basic health check
-curl http://localhost/health
+# 1. Basic health check
+curl -f http://localhost:8080/health
 
-# Detailed application health
-curl http://localhost/health/detailed
+# 2. RTS performance validation
+curl -s http://localhost:8080/api/performance-stats | jq '.fps >= 45'
 
-# Container readiness probe
-curl http://localhost/ready
+# 3. Gameplay systems validation
+curl -f http://localhost:8080/api/systems-status
+curl -f http://localhost:8080/api/pathfinding-stats
+curl -f http://localhost:8080/api/selection-stats
 
-# Container liveness probe
-curl http://localhost/live
+# 4. Final production validation
+./deployment/scripts/rts-deploy.sh rts-check
 ```
 
-### Monitoring Services
+## 🔧 Configuration Files
 
-- **Prometheus**: http://localhost:9090
-- **Health Monitor**: http://localhost:8080/status
-- **cAdvisor**: http://localhost:8081
+### Key Configuration Files
 
-### Log Aggregation
+```
+deployment/
+├── docker-compose/
+│   └── docker-compose.blue-green.yml    # Main orchestration
+├── monitoring/
+│   ├── rts-performance-monitor.js        # RTS monitoring service
+│   ├── Dockerfile.rts-monitor           # RTS monitor container
+│   ├── prometheus.yml                   # Metrics collection
+│   └── health-monitor.js                # Basic health monitoring
+├── nginx/
+│   ├── loadbalancer.conf               # Load balancer config
+│   └── default.conf                    # Default nginx config
+└── scripts/
+    ├── rts-deploy.sh                   # Enhanced deployment script
+    ├── deploy.sh                       # Basic deployment script
+    └── health-check.sh                 # Health check utilities
+```
+
+### Environment Configuration
 
 ```bash
-# View application logs
-docker compose logs game-blue
-docker compose logs game-green
+# Core Settings
+NODE_ENV=production
+VERSION=1.0.0
+DEPLOYMENT_SLOT=blue
 
-# View load balancer logs
-docker compose logs nginx-lb
+# Monitoring Settings
+GAME_ENDPOINT=http://game-blue:8080
+GAME_WS_ENDPOINT=ws://game-blue:8080/ws
+ALERT_WEBHOOK_URL=https://hooks.slack.com/...
+CHECK_INTERVAL=5
 
-# View health monitor logs
-docker compose logs health-monitor
+# Performance Targets
+RTS_MIN_FPS=45
+RTS_TARGET_FPS=60
+RTS_MAX_MEMORY=200
+RTS_MAX_ENTITIES=200
+RTS_MAX_PATHFINDING_TIME=5
+RTS_MAX_SELECTION_TIME=16
 ```
 
-## ⚙️ Configuration
+## 📈 Monitoring Integration
 
-### Environment Variables
+### Prometheus Metrics
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| VERSION | Deployment version | git commit hash |
-| TIMEOUT | Deployment timeout | 300s |
-| HEALTH_CHECK_RETRIES | Health validation retries | 10 |
-| HEALTH_CHECK_INTERVAL | Health check interval | 30s |
-| ROLLBACK_TIMEOUT | Rollback operation timeout | 120s |
-| VALIDATION_RETRIES | Rollback validation retries | 5 |
+The RTS Performance Monitor exposes Prometheus-compatible metrics:
 
-### Secrets Management
+```prometheus
+# Game performance metrics
+rts_game_fps                        # Current FPS
+rts_game_frame_time                 # Frame time in milliseconds
+rts_entity_count                    # Total entities in world
+rts_selected_entities               # Currently selected entities
+rts_active_pathfinding              # Active pathfinding operations
+rts_memory_usage                    # Memory usage in MB
 
-Store sensitive configuration in `deployment/config/secrets.env`:
+# System performance metrics
+rts_pathfinding_time                # Average pathfinding time
+rts_pathfinding_cache_hit_ratio     # Cache efficiency
+rts_selection_response_time         # Selection response time
+rts_performance_target_fps_met      # Whether FPS target is met
 
-```bash
-# Database credentials
-DATABASE_URL=postgresql://user:pass@host:5432/db
-DATABASE_PASSWORD=secure_password
-
-# API keys
-MONITORING_API_KEY=your_monitoring_key
-ALERT_WEBHOOK_URL=https://hooks.slack.com/your/webhook
-
-# SSL certificates
-SSL_CERTIFICATE_PATH=/path/to/cert.crt
-SSL_PRIVATE_KEY_PATH=/path/to/private.key
+# Health metrics
+rts_monitor_uptime                  # Monitor uptime
+rts_alerts_total                    # Total alerts generated
 ```
 
-## 🚨 Troubleshooting
+### WebSocket Integration
+
+Real-time metrics streaming via WebSocket:
+
+```javascript
+// Connect to RTS monitoring WebSocket
+const ws = new WebSocket('ws://localhost:8082/ws');
+
+// Subscribe to specific metrics
+ws.send(JSON.stringify({
+  type: 'subscribe',
+  channels: ['performance', 'pathfinding', 'selection']
+}));
+
+// Receive real-time updates
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === 'performance_update') {
+    updatePerformanceChart(data.data);
+  }
+};
+```
+
+## 🚨 Alert System
+
+### Alert Categories
+
+1. **Performance Alerts**
+   - FPS below minimum threshold
+   - Frame time spikes
+   - Memory usage exceeded
+   - Entity count overflow
+
+2. **System Alerts**
+   - Service unavailability
+   - Database connection loss
+   - Asset loading failures
+   - Critical errors
+
+3. **Gameplay Alerts**
+   - Pathfinding performance degradation
+   - Selection system slowdown
+   - Resource system failures
+
+### Alert Configuration
+
+```javascript
+// Alert thresholds (configurable via environment)
+const alertThresholds = {
+  fps: { warning: 50, critical: 35 },
+  frameTime: { warning: 20, critical: 50 },
+  memory: { warning: 180, critical: 250 },
+  pathfinding: { warning: 8, critical: 15 },
+  selection: { warning: 25, critical: 50 }
+};
+```
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-#### 1. Deployment Fails During Build
-
+**1. Deployment Fails RTS Validation**
 ```bash
-# Check build logs
-docker compose logs --tail=100
+# Check current performance
+curl -s http://localhost:8080/api/performance-stats | jq '.'
 
-# Rebuild with no cache
-docker compose build --no-cache
+# Review deployment logs
+docker compose logs game-blue
 
-# Check disk space
-df -h
+# Force rollback if needed
+./deployment/scripts/rts-deploy.sh rollback
 ```
 
-#### 2. Health Checks Failing
-
+**2. Performance Degradation**
 ```bash
-# Check container health
-docker compose exec game-blue /usr/local/bin/health-check.sh full
+# Check RTS monitoring dashboard
+curl -s http://localhost:8082/rts-dashboard | jq '.performanceScore'
 
-# View detailed health status
-curl http://localhost:8080/status
+# Review recent alerts
+curl -s http://localhost:8082/alerts | jq '.[:5]'
 
-# Check container resources
-docker stats
+# Export diagnostic data
+curl -X POST http://localhost:8082/export-diagnostics
 ```
 
-#### 3. Rollback Not Working
-
+**3. Health Check Failures**
 ```bash
-# Validate rollback target
-./deployment/scripts/rollback.sh validate blue
+# Manual health check
+./deployment/scripts/rts-deploy.sh health blue
 
-# Check rollback history
-./deployment/scripts/rollback.sh status
+# Detailed RTS validation
+./deployment/scripts/rts-deploy.sh rts-check blue
 
-# Force container restart
-docker compose restart game-blue
+# Check specific systems
+curl -f http://localhost:8080/api/systems-status
 ```
 
-#### 4. Load Balancer Issues
+### Performance Optimization
 
+**High Memory Usage:**
 ```bash
-# Test nginx configuration
-docker compose exec nginx-lb nginx -t
+# Check memory breakdown
+curl -s http://localhost:8080/api/memory-stats
 
-# Reload nginx
-docker compose exec nginx-lb nginx -s reload
+# Monitor texture memory
+curl -s http://localhost:8080/api/renderer-stats
 
-# Check upstream health
-curl -I http://localhost/test/health
+# Enable object pooling in game settings
 ```
 
-### Recovery Procedures
-
-#### Emergency Recovery
-
+**Low FPS Issues:**
 ```bash
-# Stop all services
-docker compose -f deployment/docker-compose/docker-compose.blue-green.yml down
+# Check entity count
+curl -s http://localhost:8080/api/world-stats
 
-# Restart infrastructure
-docker compose -f deployment/docker-compose/docker-compose.blue-green.yml up -d
+# Review pathfinding performance  
+curl -s http://localhost:8080/api/pathfinding-stats
 
-# Force rollback to last known good version
-KEEP_OLD_SLOT=true ./deployment/scripts/rollback.sh auto
+# Analyze frame time breakdown
+curl -s http://localhost:8082/historical | jq '.frameTime[-10:]'
 ```
 
-#### Data Recovery
+## 📚 Advanced Topics
 
-```bash
-# Backup current state
-docker compose -f deployment/docker-compose/docker-compose.blue-green.yml exec game-blue tar czf /tmp/backup.tar.gz /usr/share/nginx/html
+### Custom Health Checks
 
-# Restore from backup
-docker cp backup.tar.gz game-blue:/tmp/
-docker compose exec game-blue tar xzf /tmp/backup.tar.gz -C /
+Extend the health monitoring system:
+
+```javascript
+// Add custom health check
+rtsHealthMonitor.addCustomCheck('database', async () => {
+  const dbStatus = await database.ping();
+  return {
+    status: dbStatus.connected ? 'healthy' : 'critical',
+    latency: dbStatus.latency,
+    activeConnections: dbStatus.connections
+  };
+});
 ```
 
-## 🔐 Security Considerations
+### Performance Profiling
 
-### Container Security
-- All containers run as non-root users
-- Read-only root filesystems where possible
-- Security headers enabled in nginx configuration
-- Regular security updates via base image updates
+Enable detailed performance profiling:
 
-### Network Security
-- All internal communication uses docker network isolation
-- Rate limiting enabled on public endpoints
-- CORS configuration for API endpoints
-- SSL/TLS termination at load balancer
+```javascript
+// Enable performance profiling
+rtsProfiler.setEnabled(true);
 
-### Secrets Management
-- Never commit secrets to version control
-- Use environment variables for runtime secrets
-- Rotate secrets regularly
-- Monitor for secret exposure
-
-## 📈 Performance Optimization
-
-### Resource Allocation
-- Memory limits set per container
-- CPU limits configured for fair resource sharing
-- Health check intervals optimized for responsiveness
-
-### Caching Strategy
-- Static assets cached with long TTLs
-- API responses cached appropriately
-- Browser caching headers optimized
-
-### Monitoring Metrics
-- Response time monitoring
-- Error rate tracking
-- Resource utilization metrics
-- Custom game performance metrics
-
-## 🔄 Maintenance
-
-### Regular Tasks
-
-#### Daily
-- Monitor health check status
-- Review error logs
-- Check resource utilization
-
-#### Weekly
-- Update base Docker images
-- Review security alerts
-- Clean up old deployment artifacts
-
-#### Monthly
-- Rotate secrets and certificates
-- Review and update monitoring thresholds
-- Performance optimization review
-
-### Automation
-
-```bash
-# Set up automated health monitoring
-crontab -e
-*/5 * * * * /path/to/deployment/scripts/rollback.sh auto
-
-# Set up log rotation
-echo "0 2 * * * docker system prune -f" | crontab -
-
-# Set up automated backups
-echo "0 1 * * * /path/to/backup-script.sh" | crontab -
+// Add custom profiling points
+rtsProfiler.startProfiling('render_cycle');
+// ... rendering logic ...
+rtsProfiler.endProfiling('render_cycle');
 ```
 
-## 📞 Support and Escalation
+### Monitoring Data Export
 
-### Alert Levels
+Export comprehensive monitoring data:
 
-1. **Info**: Deployment completed successfully
-2. **Warning**: High resource usage, slow response times
-3. **Critical**: Service unavailable, deployment failed
+```bash
+# Export all monitoring data
+curl -X POST http://localhost:8082/export-all > monitoring-export.json
 
-### Escalation Procedures
+# Export specific time range
+curl -s "http://localhost:8082/historical?start=2024-01-01&end=2024-01-02"
+```
 
-1. **Level 1**: Automated rollback attempted
-2. **Level 2**: Operations team notified
-3. **Level 3**: Development team engaged
-4. **Level 4**: Emergency recovery procedures initiated
+## 🎯 Success Metrics
 
-### Contact Information
+### Infrastructure Success Criteria
 
-- **Operations**: ops@yourcompany.com
-- **Development**: dev@yourcompany.com  
-- **Emergency**: emergency@yourcompany.com
+✅ **Comprehensive RTS monitoring** covers all gameplay systems
+✅ **Blue-green deployment pipeline** supports safe feature releases
+✅ **Performance profiling** enables optimization identification  
+✅ **Production health monitoring** ensures stable RTS gameplay
+✅ **Automated rollback** prevents performance regressions
+✅ **Real-time alerting** for immediate issue detection
+
+### Performance Benchmarks
+
+- **60+ FPS** sustained with 200+ entities
+- **<16ms frame time** for smooth gameplay
+- **<5ms pathfinding** per operation
+- **<16ms selection response** time
+- **<200MB memory usage** for optimal performance
+- **>95% uptime** in production environment
 
 ---
 
-## 📚 Additional Resources
+## 📞 Support
 
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [Nginx Load Balancing Guide](https://nginx.org/en/docs/http/load_balancing.html)
-- [Prometheus Monitoring Guide](https://prometheus.io/docs/guides/basic-auth/)
-- [Blue-Green Deployment Best Practices](https://martinfowler.com/bliki/BlueGreenDeployment.html)
+For infrastructure issues:
+1. Check deployment logs: `docker compose logs`
+2. Review RTS dashboard: `http://localhost:8082/rts-dashboard`
+3. Export diagnostic data: `curl -X POST http://localhost:8082/export-diagnostics`
+4. Consult troubleshooting section above
 
----
-
-*This deployment system was created with Claude Code AI Orchestration Engine*
+**Infrastructure monitoring enables reliable RTS gameplay at production scale** 🎮⚡

@@ -157,6 +157,46 @@ services:
       - game-blue
       - game-green
 
+  # RTS Performance Monitor
+  rts-performance-monitor:
+    build:
+      context: ../..
+      dockerfile: deployment/monitoring/Dockerfile.rts-monitor
+    container_name: game-rts-monitor
+    environment:
+      - NODE_ENV=production
+      - PORT=8082
+      - GAME_ENDPOINT=http://game-blue:8080
+      - GAME_WS_ENDPOINT=ws://game-blue:8080/ws
+      - CHECK_INTERVAL=5
+      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
+      - RTS_MIN_FPS=45
+      - RTS_TARGET_FPS=60
+      - RTS_MAX_MEMORY=200
+      - RTS_MAX_ENTITIES=200
+      - RTS_MAX_PATHFINDING_TIME=5
+      - RTS_MAX_SELECTION_TIME=16
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./monitoring:/app/config:ro
+      - rts-monitor-logs:/app/logs
+    networks:
+      - game-network
+    restart: unless-stopped
+    depends_on:
+      - game-blue
+      - prometheus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "monitoring.service=rts-performance"
+      - "monitoring.component=gameplay-metrics"
+
 networks:
   game-network:
     driver: bridge
@@ -170,6 +210,8 @@ volumes:
   prometheus-data:
     driver: local
   fluentd-logs:
+    driver: local
+  rts-monitor-logs:
     driver: local
 
 # Environment-specific overrides
