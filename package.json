@@ -7,9 +7,11 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
+    "build:production": "vite build --config vite.config.prod.js",
     "preview": "vite preview",
     "dev": "vite --host",
     "test": "jest",
+    "test:rts-systems": "node src/test/ComprehensiveTestRunner.js",
     "lint": "eslint src/**/*.js",
     "typecheck": "tsc --noEmit"
   },
