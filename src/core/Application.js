@@ -208,7 +208,7 @@ export class Application {
             antialias: this.options.antialias,
             resolution: this.options.resolution,
             autoDensity: this.options.autoDensity,
-            powerPreference: this.options.powerPreference,
+            preference: 'webgl', // Use modern preference key
             // WebGL configuration for v7
             forceCanvas: false,
             sharedTicker: true,
@@ -227,15 +227,17 @@ export class Application {
         
         while (attempts < maxAttempts) {
             try {
-                const app = new PIXI.Application(appConfig);
+                // Use modern async init
+                const app = new PIXI.Application();
+                await app.init(appConfig);
                 
                 // Verify the application was created successfully
                 if (!app || !app.renderer || !app.stage) {
                     throw new Error('PIXI Application incomplete after creation');
                 }
                 
-                // Test that WebGL context is working
-                if (app.renderer.type === PIXI.RENDERER_TYPE.WEBGL && !app.renderer.gl) {
+                // Test that WebGL context is working (using string key for v7)
+                if (app.renderer.type === 'webgl' && !app.renderer.gl) {
                     throw new Error('WebGL renderer created but no GL context available');
                 }
                 
@@ -269,7 +271,8 @@ export class Application {
         this.fallbackMode = true;
         
         try {
-            this.app = new PIXI.Application({
+            this.app = new PIXI.Application();
+            await this.app.init({
                 width: this.options.width,
                 height: this.options.height,
                 backgroundColor: this.options.backgroundColor,
