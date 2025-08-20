@@ -100,3 +100,7 @@ temp/
 mcp_servers/python-sequential-thinking-mcp/
 mcp_servers/mcp-official-servers/
 tools/CnC_Tiberian_Dawn/
+
+# MCP server files and virtual environments
+mcp_servers/mcp_servers/
+mcp_servers/mcp_venv/
