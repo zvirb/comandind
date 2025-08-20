@@ -34,9 +34,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/loadbalancer.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/upstream.conf:/etc/nginx/conf.d/upstream.conf:ro
-      - ./certificates:/etc/nginx/certificates:ro
+      - ../nginx/loadbalancer.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/upstream.conf:/etc/nginx/conf.d/upstream.conf:ro
+      - ../certificates:/etc/nginx/certificates:ro
     networks:
       - game-network
     depends_on:
@@ -102,7 +102,14 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: game-cadvisor
-    privileged: true
+    # SECURITY: Removed privileged mode and replaced with minimal required capabilities
+    cap_add:
+      - SYS_ADMIN  # Required for accessing system metrics and cgroup information
+    cap_drop:
+      - ALL        # Drop all capabilities first, then add only what's needed
+    security_opt:
+      - no-new-privileges:true  # Prevent privilege escalation
+      - apparmor:unconfined     # Required for cgroup access
     devices:
       - /dev/kmsg:/dev/kmsg
     volumes:
@@ -116,6 +123,13 @@ services:
     networks:
       - game-network
     restart: unless-stopped
+    # Health check to ensure monitoring functionality remains intact
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   # Log Aggregation
   fluentd:
