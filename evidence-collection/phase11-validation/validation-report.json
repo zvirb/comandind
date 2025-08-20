@@ -1,0 +1,1219 @@
+{
+  "timestamp": "2025-08-20T13:15:29.737Z",
+  "applicationFlow": {
+    "responseStatus": 200,
+    "mainMenuTransition": false,
+    "consoleLogs": [
+      {
+        "type": "error",
+        "text": "X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.",
+        "timestamp": "2025-08-20T13:15:30.743Z"
+      },
+      {
+        "type": "debug",
+        "text": "[vite] connecting...",
+        "timestamp": "2025-08-20T13:15:30.768Z"
+      },
+      {
+        "type": "log",
+        "text": "🛡️ Secure Error Handler initialized",
+        "timestamp": "2025-08-20T13:15:30.775Z"
+      },
+      {
+        "type": "log",
+        "text": "🛡️ Initializing Secure Error Handling System...",
+        "timestamp": "2025-08-20T13:15:30.776Z"
+      },
+      {
+        "type": "log",
+        "text": "🛡️ Secure Error Display initialized",
+        "timestamp": "2025-08-20T13:15:30.776Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Secure Error Handling System ready",
+        "timestamp": "2025-08-20T13:15:30.777Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 Loading game module with secure error protection...",
+        "timestamp": "2025-08-20T13:15:30.777Z"
+      },
+      {
+        "type": "debug",
+        "text": "[vite] connected.",
+        "timestamp": "2025-08-20T13:15:30.834Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Texture atlas test loaded",
+        "timestamp": "2025-08-20T13:15:30.834Z"
+      },
+      {
+        "type": "log",
+        "text": "Importing game module...",
+        "timestamp": "2025-08-20T13:15:30.835Z"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-20T13:15:30.835Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: Touch detection - Score: 38/100, Methods: [TouchEvent, TouchList, vibrationAPI, deviceMotionAPI], Result: false",
+        "timestamp": "2025-08-20T13:15:30.959Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: Trackpad detection - Score: 63/100, Methods: [linuxGraphical, linuxNoDesktop, laptopScreen(1920x1080), pointerEvents, wheelEvent, laptopMemory(8GB)], Result: true",
+        "timestamp": "2025-08-20T13:15:30.959Z"
+      },
+      {
+        "type": "log",
+        "text": "Input devices detected - Touch: false, Trackpad: true",
+        "timestamp": "2025-08-20T13:15:30.959Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: === DEVICE DETECTION SUMMARY ===",
+        "timestamp": "2025-08-20T13:15:30.959Z"
+      },
+      {
+        "type": "log",
+        "text": "  Touch Support: false (Confidence: 38/100)",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  Trackpad Support: true (Confidence: 63/100)",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  Detection Complete: false",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  Zoom Method: pinch",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  Pan Method: trackpad",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: === BROWSER ENVIRONMENT ===",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  Platform: Linux x86_64",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  User Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "timestamp": "2025-08-20T13:15:30.960Z"
+      },
+      {
+        "type": "log",
+        "text": "  Max Touch Points: 0",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  Hardware Concurrency: 16",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  Device Memory: 8GB",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: === SCREEN INFORMATION ===",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  Screen Size: 1920x1080",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  Color Depth: 24",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  Pixel Depth: 24",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: === FEATURE SUPPORT ===",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  TouchEvent: true",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  TouchList: true",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  PointerEvent: true",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  WheelEvent: true",
+        "timestamp": "2025-08-20T13:15:30.961Z"
+      },
+      {
+        "type": "log",
+        "text": "  ontouchstart: false",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "  onpointerdown: true",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "  Orientation API: false",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "  Device Motion: true",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "  Vibration API: true",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "  Primary Pointer: fine",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "  Hover Capability: hover",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: === END DETECTION SUMMARY ===",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ EventListenerManager 'GlobalManager' initialized",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 TexturePool initialized with JSHandle@object",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 Initializing Command and Independent Thought...",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ EventListenerManager 'GameInstance' initialized",
+        "timestamp": "2025-08-20T13:15:30.962Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 Initializing with WebGL2",
+        "timestamp": "2025-08-20T13:15:31.080Z"
+      },
+      {
+        "type": "log",
+        "text": "🔧 Initializing WebGL Context Manager...",
+        "timestamp": "2025-08-20T13:15:31.337Z"
+      },
+      {
+        "type": "log",
+        "text": "📸 WebGL context state captured",
+        "timestamp": "2025-08-20T13:15:31.338Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Optional extension EXT_texture_filter_anisotropic available",
+        "timestamp": "2025-08-20T13:15:31.338Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Optional extension WEBGL_compressed_texture_s3tc available",
+        "timestamp": "2025-08-20T13:15:31.338Z"
+      },
+      {
+        "type": "log",
+        "text": "📊 Memory monitoring started",
+        "timestamp": "2025-08-20T13:15:31.338Z"
+      },
+      {
+        "type": "log",
+        "text": "🏥 WebGL health monitoring started",
+        "timestamp": "2025-08-20T13:15:31.338Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Enhanced WebGL context listeners established",
+        "timestamp": "2025-08-20T13:15:31.338Z"
+      },
+      {
+        "type": "log",
+        "text": "📊 WebGL Capabilities Analysis:",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Version: WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Renderer: WebKit WebGL",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Vendor: WebKit",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Max Texture Units: 32",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Max Texture Size: 32768px",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Drawing Buffer: 1280x720",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "   Extensions:",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "     EXT_texture_filter_anisotropic: ✅",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "     WEBGL_compressed_texture_s3tc: ✅",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "     WEBGL_compressed_texture_pvrtc: ❌",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "     WEBGL_compressed_texture_etc1: ❌",
+        "timestamp": "2025-08-20T13:15:31.339Z"
+      },
+      {
+        "type": "log",
+        "text": "     OES_texture_float: ❌",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "     ANGLE_instanced_arrays: ❌",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "     WEBGL_lose_context: ✅",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "   Unmasked Renderer: ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4050 Laptop GPU/PCIe/SSE2, OpenGL 4.5.0)",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "   Unmasked Vendor: Google Inc. (NVIDIA Corporation)",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ PIXI Application created successfully",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "Canvas element: JSHandle@node",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "Canvas dimensions: 1280 x 720",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "📊 WebGL Capabilities:",
+        "timestamp": "2025-08-20T13:15:31.340Z"
+      },
+      {
+        "type": "log",
+        "text": "   Max texture units: 32",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "   Max texture size: 32768px",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "   Max vertex attributes: 16",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "   Max varying vectors: 31",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "   Available extensions:",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "     OES_vertex_array_object: ❌",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "     WEBGL_depth_texture: ❌",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "     EXT_texture_filter_anisotropic: ✅",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "     WEBGL_compressed_texture_s3tc: ✅",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "Adding canvas to game-container",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Canvas successfully added to DOM",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "Canvas computed style: JSHandle@object",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ InputHandler event listeners setup completed",
+        "timestamp": "2025-08-20T13:15:31.341Z"
+      },
+      {
+        "type": "log",
+        "text": "🎨 UIUpdateManager initialized - Update rate: 10Hz",
+        "timestamp": "2025-08-20T13:15:31.342Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 Loading C&C Game Data...",
+        "timestamp": "2025-08-20T13:15:31.343Z"
+      },
+      {
+        "type": "log",
+        "text": "Fetching game data from: JSHandle@array",
+        "timestamp": "2025-08-20T13:15:31.343Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Game module loaded successfully",
+        "timestamp": "2025-08-20T13:15:31.344Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Game data loaded successfully",
+        "timestamp": "2025-08-20T13:15:31.350Z"
+      },
+      {
+        "type": "log",
+        "text": "   - 6 unit types",
+        "timestamp": "2025-08-20T13:15:31.350Z"
+      },
+      {
+        "type": "log",
+        "text": "   - 8 building types",
+        "timestamp": "2025-08-20T13:15:31.350Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Sprite config loaded successfully.",
+        "timestamp": "2025-08-20T13:15:31.353Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Sprite configs built from JSON data.",
+        "timestamp": "2025-08-20T13:15:31.353Z"
+      },
+      {
+        "type": "log",
+        "text": "🔧 Performing maintenance cleanup...",
+        "timestamp": "2025-08-20T13:15:31.353Z"
+      },
+      {
+        "type": "log",
+        "text": "Loading texture atlas from: /assets/sprites/units/gdi/medium-tank.svg",
+        "timestamp": "2025-08-20T13:15:31.353Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Texture loaded successfully: 24x24 from /assets/sprites/units/gdi/medium-tank.svg",
+        "timestamp": "2025-08-20T13:15:31.397Z"
+      },
+      {
+        "type": "log",
+        "text": "Generating 1x1 frames (1 total) for atlas 'gdi-medium-tank'",
+        "timestamp": "2025-08-20T13:15:31.398Z"
+      },
+      {
+        "type": "log",
+        "text": "Generated 1 optimized frames for atlas 'gdi-medium-tank'",
+        "timestamp": "2025-08-20T13:15:31.398Z"
+      },
+      {
+        "type": "log",
+        "text": "Atlas 'gdi-medium-tank' loaded successfully with memory management",
+        "timestamp": "2025-08-20T13:15:31.398Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ SelectionSystem input handlers setup completed",
+        "timestamp": "2025-08-20T13:15:31.399Z"
+      },
+      {
+        "type": "log",
+        "text": "Created 100 test sprites",
+        "timestamp": "2025-08-20T13:15:31.407Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 Creating C&C test units with ECS...",
+        "timestamp": "2025-08-20T13:15:31.407Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'gdi-medium-tank' animation 'move'",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'gdi-medium-tank' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "log",
+        "text": "Using atlas texture directly for gdi-medium-tank",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "log",
+        "text": "Created unit: Medium Tank at (200, 200)",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "log",
+        "text": "Created GDI unit entity: Medium Tank (ID: 1)",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'gdi-mammoth-tank' animation 'move'",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.408Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'gdi-mammoth-tank' not loaded",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'gdi-mammoth-tank' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for gdi-mammoth-tank",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for gdi-mammoth-tank",
+        "timestamp": "2025-08-20T13:15:31.409Z"
+      },
+      {
+        "type": "log",
+        "text": "Created unit: Mammoth Tank at (260, 200)",
+        "timestamp": "2025-08-20T13:15:31.411Z"
+      },
+      {
+        "type": "log",
+        "text": "Created GDI unit entity: Mammoth Tank (ID: 2)",
+        "timestamp": "2025-08-20T13:15:31.412Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'gdi-orca' animation 'move'",
+        "timestamp": "2025-08-20T13:15:31.412Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'gdi-orca' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:31.412Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for gdi-orca",
+        "timestamp": "2025-08-20T13:15:31.412Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for gdi-orca",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Created unit: Orca at (320, 200)",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Created GDI unit entity: Orca (ID: 3)",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'nod-light-tank' animation 'move'",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'nod-light-tank' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for nod-light-tank",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for nod-light-tank",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Created unit: Light Tank at (200, 300)",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Created NOD unit entity: Light Tank (ID: 4)",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'nod-stealth-tank' animation 'move'",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'nod-stealth-tank' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:31.413Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for nod-stealth-tank",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for nod-stealth-tank",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "log",
+        "text": "Created unit: Stealth Tank at (260, 300)",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "log",
+        "text": "Created NOD unit entity: Stealth Tank (ID: 5)",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'nod-recon-bike' animation 'move'",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.414Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'nod-recon-bike' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for nod-recon-bike",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for nod-recon-bike",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created unit: Recon Bike at (320, 300)",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created NOD unit entity: Recon Bike (ID: 6)",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created building: Construction Yard at (400, 200)",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created GDI building entity: Construction Yard (ID: 7)",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created building: Power Plant at (480, 200)",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created GDI building entity: Power Plant (ID: 8)",
+        "timestamp": "2025-08-20T13:15:31.415Z"
+      },
+      {
+        "type": "log",
+        "text": "Created building: Construction Yard at (400, 320)",
+        "timestamp": "2025-08-20T13:15:31.416Z"
+      },
+      {
+        "type": "log",
+        "text": "Created NOD building entity: Construction Yard (ID: 9)",
+        "timestamp": "2025-08-20T13:15:31.416Z"
+      },
+      {
+        "type": "log",
+        "text": "Created building: Power Plant at (480, 320)",
+        "timestamp": "2025-08-20T13:15:31.416Z"
+      },
+      {
+        "type": "log",
+        "text": "Created NOD building entity: Power Plant (ID: 10)",
+        "timestamp": "2025-08-20T13:15:31.416Z"
+      },
+      {
+        "type": "log",
+        "text": "🔧 ECS World Stats: JSHandle@object",
+        "timestamp": "2025-08-20T13:15:31.416Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Game initialized successfully!",
+        "timestamp": "2025-08-20T13:15:31.419Z"
+      },
+      {
+        "type": "log",
+        "text": "🎮 All systems ready - hiding loading screen",
+        "timestamp": "2025-08-20T13:15:31.920Z"
+      },
+      {
+        "type": "log",
+        "text": "Starting game loop with target 60 FPS",
+        "timestamp": "2025-08-20T13:15:31.920Z"
+      },
+      {
+        "type": "log",
+        "text": "🎨 UIUpdateManager started",
+        "timestamp": "2025-08-20T13:15:31.920Z"
+      },
+      {
+        "type": "log",
+        "text": "🎛️ Navigation controls activated",
+        "timestamp": "2025-08-20T13:15:33.345Z"
+      },
+      {
+        "type": "log",
+        "text": "🚀 Auto-running texture atlas test...",
+        "timestamp": "2025-08-20T13:15:33.831Z"
+      },
+      {
+        "type": "log",
+        "text": "🧪 Starting Texture Atlas Validation...",
+        "timestamp": "2025-08-20T13:15:33.832Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Game found",
+        "timestamp": "2025-08-20T13:15:33.832Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ TextureAtlasManager found",
+        "timestamp": "2025-08-20T13:15:33.832Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Sprite configs loaded",
+        "timestamp": "2025-08-20T13:15:33.832Z"
+      },
+      {
+        "type": "log",
+        "text": "📁 Available configs: JSHandle@array",
+        "timestamp": "2025-08-20T13:15:33.832Z"
+      },
+      {
+        "type": "log",
+        "text": "🖼️ Testing texture loading...",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Testing sprite: gdi-medium-tank",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'gdi-medium-tank' animation 'move'",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'gdi-medium-tank' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Using atlas texture directly for gdi-medium-tank",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ gdi-medium-tank: 24x24",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Testing sprite: gdi-construction-yard",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'gdi-construction-yard' animation 'move'",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'gdi-construction-yard' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for gdi-construction-yard",
+        "timestamp": "2025-08-20T13:15:33.833Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for gdi-construction-yard",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ gdi-construction-yard: 64x64",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "log",
+        "text": "Testing sprite: nod-recon-bike",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating animated sprite for 'nod-recon-bike' animation 'move'",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "Atlas 'nod-recon-bike' not loaded",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "warn",
+        "text": "No frames found for animation 'move' of sprite 'nod-recon-bike' - creating fallback sprite",
+        "timestamp": "2025-08-20T13:15:33.834Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder sprite for nod-recon-bike",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "Creating placeholder texture for nod-recon-bike",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ nod-recon-bike: 64x64",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "📊 Memory usage: JSHandle@object",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "\\n📋 TEST SUMMARY:",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "==================================================",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "Sprites tested: 3",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "Successful: 3",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "Failed: 0",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "Width errors: NO",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ gdi-medium-tank (24x24)",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ gdi-construction-yard (64x64)",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ nod-recon-bike (64x64)",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "==================================================",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "🎉 ALL TESTS PASSED - TEXTURE ATLAS FIX SUCCESSFUL!",
+        "timestamp": "2025-08-20T13:15:33.835Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: Finalizing device detection after observation period",
+        "timestamp": "2025-08-20T13:15:35.959Z"
+      },
+      {
+        "type": "log",
+        "text": "Final confidence scores - Touch: 38/100, Trackpad: 63/100",
+        "timestamp": "2025-08-20T13:15:35.960Z"
+      },
+      {
+        "type": "log",
+        "text": "Final detection - Touch: false, Trackpad: true",
+        "timestamp": "2025-08-20T13:15:35.960Z"
+      },
+      {
+        "type": "log",
+        "text": "Recorded 50 user interactions for analysis",
+        "timestamp": "2025-08-20T13:15:35.960Z"
+      },
+      {
+        "type": "log",
+        "text": "✅ Game is now running!",
+        "timestamp": "2025-08-20T13:15:36.130Z"
+      },
+      {
+        "type": "log",
+        "text": "InputConfig: Trackpad wheel detection - Score: +85, Total: 100/100, Methods: [fractionalDeltas, horizontalScroll, smallDeltas, pixelMode, smoothScroll]",
+        "timestamp": "2025-08-20T13:15:42.912Z"
+      }
+    ],
+    "score": 4
+  },
+  "infrastructure": {
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:            15Gi        11Gi       1.4Gi       183Mi       3.2Gi       4.1Gi\nSwap:          4.0Gi       3.6Gi       379Mi\n",
+    "cpu": "top - 23:15:47 up 2 days,  1:55,  1 user,  load average: 1.51, 1.47, 1.23\nTasks: 566 total,   2 running, 564 sleeping,   0 stopped,   0 zombie\n%Cpu(s):  3.7 us,  2.1 sy,  0.0 ni, 93.7 id,  0.5 wa,  0.0 hi,  0.0 si,  0.0 st \nMiB Mem :  15805.9 total,   1441.2 free,  11614.4 used,   3267.1 buff/cache     \nMiB Swap:   4096.0 total,    380.0 free,   3716.0 used.   4191.4 avail Mem \n",
+    "disk": "Filesystem                         Size  Used Avail Use% Mounted on\n/dev/mapper/ubuntu--vg-ubuntu--lv  466G  359G   84G  82% /\n",
+    "nodeProcesses": "root        3894  0.0  0.0   2704  1300 ?        Ss   Aug18   0:00 fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc\nmarku      32753  0.0  0.2 1115028 46776 ?       Sl   10:39   0:00 node /home/marku/Documents/programming/songnodes/frontend/node_modules/.bin/playwright show-report --port 9324\nmarku      93760  0.0  0.2 11818540 48100 ?      Sl   10:52   0:06 node /home/marku/Documents/programming/songnodes/frontend/node_modules/.bin/vite\nmarku      93788  0.0  0.0 1237752 5148 ?        Sl   10:52   0:21 /home/marku/Documents/programming/songnodes/frontend/node_modules/@esbuild/linux-x64/bin/esbuild --service=0.25.9 --ping\nmarku     254661  0.5  0.6 1461293916 107288 ?   Sl   12:53   3:23 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     254681  0.6  0.8 1461338272 141040 ?   Sl   12:53   4:14 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     324559  0.0  0.7 1461310500 115488 ?   Sl   14:09   0:25 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     324569  0.8  4.7 1461303384 773556 ?   Sl   14:09   4:36 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     324619  0.0  0.5 1459517780 83148 ?    Sl   14:09   0:00 /snap/code/204/usr/share/code/code /snap/code/204/usr/share/code/resources/app/extensions/json-language-features/server/dist/node/jsonServerMain --node-ipc --clientProcessId=324569\nmarku     325435  0.0  0.3 11518540 54000 pts/1  Sl+  14:09   0:00 node /home/marku/.npm/_npx/12b05d58670d8359/node_modules/.bin/firecrawl-mcp\nmarku     325781  0.0  1.8 1459550640 292312 ?   Sl   14:09   0:09 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/googlecloudtools.cloudcode-2.36.0/dist/server/server.js --node-ipc --clientProcessId=324569\nmarku     680433  0.0  0.6 1461294108 103932 ?   Sl   23:08   0:00 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     680443  0.8  0.9 1461295176 154144 ?   Sl   23:08   0:04 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     680484  0.5  0.5 1459550640 95692 ?    Ssl  23:08   0:02 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/ms-vscode.remote-server-1.5.2/dist/node/proxyServer.js\nmarku     680896  0.3  0.6 1461310564 111660 ?   Sl   23:08   0:01 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     680906  6.8  5.9 1461303448 959216 ?   Sl   23:08   0:29 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     681151  0.0  0.5 1459517716 86500 ?    Sl   23:08   0:00 /snap/code/204/usr/share/code/code /snap/code/204/usr/share/code/resources/app/extensions/json-language-features/server/dist/node/jsonServerMain --node-ipc --clientProcessId=680906\nmarku     681547  0.8  1.7 1462967224 288544 ?   Sl   23:08   0:03 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/ms-python.vscode-pylance-2025.7.1/dist/server.bundle.js --cancellationReceive=file:7cf80e5c87be2fada5cffa1baa5b05f9b2f88dc0d0 --node-ipc --clientProcessId=680906\nmarku     681860  7.6  6.1 1461303384 988008 ?   Sl   23:08   0:32 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     681871  2.9  1.0 1461310500 173608 ?   Sl   23:08   0:12 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-GB --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=254303 --enable-crash-reporter=e15f8355-4cce-4e49-bb68-aa9a7d39ade8,no_channel --user-data-dir=/home/marku/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,10592442745072683034,11940760427010065871,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version\nmarku     682109  0.0  0.4 1459517716 80072 ?    Sl   23:08   0:00 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/ms-azuretools.vscode-containers-2.1.0/dist/dockerfile-language-server-nodejs/lib/server.js --node-ipc --node-ipc --clientProcessId=681860\nmarku     682110  0.0  0.5 1459517716 89268 ?    Sl   23:08   0:00 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/ms-azuretools.vscode-containers-2.1.0/dist/compose-language-service/lib/server.js --node-ipc --node-ipc --clientProcessId=681860\nmarku     682148  0.0  0.5 1459517780 87652 ?    Sl   23:08   0:00 /snap/code/204/usr/share/code/code /snap/code/204/usr/share/code/resources/app/extensions/json-language-features/server/dist/node/jsonServerMain --node-ipc --clientProcessId=681860\nmarku     682156  0.1  0.6 1459550704 98460 ?    Sl   23:08   0:00 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/redhat.vscode-yaml-1.18.0/dist/languageserver.js --node-ipc --clientProcessId=681860\nmarku     683235  0.1  0.3 135320 52456 ?        Sl   23:08   0:00 /home/marku/Documents/programming/songnodes/mcp_venv/bin/python /home/marku/.vscode/extensions/ms-python.pylint-2025.2.0/bundled/tool/lsp_server.py\nmarku     683373  0.9  1.7 1462967224 289368 ?   Sl   23:08   0:04 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/ms-python.vscode-pylance-2025.7.1/dist/server.bundle.js --cancellationReceive=file:7ae1e279395725200cc8aae8280bfc98146b89675a --node-ipc --clientProcessId=681860\nmarku     683375  1.0  2.7 1459550640 439344 ?   Sl   23:08   0:04 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/googlecloudtools.cloudcode-2.36.0/dist/server/server.js --node-ipc --clientProcessId=680906\nmarku     683429  0.1  0.3 11518760 63096 pts/3  Sl+  23:08   0:00 node /home/marku/.npm/_npx/12b05d58670d8359/node_modules/.bin/firecrawl-mcp\nmarku     683990  2.3  2.7 1459550640 448428 ?   Sl   23:09   0:09 /snap/code/204/usr/share/code/code /home/marku/.vscode/extensions/googlecloudtools.cloudcode-2.36.0/dist/server/server.js --node-ipc --clientProcessId=681860\nmarku     684223  0.3  0.6 11831336 98044 ?      Sl   23:09   0:01 node /home/marku/Documents/programming/comandind/node_modules/.bin/vite --host\nmarku     684234  0.6  0.1 1506396 25964 ?       Sl   23:09   0:02 /home/marku/Documents/programming/comandind/node_modules/@esbuild/linux-x64/bin/esbuild --service=0.25.9 --ping\nmarku     698758  0.0  0.0   7392  3640 ?        Ss   23:15   0:00 /bin/bash -c -l source /home/marku/.claude/shell-snapshots/snapshot-bash-1755662961085-dhtarq.sh && eval 'node production-validation-phase11.js' \\< /dev/null && pwd -P >| /tmp/claude-fcd7-cwd\nmarku     698765  2.4  0.3 1293600 59720 ?       Sl   23:15   0:00 node production-validation-phase11.js\n",
+    "portCheck": "LISTEN 0      511                *:3000             *:*    users:((\"node\",pid=684223,fd=27))  \n",
+    "score": 6
+  },
+  "performance": {
+    "responseTime": "200,0.010090,6065",
+    "loadTest": {
+      "requests": 5,
+      "times": [
+        17,
+        13,
+        13,
+        13,
+        13
+      ],
+      "average": 13.8
+    },
+    "score": 4
+  },
+  "textureAtlas": {
+    "error": "PIXI not found"
+  },
+  "errors": [],
+  "screenshots": [
+    {
+      "name": "initial-load",
+      "path": "/home/marku/Documents/programming/comandind/evidence-collection/phase11-validation/initial-load-1755695730778.png",
+      "timestamp": "2025-08-20T13:15:30.955Z"
+    },
+    {
+      "name": "loading-screen",
+      "path": "/home/marku/Documents/programming/comandind/evidence-collection/phase11-validation/loading-screen-1755695731371.png",
+      "timestamp": "2025-08-20T13:15:31.502Z"
+    },
+    {
+      "name": "final-state",
+      "path": "/home/marku/Documents/programming/comandind/evidence-collection/phase11-validation/final-state-1755695746509.png",
+      "timestamp": "2025-08-20T13:15:46.661Z"
+    }
+  ],
+  "overallScore": 14,
+  "summary": {
+    "totalErrors": 0,
+    "screenshotCount": 3,
+    "productionReady": true,
+    "recommendations": [
+      "Critical: Main menu transition is failing - investigate texture atlas loading",
+      "System validated - ready for production deployment"
+    ]
+  }
+}

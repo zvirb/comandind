@@ -76,7 +76,7 @@ temp/
 # go.sum
 
 # Submodules and nested git repositories
-UnifiedWorkflow/
+# UnifiedWorkflow/ # Now a submodule
 mcp_servers/python-sequential-thinking-mcp/
 mcp_servers/mcp-official-servers/
 tools/CnC_Tiberian_Dawn/

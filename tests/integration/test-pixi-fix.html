@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixiJS CSP Fix Validation</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ws: wss:; font-src 'self' data:;">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: #fff; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #2d5a2d; border: 1px solid #4a8a4a; }
+        .error { background: #5a2d2d; border: 1px solid #8a4a4a; }
+        .info { background: #2d4a5a; border: 1px solid #4a7a8a; }
+        #gameContainer { border: 2px solid #333; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🎮 PixiJS CSP Fix Validation</h1>
+    
+    <div id="status"></div>
+    <div id="gameContainer"></div>
+
+    <script type="module">
+        import '@pixi/unsafe-eval';
+        import { Application, Graphics } from './node_modules/pixi.js/dist/pixi.esm.js';
+        
+        async function validatePixiJS() {
+            const statusDiv = document.getElementById('status');
+            const gameContainer = document.getElementById('gameContainer');
+            
+            try {
+                statusDiv.innerHTML = '<div class="info">🔧 Testing PixiJS initialization with CSP fix...</div>';
+                
+                // Test PixiJS Application creation
+                const app = new Application();
+                await app.init({
+                    width: 800,
+                    height: 400,
+                    backgroundColor: 0x1a1a1a,
+                    preference: 'webgl'
+                });
+                
+                statusDiv.innerHTML += '<div class="success">✅ PixiJS Application initialized successfully!</div>';
+                statusDiv.innerHTML += `<div class="info">📊 Renderer: ${app.renderer.type === 'webgl' ? 'WebGL' : 'Canvas'}</div>`;
+                
+                // Add the canvas to container
+                gameContainer.appendChild(app.canvas);
+                
+                // Test graphics rendering
+                const graphics = new Graphics();
+                graphics.rect(50, 50, 100, 100);
+                graphics.fill(0x00ff00);
+                app.stage.addChild(graphics);
+                
+                statusDiv.innerHTML += '<div class="success">✅ Graphics rendering working!</div>';
+                statusDiv.innerHTML += '<div class="success">🎉 CSP Fix Validation: PASSED</div>';
+                
+                return true;
+                
+            } catch (error) {
+                statusDiv.innerHTML += `<div class="error">❌ PixiJS Initialization Failed: ${error.message}</div>`;
+                console.error('PixiJS Test Failed:', error);
+                return false;
+            }
+        }
+        
+        // Run validation
+        validatePixiJS().then(success => {
+            if (success) {
+                console.log('✅ PixiJS CSP fix validation successful');
+            } else {
+                console.error('❌ PixiJS CSP fix validation failed');
+            }
+        });
+    </script>
+</body>
+</html>

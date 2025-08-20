@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Diagnostics - Command & Independent Thought</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            border-radius: 10px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn.danger {
+            background: #e74c3c;
+        }
+        
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+        
+        .status-bar {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        
+        .status-healthy { background: #27ae60; color: white; }
+        .status-issues { background: #e74c3c; color: white; }
+        .status-testing { background: #f39c12; color: white; }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .test-results, .system-info {
+            background: #2c3e50;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .section-title {
+            color: #3498db;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .test-item:last-child {
+            border-bottom: none;
+        }
+        
+        .test-status {
+            width: 30px;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        
+        .test-name {
+            font-weight: bold;
+            flex: 1;
+            color: #ecf0f1;
+        }
+        
+        .test-message {
+            color: #bdc3c7;
+            font-size: 12px;
+            margin-left: 40px;
+            margin-top: 4px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            background: #34495e;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .info-label {
+            color: #95a5a6;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            color: #ecf0f1;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        
+        .recommendations {
+            background: #2c3e50;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .recommendation {
+            background: #34495e;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .progress-bar {
+            background: #34495e;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .log-container {
+            background: #1a1a1a;
+            border: 1px solid #34495e;
+            border-radius: 8px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+        }
+        
+        .log-info { color: #3498db; }
+        .log-success { color: #2ecc71; }
+        .log-warning { color: #f39c12; }
+        .log-error { color: #e74c3c; }
+        
+        .canvas-container {
+            background: #34495e;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #diagnostic-canvas {
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            background: #000;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 WebGL Diagnostics Suite</h1>
+        <p>Command & Independent Thought - WebGL Analysis & Validation</p>
+    </div>
+    
+    <div class="controls">
+        <button class="btn" id="run-diagnostics">🔬 Run Full Diagnostics</button>
+        <button class="btn" id="test-context-loss" disabled>⚠️ Test Context Loss</button>
+        <button class="btn danger" id="clear-results">🗑️ Clear Results</button>
+    </div>
+    
+    <div class="status-bar">
+        <div>
+            <strong>Status:</strong> 
+            <span class="status-indicator status-testing" id="status-indicator">Ready</span>
+        </div>
+        <div>
+            <strong>Tests:</strong> 
+            <span id="test-counter">0 / 0</span>
+        </div>
+        <div>
+            <strong>Duration:</strong> 
+            <span id="test-duration">0ms</span>
+        </div>
+    </div>
+    
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill">0%</div>
+    </div>
+    
+    <div class="results-container">
+        <div class="test-results">
+            <div class="section-title">🧪 Test Results</div>
+            <div id="test-results-list">
+                <p style="color: #7f8c8d; text-align: center; padding: 20px;">
+                    Click "Run Full Diagnostics" to begin testing
+                </p>
+            </div>
+        </div>
+        
+        <div class="system-info">
+            <div class="section-title">📊 System Information</div>
+            <div id="system-info-content">
+                <p style="color: #7f8c8d; text-align: center; padding: 20px;">
+                    System information will appear after running diagnostics
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="recommendations">
+        <div class="section-title">💡 Recommendations</div>
+        <div id="recommendations-list">
+            <p style="color: #7f8c8d; text-align: center; padding: 20px;">
+                Recommendations will appear after running diagnostics
+            </p>
+        </div>
+    </div>
+    
+    <div class="canvas-container">
+        <div class="section-title">🎨 WebGL Test Canvas</div>
+        <canvas id="diagnostic-canvas" width="400" height="300"></canvas>
+        <p style="color: #7f8c8d; font-size: 12px; margin-top: 10px;">
+            This canvas is used for WebGL testing and validation
+        </p>
+    </div>
+    
+    <div class="log-container" id="log-container">
+        <div class="log-entry log-info">WebGL Diagnostics Suite initialized</div>
+        <div class="log-entry log-info">Ready to run diagnostics...</div>
+    </div>
+    
+    <script type="module">
+        import { WebGLDiagnostics } from './src/utils/WebGLDiagnostics.js';
+        import { BrowserCompatibilityChecker } from './src/rendering/BrowserCompatibilityChecker.js';
+        import { WebGLContextManager } from './src/rendering/WebGLContextManager.js';
+        
+        class DiagnosticInterface {
+            constructor() {
+                this.diagnostics = null;
+                this.contextManager = null;
+                this.startTime = 0;
+                this.testCount = 0;
+                this.totalTests = 0;
+                
+                this.initializeInterface();
+                this.setupEventListeners();
+            }
+            
+            initializeInterface() {
+                this.elements = {
+                    runButton: document.getElementById('run-diagnostics'),
+                    contextLossButton: document.getElementById('test-context-loss'),
+                    clearButton: document.getElementById('clear-results'),
+                    statusIndicator: document.getElementById('status-indicator'),
+                    testCounter: document.getElementById('test-counter'),
+                    testDuration: document.getElementById('test-duration'),
+                    progressFill: document.getElementById('progress-fill'),
+                    testResultsList: document.getElementById('test-results-list'),
+                    systemInfoContent: document.getElementById('system-info-content'),
+                    recommendationsList: document.getElementById('recommendations-list'),
+                    logContainer: document.getElementById('log-container'),
+                    canvas: document.getElementById('diagnostic-canvas')
+                };
+                
+                this.log('Interface initialized', 'info');
+            }
+            
+            setupEventListeners() {
+                this.elements.runButton.addEventListener('click', () => this.runDiagnostics());
+                this.elements.contextLossButton.addEventListener('click', () => this.testContextLoss());
+                this.elements.clearButton.addEventListener('click', () => this.clearResults());
+                
+                // Listen for WebGL context events
+                window.addEventListener('webgl-context-lost', (e) => {
+                    this.log(`WebGL context lost (attempt ${e.detail.attempt})`, 'warning');
+                    this.updateStatus('Context Lost', 'issues');
+                });
+                
+                window.addEventListener('webgl-context-restored', () => {
+                    this.log('WebGL context restored', 'success');
+                    this.updateStatus('Context Restored', 'healthy');
+                });
+                
+                window.addEventListener('gpu-memory-pressure', (e) => {
+                    this.log(`GPU memory pressure: ${e.detail.level} (${e.detail.memoryMB}MB)`, 'warning');
+                });
+            }
+            
+            async runDiagnostics() {
+                this.startTime = performance.now();
+                this.testCount = 0;
+                this.updateStatus('Running Tests...', 'testing');
+                this.elements.runButton.disabled = true;
+                
+                this.log('Starting comprehensive WebGL diagnostics...', 'info');
+                
+                try {
+                    this.diagnostics = new WebGLDiagnostics();
+                    
+                    // Override the addTest method to capture progress
+                    const originalAddTest = this.diagnostics.addTest.bind(this.diagnostics);
+                    this.diagnostics.addTest = (name, status, message) => {
+                        originalAddTest(name, status, message);
+                        this.testCount++;
+                        this.updateProgress();
+                        this.addTestResult(name, status, message);
+                    };
+                    
+                    const report = await this.diagnostics.runDiagnostics();
+                    
+                    this.displayResults(report);
+                    this.updateStatus('Diagnostics Complete', report.summary.overall === 'HEALTHY' ? 'healthy' : 'issues');
+                    
+                    // Enable context loss testing if WebGL is available
+                    if (report.capabilities?.webgl?.supported) {
+                        this.elements.contextLossButton.disabled = false;
+                    }
+                    
+                } catch (error) {
+                    this.log(`Diagnostics failed: ${error.message}`, 'error');
+                    this.updateStatus('Diagnostics Failed', 'issues');
+                } finally {\n                    this.elements.runButton.disabled = false;\n                    const duration = performance.now() - this.startTime;\n                    this.elements.testDuration.textContent = `${Math.round(duration)}ms`;\n                }\n            }\n            \n            updateProgress() {\n                if (this.totalTests === 0) {\n                    // Estimate total tests based on typical run\n                    this.totalTests = 50; // Rough estimate\n                }\n                \n                const progress = Math.min((this.testCount / this.totalTests) * 100, 100);\n                this.elements.progressFill.style.width = `${progress}%`;\n                this.elements.progressFill.textContent = `${Math.round(progress)}%`;\n                this.elements.testCounter.textContent = `${this.testCount} / ${this.totalTests}`;\n            }\n            \n            addTestResult(name, status, message) {\n                const statusIcons = {\n                    'PASS': '✅',\n                    'FAIL': '❌',\n                    'WARN': '⚠️',\n                    'ERROR': '💥',\n                    'INFO': '📊'\n                };\n                \n                const testItem = document.createElement('div');\n                testItem.className = 'test-item';\n                \n                testItem.innerHTML = `\n                    <div class=\"test-status\">${statusIcons[status] || '❓'}</div>\n                    <div class=\"test-name\">${name}</div>\n                `;\n                \n                if (message) {\n                    const messageDiv = document.createElement('div');\n                    messageDiv.className = 'test-message';\n                    messageDiv.textContent = message;\n                    testItem.appendChild(messageDiv);\n                }\n                \n                this.elements.testResultsList.appendChild(testItem);\n                \n                // Auto-scroll to bottom\n                testItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });\n            }\n            \n            displayResults(report) {\n                // Update test counter with actual totals\n                this.totalTests = report.tests.length;\n                this.elements.testCounter.textContent = `${report.tests.length} / ${report.tests.length}`;\n                \n                // Display system information\n                this.displaySystemInfo(report);\n                \n                // Display recommendations\n                this.displayRecommendations(report.recommendations);\n                \n                this.log(`Diagnostics complete: ${report.summary.passed} passed, ${report.summary.failed} failed`, 'info');\n            }\n            \n            displaySystemInfo(report) {\n                const info = [];\n                \n                if (report.capabilities.browser) {\n                    const browser = report.capabilities.browser;\n                    info.push(\n                        { label: 'Browser', value: `${browser.name} ${browser.version}` },\n                        { label: 'Engine', value: browser.engine },\n                        { label: 'Platform', value: browser.platform },\n                        { label: 'Mobile', value: browser.mobile ? 'Yes' : 'No' }\n                    );\n                }\n                \n                if (report.capabilities.webgl) {\n                    const webgl = report.capabilities.webgl;\n                    info.push(\n                        { label: 'WebGL Version', value: `WebGL ${webgl.version}` },\n                        { label: 'GPU Vendor', value: webgl.vendor },\n                        { label: 'GPU Renderer', value: webgl.renderer }\n                    );\n                }\n                \n                if (report.limits) {\n                    const limits = report.limits;\n                    info.push(\n                        { label: 'Max Texture Size', value: `${limits.maxTextureSize}px` },\n                        { label: 'Max Texture Units', value: limits.maxTextureUnits },\n                        { label: 'Est. GPU Memory', value: `${limits.estimatedGPUMemory}MB` }\n                    );\n                }\n                \n                if (report.capabilities.device) {\n                    const device = report.capabilities.device;\n                    info.push(\n                        { label: 'Performance Tier', value: device.performanceTier },\n                        { label: 'Hardware Cores', value: device.hardwareConcurrency },\n                        { label: 'Device Pixel Ratio', value: device.devicePixelRatio }\n                    );\n                }\n                \n                const infoHtml = info.map(item => `\n                    <div class=\"info-item\">\n                        <div class=\"info-label\">${item.label}</div>\n                        <div class=\"info-value\">${item.value}</div>\n                    </div>\n                `).join('');\n                \n                this.elements.systemInfoContent.innerHTML = `\n                    <div class=\"info-grid\">\n                        ${infoHtml}\n                    </div>\n                `;\n            }\n            \n            displayRecommendations(recommendations) {\n                if (recommendations.length === 0) {\n                    this.elements.recommendationsList.innerHTML = `\n                        <p style=\"color: #27ae60; text-align: center; padding: 20px;\">\n                            🎉 No issues detected! Your system is well-configured for WebGL.\n                        </p>\n                    `;\n                    return;\n                }\n                \n                const recommendationsHtml = recommendations.map(rec => `\n                    <div class=\"recommendation\">\n                        ${rec}\n                    </div>\n                `).join('');\n                \n                this.elements.recommendationsList.innerHTML = recommendationsHtml;\n            }\n            \n            async testContextLoss() {\n                this.log('Testing WebGL context loss...', 'warning');\n                \n                try {\n                    // Create a simple WebGL context for testing\n                    const gl = this.elements.canvas.getContext('webgl2') || this.elements.canvas.getContext('webgl');\n                    \n                    if (!gl) {\n                        this.log('No WebGL context available for testing', 'error');\n                        return;\n                    }\n                    \n                    // Create context manager for testing\n                    const mockApp = {\n                        renderer: { gl },\n                        view: this.elements.canvas\n                    };\n                    \n                    this.contextManager = new WebGLContextManager(mockApp);\n                    \n                    // Force context loss for testing\n                    this.contextManager.testContextLoss();\n                    \n                    this.log('Context loss test initiated', 'info');\n                    \n                } catch (error) {\n                    this.log(`Context loss test failed: ${error.message}`, 'error');\n                }\n            }\n            \n            clearResults() {\n                this.elements.testResultsList.innerHTML = `\n                    <p style=\"color: #7f8c8d; text-align: center; padding: 20px;\">\n                        Click \"Run Full Diagnostics\" to begin testing\n                    </p>\n                `;\n                \n                this.elements.systemInfoContent.innerHTML = `\n                    <p style=\"color: #7f8c8d; text-align: center; padding: 20px;\">\n                        System information will appear after running diagnostics\n                    </p>\n                `;\n                \n                this.elements.recommendationsList.innerHTML = `\n                    <p style=\"color: #7f8c8d; text-align: center; padding: 20px;\">\n                        Recommendations will appear after running diagnostics\n                    </p>\n                `;\n                \n                this.elements.progressFill.style.width = '0%';\n                this.elements.progressFill.textContent = '0%';\n                this.elements.testCounter.textContent = '0 / 0';\n                this.elements.testDuration.textContent = '0ms';\n                \n                this.updateStatus('Ready', 'testing');\n                this.elements.contextLossButton.disabled = true;\n                \n                // Clear log except initial messages\n                this.elements.logContainer.innerHTML = `\n                    <div class=\"log-entry log-info\">WebGL Diagnostics Suite initialized</div>\n                    <div class=\"log-entry log-info\">Ready to run diagnostics...</div>\n                    <div class=\"log-entry log-info\">Results cleared</div>\n                `;\n                \n                this.testCount = 0;\n                this.totalTests = 0;\n            }\n            \n            updateStatus(text, type) {\n                this.elements.statusIndicator.textContent = text;\n                this.elements.statusIndicator.className = `status-indicator status-${type}`;\n            }\n            \n            log(message, type = 'info') {\n                const timestamp = new Date().toLocaleTimeString();\n                const logEntry = document.createElement('div');\n                logEntry.className = `log-entry log-${type}`;\n                logEntry.textContent = `[${timestamp}] ${message}`;\n                \n                this.elements.logContainer.appendChild(logEntry);\n                this.elements.logContainer.scrollTop = this.elements.logContainer.scrollHeight;\n                \n                // Also log to console\n                console.log(`[WebGL Diagnostics] ${message}`);\n            }\n        }\n        \n        // Initialize the diagnostic interface\n        window.addEventListener('DOMContentLoaded', () => {\n            const interface = new DiagnosticInterface();\n        });\n    </script>\n</body>\n</html>

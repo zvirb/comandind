@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&C Sprite Integration Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
+        }
+        .category {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #0f0;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        .category h2 {
+            color: #FFD700;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+        .faction {
+            margin: 20px 0;
+        }
+        .faction h3 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .faction.gdi h3 { color: #FFD700; }
+        .faction.nod h3 { color: #DC2626; }
+        .sprite-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .sprite-item {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border: 1px solid #0f0;
+            text-align: center;
+        }
+        .sprite-item img {
+            display: block;
+            image-rendering: pixelated;
+            margin: 10px auto;
+            max-width: 200px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .sprite-name {
+            font-size: 12px;
+            color: #0f0;
+            margin-top: 5px;
+        }
+        .stats {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #0f0;
+        }
+        .loading {
+            text-align: center;
+            color: #FFD700;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 COMMAND & CONQUER SPRITE INTEGRATION TEST</h1>
+    
+    <div class="stats">
+        <h3>EXTRACTION STATISTICS</h3>
+        <p>Total Sprites Extracted: <span id="total-count">Calculating...</span></p>
+        <p>Categories: Units | Structures | Infantry | Resources</p>
+        <p>Status: <span class="loading">LOADING SPRITES...</span></p>
+    </div>
+    
+    <div id="sprite-gallery">
+        <!-- Sprites will be loaded here -->
+    </div>
+    
+    <script>
+        const config = {
+  "structures": {
+    "gdi": {
+      "construction-yard": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "power-plant": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "barracks": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "refinery": {
+        "frameWidth": 72,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "humvee": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "war-factory": {
+        "frameWidth": 72,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "weapons-factory": {
+        "frameWidth": 72,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "guard-tower": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          }
+        }
+      },
+      "advanced-tower": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          }
+        }
+      }
+    },
+    "nod": {
+      "hand-of-nod": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "obelisk-of-light": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          },
+          "charging": {
+            "frames": [
+              0,
+              1,
+              2
+            ],
+            "speed": 0.3
+          },
+          "fire": {
+            "frames": [
+              3,
+              4,
+              5
+            ],
+            "speed": 0.5
+          }
+        }
+      },
+      "temple": {
+        "frameWidth": 72,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "advanced-temple": {
+        "frameWidth": 72,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "airfield": {
+        "frameWidth": 96,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "obelisk": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "turret": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "sam-site": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      }
+    }
+  },
+  "units": {
+    "gdi": {
+      "medium-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "mammoth-tank": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "apc": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "artillery": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "mlrs": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "orca": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      }
+    },
+    "nod": {
+      "recon-bike": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "light-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "flame-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "stealth-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "buggy": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "apache": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      }
+    }
+  },
+  "infantry": {
+    "gdi": {
+      "minigunner": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "grenadier": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "rocket-soldier": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "engineer": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "commando": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      }
+    },
+    "nod": {
+      "flamethrower": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "chem-warrior": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      }
+    }
+  },
+  "resources": {
+    "green": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.05
+        }
+      }
+    },
+    "blue": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.05
+        }
+      }
+    },
+    "green-1": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.1
+        },
+        "active": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.15
+        }
+      }
+    },
+    "green-2": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.1
+        },
+        "active": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.15
+        }
+      }
+    },
+    "blue-1": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.1
+        },
+        "active": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.15
+        }
+      }
+    }
+  }
+};
+        
+        function loadSprites() {
+            const gallery = document.getElementById('sprite-gallery');
+            let totalCount = 0;
+            
+            // Units
+            if (config.units) {
+                const unitsDiv = createCategory('COMBAT UNITS');
+                
+                if (config.units.gdi && Object.keys(config.units.gdi).length > 0) {
+                    const gdiDiv = createFaction('GDI Forces', 'gdi');
+                    for (const [name, data] of Object.entries(config.units.gdi)) {
+                        gdiDiv.appendChild(createSpriteItem('gdi-' + name, data, 'units/gdi'));
+                        totalCount++;
+                    }
+                    unitsDiv.appendChild(gdiDiv);
+                }
+                
+                if (config.units.nod && Object.keys(config.units.nod).length > 0) {
+                    const nodDiv = createFaction('NOD Forces', 'nod');
+                    for (const [name, data] of Object.entries(config.units.nod)) {
+                        nodDiv.appendChild(createSpriteItem('nod-' + name, data, 'units/nod'));
+                        totalCount++;
+                    }
+                    unitsDiv.appendChild(nodDiv);
+                }
+                
+                gallery.appendChild(unitsDiv);
+            }
+            
+            // Structures
+            if (config.structures) {
+                const structuresDiv = createCategory('BASE STRUCTURES');
+                
+                if (config.structures.gdi && Object.keys(config.structures.gdi).length > 0) {
+                    const gdiDiv = createFaction('GDI Buildings', 'gdi');
+                    for (const [name, data] of Object.entries(config.structures.gdi)) {
+                        gdiDiv.appendChild(createSpriteItem('gdi-' + name, data, 'structures/gdi'));
+                        totalCount++;
+                    }
+                    structuresDiv.appendChild(gdiDiv);
+                }
+                
+                if (config.structures.nod && Object.keys(config.structures.nod).length > 0) {
+                    const nodDiv = createFaction('NOD Buildings', 'nod');
+                    for (const [name, data] of Object.entries(config.structures.nod)) {
+                        nodDiv.appendChild(createSpriteItem('nod-' + name, data, 'structures/nod'));
+                        totalCount++;
+                    }
+                    structuresDiv.appendChild(nodDiv);
+                }
+                
+                gallery.appendChild(structuresDiv);
+            }
+            
+            // Infantry
+            if (config.infantry && (config.infantry.gdi || config.infantry.nod)) {
+                const infantryDiv = createCategory('INFANTRY UNITS');
+                
+                if (config.infantry.gdi && Object.keys(config.infantry.gdi).length > 0) {
+                    const gdiDiv = createFaction('GDI Infantry', 'gdi');
+                    for (const [name, data] of Object.entries(config.infantry.gdi)) {
+                        gdiDiv.appendChild(createSpriteItem('gdi-' + name, data, 'infantry'));
+                        totalCount++;
+                    }
+                    infantryDiv.appendChild(gdiDiv);
+                }
+                
+                if (config.infantry.nod && Object.keys(config.infantry.nod).length > 0) {
+                    const nodDiv = createFaction('NOD Infantry', 'nod');
+                    for (const [name, data] of Object.entries(config.infantry.nod)) {
+                        nodDiv.appendChild(createSpriteItem('nod-' + name, data, 'infantry'));
+                        totalCount++;
+                    }
+                    infantryDiv.appendChild(nodDiv);
+                }
+                
+                gallery.appendChild(infantryDiv);
+            }
+            
+            // Resources
+            if (config.resources && Object.keys(config.resources).length > 0) {
+                const resourcesDiv = createCategory('RESOURCES');
+                const containerDiv = document.createElement('div');
+                containerDiv.className = 'sprite-container';
+                
+                for (const [name, data] of Object.entries(config.resources)) {
+                    containerDiv.appendChild(createSpriteItem(name, data, 'resources'));
+                    totalCount++;
+                }
+                
+                resourcesDiv.appendChild(containerDiv);
+                gallery.appendChild(resourcesDiv);
+            }
+            
+            // Update stats
+            document.getElementById('total-count').textContent = totalCount;
+            document.querySelector('.loading').textContent = 'SPRITES LOADED SUCCESSFULLY';
+            document.querySelector('.loading').style.color = '#0f0';
+        }
+        
+        function createCategory(title) {
+            const div = document.createElement('div');
+            div.className = 'category';
+            div.innerHTML = '<h2>' + title + '</h2>';
+            return div;
+        }
+        
+        function createFaction(title, faction) {
+            const div = document.createElement('div');
+            div.className = 'faction ' + faction;
+            div.innerHTML = '<h3>' + title + '</h3>';
+            const container = document.createElement('div');
+            container.className = 'sprite-container';
+            div.appendChild(container);
+            return div;
+        }
+        
+        function createSpriteItem(name, data, category) {
+            const div = document.createElement('div');
+            div.className = 'sprite-item';
+            
+            const img = document.createElement('img');
+            img.src = '/assets/sprites/extracted/' + category + '/' + name + '.png';
+            img.alt = name;
+            img.onerror = function() {
+                // Fallback to generated sprites if extracted not found
+                this.src = '/assets/sprites/' + category + '/' + name + '.png';
+                this.onerror = function() {
+                    this.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                };
+            };
+            
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'sprite-name';
+            nameDiv.textContent = name + ' (' + data.frameWidth + 'x' + data.frameHeight + ')';
+            
+            div.appendChild(img);
+            div.appendChild(nameDiv);
+            
+            return div;
+        }
+        
+        // Load sprites when page is ready
+        document.addEventListener('DOMContentLoaded', loadSprites);
+    </script>
+</body>
+</html>

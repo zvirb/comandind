@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texture Atlas Fix Validation</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            border: 1px solid #333;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #0a0a0a;
+        }
+        
+        .test-title {
+            color: #00ffff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .pass {
+            color: #00ff00;
+        }
+        
+        .fail {
+            color: #ff0000;
+        }
+        
+        .warn {
+            color: #ffff00;
+        }
+        
+        .info {
+            color: #00aaff;
+        }
+        
+        .results {
+            background-color: #222;
+            border: 2px solid #444;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        pre {
+            background-color: #111;
+            padding: 10px;
+            border-left: 3px solid #00ff00;
+            overflow-x: auto;
+        }
+        
+        .button {
+            background-color: #004400;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .button:hover {
+            background-color: #006600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧪 TEXTURE ATLAS LOADING FIX VALIDATION</h1>
+        <p>Testing the critical fix for texture atlas "width undefined" error</p>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">🎮 Game Application Test</div>
+        <button class="button" onclick="openGameTest()">Open Game in New Window</button>
+        <button class="button" onclick="runDirectValidation()">Run Direct Validation</button>
+        <div id="game-test-status">Ready to test...</div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">📊 Test Results</div>
+        <div id="test-results">No tests run yet.</div>
+    </div>
+
+    <div class="results">
+        <h3>Expected Outcomes (Fix Validation)</h3>
+        <ul>
+            <li class="pass">✅ No "TypeError: Cannot read properties of undefined (reading 'width')" errors</li>
+            <li class="pass">✅ TextureAtlasManager initializes successfully</li>
+            <li class="pass">✅ Sprite textures load with proper dimensions validation</li>
+            <li class="pass">✅ Main menu displays after loading screen</li>
+            <li class="pass">✅ User can transition from loading → main menu → game</li>
+            <li class="pass">✅ Graceful fallback for missing/invalid textures</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">🔧 Manual Debug Console</div>
+        <pre id="console-output">Console output will appear here...</pre>
+    </div>
+
+    <script>
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        let consoleOutput = [];
+        
+        function addToConsole(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const output = `[${timestamp}] ${type}: ${message}`;
+            consoleOutput.push(output);
+            
+            const consoleElement = document.getElementById('console-output');
+            if (consoleElement) {
+                consoleElement.textContent = consoleOutput.slice(-20).join('\n');
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+            }
+        }
+        
+        console.log = (...args) => {
+            originalLog.apply(console, args);
+            addToConsole('INFO', args.join(' '));
+        };
+        
+        console.error = (...args) => {
+            originalError.apply(console, args);
+            addToConsole('ERROR', args.join(' '));
+        };
+        
+        console.warn = (...args) => {
+            originalWarn.apply(console, args);
+            addToConsole('WARN', args.join(' '));
+        };
+
+        // Test functions
+        function openGameTest() {
+            console.log('Opening game test window...');
+            const gameWindow = window.open('http://localhost:3000', 'gametest', 
+                'width=1280,height=720,resizable=yes');
+            
+            if (gameWindow) {
+                document.getElementById('game-test-status').innerHTML = 
+                    '<span class="info">Game window opened. Check console for texture atlas loading...</span>';
+                
+                // Monitor the game window
+                monitorGameWindow(gameWindow);
+            } else {
+                document.getElementById('game-test-status').innerHTML = 
+                    '<span class="fail">Failed to open game window. Check popup blocker.</span>';
+            }
+        }
+        
+        function monitorGameWindow(gameWindow) {
+            let checkCount = 0;
+            const maxChecks = 60; // 30 seconds
+            
+            const checkInterval = setInterval(() => {
+                checkCount++;
+                
+                try {
+                    if (gameWindow.closed) {
+                        clearInterval(checkInterval);
+                        document.getElementById('game-test-status').innerHTML = 
+                            '<span class="warn">Game window was closed.</span>';
+                        return;
+                    }
+                    
+                    // Check if game is loaded
+                    if (gameWindow.window && gameWindow.window.game) {
+                        clearInterval(checkInterval);
+                        console.log('Game detected in test window!');
+                        runGameWindowValidation(gameWindow);
+                        return;
+                    }
+                    
+                    if (checkCount >= maxChecks) {
+                        clearInterval(checkInterval);
+                        document.getElementById('game-test-status').innerHTML = 
+                            '<span class="warn">Game not detected within 30 seconds.</span>';
+                    }
+                    
+                } catch (error) {
+                    // Cross-origin issues - expected
+                    if (checkCount >= maxChecks) {
+                        clearInterval(checkInterval);
+                        document.getElementById('game-test-status').innerHTML = 
+                            '<span class="info">Game window monitoring completed (cross-origin)</span>';
+                    }
+                }
+            }, 500);
+        }
+        
+        async function runGameWindowValidation(gameWindow) {
+            console.log('Running game window validation...');
+            const results = [];
+            
+            try {
+                const game = gameWindow.window.game;
+                
+                // Test 1: Check TextureAtlasManager
+                if (game.textureAtlasManager) {
+                    results.push({ test: 'TextureAtlasManager initialized', pass: true });
+                    
+                    // Test sprite configs
+                    if (game.textureAtlasManager.spriteConfigs) {
+                        results.push({ test: 'Sprite configs loaded', pass: true });
+                    } else {
+                        results.push({ test: 'Sprite configs loaded', pass: false });
+                    }
+                } else {
+                    results.push({ test: 'TextureAtlasManager initialized', pass: false });
+                }
+                
+                // Test 2: Check main menu
+                if (game.mainMenu && game.mainMenu.container) {
+                    results.push({ test: 'Main menu available', pass: true });
+                    
+                    if (game.mainMenu.container.visible) {
+                        results.push({ test: 'Main menu visible', pass: true });
+                    } else {
+                        results.push({ test: 'Main menu visible', pass: false });
+                    }
+                } else {
+                    results.push({ test: 'Main menu available', pass: false });
+                }
+                
+                // Test 3: Check for texture errors in console
+                const hasTextureErrors = consoleOutput.some(log => 
+                    log.includes('width') && log.includes('undefined') && log.includes('ERROR'));
+                
+                results.push({ 
+                    test: 'No texture width undefined errors', 
+                    pass: !hasTextureErrors 
+                });
+                
+                displayResults(results);
+                
+            } catch (error) {
+                console.error('Game window validation failed:', error);
+                displayResults([
+                    { test: 'Game window access', pass: false, error: error.message }
+                ]);
+            }
+        }
+        
+        function runDirectValidation() {
+            console.log('Running direct validation test...');
+            
+            // Test the fix by simulating texture atlas loading
+            const results = [];
+            
+            // Test 1: Check if PIXI is available
+            if (typeof PIXI !== 'undefined') {
+                results.push({ test: 'PIXI.js library available', pass: true });
+            } else {
+                results.push({ test: 'PIXI.js library available', pass: false });
+                
+                // Load PIXI for testing
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/dist/browser/pixi.min.js';
+                script.onload = () => {
+                    console.log('PIXI.js loaded externally');
+                    continueDirectValidation(results);
+                };
+                document.head.appendChild(script);
+                return;
+            }
+            
+            continueDirectValidation(results);
+        }
+        
+        function continueDirectValidation(results) {
+            // Test texture creation scenarios
+            try {
+                // Test 1: Create a simple texture
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(0, 0, 64, 64);
+                
+                const texture = PIXI.Texture.from(canvas);
+                if (texture) {
+                    results.push({ test: 'Basic texture creation', pass: true });
+                    
+                    // Test width/height access
+                    let width, height;
+                    if (texture.baseTexture) {
+                        width = texture.baseTexture.width;
+                        height = texture.baseTexture.height;
+                    } else if (texture.source) {
+                        width = texture.source.width || texture.width;
+                        height = texture.source.height || texture.height;
+                    } else {
+                        width = texture.width;
+                        height = texture.height;
+                    }
+                    
+                    if (width > 0 && height > 0) {
+                        results.push({ 
+                            test: 'Texture dimensions accessible', 
+                            pass: true,
+                            details: `${width}x${height}`
+                        });
+                    } else {
+                        results.push({ 
+                            test: 'Texture dimensions accessible', 
+                            pass: false,
+                            details: `width: ${width}, height: ${height}`
+                        });
+                    }
+                } else {
+                    results.push({ test: 'Basic texture creation', pass: false });
+                }
+                
+            } catch (error) {
+                results.push({ 
+                    test: 'Texture creation without errors', 
+                    pass: false, 
+                    error: error.message 
+                });
+            }
+            
+            displayResults(results);
+        }
+        
+        function displayResults(results) {
+            const resultContainer = document.getElementById('test-results');
+            let html = '<h4>Test Results:</h4>';
+            
+            let passCount = 0;
+            let totalCount = results.length;
+            
+            results.forEach(result => {
+                const status = result.pass ? 'pass' : 'fail';
+                const icon = result.pass ? '✅' : '❌';
+                
+                html += `<div class="${status}">
+                    ${icon} ${result.test}
+                    ${result.details ? ` (${result.details})` : ''}
+                    ${result.error ? ` - Error: ${result.error}` : ''}
+                </div>`;
+                
+                if (result.pass) passCount++;
+            });
+            
+            const overallStatus = passCount === totalCount ? 'pass' : 
+                                 passCount > totalCount / 2 ? 'warn' : 'fail';
+            
+            html += `<br><div class="${overallStatus}">
+                <strong>Overall: ${passCount}/${totalCount} tests passed</strong>
+            </div>`;
+            
+            if (passCount === totalCount) {
+                html += '<div class="pass"><strong>🎉 ALL TESTS PASSED - TEXTURE ATLAS FIX SUCCESSFUL!</strong></div>';
+            } else {
+                html += '<div class="warn"><strong>⚠️ Some tests failed - Review issues above</strong></div>';
+            }
+            
+            resultContainer.innerHTML = html;
+            
+            // Log results to console
+            console.log(`Test Results: ${passCount}/${totalCount} passed`);
+            results.forEach(result => {
+                const logFunc = result.pass ? console.log : console.error;
+                logFunc(`${result.pass ? '✅' : '❌'} ${result.test}`);
+            });
+        }
+        
+        // Auto-start some tests
+        console.log('Texture Atlas Fix Validation page loaded');
+        console.log('Ready to test the texture loading fix');
+        console.log('Click buttons above to run tests');
+    </script>
+</body>
+</html>

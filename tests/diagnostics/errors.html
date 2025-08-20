@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Error Viewer</title>
+    <style>
+        body { 
+            font-family: monospace; 
+            background: #000; 
+            color: #0f0; 
+            padding: 20px; 
+        }
+        .error { 
+            background: #111; 
+            border: 1px solid #f00; 
+            margin: 10px 0; 
+            padding: 10px; 
+            white-space: pre-wrap; 
+        }
+        .timestamp { color: #888; }
+        button { 
+            background: #0f0; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            margin: 5px; 
+            cursor: pointer; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🛡️ Secure Error Viewer</h1>
+    <p>This page shows all securely captured errors with XSS protection and data sanitization.</p>
+    
+    <div>
+        <button onclick="showErrors()">Refresh Errors</button>
+        <button onclick="clearAllErrors()">Clear All Errors</button>
+        <button onclick="window.open('/', '_blank')">Open Game (New Tab)</button>
+    </div>
+    
+    <div id="errorDisplay"></div>
+    
+    <script type="module">
+        // Import secure error handler (if available)
+        let secureErrorHandler = null;
+        try {
+            const module = await import('/src/utils/SecureErrorHandler.js');
+            secureErrorHandler = module.secureErrorHandler;
+        } catch (e) {
+            console.warn('Secure error handler not available, using fallback mode');
+        }
+        
+        /**
+         * Sanitize text to prevent XSS attacks
+         */
+        function sanitizeText(text) {
+            if (!text) return '';
+            
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+        
+        /**
+         * Sanitize and truncate stack traces
+         */
+        function sanitizeStack(stack) {
+            if (!stack) return 'No stack trace';
+            
+            let sanitized = sanitizeText(stack);
+            
+            // Remove sensitive file paths
+            sanitized = sanitized.replace(/\/home\/[^\/]+/g, '[USER_HOME]');
+            sanitized = sanitized.replace(/\/Users\/[^\/]+/g, '[USER_HOME]');
+            sanitized = sanitized.replace(/C:\\Users\\[^\\]+/g, '[USER_HOME]');
+            
+            // Limit stack trace length
+            const lines = sanitized.split('\n');
+            if (lines.length > 10) {
+                sanitized = lines.slice(0, 10).join('\n') + '\n[Stack trace truncated for security]';
+            }
+            
+            return sanitized;
+        }
+        
+        function showErrors() {
+            const display = document.getElementById('errorDisplay');
+            
+            // Clear display safely
+            while (display.firstChild) {
+                display.removeChild(display.firstChild);
+            }
+            
+            const loadingMsg = document.createElement('h2');
+            loadingMsg.textContent = 'Checking for errors...';
+            display.appendChild(loadingMsg);
+            
+            let allErrors = [];
+            
+            // Use secure error handler if available
+            if (secureErrorHandler) {
+                allErrors = secureErrorHandler.getErrors().map(err => ({...err, storageSource: 'secure_handler'}));
+            } else {
+                // Fallback to legacy storage sources
+                const sources = [
+                    'secure_errors_data',
+                    'emergency_errors',
+                    'game_errors_latest', 
+                    'game_errors_persistent',
+                    'last_emergency_error',
+                    'comandind_errors'
+                ];
+                
+                sources.forEach(source => {
+                    try {
+                        const errors = localStorage.getItem(source);
+                        if (errors) {
+                            const parsed = JSON.parse(errors);
+                            if (source === 'secure_errors_data' && parsed.errors) {
+                                // New secure format
+                                allErrors = allErrors.concat(parsed.errors.map(e => ({...e, storageSource: source})));
+                            } else if (Array.isArray(parsed)) {
+                                allErrors = allErrors.concat(parsed.map(e => ({...e, storageSource: source})));
+                            } else {
+                                allErrors.push({...parsed, storageSource: source});
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Error parsing', source, e);
+                    }
+                });
+            }
+            
+            // Clear loading message
+            while (display.firstChild) {
+                display.removeChild(display.firstChild);
+            }
+            
+            if (allErrors.length === 0) {
+                const noErrorsMsg = document.createElement('h2');
+                noErrorsMsg.textContent = '✅ No errors found!';
+                noErrorsMsg.style.color = '#0f0';
+                display.appendChild(noErrorsMsg);
+                return;
+            }
+            
+            // Sort by timestamp
+            allErrors.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Create header
+            const header = document.createElement('h2');
+            header.textContent = `🛡️ Found ${allErrors.length} Secured Errors`;
+            header.style.color = '#ff4444';
+            display.appendChild(header);
+            
+            // Create error list
+            allErrors.forEach((err, i) => {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                
+                // Error title
+                const titleDiv = document.createElement('strong');
+                titleDiv.textContent = `Error #${i + 1} (${err.storageSource}) ${err.severity ? '[' + err.severity.toUpperCase() + ']' : ''}`;
+                errorDiv.appendChild(titleDiv);
+                errorDiv.appendChild(document.createElement('br'));
+                
+                // Timestamp
+                const timestampDiv = document.createElement('div');
+                timestampDiv.className = 'timestamp';
+                timestampDiv.textContent = err.timestamp;
+                errorDiv.appendChild(timestampDiv);
+                
+                // Source
+                const sourceDiv = document.createElement('div');
+                sourceDiv.innerHTML = '<strong>Source:</strong> ' + sanitizeText(err.source);
+                errorDiv.appendChild(sourceDiv);
+                
+                // Message (already sanitized by SecureErrorHandler)
+                const messageDiv = document.createElement('div');
+                messageDiv.innerHTML = '<strong>Message:</strong> ' + (err.message || 'Unknown error');
+                errorDiv.appendChild(messageDiv);
+                
+                // File info
+                const fileDiv = document.createElement('div');
+                fileDiv.innerHTML = `<strong>File:</strong> ${sanitizeText(err.filename || 'unknown')}:${err.lineno || 0}:${err.colno || 0}`;
+                errorDiv.appendChild(fileDiv);
+                
+                // Stack trace (collapsible)
+                if (err.stack && err.stack !== 'No stack trace') {
+                    const stackHeaderDiv = document.createElement('div');
+                    stackHeaderDiv.innerHTML = '<strong>Stack:</strong> <span style="cursor: pointer; color: #0ff;">[Click to toggle]</span>';
+                    stackHeaderDiv.style.marginTop = '5px';
+                    errorDiv.appendChild(stackHeaderDiv);
+                    
+                    const stackDiv = document.createElement('div');
+                    stackDiv.style.cssText = 'margin-left: 20px; color: #ff0; font-size: 12px; white-space: pre-wrap; display: none; max-height: 200px; overflow-y: auto; background: #0a0a0a; padding: 5px; border-left: 2px solid #ff0;';
+                    stackDiv.textContent = sanitizeStack(err.stack);
+                    
+                    stackHeaderDiv.addEventListener('click', () => {
+                        stackDiv.style.display = stackDiv.style.display === 'none' ? 'block' : 'none';
+                    });
+                    
+                    errorDiv.appendChild(stackDiv);
+                }
+                
+                display.appendChild(errorDiv);
+            });
+        }
+        
+        function clearAllErrors() {
+            if (secureErrorHandler) {
+                secureErrorHandler.clearErrors();
+            } else {
+                // Clear legacy storage
+                const sources = [
+                    'secure_errors_data',
+                    'emergency_errors',
+                    'game_errors_latest', 
+                    'game_errors_persistent',
+                    'last_emergency_error',
+                    'comandind_errors'
+                ];
+                
+                sources.forEach(source => {
+                    localStorage.removeItem(source);
+                });
+            }
+            
+            const display = document.getElementById('errorDisplay');
+            while (display.firstChild) {
+                display.removeChild(display.firstChild);
+            }
+            
+            const clearedMsg = document.createElement('h2');
+            clearedMsg.textContent = '🧹 All errors cleared securely!';
+            clearedMsg.style.color = '#0f0';
+            display.appendChild(clearedMsg);
+        }
+        
+        // Make functions available globally
+        window.showErrors = showErrors;
+        window.clearAllErrors = clearAllErrors;
+        
+        // Auto-load errors on page load
+        showErrors();
+        
+        // Auto-refresh every 5 seconds (less aggressive)
+        setInterval(showErrors, 5000);
+    </script>
+</body>
+</html>

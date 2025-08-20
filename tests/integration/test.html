@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Test - Command and Independent Thought</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        #console {
+            background: #000;
+            padding: 10px;
+            border: 1px solid #0f0;
+            min-height: 300px;
+            white-space: pre-wrap;
+        }
+        .error { color: #f00; }
+        .warn { color: #ff0; }
+        .info { color: #0ff; }
+    </style>
+</head>
+<body>
+    <h1>Console Output Capture</h1>
+    <div id="console"></div>
+    
+    <script>
+        const consoleDiv = document.getElementById('console');
+        let errorCount = 0;
+        
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(msg, type = 'log') {
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = `[${type.toUpperCase()}] ${msg}`;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+            errorCount++;
+            
+            // Stop reload loop after 3 errors
+            if (errorCount > 3) {
+                addToConsole('Too many errors - stopping execution', 'error');
+                throw new Error('Stopping execution to prevent reload loop');
+            }
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole(args.join(' '), 'warn');
+        };
+        
+        // Capture uncaught errors
+        window.addEventListener('error', (e) => {
+            addToConsole(`Uncaught Error: ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`, 'error');
+            e.preventDefault();
+            return true;
+        });
+        
+        window.addEventListener('unhandledrejection', (e) => {
+            addToConsole(`Unhandled Promise Rejection: ${e.reason}`, 'error');
+            e.preventDefault();
+            return true;
+        });
+        
+        // Now try to load the game
+        addToConsole('Starting game load...', 'info');
+        
+        // Load the game module
+        import('./src/index.js')
+            .then(() => {
+                addToConsole('Game module loaded successfully!', 'info');
+            })
+            .catch(err => {
+                addToConsole(`Failed to load game: ${err.message}\n${err.stack}`, 'error');
+            });
+    </script>
+</body>
+</html>
