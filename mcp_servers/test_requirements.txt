@@ -1,0 +1,29 @@
+# MCP Server Test Dependencies
+# Install with: pip install -r test_requirements.txt
+
+# Core HTTP and testing
+requests>=2.28.0
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+
+# Performance and timing
+pytest-benchmark>=4.0.0
+
+# Coverage and reporting
+pytest-cov>=4.0.0
+coverage>=7.0.0
+
+# Mock and testing utilities
+responses>=0.23.0
+unittest-mock>=1.0.1
+
+# Async testing support
+aiohttp>=3.8.0
+asyncio-mqtt>=0.13.0
+
+# Data validation
+pydantic>=1.10.0
+jsonschema>=4.17.0
+
+# Concurrent testing
+threading2>=0.1.0

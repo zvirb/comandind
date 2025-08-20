@@ -1,0 +1,25 @@
+{
+  "timestamp": 1755671229.072893,
+  "server_url": "http://localhost:8000",
+  "tests": {
+    "basic": {
+      "success": false,
+      "stdout": "\ud83e\uddea Comprehensive MCP Server Test Suite\n============================================================\nThis test suite validates:\n\u2022 Server connectivity and health\n\u2022 Data validation and assertions\n\u2022 Error handling and edge cases\n\u2022 Automatic cleanup to prevent pollution\n\u2022 Performance and load testing\n============================================================\n\n\ud83c\udfe5 Testing server health endpoint...\n\u2705 Health check PASSED\n   Memory entities: 1\n   Redis keys: 1\n\n\ud83d\udcdd Testing Memory MCP operations...\n\u2705 Entity created successfully: d3192b010c12\n\u274c Memory operations FAILED: Memory search: Missing required field 'nodes' in response\n\n\ud83d\udd34 Testing Redis MCP operations...\n\u2705 Hash set successful\n\u2705 Set add successful\n\u2705 Sorted set add successful\n\n\ud83e\uddea Testing Redis error cases...\n\n\ud83d\udcca Testing server status endpoint...\n\u26a0\ufe0f Unusual status value: operational\n\u2705 Status endpoint validation successful\n   Status: operational\n   Memory entities: 2\n   Redis hash keys: 3\n   Redis set keys: 2\n   Redis sorted set keys: 2\n\n\ud83d\udeab Testing negative cases and error handling...\n\u2705 Invalid endpoint properly returns 404\n\u2705 Malformed JSON properly rejected\n\u2705 Incomplete entity data properly rejected\n\n\u26a1 Running performance tests...\n\u2705 Health endpoint response time: 0.001s\n\u2705 Concurrent requests successful (avg: 0.075s)\n\n\ud83e\uddf9 Cleaning up test data...\n\u2705 Cleaned up memory entity: d3192b010c12\n\u2705 Cleaned up Redis key: test:hash:20250820_162709_456350\n\u2705 Cleaned up Redis key: test:set:20250820_162709_456350\n\u2705 Cleaned up Redis key: test:zset:20250820_162709_456350\n\u2705 All test data cleaned up successfully\n\n============================================================\n\ud83d\udcca TEST SUMMARY: 5/6 tests passed\n\u26a0\ufe0f 1 test(s) failed. Server may have issues.\n\n\ud83d\udcda API Documentation: http://localhost:8000/docs\n\ud83d\udcca Server Status: http://localhost:8000/status\n",
+      "stderr": "",
+      "returncode": 1
+    },
+    "performance": {
+      "success": true,
+      "avg_response_time": 0.0010752201080322266,
+      "max_response_time": 0.0018732547760009766,
+      "min_response_time": 0.000827789306640625,
+      "total_requests": 10
+    }
+  },
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  }
+}
