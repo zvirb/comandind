@@ -35,8 +35,8 @@ export class EntityFactory {
         }
         
         // Use TextureAtlasManager to create the sprite
-        const spriteKey = `${faction.toLowerCase()}-${unitKey.toLowerCase().replace(/_/g, '-')}`;
-        const sprite = this.textureAtlasManager.createAnimatedSprite(spriteKey, 'move');
+        const spriteKey = `${faction.toLowerCase()}-${unitKey.toLowerCase().replace(/_/g, "-")}`;
+        const sprite = this.textureAtlasManager.createAnimatedSprite(spriteKey, "move");
 
         if (!sprite) {
             console.warn(`Could not create sprite for unit '${unitKey}' with key '${spriteKey}'`);

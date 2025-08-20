@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 export class MainMenu {
     constructor(app, uiLayer, onStartGame) {
@@ -20,13 +20,13 @@ export class MainMenu {
         this.container.addChild(background);
 
         // Title
-        const title = new PIXI.Text('Command & Independent Thought', {
-            fontFamily: '"Arial Black", Gadget, sans-serif',
+        const title = new PIXI.Text("Command & Independent Thought", {
+            fontFamily: "\"Arial Black\", Gadget, sans-serif",
             fontSize: 48,
             fill: 0xffd700, // Gold color
             stroke: 0x000000,
             strokeThickness: 4,
-            align: 'center'
+            align: "center"
         });
         title.anchor.set(0.5);
         title.x = this.app.renderer.width / 2;
@@ -34,7 +34,7 @@ export class MainMenu {
         this.container.addChild(title);
 
         // Menu buttons
-        const menuItems = ['New Game', 'Load Game', 'Options', 'Exit'];
+        const menuItems = ["New Game", "Load Game", "Options", "Exit"];
         const buttonWidth = 300;
         const buttonHeight = 60;
         const startY = 300;
@@ -48,10 +48,10 @@ export class MainMenu {
             button.endFill();
 
             const buttonText = new PIXI.Text(item, {
-                fontFamily: 'Arial',
+                fontFamily: "Arial",
                 fontSize: 32,
                 fill: 0xffffff,
-                align: 'center'
+                align: "center"
             });
             buttonText.anchor.set(0.5);
             buttonText.x = buttonWidth / 2;
@@ -65,13 +65,13 @@ export class MainMenu {
 
             this.container.addChild(buttonContainer);
 
-            if (item === 'New Game') {
-                buttonContainer.eventMode = 'static';
-                buttonContainer.cursor = 'pointer';
+            if (item === "New Game") {
+                buttonContainer.eventMode = "static";
+                buttonContainer.cursor = "pointer";
 
-                buttonContainer.on('pointerdown', this.onStartGame);
+                buttonContainer.on("pointerdown", this.onStartGame);
 
-                buttonContainer.on('pointerover', () => {
+                buttonContainer.on("pointerover", () => {
                     button.clear();
                     button.beginFill(0x555555, 1);
                     button.lineStyle(2, 0xaaaaaa, 1);
@@ -79,7 +79,7 @@ export class MainMenu {
                     button.endFill();
                 });
 
-                buttonContainer.on('pointerout', () => {
+                buttonContainer.on("pointerout", () => {
                     button.clear();
                     button.beginFill(0x333333, 1);
                     button.lineStyle(2, 0x888888, 1);

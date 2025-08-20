@@ -98,7 +98,7 @@ export class PathfindingSystem extends System {
         // Register buildings as static obstacles
         if (entity.hasComponent(BuildingComponent)) {
             const transform = entity.getComponent(TransformComponent);
-            const building = entity.getComponent(BuildingComponent);
+            // const building = entity.getComponent(BuildingComponent); // Not currently used
             
             // Add to navigation grid as obstacle
             const width = 64; // Default building size
@@ -361,14 +361,15 @@ export class PathfindingSystem extends System {
         if (entities.length === 0) return;
         
         // Calculate center of group
-        let centerX = 0, centerY = 0;
-        for (const entity of entities) {
-            const transform = entity.getComponent(TransformComponent);
-            centerX += transform.x;
-            centerY += transform.y;
-        }
-        centerX /= entities.length;
-        centerY /= entities.length;
+        // let centerX = 0, centerY = 0;
+        // for (const entity of entities) {
+        //     const transform = entity.getComponent(TransformComponent);
+        //     centerX += transform.x;
+        //     centerY += transform.y;
+        // }
+        // centerX /= entities.length;
+        // centerY /= entities.length;
+        // TODO: Use centerX and centerY for formation calculation
         
         // Calculate formation positions
         const positions = this.getFormationPositions(

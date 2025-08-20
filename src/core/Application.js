@@ -311,7 +311,7 @@ export class Application {
             const ext = gl.getExtension("WEBGL_texture_arrays") || 
                        (gl instanceof WebGL2RenderingContext);
             this.webgl2Features.textureArrays = !!ext;
-        } catch (e) {
+        } catch {
             this.webgl2Features.textureArrays = false;
         }
         
@@ -547,7 +547,7 @@ export class Application {
         };
     }
     
-    render(interpolation = 1) {
+    render(_interpolation = 1) {
         // Render with interpolation support
         this.renderer.render(this.stage);
     }
