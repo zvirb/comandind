@@ -1,3 +1,34 @@
+# Claude and UnifiedWorkflow related files - EXCLUDED FROM REPO
+UnifiedWorkflow/
+.claude/
+*.claude
+CLAUDE.md
+claude.json
+.claude.*
+
+# Claude specific patterns
+**/UnifiedWorkflow/**
+**/.claude/**
+**/CLAUDE.md
+**/claude.json
+
+# Additional Claude-related patterns
+claude-*
+*-claude.*
+*.claude.*
+claude_*
+*_claude.*
+
+# Workflow and orchestration patterns
+*workflow*
+*orchestration*
+*agentic*
+*nexus*
+*synthesis*
+
+# Test files that might be related to Claude workflow
+src/test/FunctionalValidationFramework.js
+
 # Dependencies
 node_modules/
 vendor/
@@ -49,6 +80,14 @@ temp/
 .env.development.local
 .env.test.local
 .env.production.local
+*.env
+*.env.*
+.env*
+
+# Backup files
+*.backup
+*.backup.*
+*backup*/
 
 # Package manager locks (uncomment the ones you want to track)
 # package-lock.json

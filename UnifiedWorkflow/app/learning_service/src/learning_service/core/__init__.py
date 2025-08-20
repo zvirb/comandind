@@ -1,1 +1,0 @@
-# Cognitive Processing Core Module

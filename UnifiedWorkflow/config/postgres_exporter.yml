@@ -1,5 +1,0 @@
-# PostgreSQL Exporter Configuration
-# Basic configuration to silence the missing config file warning
-
-# Database connection settings are provided via environment variables
-# No additional configuration needed for basic operation
