@@ -1,0 +1,19 @@
+{
+  "generated": "2025-08-20T14:14:13.562Z",
+  "categories": [
+    "structures",
+    "units",
+    "tiberium"
+  ],
+  "totals": {
+    "structures": {
+      "gdi": 4,
+      "nod": 2
+    },
+    "units": {
+      "gdi": 2,
+      "nod": 1
+    },
+    "resources": 2
+  }
+}

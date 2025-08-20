@@ -111,10 +111,39 @@ export class TextureAtlasManager {
         
         try {
             // Use texture pool for caching and memory management
-            const texture = this.texturePool.getTexture(key, () => PIXI.Assets.load(url));
+            const texture = await this.texturePool.getTexture(key, async () => {
+                console.log(`Loading texture atlas from: ${url}`);
+                
+                try {
+                    // CRITICAL FIX: Enhanced texture loading with validation
+                    const loadedTexture = await PIXI.Assets.load(url);
+                    
+                    if (!loadedTexture) {
+                        throw new Error(`PIXI.Assets.load returned null/undefined for ${url}`);
+                    }
+                    
+                    // Validate texture dimensions
+                    const width = loadedTexture.width || (loadedTexture.source && loadedTexture.source.width) || 0;
+                    const height = loadedTexture.height || (loadedTexture.source && loadedTexture.source.height) || 0;
+                    
+                    if (width <= 0 || height <= 0) {
+                        console.warn(`Texture loaded but has invalid dimensions: ${width}x${height} for ${url}`);
+                    }
+                    
+                    console.log(`✅ Texture loaded successfully: ${width}x${height} from ${url}`);
+                    return loadedTexture;
+                    
+                } catch (loadError) {
+                    console.error(`Failed to load texture from ${url}:`, loadError);
+                    
+                    // FALLBACK: Create a placeholder texture
+                    console.log(`Creating placeholder texture for ${key}`);
+                    return this.createPlaceholderTexture(key);
+                }
+            });
             
             if (!texture) {
-                throw new Error(`Failed to load texture from ${url}`);
+                throw new Error(`Failed to load or create fallback texture for ${key} from ${url}`);
             }
             
             // Store the atlas
@@ -155,16 +184,65 @@ export class TextureAtlasManager {
      */
     generateFrames(atlasKey, config) {
         const atlas = this.atlases.get(atlasKey);
-        if (!atlas) return;
+        if (!atlas) {
+            console.warn(`Atlas '${atlasKey}' not found for frame generation`);
+            return;
+        }
         
-        const baseTexture = atlas.texture.baseTexture;
+        const texture = atlas.texture;
+        if (!texture) {
+            console.error(`No texture found for atlas '${atlasKey}'`);
+            return;
+        }
+        
+        // CRITICAL FIX: Handle PIXI.js v7+ texture structure
+        let textureWidth, textureHeight, baseTexture;
+        
+        // Try different ways to get texture dimensions in PIXI v7+
+        if (texture.baseTexture) {
+            // PIXI v6 style
+            baseTexture = texture.baseTexture;
+            textureWidth = baseTexture.width;
+            textureHeight = baseTexture.height;
+        } else if (texture.source) {
+            // PIXI v7+ style - texture.source contains the resource
+            const source = texture.source;
+            textureWidth = source.width || source.pixelWidth || texture.width;
+            textureHeight = source.height || source.pixelHeight || texture.height;
+            baseTexture = source; // Use source as baseTexture equivalent
+        } else {
+            // Fallback to texture properties directly
+            textureWidth = texture.width;
+            textureHeight = texture.height;
+            baseTexture = texture;
+        }
+        
+        // Validate dimensions
+        if (!textureWidth || !textureHeight || textureWidth <= 0 || textureHeight <= 0) {
+            console.error(`Invalid texture dimensions for atlas '${atlasKey}':`, {
+                textureWidth,
+                textureHeight,
+                texture: texture,
+                hasBaseTexture: !!texture.baseTexture,
+                hasSource: !!texture.source
+            });
+            return;
+        }
+        
         const { frameWidth, frameHeight } = config;
         
-        const columns = Math.floor(baseTexture.width / frameWidth);
-        const rows = Math.floor(baseTexture.height / frameHeight);
+        if (!frameWidth || !frameHeight || frameWidth <= 0 || frameHeight <= 0) {
+            console.error(`Invalid frame dimensions for atlas '${atlasKey}':`, { frameWidth, frameHeight });
+            return;
+        }
+        
+        const columns = Math.floor(textureWidth / frameWidth);
+        const rows = Math.floor(textureHeight / frameHeight);
         
         let frameIndex = 0;
         const frameTextures = new Map();
+        
+        console.log(`Generating ${columns}x${rows} frames (${columns * rows} total) for atlas '${atlasKey}'`);
         
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < columns; x++) {
@@ -179,12 +257,41 @@ export class TextureAtlasManager {
                 
                 // Use texture pool for frame textures to enable reuse
                 const frameTexture = this.texturePool.getTexture(frameKey, () => {
-                    return new PIXI.Texture(baseTexture, rect);
+                    // CRITICAL FIX: Handle different PIXI.js versions for Texture creation
+                    try {
+                        if (texture.baseTexture) {
+                            // PIXI v6 style
+                            return new PIXI.Texture(baseTexture, rect);
+                        } else {
+                            // PIXI v7+ style - create texture from source with frame
+                            const frameTexture = new PIXI.Texture({
+                                source: texture.source,
+                                frame: rect
+                            });
+                            return frameTexture;
+                        }
+                    } catch (error) {
+                        console.error(`Failed to create frame texture ${frameKey}:`, error);
+                        // Fallback: try to clone the base texture with frame
+                        try {
+                            const clonedTexture = texture.clone();
+                            clonedTexture.frame = rect;
+                            return clonedTexture;
+                        } catch (fallbackError) {
+                            console.error(`Fallback frame creation also failed for ${frameKey}:`, fallbackError);
+                            return null;
+                        }
+                    }
                 });
                 
-                atlas.frames.set(frameIndex, frameTexture);
-                this.textures.set(frameKey, frameTexture);
-                frameTextures.set(frameIndex, frameTexture);
+                // Only store successfully created frame textures
+                if (frameTexture) {
+                    atlas.frames.set(frameIndex, frameTexture);
+                    this.textures.set(frameKey, frameTexture);
+                    frameTextures.set(frameIndex, frameTexture);
+                } else {
+                    console.warn(`Skipping null frame texture ${frameKey}`);
+                }
                 
                 frameIndex++;
             }
@@ -319,28 +426,106 @@ export class TextureAtlasManager {
     }
     
     /**
-     * Create an animated sprite using texture pool
+     * Create placeholder texture for failed loads
+     */
+    createPlaceholderTexture(key) {
+        try {
+            console.log(`Creating placeholder texture for ${key}`);
+            
+            // Create a canvas-based placeholder
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            
+            // Create a recognizable placeholder pattern
+            ctx.fillStyle = '#ff00ff'; // Magenta background
+            ctx.fillRect(0, 0, 64, 64);
+            
+            ctx.fillStyle = '#000000'; // Black border
+            ctx.strokeRect(0, 0, 64, 64);
+            
+            ctx.fillStyle = '#ffffff'; // White text
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('MISSING', 32, 30);
+            ctx.fillText('TEXTURE', 32, 45);
+            
+            return PIXI.Texture.from(canvas);
+        } catch (error) {
+            console.error('Failed to create placeholder texture:', error);
+            // Ultimate fallback - return PIXI white texture
+            return PIXI.Texture.WHITE;
+        }
+    }
+    
+    /**
+     * Create an animated sprite using texture pool with enhanced error handling
      */
     createAnimatedSprite(spriteKey, animationName) {
-        const frames = this.getAnimationFrames(spriteKey, animationName);
-        if (frames.length === 0) {
-            console.warn(`No frames found for animation '${animationName}' of sprite '${spriteKey}'`);
-            return null;
+        try {
+            // CRITICAL FIX: Enhanced animated sprite creation with fallbacks
+            console.log(`Creating animated sprite for '${spriteKey}' animation '${animationName}'`);
+            
+            const frames = this.getAnimationFrames(spriteKey, animationName);
+            if (frames.length === 0) {
+                console.warn(`No frames found for animation '${animationName}' of sprite '${spriteKey}' - creating fallback sprite`);
+                
+                // FALLBACK 1: Try to get atlas texture directly
+                const atlas = this.getAtlas(spriteKey);
+                if (atlas && atlas.texture) {
+                    console.log(`Using atlas texture directly for ${spriteKey}`);
+                    const sprite = new PIXI.Sprite(atlas.texture);
+                    this.updateTextureUsage(spriteKey);
+                    return sprite;
+                }
+                
+                // FALLBACK 2: Create placeholder sprite
+                console.log(`Creating placeholder sprite for ${spriteKey}`);
+                const placeholderTexture = this.createPlaceholderTexture(spriteKey);
+                const sprite = new PIXI.Sprite(placeholderTexture);
+                return sprite;
+            }
+            
+            // Use texture pool for sprite creation
+            const sprite = this.texturePool.getAnimatedSprite(frames);
+            if (!sprite) {
+                console.warn(`Texture pool failed to create animated sprite for ${spriteKey} - creating manual sprite`);
+                // Manual fallback
+                const manualSprite = new PIXI.AnimatedSprite(frames);
+                const config = this.spriteConfigs[spriteKey];
+                
+                if (config && config.animations[animationName]) {
+                    manualSprite.animationSpeed = config.animations[animationName].speed || 0.1;
+                    manualSprite.play();
+                }
+                
+                this.updateTextureUsage(spriteKey);
+                return manualSprite;
+            }
+            
+            const config = this.spriteConfigs[spriteKey];
+            
+            if (config && config.animations[animationName]) {
+                sprite.animationSpeed = config.animations[animationName].speed || 0.1;
+                if (sprite.play && typeof sprite.play === 'function') {
+                    sprite.play();
+                }
+            }
+            
+            // Track sprite creation for memory monitoring
+            this.updateTextureUsage(spriteKey);
+            
+            console.log(`✅ Successfully created animated sprite for ${spriteKey}`);
+            return sprite;
+            
+        } catch (error) {
+            console.error(`Error creating animated sprite for ${spriteKey}:`, error);
+            
+            // Ultimate fallback - return a simple placeholder sprite
+            const placeholderTexture = this.createPlaceholderTexture(spriteKey);
+            return new PIXI.Sprite(placeholderTexture);
         }
-        
-        // Use texture pool for sprite creation
-        const sprite = this.texturePool.getAnimatedSprite(frames);
-        const config = this.spriteConfigs[spriteKey];
-        
-        if (config && config.animations[animationName]) {
-            sprite.animationSpeed = config.animations[animationName].speed;
-            sprite.play();
-        }
-        
-        // Track sprite creation for memory monitoring
-        this.updateTextureUsage(spriteKey);
-        
-        return sprite;
     }
     
     /**
@@ -557,9 +742,33 @@ export class TextureAtlasManager {
         
         this.atlases.forEach((atlas, key) => {
             atlasCount++;
-            const baseTexture = atlas.texture.baseTexture;
-            const atlasBytes = baseTexture.width * baseTexture.height * 4;
-            totalBytes += atlasBytes;
+            
+            // CRITICAL FIX: Handle different PIXI.js versions for memory calculation
+            let textureWidth = 0;
+            let textureHeight = 0;
+            
+            try {
+                if (atlas.texture) {
+                    if (atlas.texture.baseTexture) {
+                        // PIXI v6 style
+                        textureWidth = atlas.texture.baseTexture.width || 0;
+                        textureHeight = atlas.texture.baseTexture.height || 0;
+                    } else if (atlas.texture.source) {
+                        // PIXI v7+ style
+                        textureWidth = atlas.texture.source.width || atlas.texture.source.pixelWidth || atlas.texture.width || 0;
+                        textureHeight = atlas.texture.source.height || atlas.texture.source.pixelHeight || atlas.texture.height || 0;
+                    } else {
+                        // Fallback
+                        textureWidth = atlas.texture.width || 0;
+                        textureHeight = atlas.texture.height || 0;
+                    }
+                }
+                
+                const atlasBytes = textureWidth * textureHeight * 4; // RGBA bytes
+                totalBytes += atlasBytes;
+            } catch (error) {
+                console.warn(`Error calculating memory for atlas ${key}:`, error);
+            }
             
             // Add frame memory estimation
             if (atlas.estimatedFrameMemory) {

@@ -206,6 +206,14 @@
         // Import secure error handling
         const { secureErrorHandler } = await import('/src/utils/SecureErrorHandler.js');
         
+        // Import texture atlas test for validation
+        try {
+            await import('/manual-texture-test.js');
+            console.log('✅ Texture atlas test loaded');
+        } catch (testError) {
+            console.warn('⚠️ Texture test not loaded:', testError);
+        }
+        
         try {
             console.log('Importing game module...');
             await import('/src/index.js');

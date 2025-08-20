@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&C Sprite Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+        }
+        .category {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        .category h2 {
+            color: #FFD700;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+        .faction {
+            margin: 20px 0;
+        }
+        .faction h3 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .faction.gdi h3 {
+            color: #FFD700;
+        }
+        .faction.nod h3 {
+            color: #DC2626;
+        }
+        .sprite-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .sprite-item {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sprite-item img {
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            margin: 10px auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .sprite-name {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        .sprite-info {
+            font-size: 10px;
+            color: #666;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Command & Conquer Sprite Gallery</h1>
+    
+    <div class="category">
+        <h2>Structures</h2>
+        
+        <div class="faction gdi">
+            <h3>GDI Structures</h3>
+            <div class="sprite-container">
+                <div class="sprite-item">
+                    <div class="sprite-name">Construction Yard</div>
+                    <img src="/assets/sprites/structures/gdi/construction-yard.png" alt="GDI Construction Yard" style="width: 240px;">
+                    <div class="sprite-info">48x48, 5 frames</div>
+                </div>
+                <div class="sprite-item">
+                    <div class="sprite-name">Power Plant</div>
+                    <img src="/assets/sprites/structures/gdi/power-plant.png" alt="GDI Power Plant" style="width: 144px;">
+                    <div class="sprite-info">48x48, 3 frames</div>
+                </div>
+                <div class="sprite-item">
+                    <div class="sprite-name">Barracks</div>
+                    <img src="/assets/sprites/structures/gdi/barracks.png" alt="GDI Barracks" style="width: 48px;">
+                    <div class="sprite-info">48x48, 1 frame</div>
+                </div>
+                <div class="sprite-item">
+                    <div class="sprite-name">Refinery</div>
+                    <img src="/assets/sprites/structures/gdi/refinery.png" alt="GDI Refinery" style="width: 288px;">
+                    <div class="sprite-info">72x48, 4 frames</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="faction nod">
+            <h3>NOD Structures</h3>
+            <div class="sprite-container">
+                <div class="sprite-item">
+                    <div class="sprite-name">Hand of NOD</div>
+                    <img src="/assets/sprites/structures/nod/hand-of-nod.png" alt="Hand of NOD" style="width: 48px;">
+                    <div class="sprite-info">48x48, 1 frame</div>
+                </div>
+                <div class="sprite-item">
+                    <div class="sprite-name">Obelisk of Light</div>
+                    <img src="/assets/sprites/structures/nod/obelisk-of-light.png" alt="Obelisk of Light" style="width: 144px;">
+                    <div class="sprite-info">24x48, 6 frames</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <h2>Units</h2>
+        
+        <div class="faction gdi">
+            <h3>GDI Units</h3>
+            <div class="sprite-container">
+                <div class="sprite-item">
+                    <div class="sprite-name">Medium Tank</div>
+                    <img src="/assets/sprites/units/gdi/medium-tank.png" alt="GDI Medium Tank" style="width: 384px; height: 24px;">
+                    <div class="sprite-info">24x24, 64 frames (32 directions + turret)</div>
+                </div>
+                <div class="sprite-item">
+                    <div class="sprite-name">Mammoth Tank</div>
+                    <img src="/assets/sprites/units/gdi/mammoth-tank.png" alt="GDI Mammoth Tank" style="width: 512px; height: 32px;">
+                    <div class="sprite-info">32x32, 64 frames (32 directions + turret)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="faction nod">
+            <h3>NOD Units</h3>
+            <div class="sprite-container">
+                <div class="sprite-item">
+                    <div class="sprite-name">Recon Bike</div>
+                    <img src="/assets/sprites/units/nod/recon-bike.png" alt="NOD Recon Bike" style="width: 384px; height: 24px;">
+                    <div class="sprite-info">24x24, 32 frames (32 directions)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <h2>Resources</h2>
+        <div class="sprite-container">
+            <div class="sprite-item">
+                <div class="sprite-name">Green Tiberium</div>
+                <img src="/assets/sprites/resources/green.png" alt="Green Tiberium" style="width: 96px;">
+                <div class="sprite-info">24x24, 4 frames</div>
+            </div>
+            <div class="sprite-item">
+                <div class="sprite-name">Blue Tiberium</div>
+                <img src="/assets/sprites/resources/blue.png" alt="Blue Tiberium" style="width: 96px;">
+                <div class="sprite-info">24x24, 4 frames</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('🎮 C&C Sprite Test Page Loaded');
+        console.log('📁 Sprites are loaded from /assets/sprites/');
+        
+        // Log all image loads
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('load', () => {
+                console.log(`✅ Loaded: ${img.src}`);
+            });
+            img.addEventListener('error', () => {
+                console.error(`❌ Failed to load: ${img.src}`);
+            });
+        });
+    </script>
+</body>
+</html>
