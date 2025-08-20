@@ -104,3 +104,26 @@ tools/CnC_Tiberian_Dawn/
 # MCP server files and virtual environments
 mcp_servers/mcp_servers/
 mcp_servers/mcp_venv/
+
+# Documentation and report files (except README.md)
+*_REPORT*.md
+*_TEST.md
+*_VALIDATION*.md
+*_SETUP*.md
+COMPLETE_*.md
+DEPLOYMENT_*.md
+PRODUCTION_*.md
+SECURITY_*.md
+AI_*.md
+PHASE*.md
+OLLAMA_*.md
+INPUT_*.md
+MEMORY_*.md
+NAVIGATION_*.md
+PATHFINDING_*.md
+SELECTION_*.md
+SEQUENTIAL_*.md
+TRACKPAD_*.md
+WEBGL_*.md
+MCP_*.md
+validation_report.md
