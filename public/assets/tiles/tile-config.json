@@ -1,0 +1,155 @@
+{
+  "terrains": {
+    "temperate": {
+      "name": "Temperate",
+      "tiles": {
+        "clear": {
+          "passable": true,
+          "buildable": true
+        },
+        "water": {
+          "passable": false,
+          "buildable": false
+        },
+        "road": {
+          "passable": true,
+          "buildable": false,
+          "speedBonus": 1.5
+        },
+        "rock": {
+          "passable": false,
+          "buildable": false
+        },
+        "tree": {
+          "passable": false,
+          "buildable": false,
+          "harvestable": true
+        },
+        "river": {
+          "passable": false,
+          "buildable": false
+        },
+        "shore": {
+          "passable": true,
+          "buildable": false
+        },
+        "cliff": {
+          "passable": false,
+          "buildable": false
+        },
+        "bridge": {
+          "passable": true,
+          "buildable": false
+        }
+      }
+    },
+    "winter": {
+      "name": "Winter",
+      "tiles": {
+        "snow": {
+          "passable": true,
+          "buildable": true,
+          "speedPenalty": 0.8
+        },
+        "ice": {
+          "passable": true,
+          "buildable": false,
+          "speedPenalty": 0.7
+        },
+        "water": {
+          "passable": false,
+          "buildable": false
+        },
+        "road": {
+          "passable": true,
+          "buildable": false,
+          "speedBonus": 1.3
+        },
+        "rock": {
+          "passable": false,
+          "buildable": false
+        },
+        "tree": {
+          "passable": false,
+          "buildable": false
+        },
+        "shore": {
+          "passable": true,
+          "buildable": false
+        },
+        "cliff": {
+          "passable": false,
+          "buildable": false
+        }
+      }
+    },
+    "desert": {
+      "name": "Desert",
+      "tiles": {
+        "sand": {
+          "passable": true,
+          "buildable": true,
+          "speedPenalty": 0.9
+        },
+        "rock": {
+          "passable": false,
+          "buildable": false
+        },
+        "spice": {
+          "passable": true,
+          "buildable": false,
+          "harvestable": true
+        },
+        "dune": {
+          "passable": true,
+          "buildable": false,
+          "speedPenalty": 0.7
+        },
+        "water": {
+          "passable": false,
+          "buildable": false
+        },
+        "road": {
+          "passable": true,
+          "buildable": false,
+          "speedBonus": 1.4
+        },
+        "cliff": {
+          "passable": false,
+          "buildable": false
+        }
+      }
+    },
+    "interior": {
+      "name": "Interior",
+      "tiles": {
+        "floor": {
+          "passable": true,
+          "buildable": true
+        },
+        "wall": {
+          "passable": false,
+          "buildable": false
+        },
+        "door": {
+          "passable": true,
+          "buildable": false
+        },
+        "tech": {
+          "passable": true,
+          "buildable": false
+        },
+        "computer": {
+          "passable": false,
+          "buildable": false
+        },
+        "lab": {
+          "passable": true,
+          "buildable": false
+        }
+      }
+    }
+  },
+  "tileSize": 24,
+  "defaultTerrain": "temperate"
+}

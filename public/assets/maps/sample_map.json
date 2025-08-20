@@ -1,0 +1,76 @@
+{
+  "id": "sample_map_001",
+  "name": "Sample Temperate Map",
+  "theater": "temperate",
+  "size": {
+    "width": 64,
+    "height": 64
+  },
+  "players": 2,
+  "startPositions": [
+    {
+      "x": 10,
+      "y": 10,
+      "faction": "gdi"
+    },
+    {
+      "x": 54,
+      "y": 54,
+      "faction": "nod"
+    }
+  ],
+  "tiberiumFields": [
+    {
+      "x": 32,
+      "y": 32,
+      "size": "large"
+    },
+    {
+      "x": 15,
+      "y": 45,
+      "size": "medium"
+    },
+    {
+      "x": 45,
+      "y": 15,
+      "size": "medium"
+    }
+  ],
+  "terrain": {
+    "tiles": "base64_encoded_tile_data_would_go_here"
+  },
+  "structures": [
+    {
+      "type": "v01",
+      "x": 20,
+      "y": 20,
+      "owner": "neutral"
+    },
+    {
+      "type": "v03",
+      "x": 40,
+      "y": 40,
+      "owner": "neutral"
+    }
+  ],
+  "waypoints": [
+    {
+      "id": 0,
+      "x": 10,
+      "y": 10,
+      "name": "Player 1 Start"
+    },
+    {
+      "id": 1,
+      "x": 54,
+      "y": 54,
+      "name": "Player 2 Start"
+    },
+    {
+      "id": 98,
+      "x": 32,
+      "y": 32,
+      "name": "Map Center"
+    }
+  ]
+}

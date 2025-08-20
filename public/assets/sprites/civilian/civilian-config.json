@@ -1,0 +1,299 @@
+{
+  "structures": {
+    "v01": {
+      "name": "Church",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v02": {
+      "name": "Han's House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v03": {
+      "name": "Farmhouse",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v04": {
+      "name": "House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v05": {
+      "name": "Greenhouse",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v06": {
+      "name": "House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v07": {
+      "name": "Church",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v08": {
+      "name": "Steel Mill",
+      "health": 600,
+      "armor": "steel"
+    },
+    "v09": {
+      "name": "Warehouse",
+      "health": 500,
+      "armor": "wood"
+    },
+    "v10": {
+      "name": "House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v11": {
+      "name": "Church",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v12": {
+      "name": "Apartment",
+      "health": 500,
+      "armor": "concrete"
+    },
+    "v13": {
+      "name": "House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v14": {
+      "name": "Office",
+      "health": 500,
+      "armor": "concrete"
+    },
+    "v15": {
+      "name": "Office",
+      "health": 500,
+      "armor": "concrete"
+    },
+    "v16": {
+      "name": "Shop",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v17": {
+      "name": "Shop",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v18": {
+      "name": "Windmill",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v19": {
+      "name": "Oil Pump",
+      "health": 750,
+      "armor": "steel"
+    },
+    "v20": {
+      "name": "Oil Tanks",
+      "health": 500,
+      "armor": "steel",
+      "explosive": true
+    },
+    "v21": {
+      "name": "Oil Refinery",
+      "health": 800,
+      "armor": "steel"
+    },
+    "v22": {
+      "name": "Temple",
+      "health": 600,
+      "armor": "concrete"
+    },
+    "v23": {
+      "name": "Church",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v24": {
+      "name": "Farm Silo",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v25": {
+      "name": "Farm",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v26": {
+      "name": "House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v27": {
+      "name": "House",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v28": {
+      "name": "Water Tower",
+      "health": 400,
+      "armor": "steel"
+    },
+    "v29": {
+      "name": "Apartment",
+      "health": 500,
+      "armor": "concrete"
+    },
+    "v30": {
+      "name": "Church",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v31": {
+      "name": "Church",
+      "health": 400,
+      "armor": "wood"
+    },
+    "v32": {
+      "name": "Hospital",
+      "health": 600,
+      "armor": "concrete"
+    },
+    "v33": {
+      "name": "Hospital",
+      "health": 600,
+      "armor": "concrete"
+    },
+    "v34": {
+      "name": "Stadium",
+      "health": 700,
+      "armor": "concrete"
+    },
+    "v35": {
+      "name": "Stadium",
+      "health": 700,
+      "armor": "concrete"
+    },
+    "v36": {
+      "name": "Stadium",
+      "health": 700,
+      "armor": "concrete"
+    },
+    "v37": {
+      "name": "Stadium",
+      "health": 700,
+      "armor": "concrete"
+    },
+    "arco": {
+      "name": "Arco",
+      "health": 800,
+      "armor": "steel"
+    },
+    "bio": {
+      "name": "Biolab",
+      "health": 600,
+      "armor": "concrete"
+    },
+    "hosp": {
+      "name": "Hospital",
+      "health": 600,
+      "armor": "concrete"
+    },
+    "miss": {
+      "name": "Tech Center",
+      "health": 700,
+      "armor": "concrete"
+    }
+  },
+  "units": {
+    "c1": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c2": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c3": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c4": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c5": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c6": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c7": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c8": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c9": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "c10": {
+      "name": "Civilian",
+      "health": 25,
+      "speed": 4
+    },
+    "delphi": {
+      "name": "Agent Delphi",
+      "health": 50,
+      "speed": 4
+    },
+    "chan": {
+      "name": "Dr. Chan",
+      "health": 50,
+      "speed": 4
+    },
+    "moebius": {
+      "name": "Dr. Moebius",
+      "health": 50,
+      "speed": 4
+    }
+  },
+  "vehicles": {
+    "vice": {
+      "name": "Visceriod",
+      "health": 300,
+      "speed": 6
+    },
+    "truck": {
+      "name": "Truck",
+      "health": 100,
+      "speed": 10
+    },
+    "jeep": {
+      "name": "Jeep",
+      "health": 150,
+      "speed": 20
+    },
+    "harvester": {
+      "name": "Harvester",
+      "health": 600,
+      "speed": 6
+    }
+  }
+}

@@ -1,0 +1,988 @@
+{
+  "campaigns": {
+    "gdi": [
+      {
+        "id": "scg01ea",
+        "name": "X16-Y42",
+        "theater": "temperate",
+        "size": "small",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg02ea",
+        "name": "Knock Out That Refinery",
+        "theater": "temperate",
+        "size": "small",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg03ea",
+        "name": "Air Supremacy",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg04ea",
+        "name": "SCG04EA",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg05ea",
+        "name": "Repair The GDI Base",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg06ea",
+        "name": "Destroy The Airstrip",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg07ea",
+        "name": "Orca Heist",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg08ea",
+        "name": "Destroy The Bastard Towers",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg09ea",
+        "name": "Eviction Notice",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg10ea",
+        "name": "Naval Engagement",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg11ea",
+        "name": "Doctor Wong",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg12ea",
+        "name": "Ion Cannon Strike",
+        "theater": "desert",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg13ea",
+        "name": "Fish In A Barrel",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg14ea",
+        "name": "Tanks A Lot",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg15ea",
+        "name": "Temple Strike",
+        "theater": "desert",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg01eb",
+        "name": "SCG01EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg02eb",
+        "name": "SCG02EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg03eb",
+        "name": "SCG03EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg04wa",
+        "name": "Stolen Cargo",
+        "theater": "winter",
+        "size": "small",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg04wb",
+        "name": "Recapture The Prison",
+        "theater": "winter",
+        "size": "small",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg05ea",
+        "name": "Repair The GDI Base",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg05eb",
+        "name": "SCG05EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg05ec",
+        "name": "SCG05EC",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg06ea",
+        "name": "Destroy The Airstrip",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg06eb",
+        "name": "SCG06EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg07ea",
+        "name": "Orca Heist",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg07eb",
+        "name": "SCG07EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg08ea",
+        "name": "Destroy The Bastard Towers",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg08eb",
+        "name": "SCG08EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg09ea",
+        "name": "Eviction Notice",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg10ea",
+        "name": "Naval Engagement",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg10eb",
+        "name": "SCG10EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg11ea",
+        "name": "Doctor Wong",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg11eb",
+        "name": "SCG11EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg12ea",
+        "name": "Ion Cannon Strike",
+        "theater": "desert",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg12eb",
+        "name": "SCG12EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg13ea",
+        "name": "Fish In A Barrel",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg13eb",
+        "name": "SCG13EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg14ea",
+        "name": "Tanks A Lot",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg14eb",
+        "name": "SCG14EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg15ea",
+        "name": "Temple Strike",
+        "theater": "desert",
+        "size": "large",
+        "faction": "gdi",
+        "type": "campaign"
+      },
+      {
+        "id": "scg15eb",
+        "name": "SCG15EB",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "gdi",
+        "type": "campaign"
+      }
+    ],
+    "nod": [
+      {
+        "id": "scb01ea",
+        "name": "Silenced",
+        "theater": "desert",
+        "size": "small",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb02ea",
+        "name": "Liberation Of Egypt",
+        "theater": "desert",
+        "size": "small",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb03ea",
+        "name": "Friends Of The Brotherhood",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb04ea",
+        "name": "Convoy Interception",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb05ea",
+        "name": "Grounded",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb06ea",
+        "name": "Extract The Detonator",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb07ea",
+        "name": "Sick And Dying",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb08ea",
+        "name": "Capture The Prison",
+        "theater": "winter",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb09ea",
+        "name": "Botswana",
+        "theater": "desert",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb10ea",
+        "name": "Belly Of The Beast",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb11ea",
+        "name": "Shadow Ops",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb12ea",
+        "name": "Cradle Of My Temple",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb13ea",
+        "name": "Missile Silo",
+        "theater": "desert",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb01eb",
+        "name": "SCB01EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb02eb",
+        "name": "SCB02EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb03eb",
+        "name": "SCB03EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb04ea",
+        "name": "Convoy Interception",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb04eb",
+        "name": "SCB04EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb05ea",
+        "name": "Grounded",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb05eb",
+        "name": "SCB05EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb06ea",
+        "name": "Extract The Detonator",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb06eb",
+        "name": "SCB06EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb07ea",
+        "name": "Sick And Dying",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb07eb",
+        "name": "SCB07EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb08ea",
+        "name": "Capture The Prison",
+        "theater": "winter",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb08eb",
+        "name": "SCB08EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb09ea",
+        "name": "Botswana",
+        "theater": "desert",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb09eb",
+        "name": "SCB09EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb10ea",
+        "name": "Belly Of The Beast",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb10eb",
+        "name": "SCB10EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb11ea",
+        "name": "Shadow Ops",
+        "theater": "temperate",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb11eb",
+        "name": "SCB11EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb12ea",
+        "name": "Cradle Of My Temple",
+        "theater": "temperate",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb12eb",
+        "name": "SCB12EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb13ea",
+        "name": "Missile Silo",
+        "theater": "desert",
+        "size": "large",
+        "faction": "nod",
+        "type": "campaign"
+      },
+      {
+        "id": "scb13eb",
+        "name": "SCB13EB",
+        "theater": "desert",
+        "size": "medium",
+        "faction": "nod",
+        "type": "campaign"
+      }
+    ]
+  },
+  "multiplayer": [
+    {
+      "id": "scm01ea",
+      "name": "Green Acres",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm02ea",
+      "name": "The Hot Spot",
+      "theater": "desert",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm03ea",
+      "name": "River Raid",
+      "theater": "temperate",
+      "size": "large",
+      "players": 4,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm04ea",
+      "name": "Island Hopping",
+      "theater": "temperate",
+      "size": "large",
+      "players": 4,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm05ea",
+      "name": "Winter Offensive",
+      "theater": "winter",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm06ea",
+      "name": "Desert Storm",
+      "theater": "desert",
+      "size": "large",
+      "players": 6,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm07ea",
+      "name": "Bridge War",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm08ea",
+      "name": "Canyon Chase",
+      "theater": "desert",
+      "size": "large",
+      "players": 4,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm09ea",
+      "name": "Tiberium Garden",
+      "theater": "temperate",
+      "size": "large",
+      "players": 4,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm10ea",
+      "name": "Last Stand",
+      "theater": "temperate",
+      "size": "small",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm11ea",
+      "name": "SCM11EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm12ea",
+      "name": "SCM12EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm13ea",
+      "name": "SCM13EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm14ea",
+      "name": "SCM14EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm15ea",
+      "name": "SCM15EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm16ea",
+      "name": "SCM16EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm17ea",
+      "name": "SCM17EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm18ea",
+      "name": "SCM18EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm19ea",
+      "name": "SCM19EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm20ea",
+      "name": "SCM20EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm21ea",
+      "name": "SCM21EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm22ea",
+      "name": "SCM22EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm23ea",
+      "name": "SCM23EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm24ea",
+      "name": "SCM24EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm25ea",
+      "name": "SCM25EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm26ea",
+      "name": "SCM26EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm27ea",
+      "name": "SCM27EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm28ea",
+      "name": "SCM28EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm29ea",
+      "name": "SCM29EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm30ea",
+      "name": "SCM30EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm31ea",
+      "name": "SCM31EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm32ea",
+      "name": "SCM32EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm33ea",
+      "name": "SCM33EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm34ea",
+      "name": "SCM34EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm35ea",
+      "name": "SCM35EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    },
+    {
+      "id": "scm36ea",
+      "name": "SCM36EA",
+      "theater": "temperate",
+      "size": "medium",
+      "players": 2,
+      "type": "multiplayer"
+    }
+  ],
+  "special": [
+    {
+      "id": "scu01ea",
+      "name": "SCU01EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scu02ea",
+      "name": "SCU02EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scu03ea",
+      "name": "SCU03EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scj01ea",
+      "name": "SCJ01EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scj02ea",
+      "name": "SCJ02EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scj03ea",
+      "name": "SCJ03EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scx01ea",
+      "name": "SCX01EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scx02ea",
+      "name": "SCX02EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    },
+    {
+      "id": "scx03ea",
+      "name": "SCX03EA",
+      "theater": "temperate",
+      "size": "small",
+      "type": "special"
+    }
+  ],
+  "custom": []
+}

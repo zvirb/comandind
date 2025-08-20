@@ -31,20 +31,20 @@ export class TextureAtlasManager {
 
     async loadSpriteConfig() {
         try {
-            const response = await fetch('/assets/sprites/sprite-config.json');
+            const response = await fetch("/assets/sprites/sprite-config.json");
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const config = await response.json();
             if (!config || Object.keys(config).length === 0) {
-                console.warn('⚠️ Sprite config file loaded, but it is empty. No sprites can be configured.');
+                console.warn("⚠️ Sprite config file loaded, but it is empty. No sprites can be configured.");
             } else {
-                console.log('✅ Sprite config loaded successfully.');
+                console.log("✅ Sprite config loaded successfully.");
             }
             return config;
         } catch (error) {
-            console.error('❌ Failed to load or parse sprite-config.json:', error);
-            console.error('Ensure the file exists at /public/assets/sprites/sprite-config.json and is valid JSON.');
+            console.error("❌ Failed to load or parse sprite-config.json:", error);
+            console.error("Ensure the file exists at /public/assets/sprites/sprite-config.json and is valid JSON.");
             this.spriteConfigs = {}; // Use empty config on failure
             return null;
         }
@@ -52,22 +52,22 @@ export class TextureAtlasManager {
 
     buildSpriteConfigs(config) {
         if (!config || Object.keys(config).length === 0) {
-            console.warn('Cannot build sprite configs: config data is missing or empty.');
+            console.warn("Cannot build sprite configs: config data is missing or empty.");
             this.spriteConfigs = {};
             return;
         }
 
         this.spriteConfigs = {};
-        const basePath = '/assets/sprites';
+        const basePath = "/assets/sprites";
 
-        // Helper to process categories that might be nested differently (e.g., tiberium)
+        // Helper to process categories that might be nested differently (e.g., resources)
         const processCategory = (categoryName, categoryData) => {
-            if (categoryName === 'tiberium') {
-                // Handle flat tiberium structure
-                for (const [tiberiumType, tiberiumData] of Object.entries(categoryData)) {
-                    const key = `tiberium-${tiberiumType}`;
-                    const url = `${basePath}/resources/${tiberiumType}.png`;
-                    this.spriteConfigs[key] = { url, ...tiberiumData };
+            if (categoryName === "resources") {
+                // Handle resources structure
+                for (const [resourceType, resourceData] of Object.entries(categoryData)) {
+                    const key = `tiberium-${resourceType}`;
+                    const url = `${basePath}/resources/${resourceType}.png`;
+                    this.spriteConfigs[key] = { url, ...resourceData };
                 }
             } else {
                 // Handle nested faction structure
@@ -75,9 +75,9 @@ export class TextureAtlasManager {
                     for (const [entityName, entityData] of Object.entries(entities)) {
                         const key = `${faction}-${entityName}`;
                         // Default to .png, but allow for exceptions for test assets.
-                        let extension = 'png';
-                        if (key === 'gdi-medium-tank') {
-                            extension = 'svg'; // Our test asset is an SVG
+                        let extension = "png";
+                        if (key === "gdi-medium-tank") {
+                            extension = "svg"; // Our test asset is an SVG
                         }
                         const url = `${basePath}/${categoryName}/${faction}/${entityName}.${extension}`;
                         this.spriteConfigs[key] = { url, ...entityData };
@@ -90,7 +90,20 @@ export class TextureAtlasManager {
             processCategory(category, data);
         }
 
-        console.log('✅ Sprite configs built from JSON data.');
+        console.log("✅ Sprite configs built from JSON data.");
+    }
+    
+    /**
+     * Get sprite configuration by key
+     * @param {string} spriteKey - The sprite identifier
+     * @returns {Object|null} Sprite configuration or null if not found
+     */
+    getSpriteConfig(spriteKey) {
+        if (!this.spriteConfigs) {
+            console.warn("Sprite configs not loaded yet");
+            return null;
+        }
+        return this.spriteConfigs[spriteKey] || null;
     }
     
     /**
@@ -433,27 +446,27 @@ export class TextureAtlasManager {
             console.log(`Creating placeholder texture for ${key}`);
             
             // Create a canvas-based placeholder
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = 64;
             canvas.height = 64;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext("2d");
             
             // Create a recognizable placeholder pattern
-            ctx.fillStyle = '#ff00ff'; // Magenta background
+            ctx.fillStyle = "#ff00ff"; // Magenta background
             ctx.fillRect(0, 0, 64, 64);
             
-            ctx.fillStyle = '#000000'; // Black border
+            ctx.fillStyle = "#000000"; // Black border
             ctx.strokeRect(0, 0, 64, 64);
             
-            ctx.fillStyle = '#ffffff'; // White text
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('MISSING', 32, 30);
-            ctx.fillText('TEXTURE', 32, 45);
+            ctx.fillStyle = "#ffffff"; // White text
+            ctx.font = "10px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("MISSING", 32, 30);
+            ctx.fillText("TEXTURE", 32, 45);
             
             return PIXI.Texture.from(canvas);
         } catch (error) {
-            console.error('Failed to create placeholder texture:', error);
+            console.error("Failed to create placeholder texture:", error);
             // Ultimate fallback - return PIXI white texture
             return PIXI.Texture.WHITE;
         }
@@ -508,7 +521,7 @@ export class TextureAtlasManager {
             
             if (config && config.animations[animationName]) {
                 sprite.animationSpeed = config.animations[animationName].speed || 0.1;
-                if (sprite.play && typeof sprite.play === 'function') {
+                if (sprite.play && typeof sprite.play === "function") {
                     sprite.play();
                 }
             }

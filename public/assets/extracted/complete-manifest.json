@@ -1,0 +1,150 @@
+{
+  "mixFiles": {
+    "conquer.mix": {
+      "name": "conquer.mix",
+      "size": 2039435,
+      "sizeFormatted": "1.94 MB",
+      "estimatedResources": 200,
+      "categories": {
+        "units": 50,
+        "structures": 40,
+        "sprites": 100,
+        "shpSprites": 10
+      }
+    },
+    "desert.mix": {
+      "name": "desert.mix",
+      "size": 677061,
+      "sizeFormatted": "0.65 MB",
+      "estimatedResources": 360,
+      "categories": {
+        "terrain": 100,
+        "tiles": 200,
+        "features": 50,
+        "shpSprites": 10
+      }
+    },
+    "general.mix": {
+      "name": "general.mix",
+      "size": 2584388,
+      "sizeFormatted": "2.46 MB",
+      "estimatedResources": 170,
+      "categories": {
+        "sprites": 80,
+        "ui": 30,
+        "misc": 40,
+        "shpSprites": 10,
+        "audio": 10
+      }
+    },
+    "sounds.mix": {
+      "name": "sounds.mix",
+      "size": 1228794,
+      "sizeFormatted": "1.17 MB",
+      "estimatedResources": 210,
+      "categories": {
+        "sfx": 150,
+        "voices": 50,
+        "shpSprites": 10
+      }
+    },
+    "speech.mix": {
+      "name": "speech.mix",
+      "size": 594297,
+      "sizeFormatted": "0.57 MB",
+      "estimatedResources": 140,
+      "categories": {
+        "speech": 100,
+        "briefings": 30,
+        "shpSprites": 10
+      }
+    },
+    "temperat.mix": {
+      "name": "temperat.mix",
+      "size": 639607,
+      "sizeFormatted": "0.61 MB",
+      "estimatedResources": 370,
+      "categories": {
+        "terrain": 100,
+        "tiles": 200,
+        "features": 50,
+        "shpSprites": 10,
+        "audio": 10
+      }
+    },
+    "tempicnh.mix": {
+      "name": "tempicnh.mix",
+      "size": 119935,
+      "sizeFormatted": "0.11 MB",
+      "estimatedResources": 110,
+      "categories": {
+        "interior": 60,
+        "tiles": 40,
+        "shpSprites": 10
+      }
+    },
+    "transit.mix": {
+      "name": "transit.mix",
+      "size": 1907405,
+      "sizeFormatted": "1.82 MB",
+      "estimatedResources": 70,
+      "categories": {
+        "animations": 40,
+        "transitions": 20,
+        "shpSprites": 10
+      }
+    },
+    "winter.mix": {
+      "name": "winter.mix",
+      "size": 667385,
+      "sizeFormatted": "0.64 MB",
+      "estimatedResources": 360,
+      "categories": {
+        "terrain": 100,
+        "tiles": 200,
+        "features": 50,
+        "shpSprites": 10
+      }
+    }
+  },
+  "totalResources": 1990,
+  "resourceTypes": {
+    "sprites": 141,
+    "terrain": 57,
+    "animations": 44,
+    "ui": 54,
+    "audio": 123
+  },
+  "extractionDate": "2025-08-20T22:31:49.068Z",
+  "detailedCounts": {
+    "sprites": {
+      "units": 45,
+      "structures": 68,
+      "overlays": 29
+    },
+    "terrain": {
+      "tiles": 26,
+      "features": 31
+    },
+    "animations": {
+      "explosions": 15,
+      "projectiles": 14,
+      "smoke": 7,
+      "misc": 8
+    },
+    "ui": {
+      "cursors": 25,
+      "buttons": 8,
+      "icons": 12,
+      "panels": 9
+    },
+    "audio": {
+      "sfx": 70,
+      "music": 23,
+      "speech": 31
+    },
+    "videos": 58,
+    "fonts": 10,
+    "palettes": 10
+  }
+}

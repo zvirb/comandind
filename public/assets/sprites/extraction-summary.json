@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-08-20T22:03:41.016Z",
+  "mixFilesProcessed": [
+    "conquer.mix"
+  ],
+  "spritesExtracted": {
+    "units": {
+      "gdi": 6,
+      "nod": 6
+    },
+    "structures": {
+      "gdi": 9,
+      "nod": 7
+    },
+    "infantry": {
+      "gdi": 5,
+      "nod": 2
+    },
+    "resources": 3
+  },
+  "totalSprites": 38,
+  "outputDirectories": [
+    "public/assets/sprites/extracted/units/gdi",
+    "public/assets/sprites/extracted/units/nod",
+    "public/assets/sprites/extracted/structures/gdi",
+    "public/assets/sprites/extracted/structures/nod",
+    "public/assets/sprites/extracted/infantry",
+    "public/assets/sprites/extracted/resources"
+  ]
+}
