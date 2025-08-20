@@ -21,12 +21,12 @@ export class FunctionalValidationFramework {
             minimumRTSEntities: 6, // At least 6 RTS units/buildings visible
             maximumTestSprites: 10, // No more than 10 test sprites allowed
             requiredGameplayElements: [
-                'unit-selection',
-                'camera-controls', 
-                'ecs-entities',
-                'rts-assets',
-                'pathfinding',
-                'user-interaction'
+                "unit-selection",
+                "camera-controls", 
+                "ecs-entities",
+                "rts-assets",
+                "pathfinding",
+                "user-interaction"
             ],
             validationTimeout: 30000, // 30 seconds maximum
             screenshotEvidence: true
@@ -37,15 +37,15 @@ export class FunctionalValidationFramework {
      * Initialize functional validation framework
      */
     async initialize(gameInstance) {
-        console.log('🔍 Initializing Functional Validation Framework...');
+        console.log("🔍 Initializing Functional Validation Framework...");
         this.gameInstance = gameInstance;
         this.pixiApp = gameInstance?.application;
         
         if (!this.gameInstance || !this.pixiApp) {
-            throw new Error('CRITICAL: Cannot validate - game instance not available');
+            throw new Error("CRITICAL: Cannot validate - game instance not available");
         }
         
-        console.log('✅ Functional validation framework ready');
+        console.log("✅ Functional validation framework ready");
         return true;
     }
 
@@ -54,7 +54,7 @@ export class FunctionalValidationFramework {
      * Returns validation results with evidence
      */
     async runFunctionalValidation() {
-        console.log('🎯 Starting Comprehensive Functional Validation...');
+        console.log("🎯 Starting Comprehensive Functional Validation...");
         
         const validationSuite = {
             gameplayVisibility: await this.validateGameplayVisibility(),
@@ -81,11 +81,11 @@ export class FunctionalValidationFramework {
      * Validate that actual RTS gameplay elements are visible (not just test sprites)
      */
     async validateGameplayVisibility() {
-        console.log('🔍 Validating gameplay visibility...');
+        console.log("🔍 Validating gameplay visibility...");
         
         const validation = {
-            testName: 'Gameplay Visibility Validation',
-            status: 'unknown',
+            testName: "Gameplay Visibility Validation",
+            status: "unknown",
             evidence: {},
             issues: []
         };
@@ -127,7 +127,7 @@ export class FunctionalValidationFramework {
             }
 
             if (contentAnalysis.rtsEntities === 0 && contentAnalysis.testSprites > 0) {
-                validation.issues.push('CRITICAL: Users only see test sprites, no RTS gameplay content visible');
+                validation.issues.push("CRITICAL: Users only see test sprites, no RTS gameplay content visible");
             }
 
             // Check if ECS world has entities
@@ -137,21 +137,21 @@ export class FunctionalValidationFramework {
                 validation.evidence.ecsComponents = ecsStats.componentCount;
                 
                 if (ecsStats.entityCount === 0) {
-                    validation.issues.push('CRITICAL: ECS world has no entities - game logic not functional');
+                    validation.issues.push("CRITICAL: ECS world has no entities - game logic not functional");
                 }
             }
 
             // Overall status determination
             if (validation.issues.length === 0) {
-                validation.status = 'passed';
-            } else if (validation.issues.some(issue => issue.includes('CRITICAL'))) {
-                validation.status = 'failed';
+                validation.status = "passed";
+            } else if (validation.issues.some(issue => issue.includes("CRITICAL"))) {
+                validation.status = "failed";
             } else {
-                validation.status = 'warning';
+                validation.status = "warning";
             }
 
         } catch (error) {
-            validation.status = 'error';
+            validation.status = "error";
             validation.issues.push(`Validation error: ${error.message}`);
         }
 
@@ -162,11 +162,11 @@ export class FunctionalValidationFramework {
      * Validate user interaction functionality
      */
     async validateUserInteraction() {
-        console.log('🔍 Validating user interaction...');
+        console.log("🔍 Validating user interaction...");
         
         const validation = {
-            testName: 'User Interaction Validation',
-            status: 'unknown',
+            testName: "User Interaction Validation",
+            status: "unknown",
             evidence: {},
             issues: []
         };
@@ -174,43 +174,43 @@ export class FunctionalValidationFramework {
         try {
             // Check input handler
             if (!this.gameInstance.inputHandler) {
-                validation.issues.push('CRITICAL: Input handler not initialized');
+                validation.issues.push("CRITICAL: Input handler not initialized");
             } else {
-                validation.evidence.inputHandler = 'initialized';
+                validation.evidence.inputHandler = "initialized";
             }
 
             // Check selection system
             if (!this.gameInstance.selectionSystem) {
-                validation.issues.push('CRITICAL: Selection system not available');
+                validation.issues.push("CRITICAL: Selection system not available");
             } else {
-                validation.evidence.selectionSystem = 'initialized';
+                validation.evidence.selectionSystem = "initialized";
                 
                 // Test selection functionality
                 const selectionTest = await this.testSelectionSystem();
                 validation.evidence.selectionTest = selectionTest;
                 
                 if (!selectionTest.functional) {
-                    validation.issues.push('CRITICAL: Selection system not responding to user input');
+                    validation.issues.push("CRITICAL: Selection system not responding to user input");
                 }
             }
 
             // Check camera controls
             if (!this.gameInstance.camera) {
-                validation.issues.push('CRITICAL: Camera system not available');
+                validation.issues.push("CRITICAL: Camera system not available");
             } else {
                 validation.evidence.camera = {
                     position: { x: this.gameInstance.camera.x, y: this.gameInstance.camera.y },
                     scale: this.gameInstance.camera.scale,
-                    functional: typeof this.gameInstance.camera.update === 'function'
+                    functional: typeof this.gameInstance.camera.update === "function"
                 };
             }
 
             // Overall status
-            validation.status = validation.issues.length === 0 ? 'passed' : 
-                              validation.issues.some(issue => issue.includes('CRITICAL')) ? 'failed' : 'warning';
+            validation.status = validation.issues.length === 0 ? "passed" : 
+                validation.issues.some(issue => issue.includes("CRITICAL")) ? "failed" : "warning";
 
         } catch (error) {
-            validation.status = 'error';
+            validation.status = "error";
             validation.issues.push(`Validation error: ${error.message}`);
         }
 
@@ -221,11 +221,11 @@ export class FunctionalValidationFramework {
      * Validate system integration and ECS functionality
      */
     async validateSystemIntegration() {
-        console.log('🔍 Validating system integration...');
+        console.log("🔍 Validating system integration...");
         
         const validation = {
-            testName: 'System Integration Validation',
-            status: 'unknown',
+            testName: "System Integration Validation",
+            status: "unknown",
             evidence: {},
             issues: []
         };
@@ -233,54 +233,54 @@ export class FunctionalValidationFramework {
         try {
             // Check ECS World
             if (!this.gameInstance.world) {
-                validation.issues.push('CRITICAL: ECS World not initialized');
+                validation.issues.push("CRITICAL: ECS World not initialized");
             } else {
                 const worldStats = this.gameInstance.world.getStats();
                 validation.evidence.ecsWorld = worldStats;
                 
                 if (worldStats.entityCount === 0) {
-                    validation.issues.push('CRITICAL: ECS World has no entities');
+                    validation.issues.push("CRITICAL: ECS World has no entities");
                 }
                 
                 if (worldStats.systemCount === 0) {
-                    validation.issues.push('CRITICAL: ECS World has no systems');
+                    validation.issues.push("CRITICAL: ECS World has no systems");
                 }
             }
 
             // Check Asset Loading
             if (!this.gameInstance.cncAssets) {
-                validation.issues.push('CRITICAL: C&C Assets not loaded');
+                validation.issues.push("CRITICAL: C&C Assets not loaded");
             } else {
                 const assetStats = this.gameInstance.cncAssets.getLoadingStats();
                 validation.evidence.assets = assetStats;
                 
                 if (assetStats.loadedAssets === 0) {
-                    validation.issues.push('CRITICAL: No C&C assets loaded - only test sprites available');
+                    validation.issues.push("CRITICAL: No C&C assets loaded - only test sprites available");
                 }
             }
 
             // Check Pathfinding System
             if (!this.gameInstance.pathfindingSystem) {
-                validation.issues.push('WARNING: Pathfinding system not available');
+                validation.issues.push("WARNING: Pathfinding system not available");
             } else {
                 validation.evidence.pathfinding = {
                     initialized: true,
-                    gridSize: this.gameInstance.pathfindingSystem.gridWidth + 'x' + this.gameInstance.pathfindingSystem.gridHeight
+                    gridSize: this.gameInstance.pathfindingSystem.gridWidth + "x" + this.gameInstance.pathfindingSystem.gridHeight
                 };
             }
 
             // Check Entity Factory
             if (!this.gameInstance.entityFactory) {
-                validation.issues.push('CRITICAL: Entity Factory not available - cannot create RTS units');
+                validation.issues.push("CRITICAL: Entity Factory not available - cannot create RTS units");
             } else {
-                validation.evidence.entityFactory = 'initialized';
+                validation.evidence.entityFactory = "initialized";
             }
 
-            validation.status = validation.issues.length === 0 ? 'passed' : 
-                              validation.issues.some(issue => issue.includes('CRITICAL')) ? 'failed' : 'warning';
+            validation.status = validation.issues.length === 0 ? "passed" : 
+                validation.issues.some(issue => issue.includes("CRITICAL")) ? "failed" : "warning";
 
         } catch (error) {
-            validation.status = 'error';
+            validation.status = "error";
             validation.issues.push(`Validation error: ${error.message}`);
         }
 
@@ -291,11 +291,11 @@ export class FunctionalValidationFramework {
      * Validate functional reality vs technical metrics
      */
     async validateFunctionalReality() {
-        console.log('🔍 Validating functional reality...');
+        console.log("🔍 Validating functional reality...");
         
         const validation = {
-            testName: 'Functional Reality Check',
-            status: 'unknown',
+            testName: "Functional Reality Check",
+            status: "unknown",
             evidence: {},
             issues: []
         };
@@ -322,26 +322,26 @@ export class FunctionalValidationFramework {
 
             // Critical functional reality checks
             if (!functionalReality.userCanSeeRTSContent) {
-                validation.issues.push('CRITICAL: High technical performance but users cannot see RTS content');
+                validation.issues.push("CRITICAL: High technical performance but users cannot see RTS content");
             }
 
             if (!functionalReality.userCanInteract) {
-                validation.issues.push('CRITICAL: Technical systems responding but user interaction not functional');
+                validation.issues.push("CRITICAL: Technical systems responding but user interaction not functional");
             }
 
             if (!functionalReality.gameplayActuallyWorks) {
-                validation.issues.push('CRITICAL: Technical validation passed but gameplay is non-functional');
+                validation.issues.push("CRITICAL: Technical validation passed but gameplay is non-functional");
             }
 
             // Correlation analysis
             if (technicalMetrics.fps > 60 && !functionalReality.gameplayActuallyWorks) {
-                validation.issues.push('CRITICAL: Technical-vs-functional disconnect detected (high FPS, broken gameplay)');
+                validation.issues.push("CRITICAL: Technical-vs-functional disconnect detected (high FPS, broken gameplay)");
             }
 
-            validation.status = validation.issues.length === 0 ? 'passed' : 'failed';
+            validation.status = validation.issues.length === 0 ? "passed" : "failed";
 
         } catch (error) {
-            validation.status = 'error';
+            validation.status = "error";
             validation.issues.push(`Validation error: ${error.message}`);
         }
 
@@ -353,20 +353,20 @@ export class FunctionalValidationFramework {
      */
     async collectVisualEvidence() {
         if (!this.validationConfig.screenshotEvidence) {
-            return { collected: false, reason: 'Screenshot evidence disabled' };
+            return { collected: false, reason: "Screenshot evidence disabled" };
         }
 
         try {
             // Create canvas screenshot
             const canvas = this.pixiApp.view;
-            const dataURL = canvas.toDataURL('image/png');
+            const dataURL = canvas.toDataURL("image/png");
             
             return {
                 collected: true,
                 timestamp: new Date().toISOString(),
                 screenshot: dataURL,
                 canvasSize: { width: canvas.width, height: canvas.height },
-                description: 'Functional validation screenshot showing actual user view'
+                description: "Functional validation screenshot showing actual user view"
             };
         } catch (error) {
             return {
@@ -382,8 +382,8 @@ export class FunctionalValidationFramework {
     isTestSprite(child) {
         // Check if this is a TestSprite (usually has specific properties or naming)
         return child.tint !== undefined && 
-               (child.constructor.name === 'Sprite' || child.constructor.name === 'Graphics') &&
-               (!child.texture?.baseTexture?.imageUrl || child.texture.baseTexture.imageUrl.includes('test'));
+               (child.constructor.name === "Sprite" || child.constructor.name === "Graphics") &&
+               (!child.texture?.baseTexture?.imageUrl || child.texture.baseTexture.imageUrl.includes("test"));
     }
 
     isRTSEntity(child) {
@@ -391,13 +391,13 @@ export class FunctionalValidationFramework {
         return child.entityId !== undefined || 
                child.unitType !== undefined ||
                child.faction !== undefined ||
-               (child.texture?.baseTexture?.imageUrl && !child.texture.baseTexture.imageUrl.includes('test'));
+               (child.texture?.baseTexture?.imageUrl && !child.texture.baseTexture.imageUrl.includes("test"));
     }
 
     identifyRTSElement(child) {
         return {
-            type: child.unitType || child.buildingType || 'unknown',
-            faction: child.faction || 'unknown',
+            type: child.unitType || child.buildingType || "unknown",
+            faction: child.faction || "unknown",
             entityId: child.entityId,
             position: { x: child.x, y: child.y }
         };
@@ -409,11 +409,11 @@ export class FunctionalValidationFramework {
     async testSelectionSystem() {
         try {
             const selectionSystem = this.gameInstance.selectionSystem;
-            if (!selectionSystem) return { functional: false, reason: 'Selection system not available' };
+            if (!selectionSystem) return { functional: false, reason: "Selection system not available" };
 
             // Check if selection system has required methods
-            const hasRequiredMethods = typeof selectionSystem.getSelectedEntities === 'function' &&
-                                     typeof selectionSystem.selectEntity === 'function';
+            const hasRequiredMethods = typeof selectionSystem.getSelectedEntities === "function" &&
+                                     typeof selectionSystem.selectEntity === "function";
 
             return {
                 functional: hasRequiredMethods,
@@ -465,11 +465,11 @@ export class FunctionalValidationFramework {
         const issues = [];
         
         if (technical.fps > 60 && !functional.gameplayActuallyWorks) {
-            issues.push('High performance metrics but non-functional gameplay');
+            issues.push("High performance metrics but non-functional gameplay");
         }
         
         if (technical.stageChildren > 0 && !functional.userCanSeeRTSContent) {
-            issues.push('Stage has children but user cannot see RTS content');
+            issues.push("Stage has children but user cannot see RTS content");
         }
         
         return {
@@ -483,23 +483,23 @@ export class FunctionalValidationFramework {
      */
     evaluateOverallValidation(suite) {
         const results = Object.values(suite);
-        const passedCount = results.filter(r => r.status === 'passed').length;
-        const failedCount = results.filter(r => r.status === 'failed').length;
-        const errorCount = results.filter(r => r.status === 'error').length;
+        const passedCount = results.filter(r => r.status === "passed").length;
+        const failedCount = results.filter(r => r.status === "failed").length;
+        const errorCount = results.filter(r => r.status === "error").length;
         
-        let overallStatus = 'unknown';
+        let overallStatus = "unknown";
         let score = 0;
         
         if (errorCount > 0) {
-            overallStatus = 'error';
+            overallStatus = "error";
         } else if (failedCount > 0) {
-            overallStatus = 'failed';
+            overallStatus = "failed";
             score = Math.max(0, (passedCount / results.length) * 100 - failedCount * 25);
         } else if (passedCount === results.length) {
-            overallStatus = 'passed';
+            overallStatus = "passed";
             score = 100;
         } else {
-            overallStatus = 'warning';
+            overallStatus = "warning";
             score = (passedCount / results.length) * 100;
         }
 
@@ -522,24 +522,24 @@ export class FunctionalValidationFramework {
     generateRecommendations(suite) {
         const recommendations = [];
         
-        if (suite.gameplayVisibility.status === 'failed') {
-            recommendations.push('CRITICAL: Implement actual RTS content visibility before production');
+        if (suite.gameplayVisibility.status === "failed") {
+            recommendations.push("CRITICAL: Implement actual RTS content visibility before production");
         }
         
-        if (suite.userInteraction.status === 'failed') {
-            recommendations.push('CRITICAL: Fix user interaction systems before production');
+        if (suite.userInteraction.status === "failed") {
+            recommendations.push("CRITICAL: Fix user interaction systems before production");
         }
         
-        if (suite.systemIntegration.status === 'failed') {
-            recommendations.push('CRITICAL: Resolve ECS/asset loading issues before production');
+        if (suite.systemIntegration.status === "failed") {
+            recommendations.push("CRITICAL: Resolve ECS/asset loading issues before production");
         }
         
-        if (suite.functionalReality.status === 'failed') {
-            recommendations.push('CRITICAL: Correlate technical metrics with functional reality');
+        if (suite.functionalReality.status === "failed") {
+            recommendations.push("CRITICAL: Correlate technical metrics with functional reality");
         }
         
         if (recommendations.length === 0) {
-            recommendations.push('Functional validation passed - ready for production');
+            recommendations.push("Functional validation passed - ready for production");
         }
         
         return recommendations;
@@ -551,22 +551,22 @@ export class FunctionalValidationFramework {
     getPreventionMeasures() {
         return {
             mandatoryChecks: [
-                'Visual content verification (RTS entities vs test sprites)',
-                'User interaction testing with actual gameplay elements',
-                'End-to-end gameplay flow validation',
-                'Technical metrics correlation with functional reality'
+                "Visual content verification (RTS entities vs test sprites)",
+                "User interaction testing with actual gameplay elements",
+                "End-to-end gameplay flow validation",
+                "Technical metrics correlation with functional reality"
             ],
             automatedTests: [
-                'Screenshot comparison with expected gameplay content',
-                'Interactive element counting and verification',
-                'ECS entity validation and content verification',
-                'Asset loading verification with functional testing'
+                "Screenshot comparison with expected gameplay content",
+                "Interactive element counting and verification",
+                "ECS entity validation and content verification",
+                "Asset loading verification with functional testing"
             ],
             validationGates: [
-                'No production deployment without functional validation',
-                'Technical metrics must correlate with user experience',
-                'Mandatory user perspective testing before certification',
-                'Screenshot evidence required for production validation'
+                "No production deployment without functional validation",
+                "Technical metrics must correlate with user experience",
+                "Mandatory user perspective testing before certification",
+                "Screenshot evidence required for production validation"
             ]
         };
     }
@@ -586,7 +586,7 @@ export class EnhancedProductionValidator {
      * Run combined technical and functional validation
      */
     async runEnhancedValidation(gameInstance) {
-        console.log('🎯 Running Enhanced Production Validation (Technical + Functional)...');
+        console.log("🎯 Running Enhanced Production Validation (Technical + Functional)...");
         
         // Initialize functional validator
         await this.functionalValidator.initialize(gameInstance);
@@ -600,7 +600,7 @@ export class EnhancedProductionValidator {
         // Create comprehensive validation report
         const enhancedReport = {
             timestamp: new Date().toISOString(),
-            validationType: 'Enhanced Production Validation',
+            validationType: "Enhanced Production Validation",
             functionalValidation: functionalResults,
             technicalValidation: technicalResults,
             overallStatus: this.determineOverallStatus(functionalResults, technicalResults),
@@ -617,10 +617,10 @@ export class EnhancedProductionValidator {
     async runTechnicalValidation() {
         // This would integrate with existing technical validation
         return {
-            status: 'passed',
-            healthChecks: 'passed',
-            performance: 'excellent',
-            security: 'validated'
+            status: "passed",
+            healthChecks: "passed",
+            performance: "excellent",
+            security: "validated"
         };
     }
 
@@ -628,19 +628,19 @@ export class EnhancedProductionValidator {
      * Determine overall validation status
      */
     determineOverallStatus(functional, technical) {
-        if (functional.overallStatus === 'failed' || technical.status === 'failed') {
-            return 'failed';
+        if (functional.overallStatus === "failed" || technical.status === "failed") {
+            return "failed";
         }
         
-        if (functional.overallStatus === 'error' || technical.status === 'error') {
-            return 'error';
+        if (functional.overallStatus === "error" || technical.status === "error") {
+            return "error";
         }
         
-        if (functional.overallStatus === 'passed' && technical.status === 'passed') {
-            return 'passed';
+        if (functional.overallStatus === "passed" && technical.status === "passed") {
+            return "passed";
         }
         
-        return 'warning';
+        return "warning";
     }
 
     /**
@@ -649,13 +649,13 @@ export class EnhancedProductionValidator {
     analyzeValidationGaps(functional, technical) {
         const gaps = [];
         
-        if (technical.status === 'passed' && functional.overallStatus === 'failed') {
-            gaps.push('CRITICAL GAP: Technical validation passed but functional validation failed');
-            gaps.push('This indicates a technical-vs-functional disconnect');
+        if (technical.status === "passed" && functional.overallStatus === "failed") {
+            gaps.push("CRITICAL GAP: Technical validation passed but functional validation failed");
+            gaps.push("This indicates a technical-vs-functional disconnect");
         }
         
-        if (functional.functionalScore < 50 && technical.status === 'passed') {
-            gaps.push('WARNING: Low functional score despite passing technical validation');
+        if (functional.functionalScore < 50 && technical.status === "passed") {
+            gaps.push("WARNING: Low functional score despite passing technical validation");
         }
         
         return gaps;
@@ -667,21 +667,21 @@ export class EnhancedProductionValidator {
     makeCertificationDecision(functional, technical) {
         const decision = {
             certified: false,
-            reason: '',
+            reason: "",
             requirements: []
         };
         
-        if (functional.overallStatus === 'failed') {
-            decision.reason = 'Functional validation failed - user experience not acceptable';
+        if (functional.overallStatus === "failed") {
+            decision.reason = "Functional validation failed - user experience not acceptable";
             decision.requirements = functional.recommendations;
-        } else if (technical.status === 'failed') {
-            decision.reason = 'Technical validation failed';
-        } else if (functional.overallStatus === 'passed' && technical.status === 'passed') {
+        } else if (technical.status === "failed") {
+            decision.reason = "Technical validation failed";
+        } else if (functional.overallStatus === "passed" && technical.status === "passed") {
             decision.certified = true;
-            decision.reason = 'Both technical and functional validation passed';
+            decision.reason = "Both technical and functional validation passed";
         } else {
-            decision.reason = 'Partial validation success - review warnings';
-            decision.requirements.push('Address validation warnings before certification');
+            decision.reason = "Partial validation success - review warnings";
+            decision.requirements.push("Address validation warnings before certification");
         }
         
         return decision;

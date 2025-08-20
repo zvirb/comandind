@@ -43,7 +43,7 @@ export class IntegrationTestFramework {
     }
     
     setupIntegrationEnvironment() {
-        console.log('🔧 Setting up Integration Testing Framework...');
+        console.log("🔧 Setting up Integration Testing Framework...");
         
         // Initialize performance monitoring
         this.performanceMonitor = new IntegrationPerformanceMonitor();
@@ -51,15 +51,15 @@ export class IntegrationTestFramework {
         // Initialize regression tracker
         this.regressionTracker = new RegressionTracker();
         
-        console.log('✅ Integration testing framework ready');
+        console.log("✅ Integration testing framework ready");
     }
     
     /**
      * Run comprehensive integration tests
      */
     async runIntegrationTests() {
-        console.log('🔧 Starting Integration Testing Framework');
-        console.log('=' .repeat(80));
+        console.log("🔧 Starting Integration Testing Framework");
+        console.log("=" .repeat(80));
         
         const overallStartTime = performance.now();
         
@@ -101,7 +101,7 @@ export class IntegrationTestFramework {
             return allResults;
             
         } catch (error) {
-            console.error('❌ Integration testing failed:', error);
+            console.error("❌ Integration testing failed:", error);
             throw error;
         }
     }
@@ -110,47 +110,47 @@ export class IntegrationTestFramework {
      * Test cross-system integrations
      */
     async runCrossSystemTests() {
-        console.log('\n🔄 Testing Cross-System Integration...');
+        console.log("\n🔄 Testing Cross-System Integration...");
         
         const results = [];
         
         // Test 1: Selection → Pathfinding integration
         if (this.config.crossSystem.selectionToPathfinding) {
-            console.log('  📋 Testing Selection → Pathfinding integration');
+            console.log("  📋 Testing Selection → Pathfinding integration");
             const selectionPathfindingResult = await this.testSelectionPathfindingIntegration();
             results.push(selectionPathfindingResult);
         }
         
         // Test 2: Pathfinding → Economy integration
         if (this.config.crossSystem.pathfindingToEconomy) {
-            console.log('  📋 Testing Pathfinding → Economy integration');
+            console.log("  📋 Testing Pathfinding → Economy integration");
             const pathfindingEconomyResult = await this.testPathfindingEconomyIntegration();
             results.push(pathfindingEconomyResult);
         }
         
         // Test 3: Economy → Rendering integration
         if (this.config.crossSystem.economyToRendering) {
-            console.log('  📋 Testing Economy → Rendering integration');
+            console.log("  📋 Testing Economy → Rendering integration");
             const economyRenderingResult = await this.testEconomyRenderingIntegration();
             results.push(economyRenderingResult);
         }
         
         // Test 4: Rendering → Input integration
         if (this.config.crossSystem.renderingToInput) {
-            console.log('  📋 Testing Rendering → Input integration');
+            console.log("  📋 Testing Rendering → Input integration");
             const renderingInputResult = await this.testRenderingInputIntegration();
             results.push(renderingInputResult);
         }
         
         // Test 5: Input → Selection integration
         if (this.config.crossSystem.inputToSelection) {
-            console.log('  📋 Testing Input → Selection integration');
+            console.log("  📋 Testing Input → Selection integration");
             const inputSelectionResult = await this.testInputSelectionIntegration();
             results.push(inputSelectionResult);
         }
         
         return {
-            testType: 'Cross-System Integration',
+            testType: "Cross-System Integration",
             results,
             success: results.every(r => r.success),
             summary: this.generateCrossSystemSummary(results)
@@ -210,7 +210,7 @@ export class IntegrationTestFramework {
             const success = testData.successfulTransitions >= testData.integrationPoints * 0.95; // 95% success rate
             
             return {
-                testName: 'Selection → Pathfinding Integration',
+                testName: "Selection → Pathfinding Integration",
                 success,
                 metrics: testData,
                 details: {
@@ -222,7 +222,7 @@ export class IntegrationTestFramework {
         } catch (error) {
             testData.errors.push(error.message);
             return {
-                testName: 'Selection → Pathfinding Integration',
+                testName: "Selection → Pathfinding Integration",
                 success: false,
                 error: error.message,
                 metrics: testData
@@ -272,7 +272,7 @@ export class IntegrationTestFramework {
             const success = testData.integrationFailures < testData.pathfindingRequests * 0.1; // Less than 10% failures
             
             return {
-                testName: 'Pathfinding → Economy Integration',
+                testName: "Pathfinding → Economy Integration",
                 success,
                 metrics: testData,
                 details: {
@@ -283,7 +283,7 @@ export class IntegrationTestFramework {
             
         } catch (error) {
             return {
-                testName: 'Pathfinding → Economy Integration',
+                testName: "Pathfinding → Economy Integration",
                 success: false,
                 error: error.message,
                 metrics: testData
@@ -328,7 +328,7 @@ export class IntegrationTestFramework {
             const success = testData.visualSyncFailures < testData.economyEvents * 0.05; // Less than 5% sync failures
             
             return {
-                testName: 'Economy → Rendering Integration',
+                testName: "Economy → Rendering Integration",
                 success,
                 metrics: testData,
                 details: {
@@ -339,7 +339,7 @@ export class IntegrationTestFramework {
             
         } catch (error) {
             return {
-                testName: 'Economy → Rendering Integration',
+                testName: "Economy → Rendering Integration",
                 success: false,
                 error: error.message,
                 metrics: testData
@@ -383,7 +383,7 @@ export class IntegrationTestFramework {
             const success = testData.renderingResponses >= testData.inputEvents * 0.95 && averageInputLag <= 16; // 95% response rate, <16ms lag
             
             return {
-                testName: 'Rendering → Input Integration',
+                testName: "Rendering → Input Integration",
                 success,
                 metrics: testData,
                 details: {
@@ -394,7 +394,7 @@ export class IntegrationTestFramework {
             
         } catch (error) {
             return {
-                testName: 'Rendering → Input Integration',
+                testName: "Rendering → Input Integration",
                 success: false,
                 error: error.message,
                 metrics: testData
@@ -439,7 +439,7 @@ export class IntegrationTestFramework {
             const success = testData.selectionErrors < testData.inputCommands * 0.05; // Less than 5% errors
             
             return {
-                testName: 'Input → Selection Integration',
+                testName: "Input → Selection Integration",
                 success,
                 metrics: testData,
                 details: {
@@ -450,7 +450,7 @@ export class IntegrationTestFramework {
             
         } catch (error) {
             return {
-                testName: 'Input → Selection Integration',
+                testName: "Input → Selection Integration",
                 success: false,
                 error: error.message,
                 metrics: testData
@@ -462,26 +462,26 @@ export class IntegrationTestFramework {
      * Run end-to-end gameplay tests
      */
     async runEndToEndTests() {
-        console.log('\n🎮 Running End-to-End Gameplay Tests...');
+        console.log("\n🎮 Running End-to-End Gameplay Tests...");
         
         const results = [];
         
         // Test complete RTS gameplay scenarios
         const gameplayScenarios = [
             {
-                name: 'Basic RTS Workflow',
+                name: "Basic RTS Workflow",
                 duration: 60000,
-                actions: ['select', 'move', 'build', 'harvest', 'attack']
+                actions: ["select", "move", "build", "harvest", "attack"]
             },
             {
-                name: 'Complex Multi-Unit Management',
+                name: "Complex Multi-Unit Management",
                 duration: 90000,
-                actions: ['mass_select', 'formation_move', 'coordinated_attack', 'resource_management']
+                actions: ["mass_select", "formation_move", "coordinated_attack", "resource_management"]
             },
             {
-                name: 'Extended Gameplay Session',
+                name: "Extended Gameplay Session",
                 duration: 120000,
-                actions: ['all_actions', 'continuous_play', 'memory_stability']
+                actions: ["all_actions", "continuous_play", "memory_stability"]
             }
         ];
         
@@ -496,7 +496,7 @@ export class IntegrationTestFramework {
         }
         
         return {
-            testType: 'End-to-End Gameplay',
+            testType: "End-to-End Gameplay",
             results,
             success: results.every(r => r.success),
             summary: this.generateEndToEndSummary(results)
@@ -523,7 +523,7 @@ export class IntegrationTestFramework {
             
             // Run scenario
             let elapsedTime = 0;
-            const frameTime = 16.67; // 60 FPS target
+            // Target frame time: 16.67ms for 60 FPS
             
             while (elapsedTime < scenario.duration) {
                 const frameStart = performance.now();
@@ -583,9 +583,9 @@ export class IntegrationTestFramework {
                     frameCount: performanceData.frameCount
                 },
                 requirements: [
-                    `FPS >= 45: ${performanceData.averageFPS >= 45 ? '✅' : '❌'}`,
-                    `Memory growth < 100MB: ${memoryGrowth < 100 ? '✅' : '❌'}`,
-                    `Actions successful: ${performanceData.actionSuccess >= performanceData.actionFailures ? '✅' : '❌'}`
+                    `FPS >= 45: ${performanceData.averageFPS >= 45 ? "✅" : "❌"}`,
+                    `Memory growth < 100MB: ${memoryGrowth < 100 ? "✅" : "❌"}`,
+                    `Actions successful: ${performanceData.actionSuccess >= performanceData.actionFailures ? "✅" : "❌"}`
                 ]
             };
             
@@ -603,33 +603,33 @@ export class IntegrationTestFramework {
      * Run regression prevention tests
      */
     async runRegressionTests() {
-        console.log('\n🔄 Running Regression Prevention Tests...');
+        console.log("\n🔄 Running Regression Prevention Tests...");
         
         const results = [];
         
         // Load or create performance baseline
         if (!this.performanceBaseline) {
-            console.log('  📊 Creating performance baseline...');
+            console.log("  📊 Creating performance baseline...");
             this.performanceBaseline = await this.createPerformanceBaseline();
         }
         
         // Test current performance against baseline
-        console.log('  📈 Testing against performance baseline...');
+        console.log("  📈 Testing against performance baseline...");
         const performanceRegressionResult = await this.testPerformanceRegression();
         results.push(performanceRegressionResult);
         
         // Test memory regression
-        console.log('  🧠 Testing memory regression...');
+        console.log("  🧠 Testing memory regression...");
         const memoryRegressionResult = await this.testMemoryRegression();
         results.push(memoryRegressionResult);
         
         // Test response time regression
-        console.log('  ⏱️ Testing response time regression...');
+        console.log("  ⏱️ Testing response time regression...");
         const responseRegressionResult = await this.testResponseTimeRegression();
         results.push(responseRegressionResult);
         
         return {
-            testType: 'Regression Prevention',
+            testType: "Regression Prevention",
             results,
             success: results.every(r => r.success),
             baseline: this.performanceBaseline,
@@ -641,7 +641,7 @@ export class IntegrationTestFramework {
      * Create performance baseline for regression testing
      */
     async createPerformanceBaseline() {
-        console.log('    🎯 Establishing baseline metrics...');
+        console.log("    🎯 Establishing baseline metrics...");
         
         const baselineMetrics = {
             timestamp: new Date().toISOString(),
@@ -665,7 +665,6 @@ export class IntegrationTestFramework {
             renderingTimes: []
         };
         
-        const startTime = performance.now();
         let elapsedTime = 0;
         
         // Create baseline test environment
@@ -688,7 +687,7 @@ export class IntegrationTestFramework {
                 
                 // Rendering test
                 const renderingStart = performance.now();
-                await this.simulateRenderingUpdate({ type: 'entity_update', entities: entities.slice(0, 10) });
+                await this.simulateRenderingUpdate({ type: "entity_update", entities: entities.slice(0, 10) });
                 performanceData.renderingTimes.push(performance.now() - renderingStart);
             }
             
@@ -720,7 +719,7 @@ export class IntegrationTestFramework {
         // Cleanup
         this.cleanupIntegrationEntities(entities);
         
-        console.log('    ✅ Baseline established');
+        console.log("    ✅ Baseline established");
         console.log(`       FPS: ${baselineMetrics.performance.averageFPS.toFixed(1)}`);
         console.log(`       Memory: ${baselineMetrics.performance.memoryUsage.toFixed(1)}MB`);
         console.log(`       Selection: ${baselineMetrics.performance.selectionTime.toFixed(2)}ms`);
@@ -731,13 +730,13 @@ export class IntegrationTestFramework {
     
     // Performance Integration Tests
     async runPerformanceIntegrationTests() {
-        console.log('\n⚡ Running Performance Integration Tests...');
+        console.log("\n⚡ Running Performance Integration Tests...");
         
         // Test performance under integrated system load
         const integratedPerformanceResult = await this.testIntegratedSystemPerformance();
         
         return {
-            testType: 'Performance Integration',
+            testType: "Performance Integration",
             results: [integratedPerformanceResult],
             success: integratedPerformanceResult.success,
             summary: this.generatePerformanceIntegrationSummary([integratedPerformanceResult])
@@ -790,7 +789,7 @@ export class IntegrationTestFramework {
             const success = averageFPS >= 50; // Integrated systems should maintain 50+ FPS
             
             return {
-                testName: 'Integrated System Performance',
+                testName: "Integrated System Performance",
                 success,
                 metrics: {
                     averageFPS,
@@ -807,12 +806,12 @@ export class IntegrationTestFramework {
     
     // Stress Integration Tests
     async runStressIntegrationTests() {
-        console.log('\n🏋️ Running Stress Integration Tests...');
+        console.log("\n🏋️ Running Stress Integration Tests...");
         
         const stressResult = await this.testSystemStressIntegration();
         
         return {
-            testType: 'Stress Integration',
+            testType: "Stress Integration",
             results: [stressResult],
             success: stressResult.success,
             summary: this.generateStressIntegrationSummary([stressResult])
@@ -820,7 +819,7 @@ export class IntegrationTestFramework {
     }
     
     async testSystemStressIntegration() {
-        console.log('  💪 Testing system integration under extreme load...');
+        console.log("  💪 Testing system integration under extreme load...");
         
         // Create extreme load scenario
         const entities = this.createIntegrationTestEntities(200);
@@ -833,7 +832,6 @@ export class IntegrationTestFramework {
         
         try {
             const testDuration = 30000; // 30 seconds of stress
-            const startTime = performance.now();
             let elapsedTime = 0;
             
             while (elapsedTime < testDuration) {
@@ -847,7 +845,7 @@ export class IntegrationTestFramework {
                         this.stressRenderingSystem(entities),
                         this.stressEconomySystem(entities)
                     ]);
-                } catch (error) {
+                } catch {
                     stressMetrics.systemFailures++;
                     
                     // Measure recovery time
@@ -874,7 +872,7 @@ export class IntegrationTestFramework {
                            stressMetrics.peakMemory < 1000; // Less than 1GB memory
             
             return {
-                testName: 'System Stress Integration',
+                testName: "System Stress Integration",
                 success,
                 metrics: stressMetrics,
                 details: {
@@ -882,7 +880,7 @@ export class IntegrationTestFramework {
                     peakMemory: `${stressMetrics.peakMemory.toFixed(1)}MB`,
                     systemFailures: stressMetrics.systemFailures,
                     averageRecoveryTime: stressMetrics.systemFailures > 0 ? 
-                        `${(stressMetrics.recoveryTime / stressMetrics.systemFailures).toFixed(2)}ms` : '0ms'
+                        `${(stressMetrics.recoveryTime / stressMetrics.systemFailures).toFixed(2)}ms` : "0ms"
                 }
             };
             
@@ -915,7 +913,7 @@ export class IntegrationTestFramework {
                 id: `harvester_${i}`,
                 x: 600 + (i * 30),
                 y: 350 + (i * 20),
-                state: 'idle'
+                state: "idle"
             });
         }
         return harvesters;
@@ -957,11 +955,11 @@ export class IntegrationTestFramework {
     }
     
     simulateEconomyUpdate(harvester, targetNode) {
-        return harvester.state !== 'error' && targetNode.resources > 0;
+        return harvester.state !== "error" && targetNode.resources > 0;
     }
     
     generateEconomyEvent() {
-        const events = ['resource_harvested', 'unit_produced', 'building_constructed'];
+        const events = ["resource_harvested", "unit_produced", "building_constructed"];
         return {
             type: events[Math.floor(Math.random() * events.length)],
             timestamp: performance.now()
@@ -975,11 +973,11 @@ export class IntegrationTestFramework {
     
     verifyVisualSync(economyEvent) {
         // Mock visual sync verification
-        return economyEvent.type !== 'error';
+        return economyEvent.type !== "error";
     }
     
     generateInputEvent() {
-        const events = ['mouse_click', 'key_press', 'mouse_drag'];
+        const events = ["mouse_click", "key_press", "mouse_drag"];
         return {
             type: events[Math.floor(Math.random() * events.length)],
             timestamp: performance.now()
@@ -993,7 +991,7 @@ export class IntegrationTestFramework {
     
     generateSelectionInputCommand(entities) {
         return {
-            type: 'area_select',
+            type: "area_select",
             area: {
                 x: Math.random() * 1000,
                 y: Math.random() * 600,
@@ -1007,8 +1005,8 @@ export class IntegrationTestFramework {
     async simulateSelectionUpdate(inputCommand) {
         await new Promise(resolve => setTimeout(resolve, 2 + Math.random() * 3));
         return {
-            success: inputCommand.type === 'area_select',
-            selectedCount: inputCommand.type === 'area_select' ? Math.floor(Math.random() * 5) : 0
+            success: inputCommand.type === "area_select",
+            selectedCount: inputCommand.type === "area_select" ? Math.floor(Math.random() * 5) : 0
         };
     }
     
@@ -1029,8 +1027,8 @@ export class IntegrationTestFramework {
     }
     
     selectRandomAction(actions) {
-        if (actions.includes('all_actions')) {
-            const allActions = ['select', 'move', 'build', 'harvest', 'attack', 'mass_select'];
+        if (actions.includes("all_actions")) {
+            const allActions = ["select", "move", "build", "harvest", "attack", "mass_select"];
             return allActions[Math.floor(Math.random() * allActions.length)];
         }
         return actions[Math.floor(Math.random() * actions.length)];
@@ -1039,26 +1037,26 @@ export class IntegrationTestFramework {
     async executeGameplayAction(action, gameState) {
         try {
             switch (action) {
-                case 'select':
-                    gameState.selectedEntities = this.simulateEntitySelection(gameState.entities, 3);
-                    return { success: true };
+            case "select":
+                gameState.selectedEntities = this.simulateEntitySelection(gameState.entities, 3);
+                return { success: true };
                     
-                case 'move':
-                    if (gameState.selectedEntities.length > 0) {
-                        await this.simulatePathfindingTrigger(gameState.selectedEntities, { 
-                            targetX: Math.random() * 1200, 
-                            targetY: Math.random() * 700 
-                        });
-                        return { success: true };
-                    }
-                    return { success: false, error: 'No entities selected' };
-                    
-                case 'mass_select':
-                    gameState.selectedEntities = this.simulateEntitySelection(gameState.entities, 10);
+            case "move":
+                if (gameState.selectedEntities.length > 0) {
+                    await this.simulatePathfindingTrigger(gameState.selectedEntities, { 
+                        targetX: Math.random() * 1200, 
+                        targetY: Math.random() * 700 
+                    });
                     return { success: true };
+                }
+                return { success: false, error: "No entities selected" };
                     
-                default:
-                    return { success: true };
+            case "mass_select":
+                gameState.selectedEntities = this.simulateEntitySelection(gameState.entities, 10);
+                return { success: true };
+                    
+            default:
+                return { success: true };
             }
         } catch (error) {
             return { success: false, error: error.message };
@@ -1093,12 +1091,12 @@ export class IntegrationTestFramework {
     async stressRenderingSystem(entities) {
         // Simulate heavy rendering load
         for (let i = 0; i < 20; i++) {
-            await this.simulateRenderingUpdate({ type: 'batch_update', entities: entities.slice(i * 10, (i + 1) * 10) });
+            await this.simulateRenderingUpdate({ type: "batch_update", entities: entities.slice(i * 10, (i + 1) * 10) });
         }
         return { executionTime: 8 + Math.random() * 12 };
     }
     
-    async stressEconomySystem(entities) {
+    async stressEconomySystem() {
         // Simulate heavy economy load
         for (let i = 0; i < 25; i++) {
             this.simulateEconomyUpdate({ id: i }, { resources: 100 });
@@ -1111,7 +1109,7 @@ export class IntegrationTestFramework {
         await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
     }
     
-    async simulatePathfindingCalculation(entity, target = null) {
+    async simulatePathfindingCalculation() {
         await new Promise(resolve => setTimeout(resolve, 2 + Math.random() * 8));
         return { executionTime: 2 + Math.random() * 8 };
     }
@@ -1127,12 +1125,12 @@ export class IntegrationTestFramework {
     }
     
     async simulateRenderingSystem(entities) {
-        await this.simulateRenderingUpdate({ type: 'update', entities: entities.slice(0, 10) });
+        await this.simulateRenderingUpdate({ type: "update", entities: entities.slice(0, 10) });
         return { executionTime: 2 + Math.random() * 4 };
     }
     
-    async simulateEconomySystem(entities) {
-        this.simulateEconomyUpdate({ id: 'test' }, { resources: 50 });
+    async simulateEconomySystem() {
+        this.simulateEconomyUpdate({ id: "test" }, { resources: 50 });
         return { executionTime: 1 + Math.random() * 2 };
     }
     
@@ -1151,7 +1149,7 @@ export class IntegrationTestFramework {
             totalIntegrations: totalTests,
             passedIntegrations: passedTests,
             successRate: `${(passedTests / totalTests * 100).toFixed(1)}%`,
-            status: passedTests === totalTests ? 'FULLY INTEGRATED' : 'INTEGRATION ISSUES'
+            status: passedTests === totalTests ? "FULLY INTEGRATED" : "INTEGRATION ISSUES"
         };
     }
     
@@ -1162,7 +1160,7 @@ export class IntegrationTestFramework {
         return {
             averageFPS: `${avgFPS.toFixed(1)} FPS`,
             gameplayScenarios: results.length,
-            status: allPassed ? 'GAMEPLAY READY' : 'GAMEPLAY ISSUES',
+            status: allPassed ? "GAMEPLAY READY" : "GAMEPLAY ISSUES",
             longestScenario: `${Math.max(...results.map(r => r.duration || 0)) / 1000}s`
         };
     }
@@ -1173,22 +1171,22 @@ export class IntegrationTestFramework {
         return {
             regressionTests: results.length,
             regressionDetected: regressions,
-            status: regressions === 0 ? 'NO REGRESSIONS' : `${regressions} REGRESSIONS DETECTED`
+            status: regressions === 0 ? "NO REGRESSIONS" : `${regressions} REGRESSIONS DETECTED`
         };
     }
     
     generatePerformanceIntegrationSummary(results) {
         return {
-            integratedPerformance: results[0]?.metrics?.averageFPS ? `${results[0].metrics.averageFPS.toFixed(1)} FPS` : 'N/A',
-            status: results[0]?.success ? 'PERFORMANCE STABLE' : 'PERFORMANCE DEGRADED'
+            integratedPerformance: results[0]?.metrics?.averageFPS ? `${results[0].metrics.averageFPS.toFixed(1)} FPS` : "N/A",
+            status: results[0]?.success ? "PERFORMANCE STABLE" : "PERFORMANCE DEGRADED"
         };
     }
     
     generateStressIntegrationSummary(results) {
         return {
-            stressTestPassed: results[0]?.success ? 'YES' : 'NO',
-            minFPSUnderStress: results[0]?.details?.minFPS || 'N/A',
-            status: results[0]?.success ? 'STRESS RESISTANT' : 'STRESS VULNERABLE'
+            stressTestPassed: results[0]?.success ? "YES" : "NO",
+            minFPSUnderStress: results[0]?.details?.minFPS || "N/A",
+            status: results[0]?.success ? "STRESS RESISTANT" : "STRESS VULNERABLE"
         };
     }
     
@@ -1200,27 +1198,27 @@ export class IntegrationTestFramework {
     async testPerformanceRegression() {
         // Mock performance regression test
         return {
-            testName: 'Performance Regression',
+            testName: "Performance Regression",
             success: true,
-            details: 'No performance regression detected'
+            details: "No performance regression detected"
         };
     }
     
     async testMemoryRegression() {
         // Mock memory regression test
         return {
-            testName: 'Memory Regression',
+            testName: "Memory Regression",
             success: true,
-            details: 'Memory usage within baseline parameters'
+            details: "Memory usage within baseline parameters"
         };
     }
     
     async testResponseTimeRegression() {
         // Mock response time regression test
         return {
-            testName: 'Response Time Regression',
+            testName: "Response Time Regression",
             success: true,
-            details: 'Response times within acceptable range'
+            details: "Response times within acceptable range"
         };
     }
     
@@ -1228,18 +1226,18 @@ export class IntegrationTestFramework {
      * Print comprehensive integration test report
      */
     printIntegrationTestReport(results) {
-        console.log('\n' + '=' .repeat(80));
-        console.log('🔧 INTEGRATION TEST FRAMEWORK REPORT');
-        console.log('=' .repeat(80));
+        console.log("\n" + "=" .repeat(80));
+        console.log("🔧 INTEGRATION TEST FRAMEWORK REPORT");
+        console.log("=" .repeat(80));
         
-        console.log(`\n📊 Overall Results:`);
+        console.log("\n📊 Overall Results:");
         console.log(`   Duration: ${(results.duration / 1000).toFixed(2)}s`);
-        console.log(`   Overall Success: ${results.overallSuccess ? '✅ PASSED' : '❌ FAILED'}`);
+        console.log(`   Overall Success: ${results.overallSuccess ? "✅ PASSED" : "❌ FAILED"}`);
         
         // Print phase results
-        Object.entries(results.phases).forEach(([phaseName, phaseResult]) => {
+        Object.entries(results.phases).forEach(([, phaseResult]) => {
             console.log(`\n🔍 ${phaseResult.testType}:`);
-            console.log(`   Status: ${phaseResult.success ? '✅ PASSED' : '❌ FAILED'}`);
+            console.log(`   Status: ${phaseResult.success ? "✅ PASSED" : "❌ FAILED"}`);
             
             if (phaseResult.summary) {
                 Object.entries(phaseResult.summary).forEach(([key, value]) => {
@@ -1249,13 +1247,13 @@ export class IntegrationTestFramework {
         });
         
         // Integration targets
-        console.log(`\n🎯 Integration Targets:`);
-        console.log(`   Cross-System Integration: All systems must integrate seamlessly`);
-        console.log(`   End-to-End Gameplay: Complete RTS workflows must function`);
-        console.log(`   Regression Prevention: No performance degradation allowed`);
-        console.log(`   Stress Resistance: Systems must handle extreme loads`);
+        console.log("\n🎯 Integration Targets:");
+        console.log("   Cross-System Integration: All systems must integrate seamlessly");
+        console.log("   End-to-End Gameplay: Complete RTS workflows must function");
+        console.log("   Regression Prevention: No performance degradation allowed");
+        console.log("   Stress Resistance: Systems must handle extreme loads");
         
-        console.log('\n' + '=' .repeat(80));
+        console.log("\n" + "=" .repeat(80));
     }
 }
 
@@ -1309,7 +1307,7 @@ class RegressionTracker {
             metric,
             current,
             baseline,
-            change: ((current - baseline) / baseline * 100).toFixed(2) + '%',
+            change: ((current - baseline) / baseline * 100).toFixed(2) + "%",
             timestamp: new Date().toISOString()
         });
     }

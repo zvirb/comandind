@@ -24,33 +24,33 @@ export class SelectionSystemTester {
         // Test scenarios
         this.testScenarios = [
             {
-                name: 'Single Unit Selection',
+                name: "Single Unit Selection",
                 entityCount: 1,
-                selectionType: 'single',
+                selectionType: "single",
                 targetTime: 5
             },
             {
-                name: 'Small Group Selection',
+                name: "Small Group Selection",
                 entityCount: 10,
-                selectionType: 'area',
+                selectionType: "area",
                 targetTime: 8
             },
             {
-                name: 'Large Group Selection',
+                name: "Large Group Selection",
                 entityCount: 50,
-                selectionType: 'area',
+                selectionType: "area",
                 targetTime: 12
             },
             {
-                name: 'Mass Selection Test',
+                name: "Mass Selection Test",
                 entityCount: 100,
-                selectionType: 'area',
+                selectionType: "area",
                 targetTime: 16
             },
             {
-                name: 'Extreme Selection Stress',
+                name: "Extreme Selection Stress",
                 entityCount: 200,
-                selectionType: 'area',
+                selectionType: "area",
                 targetTime: 20
             }
         ];
@@ -63,8 +63,8 @@ export class SelectionSystemTester {
      * Run comprehensive selection system tests
      */
     async runSelectionTests() {
-        console.log('🎯 Starting Selection System Performance Tests');
-        console.log('=' .repeat(70));
+        console.log("🎯 Starting Selection System Performance Tests");
+        console.log("=" .repeat(70));
         
         const overallStartTime = performance.now();
         
@@ -106,7 +106,7 @@ export class SelectionSystemTester {
             return allResults;
             
         } catch (error) {
-            console.error('❌ Selection system testing failed:', error);
+            console.error("❌ Selection system testing failed:", error);
             throw error;
         }
     }
@@ -115,7 +115,7 @@ export class SelectionSystemTester {
      * Test selection response times across different scenarios
      */
     async testSelectionResponseTimes() {
-        console.log('\n⏱️ Testing Selection Response Times...');
+        console.log("\n⏱️ Testing Selection Response Times...");
         
         const results = [];
         
@@ -126,14 +126,14 @@ export class SelectionSystemTester {
             results.push(scenarioResult);
             
             // Collect evidence
-            this.collectEvidence('response_time', scenario.name, scenarioResult);
+            this.collectEvidence("response_time", scenario.name, scenarioResult);
             
             // Brief pause between tests
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         return {
-            testType: 'Selection Response Time',
+            testType: "Selection Response Time",
             scenarios: results,
             success: results.every(r => r.success),
             averageTime: results.reduce((sum, r) => sum + r.averageTime, 0) / results.length,
@@ -214,7 +214,7 @@ export class SelectionSystemTester {
      * Test QuadTree spatial optimization
      */
     async testQuadTreeOptimization() {
-        console.log('\n🌳 Testing QuadTree Spatial Optimization...');
+        console.log("\n🌳 Testing QuadTree Spatial Optimization...");
         
         const results = [];
         const entityCounts = [50, 100, 150, 200];
@@ -244,7 +244,7 @@ export class SelectionSystemTester {
         }
         
         return {
-            testType: 'QuadTree Optimization',
+            testType: "QuadTree Optimization",
             results,
             success: results.every(r => r.success),
             summary: this.generateQuadTreeSummary(results)
@@ -339,13 +339,13 @@ export class SelectionSystemTester {
      * Test large selection performance
      */
     async testLargeSelectionPerformance() {
-        console.log('\n📏 Testing Large Selection Performance...');
+        console.log("\n📏 Testing Large Selection Performance...");
         
         const results = [];
         const testCases = [
-            { entities: 100, description: 'Select 100+ units' },
-            { entities: 150, description: 'Select 150+ units' },
-            { entities: 200, description: 'Select 200+ units' }
+            { entities: 100, description: "Select 100+ units" },
+            { entities: 150, description: "Select 150+ units" },
+            { entities: 200, description: "Select 200+ units" }
         ];
         
         for (const testCase of testCases) {
@@ -390,7 +390,7 @@ export class SelectionSystemTester {
         }
         
         return {
-            testType: 'Large Selection Performance',
+            testType: "Large Selection Performance",
             results,
             success: results.every(r => r.success),
             summary: this.generateLargeSelectionSummary(results)
@@ -401,11 +401,10 @@ export class SelectionSystemTester {
      * Test concurrent selection handling
      */
     async testConcurrentSelections() {
-        console.log('\n🔄 Testing Concurrent Selection Handling...');
+        console.log("\n🔄 Testing Concurrent Selection Handling...");
         
         const entities = this.createTestEntities(100);
         const concurrentSelections = 5;
-        const results = [];
         
         try {
             // Perform multiple selections "concurrently" (simulated)
@@ -414,7 +413,7 @@ export class SelectionSystemTester {
             for (let i = 0; i < concurrentSelections; i++) {
                 const selectionArea = this.generateRandomSelectionArea();
                 
-                const selectionPromise = new Promise(async (resolve) => {
+                const selectionPromise = new Promise((resolve) => {
                     const startTime = performance.now();
                     const selected = this.performOptimizedAreaSelection(entities, selectionArea);
                     const endTime = performance.now();
@@ -436,7 +435,7 @@ export class SelectionSystemTester {
             const maxTime = Math.max(...concurrentResults.map(r => r.time));
             
             return {
-                testType: 'Concurrent Selection Handling',
+                testType: "Concurrent Selection Handling",
                 concurrentSelections,
                 averageTime,
                 maxTime,
@@ -454,7 +453,7 @@ export class SelectionSystemTester {
      * Test selection stability under load
      */
     async testSelectionStability() {
-        console.log('\n🏋️ Testing Selection Stability Under Load...');
+        console.log("\n🏋️ Testing Selection Stability Under Load...");
         
         const entities = this.createTestEntities(150);
         const testDuration = 10000; // 10 seconds
@@ -470,21 +469,22 @@ export class SelectionSystemTester {
                 const operationStart = performance.now();
                 
                 switch (operation) {
-                    case 0:
-                        // Area selection
-                        const selected = this.performOptimizedAreaSelection(
-                            entities, 
-                            this.generateRandomSelectionArea()
-                        );
-                        break;
-                    case 1:
-                        // Add to selection
-                        this.addToSelection(entities.slice(0, 5));
-                        break;
-                    case 2:
-                        // Clear selection
-                        this.clearSelection();
-                        break;
+                case 0: {
+                    // Area selection
+                    this.performOptimizedAreaSelection(
+                        entities, 
+                        this.generateRandomSelectionArea()
+                    );
+                    break;
+                }
+                case 1:
+                    // Add to selection
+                    this.addToSelection(entities.slice(0, 5));
+                    break;
+                case 2:
+                    // Clear selection
+                    this.clearSelection();
+                    break;
                 }
                 
                 const operationEnd = performance.now();
@@ -510,7 +510,7 @@ export class SelectionSystemTester {
             const timeStdDev = this.calculateStandardDeviation(operationTimes);
             
             return {
-                testType: 'Selection Stability Under Load',
+                testType: "Selection Stability Under Load",
                 duration: performance.now() - startTime,
                 operations: operationCount,
                 averageTime,
@@ -534,7 +534,7 @@ export class SelectionSystemTester {
             const entity = this.world ? this.world.createEntity() : this.createMockEntity(i);
             
             // Add spatial position
-            entity.addComponent('TransformComponent', {
+            entity.addComponent("TransformComponent", {
                 x: Math.random() * 1200,
                 y: Math.random() * 700,
                 width: 32,
@@ -542,7 +542,7 @@ export class SelectionSystemTester {
             });
             
             // Add selection component
-            entity.addComponent('SelectableComponent', {
+            entity.addComponent("SelectableComponent", {
                 selected: false,
                 selectable: true,
                 selectionPriority: 1
@@ -568,20 +568,20 @@ export class SelectionSystemTester {
     performSelection(entities, selectionType) {
         // Mock selection implementation
         switch (selectionType) {
-            case 'single':
-                return entities.slice(0, 1);
-            case 'area':
-                // Simulate area selection with spatial filtering
-                return entities.filter(() => Math.random() < 0.3);
-            default:
-                return [];
+        case "single":
+            return entities.slice(0, 1);
+        case "area":
+            // Simulate area selection with spatial filtering
+            return entities.filter(() => Math.random() < 0.3);
+        default:
+            return [];
         }
     }
     
     performSpatialQuery(entities, queryArea) {
         // Mock spatial query - would use actual QuadTree
         return entities.filter(entity => {
-            const transform = entity.getComponent('TransformComponent');
+            const transform = entity.getComponent("TransformComponent");
             return transform && 
                    transform.x >= queryArea.x && 
                    transform.x <= queryArea.x + queryArea.width &&
@@ -613,7 +613,7 @@ export class SelectionSystemTester {
         };
     }
     
-    createLargeSelectionArea(entities) {
+    createLargeSelectionArea() {
         // Create an area that encompasses most entities
         return {
             x: 100,
@@ -627,7 +627,7 @@ export class SelectionSystemTester {
         // Mock selection clearing
     }
     
-    addToSelection(entities) {
+    addToSelection() {
         // Mock adding entities to selection
     }
     
@@ -690,7 +690,7 @@ export class SelectionSystemTester {
             passedTests,
             successRate: `${(passedTests / totalTests * 100).toFixed(1)}%`,
             averageTime: `${averageTime.toFixed(2)}ms`,
-            status: passedTests === totalTests ? 'ALL PASSED' : 'SOME FAILED'
+            status: passedTests === totalTests ? "ALL PASSED" : "SOME FAILED"
         };
     }
     
@@ -701,8 +701,8 @@ export class SelectionSystemTester {
         return {
             averageQueryTime: `${averageQueryTime.toFixed(2)}ms`,
             averageSelectionTime: `${averageSelectionTime.toFixed(2)}ms`,
-            optimization: 'Spatial partitioning effective',
-            status: results.every(r => r.success) ? 'OPTIMIZED' : 'NEEDS IMPROVEMENT'
+            optimization: "Spatial partitioning effective",
+            status: results.every(r => r.success) ? "OPTIMIZED" : "NEEDS IMPROVEMENT"
         };
     }
     
@@ -713,8 +713,8 @@ export class SelectionSystemTester {
         return {
             largestSelectionTime: `${maxTime.toFixed(2)}ms`,
             target: `${this.config.maxSelectionTime}ms`,
-            status: allPassed ? 'WITHIN TARGETS' : 'EXCEEDS TARGETS',
-            recommendation: allPassed ? 'Performance acceptable' : 'Optimize selection algorithm'
+            status: allPassed ? "WITHIN TARGETS" : "EXCEEDS TARGETS",
+            recommendation: allPassed ? "Performance acceptable" : "Optimize selection algorithm"
         };
     }
     
@@ -726,18 +726,18 @@ export class SelectionSystemTester {
      * Print comprehensive selection test report
      */
     printSelectionTestReport(results) {
-        console.log('\n' + '=' .repeat(80));
-        console.log('🎯 SELECTION SYSTEM TEST REPORT');
-        console.log('=' .repeat(80));
+        console.log("\n" + "=" .repeat(80));
+        console.log("🎯 SELECTION SYSTEM TEST REPORT");
+        console.log("=" .repeat(80));
         
-        console.log(`\n📊 Overall Results:`);
+        console.log("\n📊 Overall Results:");
         console.log(`   Duration: ${(results.duration / 1000).toFixed(2)}s`);
-        console.log(`   Overall Success: ${results.overallSuccess ? '✅ PASSED' : '❌ FAILED'}`);
+        console.log(`   Overall Success: ${results.overallSuccess ? "✅ PASSED" : "❌ FAILED"}`);
         
         // Print individual test results
-        Object.entries(results.tests).forEach(([testName, testResult]) => {
+        Object.entries(results.tests).forEach(([, testResult]) => {
             console.log(`\n🔍 ${testResult.testType}:`);
-            console.log(`   Status: ${testResult.success ? '✅ PASSED' : '❌ FAILED'}`);
+            console.log(`   Status: ${testResult.success ? "✅ PASSED" : "❌ FAILED"}`);
             
             if (testResult.summary) {
                 Object.entries(testResult.summary).forEach(([key, value]) => {
@@ -747,16 +747,16 @@ export class SelectionSystemTester {
         });
         
         // Performance targets
-        console.log(`\n🎯 Performance Targets:`);
+        console.log("\n🎯 Performance Targets:");
         console.log(`   Max Selection Time: ${this.config.maxSelectionTime}ms`);
         console.log(`   Critical Selection Time: ${this.config.criticalSelectionTime}ms`);
         console.log(`   Large Selection Threshold: ${this.config.largeSelectionThreshold} entities`);
         
         // Evidence summary
-        console.log(`\n📋 Evidence Collected:`);
+        console.log("\n📋 Evidence Collected:");
         console.log(`   Test Evidence Points: ${this.evidenceData.length}`);
-        console.log(`   Performance Measurements: ${this.evidenceData.filter(e => e.testType === 'response_time').length}`);
+        console.log(`   Performance Measurements: ${this.evidenceData.filter(e => e.testType === "response_time").length}`);
         
-        console.log('\n' + '=' .repeat(80));
+        console.log("\n" + "=" .repeat(80));
     }
 }

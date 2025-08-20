@@ -3,8 +3,8 @@
  * Implements automated testing for performance, functionality, and user experience validation
  */
 
-import { PerformanceBenchmark } from '../utils/PerformanceBenchmark.js';
-import { PathfindingPerformanceTest } from '../utils/PathfindingPerformanceTest.js';
+import { PerformanceBenchmark } from "../utils/PerformanceBenchmark.js";
+import { PathfindingPerformanceTest } from "../utils/PathfindingPerformanceTest.js";
 
 export class QualityAssuranceFramework {
     constructor(application) {
@@ -56,16 +56,16 @@ export class QualityAssuranceFramework {
     }
     
     setupTestEnvironment() {
-        console.log('🔧 Setting up Quality Assurance Framework...');
+        console.log("🔧 Setting up Quality Assurance Framework...");
         
         // Create test data directory structure
-        this.testDataPath = './test-results/';
-        this.evidencePath = './test-evidence/';
+        this.testDataPath = "./test-results/";
+        this.evidencePath = "./test-evidence/";
         
         // Initialize test reporting
         this.reportGenerator = new QAReportGenerator();
         
-        console.log('✅ QA Framework initialized');
+        console.log("✅ QA Framework initialized");
     }
     
     /**
@@ -73,15 +73,15 @@ export class QualityAssuranceFramework {
      */
     async runComprehensiveQA() {
         if (this.isRunning) {
-            throw new Error('QA tests are already running');
+            throw new Error("QA tests are already running");
         }
         
         this.isRunning = true;
         const startTime = performance.now();
         
         try {
-            console.log('🚀 Starting Comprehensive Quality Assurance Testing');
-            console.log('=' .repeat(80));
+            console.log("🚀 Starting Comprehensive Quality Assurance Testing");
+            console.log("=" .repeat(80));
             
             // Phase 1: Performance Testing (Priority 0)
             const performanceResults = await this.runPerformanceTests();
@@ -127,7 +127,7 @@ export class QualityAssuranceFramework {
             return overallResults;
             
         } catch (error) {
-            console.error('❌ QA Testing failed:', error);
+            console.error("❌ QA Testing failed:", error);
             throw error;
         } finally {
             this.isRunning = false;
@@ -140,13 +140,13 @@ export class QualityAssuranceFramework {
      * Tests 50-200+ entity scenarios with automated benchmarking
      */
     async runPerformanceTests() {
-        console.log('\n📊 Phase 1: Performance Testing Framework');
-        console.log('=' .repeat(60));
+        console.log("\n📊 Phase 1: Performance Testing Framework");
+        console.log("=" .repeat(60));
         
-        this.currentTest = 'Performance Testing';
+        this.currentTest = "Performance Testing";
         const results = {
-            phase: 'performance',
-            status: 'running',
+            phase: "performance",
+            status: "running",
             tests: [],
             evidence: []
         };
@@ -170,25 +170,25 @@ export class QualityAssuranceFramework {
             }
             
             // Memory leak detection
-            console.log('\n🧠 Running Memory Leak Detection...');
+            console.log("\n🧠 Running Memory Leak Detection...");
             const memoryTest = await this.runMemoryLeakTest();
             results.tests.push(memoryTest);
             
             // CPU profiling test
-            console.log('\n💻 Running CPU Profiling Test...');
+            console.log("\n💻 Running CPU Profiling Test...");
             const cpuTest = await this.runCPUProfilingTest();
             results.tests.push(cpuTest);
             
-            results.status = 'completed';
+            results.status = "completed";
             results.success = results.tests.every(test => test.success);
             
             console.log(`✅ Performance testing completed. Success: ${results.success}`);
             return results;
             
         } catch (error) {
-            results.status = 'failed';
+            results.status = "failed";
             results.error = error.message;
-            console.error('❌ Performance testing failed:', error);
+            console.error("❌ Performance testing failed:", error);
             return results;
         }
     }
@@ -197,13 +197,13 @@ export class QualityAssuranceFramework {
      * Selection System Testing with QuadTree validation (Priority 1)
      */
     async runSelectionSystemTests() {
-        console.log('\n🎯 Phase 2: Selection System Testing');
-        console.log('=' .repeat(60));
+        console.log("\n🎯 Phase 2: Selection System Testing");
+        console.log("=" .repeat(60));
         
-        this.currentTest = 'Selection System Testing';
+        this.currentTest = "Selection System Testing";
         const results = {
-            phase: 'selection',
-            status: 'running',
+            phase: "selection",
+            status: "running",
             tests: [],
             evidence: []
         };
@@ -225,16 +225,16 @@ export class QualityAssuranceFramework {
             const stabilityTest = await this.runMultiSelectionStabilityTest();
             results.tests.push(stabilityTest);
             
-            results.status = 'completed';
+            results.status = "completed";
             results.success = results.tests.every(test => test.success);
             
             console.log(`✅ Selection system testing completed. Success: ${results.success}`);
             return results;
             
         } catch (error) {
-            results.status = 'failed';
+            results.status = "failed";
             results.error = error.message;
-            console.error('❌ Selection system testing failed:', error);
+            console.error("❌ Selection system testing failed:", error);
             return results;
         }
     }
@@ -243,13 +243,13 @@ export class QualityAssuranceFramework {
      * Pathfinding Performance Validation (Priority 2)
      */
     async runPathfindingTests() {
-        console.log('\n🛣️ Phase 3: Pathfinding Performance Validation');
-        console.log('=' .repeat(60));
+        console.log("\n🛣️ Phase 3: Pathfinding Performance Validation");
+        console.log("=" .repeat(60));
         
-        this.currentTest = 'Pathfinding Testing';
+        this.currentTest = "Pathfinding Testing";
         const results = {
-            phase: 'pathfinding',
-            status: 'running',
+            phase: "pathfinding",
+            status: "running",
             tests: [],
             evidence: []
         };
@@ -271,7 +271,7 @@ export class QualityAssuranceFramework {
             results.tests.push(cacheTest);
             
             results.pathfindingResults = pathfindingResults;
-            results.status = 'completed';
+            results.status = "completed";
             results.success = results.tests.every(test => test.success) && 
                             pathfindingResults.every(test => test.success !== false);
             
@@ -279,9 +279,9 @@ export class QualityAssuranceFramework {
             return results;
             
         } catch (error) {
-            results.status = 'failed';
+            results.status = "failed";
             results.error = error.message;
-            console.error('❌ Pathfinding testing failed:', error);
+            console.error("❌ Pathfinding testing failed:", error);
             return results;
         }
     }
@@ -290,13 +290,13 @@ export class QualityAssuranceFramework {
      * Resource Economy Testing for harvester AI (Priority 3)
      */
     async runResourceEconomyTests() {
-        console.log('\n💰 Phase 4: Resource Economy Testing');
-        console.log('=' .repeat(60));
+        console.log("\n💰 Phase 4: Resource Economy Testing");
+        console.log("=" .repeat(60));
         
-        this.currentTest = 'Resource Economy Testing';
+        this.currentTest = "Resource Economy Testing";
         const results = {
-            phase: 'economy',
-            status: 'running',
+            phase: "economy",
+            status: "running",
             tests: [],
             evidence: []
         };
@@ -318,16 +318,16 @@ export class QualityAssuranceFramework {
             const coordinationTest = await this.runHarvesterCoordinationTest();
             results.tests.push(coordinationTest);
             
-            results.status = 'completed';
+            results.status = "completed";
             results.success = results.tests.every(test => test.success);
             
             console.log(`✅ Resource economy testing completed. Success: ${results.success}`);
             return results;
             
         } catch (error) {
-            results.status = 'failed';
+            results.status = "failed";
             results.error = error.message;
-            console.error('❌ Resource economy testing failed:', error);
+            console.error("❌ Resource economy testing failed:", error);
             return results;
         }
     }
@@ -336,13 +336,13 @@ export class QualityAssuranceFramework {
      * Integration Testing with regression prevention (Priority 4)
      */
     async runIntegrationTests() {
-        console.log('\n🔧 Phase 5: Integration Testing Framework');
-        console.log('=' .repeat(60));
+        console.log("\n🔧 Phase 5: Integration Testing Framework");
+        console.log("=" .repeat(60));
         
-        this.currentTest = 'Integration Testing';
+        this.currentTest = "Integration Testing";
         const results = {
-            phase: 'integration',
-            status: 'running',
+            phase: "integration",
+            status: "running",
             tests: [],
             evidence: []
         };
@@ -364,16 +364,16 @@ export class QualityAssuranceFramework {
             const perfRegressionTest = await this.runPerformanceRegressionTest();
             results.tests.push(perfRegressionTest);
             
-            results.status = 'completed';
+            results.status = "completed";
             results.success = results.tests.every(test => test.success);
             
             console.log(`✅ Integration testing completed. Success: ${results.success}`);
             return results;
             
         } catch (error) {
-            results.status = 'failed';
+            results.status = "failed";
             results.error = error.message;
-            console.error('❌ Integration testing failed:', error);
+            console.error("❌ Integration testing failed:", error);
             return results;
         }
     }
@@ -382,13 +382,13 @@ export class QualityAssuranceFramework {
      * User Experience Validation with evidence collection
      */
     async runUserExperienceTests() {
-        console.log('\n👤 Phase 6: User Experience Validation');
-        console.log('=' .repeat(60));
+        console.log("\n👤 Phase 6: User Experience Validation");
+        console.log("=" .repeat(60));
         
-        this.currentTest = 'User Experience Testing';
+        this.currentTest = "User Experience Testing";
         const results = {
-            phase: 'userExperience',
-            status: 'running',
+            phase: "userExperience",
+            status: "running",
             tests: [],
             evidence: []
         };
@@ -410,16 +410,16 @@ export class QualityAssuranceFramework {
             const accessibilityTest = await this.runAccessibilityTest();
             results.tests.push(accessibilityTest);
             
-            results.status = 'completed';
+            results.status = "completed";
             results.success = results.tests.every(test => test.success);
             
             console.log(`✅ User experience testing completed. Success: ${results.success}`);
             return results;
             
         } catch (error) {
-            results.status = 'failed';
+            results.status = "failed";
             results.error = error.message;
-            console.error('❌ User experience testing failed:', error);
+            console.error("❌ User experience testing failed:", error);
             return results;
         }
     }
@@ -512,9 +512,9 @@ export class QualityAssuranceFramework {
                 targetMet: avgFPS >= this.config.performance.targetFPS
             },
             requirements: [
-                `FPS >= ${this.config.performance.minFPS}: ${avgFPS >= this.config.performance.minFPS ? '✅' : '❌'}`,
-                `Memory < ${this.config.performance.maxMemory}MB: ${performanceData.peakMemory < this.config.performance.maxMemory ? '✅' : '❌'}`,
-                `60+ FPS target: ${avgFPS >= this.config.performance.targetFPS ? '✅' : '❌'}`
+                `FPS >= ${this.config.performance.minFPS}: ${avgFPS >= this.config.performance.minFPS ? "✅" : "❌"}`,
+                `Memory < ${this.config.performance.maxMemory}MB: ${performanceData.peakMemory < this.config.performance.maxMemory ? "✅" : "❌"}`,
+                `60+ FPS target: ${avgFPS >= this.config.performance.targetFPS ? "✅" : "❌"}`
             ]
         };
     }
@@ -545,34 +545,34 @@ export class QualityAssuranceFramework {
     
     addTestComponents(entity) {
         // Transform component
-        entity.addComponent('TransformComponent', {
+        entity.addComponent("TransformComponent", {
             x: Math.random() * 1200,
             y: Math.random() * 700,
             rotation: Math.random() * Math.PI * 2
         });
         
         // Movement component
-        entity.addComponent('MovementComponent', {
+        entity.addComponent("MovementComponent", {
             speed: 50 + Math.random() * 100,
             isMoving: Math.random() < 0.3,
             path: []
         });
         
         // Sprite component
-        entity.addComponent('SpriteComponent', {
+        entity.addComponent("SpriteComponent", {
             textureName: `test_unit_${Math.floor(Math.random() * 5)}`,
             visible: true,
             alpha: 0.8 + Math.random() * 0.2
         });
         
         // AI component
-        entity.addComponent('AIComponent', {
-            behaviorType: ['patrol', 'attack', 'harvest'][Math.floor(Math.random() * 3)],
+        entity.addComponent("AIComponent", {
+            behaviorType: ["patrol", "attack", "harvest"][Math.floor(Math.random() * 3)],
             thinkInterval: 200 + Math.random() * 300
         });
         
         // Health component
-        entity.addComponent('HealthComponent', {
+        entity.addComponent("HealthComponent", {
             maxHealth: 100,
             currentHealth: 100
         });
@@ -585,8 +585,8 @@ export class QualityAssuranceFramework {
         // Simulate various game systems
         entities.forEach(entity => {
             // Update positions
-            const transform = entity.getComponent('TransformComponent');
-            const movement = entity.getComponent('MovementComponent');
+            const transform = entity.getComponent("TransformComponent");
+            const movement = entity.getComponent("MovementComponent");
             
             if (transform && movement && movement.isMoving) {
                 transform.x += (Math.random() - 0.5) * movement.speed * 0.016;
@@ -595,7 +595,7 @@ export class QualityAssuranceFramework {
             }
             
             // Simulate AI thinking
-            const ai = entity.getComponent('AIComponent');
+            const ai = entity.getComponent("AIComponent");
             if (ai && Math.random() < 0.01) {
                 // Randomly change behavior
                 if (movement) {
@@ -617,9 +617,9 @@ export class QualityAssuranceFramework {
      * Generate comprehensive QA report
      */
     async generateComprehensiveReport(results) {
-        console.log('\n' + '=' .repeat(100));
-        console.log('🏆 COMPREHENSIVE QUALITY ASSURANCE REPORT');
-        console.log('=' .repeat(100));
+        console.log("\n" + "=" .repeat(100));
+        console.log("🏆 COMPREHENSIVE QUALITY ASSURANCE REPORT");
+        console.log("=" .repeat(100));
         
         const reportData = {
             ...results,
@@ -647,7 +647,7 @@ export class QualityAssuranceFramework {
             totalTests,
             passedTests,
             failedTests,
-            successRate: totalTests > 0 ? (passedTests / totalTests * 100).toFixed(1) : '0',
+            successRate: totalTests > 0 ? (passedTests / totalTests * 100).toFixed(1) : "0",
             overallStatus: results.overallStatus,
             criticalIssues: this.identifyCriticalIssues(results),
             performanceTargetsMet: this.checkPerformanceTargets(results),
@@ -658,33 +658,33 @@ export class QualityAssuranceFramework {
     printConsoleSummary(reportData) {
         const { summary } = reportData;
         
-        console.log(`\n📊 Executive Summary:`);
+        console.log("\n📊 Executive Summary:");
         console.log(`   Total Tests Run: ${summary.totalTests}`);
         console.log(`   Passed: ${summary.passedTests} ✅`);
-        console.log(`   Failed: ${summary.failedTests} ${summary.failedTests > 0 ? '❌' : ''}`);
+        console.log(`   Failed: ${summary.failedTests} ${summary.failedTests > 0 ? "❌" : ""}`);
         console.log(`   Success Rate: ${summary.successRate}%`);
         console.log(`   Overall Status: ${summary.overallStatus}`);
         
-        console.log(`\n🎯 Performance Targets:`);
+        console.log("\n🎯 Performance Targets:");
         summary.performanceTargetsMet.forEach(target => {
             console.log(`   ${target}`);
         });
         
         if (summary.criticalIssues.length > 0) {
-            console.log(`\n🚨 Critical Issues:`);
+            console.log("\n🚨 Critical Issues:");
             summary.criticalIssues.forEach(issue => {
                 console.log(`   • ${issue}`);
             });
         }
         
         if (summary.recommendedActions.length > 0) {
-            console.log(`\n💡 Recommended Actions:`);
+            console.log("\n💡 Recommended Actions:");
             summary.recommendedActions.forEach(action => {
                 console.log(`   • ${action}`);
             });
         }
         
-        console.log('\n' + '=' .repeat(100));
+        console.log("\n" + "=" .repeat(100));
     }
     
     determineOverallStatus(phaseResults) {
@@ -692,10 +692,10 @@ export class QualityAssuranceFramework {
         const successfulPhases = allPhases.filter(phase => phase.success);
         const failedPhases = allPhases.length - successfulPhases.length;
         
-        if (failedPhases === 0) return 'PASSED - All QA targets met';
-        if (failedPhases === 1) return 'PASSED WITH WARNINGS - Minor issues detected';
-        if (failedPhases <= 2) return 'FAILED - Significant issues require attention';
-        return 'CRITICAL FAILURE - Multiple system failures detected';
+        if (failedPhases === 0) return "PASSED - All QA targets met";
+        if (failedPhases === 1) return "PASSED WITH WARNINGS - Minor issues detected";
+        if (failedPhases <= 2) return "FAILED - Significant issues require attention";
+        return "CRITICAL FAILURE - Multiple system failures detected";
     }
     
     identifyCriticalIssues(results) {
@@ -703,17 +703,17 @@ export class QualityAssuranceFramework {
         
         // Check performance issues
         if (results.phases.performance && !results.phases.performance.success) {
-            issues.push('Performance targets not met - FPS below acceptable thresholds');
+            issues.push("Performance targets not met - FPS below acceptable thresholds");
         }
         
         // Check pathfinding issues
         if (results.phases.pathfinding && !results.phases.pathfinding.success) {
-            issues.push('Pathfinding performance inadequate for RTS gameplay');
+            issues.push("Pathfinding performance inadequate for RTS gameplay");
         }
         
         // Check selection system issues
         if (results.phases.selection && !results.phases.selection.success) {
-            issues.push('Selection system response time exceeds 16ms target');
+            issues.push("Selection system response time exceeds 16ms target");
         }
         
         return issues;
@@ -722,10 +722,10 @@ export class QualityAssuranceFramework {
     checkPerformanceTargets(results) {
         const targets = [];
         
-        targets.push(`60+ FPS target: ${this.evaluatePerformanceTarget(results, 'fps') ? '✅' : '❌'}`);
-        targets.push(`<400MB memory: ${this.evaluatePerformanceTarget(results, 'memory') ? '✅' : '❌'}`);
-        targets.push(`<16ms selection: ${this.evaluatePerformanceTarget(results, 'selection') ? '✅' : '❌'}`);
-        targets.push(`<5ms pathfinding: ${this.evaluatePerformanceTarget(results, 'pathfinding') ? '✅' : '❌'}`);
+        targets.push(`60+ FPS target: ${this.evaluatePerformanceTarget(results, "fps") ? "✅" : "❌"}`);
+        targets.push(`<400MB memory: ${this.evaluatePerformanceTarget(results, "memory") ? "✅" : "❌"}`);
+        targets.push(`<16ms selection: ${this.evaluatePerformanceTarget(results, "selection") ? "✅" : "❌"}`);
+        targets.push(`<5ms pathfinding: ${this.evaluatePerformanceTarget(results, "pathfinding") ? "✅" : "❌"}`);
         
         return targets;
     }
@@ -734,16 +734,16 @@ export class QualityAssuranceFramework {
         // Implementation would check actual metrics from test results
         // For now, return based on phase success
         switch (targetType) {
-            case 'fps':
-                return results.phases.performance?.success || false;
-            case 'memory':
-                return results.phases.performance?.success || false;
-            case 'selection':
-                return results.phases.selection?.success || false;
-            case 'pathfinding':
-                return results.phases.pathfinding?.success || false;
-            default:
-                return false;
+        case "fps":
+            return results.phases.performance?.success || false;
+        case "memory":
+            return results.phases.performance?.success || false;
+        case "selection":
+            return results.phases.selection?.success || false;
+        case "pathfinding":
+            return results.phases.pathfinding?.success || false;
+        default:
+            return false;
         }
     }
     
@@ -751,18 +751,18 @@ export class QualityAssuranceFramework {
         const actions = [];
         
         if (!results.phases.performance?.success) {
-            actions.push('Implement object pooling for entity management');
-            actions.push('Optimize sprite batching and texture atlasing');
+            actions.push("Implement object pooling for entity management");
+            actions.push("Optimize sprite batching and texture atlasing");
         }
         
         if (!results.phases.pathfinding?.success) {
-            actions.push('Implement hierarchical pathfinding for long distances');
-            actions.push('Increase pathfinding cache effectiveness');
+            actions.push("Implement hierarchical pathfinding for long distances");
+            actions.push("Increase pathfinding cache effectiveness");
         }
         
         if (!results.phases.selection?.success) {
-            actions.push('Optimize QuadTree spatial partitioning parameters');
-            actions.push('Implement selection culling for off-screen entities');
+            actions.push("Optimize QuadTree spatial partitioning parameters");
+            actions.push("Implement selection culling for off-screen entities");
         }
         
         return actions;
@@ -770,10 +770,10 @@ export class QualityAssuranceFramework {
     
     getTestEnvironment() {
         return {
-            platform: typeof navigator !== 'undefined' ? navigator.platform : 'Node.js',
-            userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Test Environment',
+            platform: typeof navigator !== "undefined" ? navigator.platform : "Node.js",
+            userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "Test Environment",
             timestamp: new Date().toISOString(),
-            memoryInfo: typeof performance !== 'undefined' && performance.memory ? {
+            memoryInfo: typeof performance !== "undefined" && performance.memory ? {
                 totalJSHeapSize: performance.memory.totalJSHeapSize,
                 usedJSHeapSize: performance.memory.usedJSHeapSize,
                 jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
@@ -783,94 +783,94 @@ export class QualityAssuranceFramework {
     
     // Placeholder methods for individual test implementations
     async runMemoryLeakTest() {
-        return { name: 'Memory Leak Detection', success: true, details: 'No memory leaks detected' };
+        return { name: "Memory Leak Detection", success: true, details: "No memory leaks detected" };
     }
     
     async runCPUProfilingTest() {
-        return { name: 'CPU Profiling', success: true, details: 'CPU usage within acceptable limits' };
+        return { name: "CPU Profiling", success: true, details: "CPU usage within acceptable limits" };
     }
     
     async runLargeSelectionTest() {
-        return { name: 'Large Selection Performance', success: true, details: '100+ unit selection under 16ms' };
+        return { name: "Large Selection Performance", success: true, details: "100+ unit selection under 16ms" };
     }
     
     async runQuadTreeOptimizationTest() {
-        return { name: 'QuadTree Optimization', success: true, details: 'Spatial partitioning optimized' };
+        return { name: "QuadTree Optimization", success: true, details: "Spatial partitioning optimized" };
     }
     
     async runSelectionResponseTimeTest() {
-        return { name: 'Selection Response Time', success: true, details: 'Response time under 16ms target' };
+        return { name: "Selection Response Time", success: true, details: "Response time under 16ms target" };
     }
     
     async runMultiSelectionStabilityTest() {
-        return { name: 'Multi-Selection Stability', success: true, details: 'Stable selection across multiple entities' };
+        return { name: "Multi-Selection Stability", success: true, details: "Stable selection across multiple entities" };
     }
     
     async runMultiUnitPathfindingTest() {
-        return { name: 'Multi-Unit Pathfinding', success: true, details: 'Multiple units pathfinding simultaneously' };
+        return { name: "Multi-Unit Pathfinding", success: true, details: "Multiple units pathfinding simultaneously" };
     }
     
     async runAStarEfficiencyTest() {
-        return { name: 'A* Algorithm Efficiency', success: true, details: 'A* pathfinding under 5ms target' };
+        return { name: "A* Algorithm Efficiency", success: true, details: "A* pathfinding under 5ms target" };
     }
     
     async runPathfindingCacheTest() {
-        return { name: 'Pathfinding Cache', success: true, details: 'Cache hit ratio above 70%' };
+        return { name: "Pathfinding Cache", success: true, details: "Cache hit ratio above 70%" };
     }
     
     async runHarvesterAITest() {
-        return { name: 'Harvester AI Efficiency', success: true, details: 'Harvester AI optimized for resource collection' };
+        return { name: "Harvester AI Efficiency", success: true, details: "Harvester AI optimized for resource collection" };
     }
     
     async runResourcePathfindingTest() {
-        return { name: 'Resource Node Pathfinding', success: true, details: 'Efficient pathfinding to resource nodes' };
+        return { name: "Resource Node Pathfinding", success: true, details: "Efficient pathfinding to resource nodes" };
     }
     
     async runEconomyBalanceTest() {
-        return { name: 'Economy Balance', success: true, details: 'Resource economy balanced' };
+        return { name: "Economy Balance", success: true, details: "Resource economy balanced" };
     }
     
     async runHarvesterCoordinationTest() {
-        return { name: 'Harvester Coordination', success: true, details: 'Multiple harvesters coordinate efficiently' };
+        return { name: "Harvester Coordination", success: true, details: "Multiple harvesters coordinate efficiently" };
     }
     
     async runCrossSystemIntegrationTest() {
-        return { name: 'Cross-System Integration', success: true, details: 'All systems integrate properly' };
+        return { name: "Cross-System Integration", success: true, details: "All systems integrate properly" };
     }
     
     async runRegressionPreventionTest() {
-        return { name: 'Regression Prevention', success: true, details: 'No regressions detected' };
+        return { name: "Regression Prevention", success: true, details: "No regressions detected" };
     }
     
     async runEndToEndTest() {
-        return { name: 'End-to-End Functionality', success: true, details: 'Complete gameplay flow works' };
+        return { name: "End-to-End Functionality", success: true, details: "Complete gameplay flow works" };
     }
     
     async runPerformanceRegressionTest() {
-        return { name: 'Performance Regression', success: true, details: 'No performance regressions detected' };
+        return { name: "Performance Regression", success: true, details: "No performance regressions detected" };
     }
     
     async runRTSGameplayFlowTest() {
-        return { name: 'RTS Gameplay Flow', success: true, details: 'Gameplay meets RTS standards' };
+        return { name: "RTS Gameplay Flow", success: true, details: "Gameplay meets RTS standards" };
     }
     
     async runUIResponsivenessTest() {
-        return { name: 'UI Responsiveness', success: true, details: 'UI responsive under load' };
+        return { name: "UI Responsiveness", success: true, details: "UI responsive under load" };
     }
     
     async runCrossPlatformTest() {
-        return { name: 'Cross-Platform Compatibility', success: true, details: 'Works across platforms' };
+        return { name: "Cross-Platform Compatibility", success: true, details: "Works across platforms" };
     }
     
     async runAccessibilityTest() {
-        return { name: 'Accessibility Validation', success: true, details: 'Accessibility standards met' };
+        return { name: "Accessibility Validation", success: true, details: "Accessibility standards met" };
     }
     
     async collectPerformanceEvidence(testName, testResult) {
         this.evidenceCollection.push({
             test: testName,
             timestamp: new Date().toISOString(),
-            type: 'performance',
+            type: "performance",
             metrics: testResult.metrics,
             success: testResult.success
         });
@@ -882,15 +882,15 @@ export class QualityAssuranceFramework {
  */
 export class QAReportGenerator {
     constructor() {
-        this.reportFormat = 'console'; // Could be extended to JSON, HTML, etc.
+        this.reportFormat = "console"; // Could be extended to JSON, HTML, etc.
     }
     
     generateReport(results) {
         switch (this.reportFormat) {
-            case 'console':
-                return this.generateConsoleReport(results);
-            default:
-                return results;
+        case "console":
+            return this.generateConsoleReport(results);
+        default:
+            return results;
         }
     }
     

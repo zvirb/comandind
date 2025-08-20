@@ -16,7 +16,7 @@ export class ResourceEconomyTester {
             resourceBalanceThreshold: 0.2, // 20% variance acceptable
             
             // Economy balance targets
-            resourceTypes: ['minerals', 'energy', 'research'],
+            resourceTypes: ["minerals", "energy", "research"],
             baseHarvestRate: 10, // resources per second per harvester
             expectedROI: 1.5, // return on investment for harvesters
             maxHarvesters: 20, // maximum concurrent harvesters for testing
@@ -25,35 +25,35 @@ export class ResourceEconomyTester {
         // Test scenarios
         this.testScenarios = [
             {
-                name: 'Single Harvester Efficiency',
+                name: "Single Harvester Efficiency",
                 harvesters: 1,
                 resourceNodes: 3,
                 duration: 30000, // 30 seconds
                 expectedEfficiency: 0.80
             },
             {
-                name: 'Multi-Harvester Coordination',
+                name: "Multi-Harvester Coordination",
                 harvesters: 5,
                 resourceNodes: 3,
                 duration: 45000,
                 expectedEfficiency: 0.75
             },
             {
-                name: 'High Load Harvesting',
+                name: "High Load Harvesting",
                 harvesters: 10,
                 resourceNodes: 5,
                 duration: 60000,
                 expectedEfficiency: 0.70
             },
             {
-                name: 'Resource Competition',
+                name: "Resource Competition",
                 harvesters: 15,
                 resourceNodes: 3,
                 duration: 45000,
                 expectedEfficiency: 0.65
             },
             {
-                name: 'Scalability Stress Test',
+                name: "Scalability Stress Test",
                 harvesters: 20,
                 resourceNodes: 8,
                 duration: 90000,
@@ -69,8 +69,8 @@ export class ResourceEconomyTester {
      * Run comprehensive resource economy tests
      */
     async runEconomyTests() {
-        console.log('💰 Starting Resource Economy Tests');
-        console.log('=' .repeat(70));
+        console.log("💰 Starting Resource Economy Tests");
+        console.log("=" .repeat(70));
         
         const overallStartTime = performance.now();
         
@@ -112,7 +112,7 @@ export class ResourceEconomyTester {
             return allResults;
             
         } catch (error) {
-            console.error('❌ Resource economy testing failed:', error);
+            console.error("❌ Resource economy testing failed:", error);
             throw error;
         }
     }
@@ -121,7 +121,7 @@ export class ResourceEconomyTester {
      * Test harvester AI efficiency across different scenarios
      */
     async testHarvesterAIEfficiency() {
-        console.log('\n🤖 Testing Harvester AI Efficiency...');
+        console.log("\n🤖 Testing Harvester AI Efficiency...");
         
         const results = [];
         
@@ -133,14 +133,14 @@ export class ResourceEconomyTester {
             results.push(scenarioResult);
             
             // Collect evidence
-            this.collectEvidence('harvester_ai', scenario.name, scenarioResult);
+            this.collectEvidence("harvester_ai", scenario.name, scenarioResult);
             
             // Brief pause between tests
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
         
         return {
-            testType: 'Harvester AI Efficiency',
+            testType: "Harvester AI Efficiency",
             scenarios: results,
             success: results.every(r => r.success),
             averageEfficiency: results.reduce((sum, r) => sum + r.efficiency, 0) / results.length,
@@ -171,7 +171,7 @@ export class ResourceEconomyTester {
             // Initialize harvester states
             harvesters.forEach(harvester => {
                 tracking.harvesterStates.set(harvester.id, {
-                    currentState: 'idle',
+                    currentState: "idle",
                     lastStateChange: performance.now(),
                     totalHarvested: 0,
                     trips: 0,
@@ -263,8 +263,8 @@ export class ResourceEconomyTester {
     
     createResourceDepot() {
         return {
-            id: 'depot_0',
-            type: 'depot',
+            id: "depot_0",
+            type: "depot",
             position: { x: 600, y: 350 }, // Center of map
             capacity: 10000,
             currentResources: 0,
@@ -292,7 +292,7 @@ export class ResourceEconomyTester {
         
         return {
             id: `resource_node_${index}`,
-            type: 'resource_node',
+            type: "resource_node",
             position,
             resourceType: this.config.resourceTypes[index % this.config.resourceTypes.length],
             maxResources: 1000,
@@ -324,9 +324,9 @@ export class ResourceEconomyTester {
     createHarvester(index, depot) {
         return {
             id: `harvester_${index}`,
-            type: 'harvester',
+            type: "harvester",
             position: { x: depot.position.x + (index * 20), y: depot.position.y + (index * 20) },
-            state: 'idle', // idle, moving_to_resource, harvesting, moving_to_depot, depositing
+            state: "idle", // idle, moving_to_resource, harvesting, moving_to_depot, depositing
             targetNode: null,
             currentResources: 0,
             capacity: 50,
@@ -344,12 +344,12 @@ export class ResourceEconomyTester {
                     const harvesterTracking = tracking.harvesterStates.get(this.id);
                     
                     switch (this.state) {
-                        case 'idle':
-                            tracking.idleTime += stateTime;
-                            break;
-                        case 'harvesting':
-                            tracking.totalHarvestingTime += stateTime;
-                            break;
+                    case "idle":
+                        tracking.idleTime += stateTime;
+                        break;
+                    case "harvesting":
+                        tracking.totalHarvestingTime += stateTime;
+                        break;
                     }
                     
                     this.state = newState;
@@ -367,25 +367,25 @@ export class ResourceEconomyTester {
             const deltaTime = 0.05; // 50ms frame time
             
             switch (harvester.state) {
-                case 'idle':
-                    await this.handleIdleState(harvester, resourceNodes, tracking);
-                    break;
+            case "idle":
+                await this.handleIdleState(harvester, resourceNodes, tracking);
+                break;
                     
-                case 'moving_to_resource':
-                    await this.handleMovingToResourceState(harvester, resourceNodes, deltaTime, tracking);
-                    break;
+            case "moving_to_resource":
+                await this.handleMovingToResourceState(harvester, resourceNodes, deltaTime, tracking);
+                break;
                     
-                case 'harvesting':
-                    await this.handleHarvestingState(harvester, deltaTime, tracking);
-                    break;
+            case "harvesting":
+                await this.handleHarvestingState(harvester, deltaTime, tracking);
+                break;
                     
-                case 'moving_to_depot':
-                    await this.handleMovingToDepotState(harvester, depot, deltaTime, tracking);
-                    break;
+            case "moving_to_depot":
+                await this.handleMovingToDepotState(harvester, depot, deltaTime, tracking);
+                break;
                     
-                case 'depositing':
-                    await this.handleDepositingState(harvester, depot, tracking);
-                    break;
+            case "depositing":
+                await this.handleDepositingState(harvester, depot, tracking);
+                break;
             }
         }
     }
@@ -407,13 +407,13 @@ export class ResourceEconomyTester {
             
             harvester.targetNode = nearestNode;
             nearestNode.assignHarvester(harvester.id);
-            harvester.setState('moving_to_resource', tracking);
+            harvester.setState("moving_to_resource", tracking);
         }
     }
     
     async handleMovingToResourceState(harvester, resourceNodes, deltaTime, tracking) {
         if (!harvester.targetNode) {
-            harvester.setState('idle', tracking);
+            harvester.setState("idle", tracking);
             return;
         }
         
@@ -426,7 +426,7 @@ export class ResourceEconomyTester {
         const distance = this.calculateDistance(harvester.position, harvester.targetNode.position);
         
         if (distance <= 32) { // Reached node
-            harvester.setState('harvesting', tracking);
+            harvester.setState("harvesting", tracking);
         } else {
             // Move closer
             const moveDistance = harvester.speed * deltaTime;
@@ -446,7 +446,7 @@ export class ResourceEconomyTester {
                 harvester.targetNode.unassignHarvester(harvester.id);
             }
             harvester.targetNode = null;
-            harvester.setState('idle', tracking);
+            harvester.setState("idle", tracking);
             return;
         }
         
@@ -461,7 +461,7 @@ export class ResourceEconomyTester {
         if (harvester.currentResources >= harvester.capacity) {
             harvester.targetNode.unassignHarvester(harvester.id);
             harvester.targetNode = null;
-            harvester.setState('moving_to_depot', tracking);
+            harvester.setState("moving_to_depot", tracking);
             
             // Track harvester stats
             const harvesterStats = tracking.harvesterStates.get(harvester.id);
@@ -473,9 +473,9 @@ export class ResourceEconomyTester {
             harvester.targetNode = null;
             
             if (harvester.currentResources > 0) {
-                harvester.setState('moving_to_depot', tracking);
+                harvester.setState("moving_to_depot", tracking);
             } else {
-                harvester.setState('idle', tracking);
+                harvester.setState("idle", tracking);
             }
         }
     }
@@ -485,7 +485,7 @@ export class ResourceEconomyTester {
         const distance = this.calculateDistance(harvester.position, depot.position);
         
         if (distance <= 48) { // Reached depot
-            harvester.setState('depositing', tracking);
+            harvester.setState("depositing", tracking);
         } else {
             // Move closer
             const moveDistance = harvester.speed * deltaTime;
@@ -505,7 +505,7 @@ export class ResourceEconomyTester {
         harvester.currentResources = 0;
         
         // Return to idle state
-        harvester.setState('idle', tracking);
+        harvester.setState("idle", tracking);
     }
     
     updateResourceNodes(resourceNodes) {
@@ -527,13 +527,13 @@ export class ResourceEconomyTester {
      * Test resource pathfinding performance
      */
     async testResourcePathfinding() {
-        console.log('\n🛣️ Testing Resource Pathfinding Performance...');
+        console.log("\n🛣️ Testing Resource Pathfinding Performance...");
         
         const results = [];
         const pathfindingTests = [
-            { harvesters: 5, nodes: 3, complexity: 'simple' },
-            { harvesters: 10, nodes: 5, complexity: 'moderate' },
-            { harvesters: 15, nodes: 8, complexity: 'complex' }
+            { harvesters: 5, nodes: 3, complexity: "simple" },
+            { harvesters: 10, nodes: 5, complexity: "moderate" },
+            { harvesters: 15, nodes: 8, complexity: "complex" }
         ];
         
         for (const test of pathfindingTests) {
@@ -544,7 +544,7 @@ export class ResourceEconomyTester {
         }
         
         return {
-            testType: 'Resource Pathfinding Performance',
+            testType: "Resource Pathfinding Performance",
             results,
             success: results.every(r => r.success),
             averagePathTime: results.reduce((sum, r) => sum + r.averagePathTime, 0) / results.length,
@@ -605,15 +605,15 @@ export class ResourceEconomyTester {
         let delay = 2; // Base delay
         
         switch (complexity) {
-            case 'simple':
-                delay += Math.random() * 2;
-                break;
-            case 'moderate':
-                delay += Math.random() * 5;
-                break;
-            case 'complex':
-                delay += Math.random() * 8;
-                break;
+        case "simple":
+            delay += Math.random() * 2;
+            break;
+        case "moderate":
+            delay += Math.random() * 5;
+            break;
+        case "complex":
+            delay += Math.random() * 8;
+            break;
         }
         
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -623,7 +623,7 @@ export class ResourceEconomyTester {
      * Test economy balance
      */
     async testEconomyBalance() {
-        console.log('\n⚖️ Testing Economy Balance...');
+        console.log("\n⚖️ Testing Economy Balance...");
         
         const testEnvironment = this.createEconomyTestEnvironment({
             harvesters: 10,
@@ -636,7 +636,7 @@ export class ResourceEconomyTester {
             const balanceResult = await this.runEconomyBalanceTest(testEnvironment);
             
             return {
-                testType: 'Economy Balance',
+                testType: "Economy Balance",
                 success: balanceResult.balanced,
                 metrics: balanceResult,
                 summary: this.generateBalanceSummary(balanceResult)
@@ -684,7 +684,7 @@ export class ResourceEconomyTester {
             maxDeviation,
             balanced: maxDeviation <= this.config.resourceBalanceThreshold,
             recommendations: maxDeviation > this.config.resourceBalanceThreshold ? 
-                ['Rebalance resource node distribution', 'Adjust harvester efficiency per resource type'] : []
+                ["Rebalance resource node distribution", "Adjust harvester efficiency per resource type"] : []
         };
     }
     
@@ -692,12 +692,12 @@ export class ResourceEconomyTester {
      * Test harvester coordination
      */
     async testHarvesterCoordination() {
-        console.log('\n🤝 Testing Harvester Coordination...');
+        console.log("\n🤝 Testing Harvester Coordination...");
         
         const coordinationResult = await this.runCoordinationTest();
         
         return {
-            testType: 'Harvester Coordination',
+            testType: "Harvester Coordination",
             success: coordinationResult.efficient,
             metrics: coordinationResult,
             summary: this.generateCoordinationSummary(coordinationResult)
@@ -736,7 +736,7 @@ export class ResourceEconomyTester {
                 averageIdleTime: avgIdleTime,
                 efficient: collisionRate < 0.1 && avgIdleTime < 5000, // Less than 0.1 collisions/sec and 5s idle
                 recommendations: collisionRate >= 0.1 ? 
-                    ['Implement harvester reservation system', 'Add coordination protocols'] : []
+                    ["Implement harvester reservation system", "Add coordination protocols"] : []
             };
             
         } finally {
@@ -753,7 +753,7 @@ export class ResourceEconomyTester {
         });
         
         // Detect idle harvesters when resources available
-        const idleHarvesters = harvesters.filter(h => h.state === 'idle');
+        const idleHarvesters = harvesters.filter(h => h.state === "idle");
         const availableNodes = resourceNodes.filter(n => !n.depleted);
         
         if (idleHarvesters.length > 0 && availableNodes.length > 0) {
@@ -765,12 +765,12 @@ export class ResourceEconomyTester {
      * Test resource node optimization
      */
     async testResourceNodeOptimization() {
-        console.log('\n🎯 Testing Resource Node Optimization...');
+        console.log("\n🎯 Testing Resource Node Optimization...");
         
         const optimizationTests = [
-            { nodes: 3, harvesters: 10, layout: 'clustered' },
-            { nodes: 5, harvesters: 10, layout: 'distributed' },
-            { nodes: 8, harvesters: 15, layout: 'scattered' }
+            { nodes: 3, harvesters: 10, layout: "clustered" },
+            { nodes: 5, harvesters: 10, layout: "distributed" },
+            { nodes: 8, harvesters: 15, layout: "scattered" }
         ];
         
         const results = [];
@@ -781,7 +781,7 @@ export class ResourceEconomyTester {
         }
         
         return {
-            testType: 'Resource Node Optimization',
+            testType: "Resource Node Optimization",
             results,
             success: results.every(r => r.efficient),
             summary: this.generateOptimizationSummary(results)
@@ -809,7 +809,7 @@ export class ResourceEconomyTester {
             distributionScore,
             efficient: totalDistance < 10000 && distributionScore > 0.7,
             recommendations: totalDistance >= 10000 ? 
-                ['Reduce node distances', 'Add strategic depot placement'] : []
+                ["Reduce node distances", "Add strategic depot placement"] : []
         };
     }
     
@@ -837,33 +837,33 @@ export class ResourceEconomyTester {
         const nodes = [];
         
         switch (testConfig.layout) {
-            case 'clustered':
-                // Nodes close together
-                for (let i = 0; i < testConfig.nodes; i++) {
-                    nodes.push(this.createResourceNode(i));
-                    nodes[i].position.x = 500 + (i * 100);
-                    nodes[i].position.y = 300 + ((i % 2) * 100);
-                }
-                break;
+        case "clustered":
+            // Nodes close together
+            for (let i = 0; i < testConfig.nodes; i++) {
+                nodes.push(this.createResourceNode(i));
+                nodes[i].position.x = 500 + (i * 100);
+                nodes[i].position.y = 300 + ((i % 2) * 100);
+            }
+            break;
                 
-            case 'distributed':
-                // Evenly distributed
-                for (let i = 0; i < testConfig.nodes; i++) {
-                    nodes.push(this.createResourceNode(i));
-                    const angle = (i / testConfig.nodes) * 2 * Math.PI;
-                    nodes[i].position.x = 600 + Math.cos(angle) * 300;
-                    nodes[i].position.y = 350 + Math.sin(angle) * 200;
-                }
-                break;
+        case "distributed":
+            // Evenly distributed
+            for (let i = 0; i < testConfig.nodes; i++) {
+                nodes.push(this.createResourceNode(i));
+                const angle = (i / testConfig.nodes) * 2 * Math.PI;
+                nodes[i].position.x = 600 + Math.cos(angle) * 300;
+                nodes[i].position.y = 350 + Math.sin(angle) * 200;
+            }
+            break;
                 
-            case 'scattered':
-                // Random distribution
-                for (let i = 0; i < testConfig.nodes; i++) {
-                    nodes.push(this.createResourceNode(i));
-                    nodes[i].position.x = 200 + Math.random() * 800;
-                    nodes[i].position.y = 150 + Math.random() * 400;
-                }
-                break;
+        case "scattered":
+            // Random distribution
+            for (let i = 0; i < testConfig.nodes; i++) {
+                nodes.push(this.createResourceNode(i));
+                nodes[i].position.x = 200 + Math.random() * 800;
+                nodes[i].position.y = 150 + Math.random() * 400;
+            }
+            break;
         }
         
         return nodes;
@@ -941,7 +941,7 @@ export class ResourceEconomyTester {
         return {
             averageEfficiency: `${(avgEfficiency * 100).toFixed(1)}%`,
             passedTests: `${passedTests}/${results.length}`,
-            status: passedTests === results.length ? 'EFFICIENT' : 'NEEDS OPTIMIZATION'
+            status: passedTests === results.length ? "EFFICIENT" : "NEEDS OPTIMIZATION"
         };
     }
     
@@ -952,16 +952,16 @@ export class ResourceEconomyTester {
         return {
             averagePathfindingTime: `${avgTime.toFixed(2)}ms`,
             target: `${this.config.maxHarvesterPathTime}ms`,
-            status: allPassed ? 'WITHIN TARGETS' : 'EXCEEDS TARGETS'
+            status: allPassed ? "WITHIN TARGETS" : "EXCEEDS TARGETS"
         };
     }
     
     generateBalanceSummary(result) {
         return {
-            balanced: result.balanced ? 'YES' : 'NO',
+            balanced: result.balanced ? "YES" : "NO",
             maxDeviation: `${(result.maxDeviation * 100).toFixed(1)}%`,
             threshold: `${(this.config.resourceBalanceThreshold * 100).toFixed(1)}%`,
-            status: result.balanced ? 'BALANCED' : 'IMBALANCED'
+            status: result.balanced ? "BALANCED" : "IMBALANCED"
         };
     }
     
@@ -969,7 +969,7 @@ export class ResourceEconomyTester {
         return {
             collisionRate: `${result.collisionRate.toFixed(2)}/sec`,
             averageIdleTime: `${(result.averageIdleTime / 1000).toFixed(1)}s`,
-            status: result.efficient ? 'COORDINATED' : 'NEEDS IMPROVEMENT'
+            status: result.efficient ? "COORDINATED" : "NEEDS IMPROVEMENT"
         };
     }
     
@@ -981,7 +981,7 @@ export class ResourceEconomyTester {
             bestLayout: results.reduce((best, current) => 
                 current.distributionScore > best.distributionScore ? current : best
             ).layout,
-            status: efficientLayouts === results.length ? 'OPTIMIZED' : 'NEEDS ADJUSTMENT'
+            status: efficientLayouts === results.length ? "OPTIMIZED" : "NEEDS ADJUSTMENT"
         };
     }
     
@@ -993,18 +993,18 @@ export class ResourceEconomyTester {
      * Print comprehensive economy test report
      */
     printEconomyTestReport(results) {
-        console.log('\n' + '=' .repeat(80));
-        console.log('💰 RESOURCE ECONOMY TEST REPORT');
-        console.log('=' .repeat(80));
+        console.log("\n" + "=" .repeat(80));
+        console.log("💰 RESOURCE ECONOMY TEST REPORT");
+        console.log("=" .repeat(80));
         
-        console.log(`\n📊 Overall Results:`);
+        console.log("\n📊 Overall Results:");
         console.log(`   Duration: ${(results.duration / 1000).toFixed(2)}s`);
-        console.log(`   Overall Success: ${results.overallSuccess ? '✅ PASSED' : '❌ FAILED'}`);
+        console.log(`   Overall Success: ${results.overallSuccess ? "✅ PASSED" : "❌ FAILED"}`);
         
         // Print individual test results
         Object.entries(results.tests).forEach(([testName, testResult]) => {
             console.log(`\n💡 ${testResult.testType}:`);
-            console.log(`   Status: ${testResult.success ? '✅ PASSED' : '❌ FAILED'}`);
+            console.log(`   Status: ${testResult.success ? "✅ PASSED" : "❌ FAILED"}`);
             
             if (testResult.summary) {
                 Object.entries(testResult.summary).forEach(([key, value]) => {
@@ -1014,11 +1014,11 @@ export class ResourceEconomyTester {
         });
         
         // Economic targets
-        console.log(`\n🎯 Economic Targets:`);
+        console.log("\n🎯 Economic Targets:");
         console.log(`   Minimum Efficiency: ${(this.config.minEfficiencyRate * 100).toFixed(1)}%`);
         console.log(`   Max Harvester Path Time: ${this.config.maxHarvesterPathTime}ms`);
         console.log(`   Resource Balance Threshold: ${(this.config.resourceBalanceThreshold * 100).toFixed(1)}%`);
         
-        console.log('\n' + '=' .repeat(80));
+        console.log("\n" + "=" .repeat(80));
     }
 }
