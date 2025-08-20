@@ -8,6 +8,7 @@ import { InputHandler } from './core/InputHandler.js';
 import { createEventManager } from './utils/EventListenerManager.js';
 import { TestSprites } from './rendering/TestSprites.js';
 import { CnCAssetLoader } from './rendering/CnCAssetLoader.js';
+import { TextureAtlasManager } from './rendering/TextureAtlasManager.js';
 import { UIUpdateManager } from './core/UIUpdateManager.js';
 import { MainMenu } from './ui/MainMenu.js';
 import { 
@@ -31,6 +32,7 @@ class CommandAndIndependentThought {
         this.inputHandler = null;
         this.testSprites = null;
         this.cncAssets = null;
+        this.textureAtlasManager = null;
         this.world = null;
         this.entityFactory = null;
         this.uiUpdateManager = null;
@@ -99,11 +101,18 @@ class CommandAndIndependentThought {
             this.cncAssets = new CnCAssetLoader();
             await this.cncAssets.loadGameData();
             
-            this.updateLoadingProgress(87, "Initializing ECS world...");
+            this.updateLoadingProgress(86, 'Initializing texture atlas manager...');
+
+            // Initialize Texture Atlas Manager and load a test sprite
+            this.textureAtlasManager = new TextureAtlasManager();
+            await this.textureAtlasManager.initialize();
+            await this.textureAtlasManager.loadSpriteSet('gdi-medium-tank');
+
+            this.updateLoadingProgress(87, 'Initializing ECS world...');
             
             // Initialize ECS World and Systems
             this.world = new World();
-            this.entityFactory = new EntityFactory(this.world, this.cncAssets);
+            this.entityFactory = new EntityFactory(this.world, this.cncAssets, this.textureAtlasManager);
             
             // Add systems to world (order matters for priority)
             this.world.addSystem(new MovementSystem(this.world));

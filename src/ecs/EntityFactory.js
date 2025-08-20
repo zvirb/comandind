@@ -18,9 +18,10 @@ import {
  * Simplifies entity creation for C&C units, buildings, and other game objects
  */
 export class EntityFactory {
-    constructor(world, cncAssets) {
+    constructor(world, cncAssets, textureAtlasManager) {
         this.world = world;
         this.cncAssets = cncAssets;
+        this.textureAtlasManager = textureAtlasManager;
     }
     
     /**
@@ -33,9 +34,12 @@ export class EntityFactory {
             return null;
         }
         
-        const texture = await this.cncAssets.getTexture(`unit_${unitKey}`);
-        if (!texture) {
-            console.warn(`Texture for unit '${unitKey}' not found`);
+        // Use TextureAtlasManager to create the sprite
+        const spriteKey = `${faction.toLowerCase()}-${unitKey.toLowerCase().replace(/_/g, '-')}`;
+        const sprite = this.textureAtlasManager.createAnimatedSprite(spriteKey, 'move');
+
+        if (!sprite) {
+            console.warn(`Could not create sprite for unit '${unitKey}' with key '${spriteKey}'`);
             return null;
         }
         
@@ -45,7 +49,7 @@ export class EntityFactory {
         // Add components
         entity.addComponent(new TransformComponent(x, y));
         entity.addComponent(new VelocityComponent(0, 0, unitInfo.speed || 50));
-        entity.addComponent(new SpriteComponent(texture));
+        entity.addComponent(new SpriteComponent(sprite));
         entity.addComponent(new HealthComponent(unitInfo.health || 100));
         entity.addComponent(new UnitComponent(unitKey, faction, unitInfo.cost || 0));
         entity.addComponent(new MovementComponent());

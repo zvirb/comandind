@@ -198,11 +198,18 @@ export class RenderingSystem extends System {
     
     onEntityAdded(entity) {
         const spriteComp = entity.getComponent(SpriteComponent);
+        // The `texture` property now holds a pre-created PIXI.DisplayObject (Sprite or AnimatedSprite)
         if (spriteComp.texture && !spriteComp.sprite) {
-            // Create PIXI sprite
-            spriteComp.sprite = new PIXI.Sprite(spriteComp.texture);
+            // The sprite is already created by the factory, just assign and add to stage
+            spriteComp.sprite = spriteComp.texture;
             spriteComp.sprite.anchor.set(spriteComp.anchor.x, spriteComp.anchor.y);
             this.pixiStage.addChild(spriteComp.sprite);
+
+            // If it's an animated sprite, start playing it.
+            if (spriteComp.sprite instanceof PIXI.AnimatedSprite) {
+                spriteComp.sprite.animationSpeed = 0.2; // A default speed
+                spriteComp.sprite.play();
+            }
         }
     }
     

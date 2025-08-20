@@ -18,127 +18,79 @@ export class TextureAtlasManager {
         this.textureUsageTracking = new Map();
         this.priorityQueue = new Map(); // Track texture priority for cleanup decisions
         
-        // Sprite sheet configurations for C&C sprites
-        this.spriteConfigs = {
-            // GDI Structures
-            "gdi-construction-yard": {
-                url: "/assets/sprites/structures/gdi/construction-yard.png",
-                frameWidth: 48,
-                frameHeight: 48,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    active: { frames: [0, 1, 2, 3], speed: 0.1 },
-                    damaged: { frames: [4], speed: 0 }
+        // Sprite sheet configurations will be loaded from JSON
+        this.spriteConfigs = null;
+    }
+
+    async initialize() {
+        const config = await this.loadSpriteConfig();
+        if (config) {
+            this.buildSpriteConfigs(config);
+        }
+    }
+
+    async loadSpriteConfig() {
+        try {
+            const response = await fetch('/assets/sprites/sprite-config.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const config = await response.json();
+            if (!config || Object.keys(config).length === 0) {
+                console.warn('⚠️ Sprite config file loaded, but it is empty. No sprites can be configured.');
+            } else {
+                console.log('✅ Sprite config loaded successfully.');
+            }
+            return config;
+        } catch (error) {
+            console.error('❌ Failed to load or parse sprite-config.json:', error);
+            console.error('Ensure the file exists at /public/assets/sprites/sprite-config.json and is valid JSON.');
+            this.spriteConfigs = {}; // Use empty config on failure
+            return null;
+        }
+    }
+
+    buildSpriteConfigs(config) {
+        if (!config || Object.keys(config).length === 0) {
+            console.warn('Cannot build sprite configs: config data is missing or empty.');
+            this.spriteConfigs = {};
+            return;
+        }
+
+        this.spriteConfigs = {};
+        const basePath = '/assets/sprites';
+
+        // Helper to process categories that might be nested differently (e.g., tiberium)
+        const processCategory = (categoryName, categoryData) => {
+            if (categoryName === 'tiberium') {
+                // Handle flat tiberium structure
+                for (const [tiberiumType, tiberiumData] of Object.entries(categoryData)) {
+                    const key = `tiberium-${tiberiumType}`;
+                    const url = `${basePath}/resources/${tiberiumType}.png`;
+                    this.spriteConfigs[key] = { url, ...tiberiumData };
                 }
-            },
-            "gdi-power-plant": {
-                url: "/assets/sprites/structures/gdi/power-plant.png",
-                frameWidth: 48,
-                frameHeight: 48,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    active: { frames: [0, 1, 2], speed: 0.15 }
-                }
-            },
-            "gdi-barracks": {
-                url: "/assets/sprites/structures/gdi/barracks.png",
-                frameWidth: 48,
-                frameHeight: 48,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    active: { frames: [0, 1], speed: 0.1 }
-                }
-            },
-            "gdi-refinery": {
-                url: "/assets/sprites/structures/gdi/refinery.png",
-                frameWidth: 72,
-                frameHeight: 48,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    active: { frames: [0, 1, 2, 3], speed: 0.1 }
-                }
-            },
-            
-            // GDI Units
-            "gdi-medium-tank": {
-                url: "/assets/sprites/units/gdi/medium-tank.png",
-                frameWidth: 24,
-                frameHeight: 24,
-                animations: {
-                    // 32 directions (frames 0-31)
-                    move: { frames: Array.from({length: 32}, (_, i) => i), speed: 0 },
-                    // Turret rotation separate (frames 32-63)
-                    turret: { frames: Array.from({length: 32}, (_, i) => i + 32), speed: 0 }
-                }
-            },
-            "gdi-mammoth-tank": {
-                url: "/assets/sprites/units/gdi/mammoth-tank.png",
-                frameWidth: 32,
-                frameHeight: 32,
-                animations: {
-                    move: { frames: Array.from({length: 32}, (_, i) => i), speed: 0 },
-                    turret: { frames: Array.from({length: 32}, (_, i) => i + 32), speed: 0 }
-                }
-            },
-            "gdi-orca": {
-                url: "/assets/sprites/units/gdi/orca.png",
-                frameWidth: 32,
-                frameHeight: 32,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    fly: { frames: [0, 1, 2, 3], speed: 0.2 }
-                }
-            },
-            
-            // NOD Structures
-            "nod-construction-yard": {
-                url: "/assets/sprites/structures/nod/construction-yard.png",
-                frameWidth: 48,
-                frameHeight: 48,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    active: { frames: [0, 1, 2, 3], speed: 0.1 }
-                }
-            },
-            "nod-obelisk": {
-                url: "/assets/sprites/structures/nod/obelisk.png",
-                frameWidth: 24,
-                frameHeight: 48,
-                animations: {
-                    idle: { frames: [0], speed: 0 },
-                    charging: { frames: [0, 1, 2], speed: 0.3 },
-                    fire: { frames: [3, 4, 5], speed: 0.5 }
-                }
-            },
-            
-            // NOD Units
-            "nod-recon-bike": {
-                url: "/assets/sprites/units/nod/recon-bike.png",
-                frameWidth: 24,
-                frameHeight: 24,
-                animations: {
-                    move: { frames: Array.from({length: 32}, (_, i) => i), speed: 0 }
-                }
-            },
-            
-            // Resources
-            "tiberium-green": {
-                url: "/assets/sprites/resources/tiberium-green.png",
-                frameWidth: 24,
-                frameHeight: 24,
-                animations: {
-                    idle: { frames: [0, 1, 2, 3], speed: 0.05 }
-                }
-            },
-            "tiberium-blue": {
-                url: "/assets/sprites/resources/tiberium-blue.png",
-                frameWidth: 24,
-                frameHeight: 24,
-                animations: {
-                    idle: { frames: [0, 1, 2, 3], speed: 0.05 }
+            } else {
+                // Handle nested faction structure
+                for (const [faction, entities] of Object.entries(categoryData)) {
+                    for (const [entityName, entityData] of Object.entries(entities)) {
+                        const key = `${faction}-${entityName}`;
+                        // Default to .png, but allow for exceptions for test assets.
+                        let extension = 'png';
+                        if (key === 'gdi-medium-tank') {
+                            extension = 'svg'; // Our test asset is an SVG
+                        }
+                        const url = `${basePath}/${categoryName}/${faction}/${entityName}.${extension}`;
+                        this.spriteConfigs[key] = { url, ...entityData };
+                    }
                 }
             }
         };
+
+        for (const [category, data] of Object.entries(config)) {
+            processCategory(category, data);
+        }
+
+        console.log('✅ Sprite configs built from JSON data.');
     }
     
     /**
