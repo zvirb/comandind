@@ -227,9 +227,8 @@ export class Application {
         
         while (attempts < maxAttempts) {
             try {
-                // Use modern async init
-                const app = new PIXI.Application();
-                await app.init(appConfig);
+                // Create PIXI v7 application with config
+                const app = new PIXI.Application(appConfig);
                 
                 // Verify the application was created successfully
                 if (!app || !app.renderer || !app.stage) {
@@ -271,8 +270,7 @@ export class Application {
         this.fallbackMode = true;
         
         try {
-            this.app = new PIXI.Application();
-            await this.app.init({
+            this.app = new PIXI.Application({
                 width: this.options.width,
                 height: this.options.height,
                 backgroundColor: this.options.backgroundColor,
