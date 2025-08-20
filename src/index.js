@@ -9,6 +9,7 @@ import { createEventManager } from './utils/EventListenerManager.js';
 import { TestSprites } from './rendering/TestSprites.js';
 import { CnCAssetLoader } from './rendering/CnCAssetLoader.js';
 import { UIUpdateManager } from './core/UIUpdateManager.js';
+import { MainMenu } from './ui/MainMenu.js';
 import { 
     World, 
     EntityFactory,
@@ -33,7 +34,9 @@ class CommandAndIndependentThought {
         this.world = null;
         this.entityFactory = null;
         this.uiUpdateManager = null;
+        this.mainMenu = null;
         this.isInitialized = false;
+        this.gameStarted = false;
         
         // Create event listener manager for this game instance
         this.eventManager = createEventManager('GameInstance');
@@ -78,7 +81,6 @@ class CommandAndIndependentThought {
             
             // Initialize input handler
             this.inputHandler = new InputHandler(this.application.view);
-            this.setupInputHandlers();
             
             this.updateLoadingProgress(85, 'Starting performance monitor...');
             
@@ -136,29 +138,21 @@ class CommandAndIndependentThought {
             
             // Setup cleanup handler
             window.addEventListener('beforeunload', this.cleanup.bind(this));
+
+            // Create Main Menu
+            this.mainMenu = new MainMenu(this.application, this.application.layers.ui, this.startGame.bind(this));
             
-            // Hide loading screen and show performance monitor
+            // Hide loading screen and show main menu
             setTimeout(() => {
-                // Double-check that everything is properly initialized before hiding loading screen
                 if (this.application && this.application.view && this.gameLoop) {
                     console.log('🎮 All systems ready - hiding loading screen');
                     document.getElementById('loading-screen').classList.add('hidden');
-                    document.getElementById('performance-monitor').classList.remove('hidden');
                     this.isInitialized = true;
-                    
-                    // Start the game loop
                     this.gameLoop.start();
-                    
-                    // Start the UI update manager
                     this.uiUpdateManager.start();
-                    console.log('✅ Game is now running!');
+                    this.showMainMenu();
                 } else {
                     console.error('❌ Cannot start game - critical systems not initialized');
-                    console.error('Application:', !!this.application);
-                    console.error('Application.view:', !!this.application?.view);
-                    console.error('GameLoop:', !!this.gameLoop);
-                    
-                    // Keep loading screen visible and show error
                     document.getElementById('loading-text').textContent = 'ERROR: Failed to initialize game systems';
                     document.getElementById('loading-text').style.color = '#f00';
                 }
@@ -357,8 +351,26 @@ class CommandAndIndependentThought {
         });
     }
     
+    showMainMenu() {
+        this.mainMenu.show();
+        document.getElementById('performance-monitor').classList.add('hidden');
+    }
+
+    startGame() {
+        this.mainMenu.hide();
+        this.gameStarted = true;
+        this.setupInputHandlers(); // Setup game controls only when game starts
+        document.getElementById('performance-monitor').classList.remove('hidden');
+        console.log('✅ Game is now running!');
+    }
+
     update(deltaTime) {
         if (!this.isInitialized) return;
+
+        if (!this.gameStarted) {
+            // Don't update game logic if menu is showing
+            return;
+        }
         
         // Update camera
         this.camera.update(deltaTime);
