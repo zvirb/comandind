@@ -20,4 +20,352 @@ export class TextureMemoryTest {
     
     /**
      * Initialize PIXI application for testing
-     */\n    async initializePIXI() {\n        // Create PIXI application\n        this.app = new PIXI.Application({\n            width: 800,\n            height: 600,\n            backgroundColor: 0x1099bb,\n            antialias: true\n        });\n        \n        // Initialize managers\n        this.atlasManager = new TextureAtlasManager();\n        this.assetLoader = new CnCAssetLoader();\n        this.gpuMonitor = new GPUMemoryMonitor(this.app.renderer);\n        \n        // Load game data\n        await this.assetLoader.loadGameData();\n        \n        console.log('✅ PIXI Test Environment Initialized');\n    }\n    \n    /**\n     * Test 1: Basic texture pooling efficiency\n     */\n    async testTexturePooling() {\n        console.log('🧪 Testing Texture Pooling...');\n        \n        const startTime = performance.now();\n        const startMemory = globalTexturePool.getMemoryStats();\n        \n        // Create multiple sprites using the same texture\n        const textureKey = 'unit_GDI_MEDIUM_TANK';\n        const sprites = [];\n        \n        for (let i = 0; i < 100; i++) {\n            const sprite = await this.assetLoader.createUnit('GDI_MEDIUM_TANK', i * 10, i * 10);\n            if (sprite) {\n                sprites.push(sprite);\n                this.app.stage.addChild(sprite);\n            }\n        }\n        \n        const endTime = performance.now();\n        const endMemory = globalTexturePool.getMemoryStats();\n        \n        const result = {\n            test: 'Texture Pooling',\n            duration: `${(endTime - startTime).toFixed(2)}ms`,\n            spritesCreated: sprites.length,\n            cacheHitRate: endMemory.cacheHitRate || 'N/A',\n            memoryUsed: `${endMemory.currentMemoryMB}MB`,\n            pooledObjects: endMemory.pooledSprites + endMemory.pooledAnimatedSprites\n        };\n        \n        this.testResults.push(result);\n        console.log('📊 Texture Pooling Results:', result);\n        \n        // Clean up\n        sprites.forEach(sprite => {\n            this.app.stage.removeChild(sprite);\n            this.assetLoader.returnSprite(sprite);\n        });\n        \n        return result;\n    }\n    \n    /**\n     * Test 2: Memory pressure and cleanup\n     */\n    async testMemoryPressure() {\n        console.log('🧪 Testing Memory Pressure Management...');\n        \n        const startStats = globalTexturePool.getMemoryStats();\n        const sprites = [];\n        \n        // Create many different textures to trigger memory pressure\n        const unitTypes = this.assetLoader.getAvailableUnits();\n        const buildingTypes = this.assetLoader.getAvailableBuildings();\n        \n        // Load many textures\n        for (let i = 0; i < Math.min(50, unitTypes.length); i++) {\n            const sprite = await this.assetLoader.createUnit(unitTypes[i], i * 5, i * 5);\n            if (sprite) {\n                sprites.push(sprite);\n                this.app.stage.addChild(sprite);\n            }\n        }\n        \n        for (let i = 0; i < Math.min(20, buildingTypes.length); i++) {\n            const sprite = await this.assetLoader.createBuilding(buildingTypes[i], i * 10, 300 + i * 10);\n            if (sprite) {\n                sprites.push(sprite);\n                this.app.stage.addChild(sprite);\n            }\n        }\n        \n        const beforeCleanupStats = globalTexturePool.getMemoryStats();\n        \n        // Trigger cleanup\n        globalTexturePool.performMaintenance();\n        this.atlasManager.performSmartCleanup();\n        this.assetLoader.performMemoryCleanup();\n        \n        const afterCleanupStats = globalTexturePool.getMemoryStats();\n        \n        const result = {\n            test: 'Memory Pressure',\n            spritesCreated: sprites.length,\n            beforeCleanup: `${beforeCleanupStats.currentMemoryMB}MB`,\n            afterCleanup: `${afterCleanupStats.currentMemoryMB}MB`,\n            memorySaved: `${(parseFloat(beforeCleanupStats.currentMemoryMB) - parseFloat(afterCleanupStats.currentMemoryMB)).toFixed(1)}MB`,\n            cleanupEfficiency: `${((parseFloat(beforeCleanupStats.currentMemoryMB) - parseFloat(afterCleanupStats.currentMemoryMB)) / parseFloat(beforeCleanupStats.currentMemoryMB) * 100).toFixed(1)}%`\n        };\n        \n        this.testResults.push(result);\n        console.log('📊 Memory Pressure Results:', result);\n        \n        // Clean up\n        sprites.forEach(sprite => {\n            this.app.stage.removeChild(sprite);\n            this.assetLoader.returnSprite(sprite);\n        });\n        \n        return result;\n    }\n    \n    /**\n     * Test 3: GPU memory monitoring\n     */\n    async testGPUMonitoring() {\n        console.log('🧪 Testing GPU Memory Monitoring...');\n        \n        // Initialize GPU monitoring\n        this.gpuMonitor.startMonitoring(1000);\n        \n        // Create memory pressure\n        const sprites = [];\n        for (let i = 0; i < 50; i++) {\n            const sprite = this.atlasManager.createAnimatedSprite('gdi-medium-tank', 'move');\n            if (sprite) {\n                sprite.x = Math.random() * 700;\n                sprite.y = Math.random() * 500;\n                sprites.push(sprite);\n                this.app.stage.addChild(sprite);\n            }\n        }\n        \n        // Wait for monitoring to collect data\n        await new Promise(resolve => setTimeout(resolve, 2000));\n        \n        const gpuStats = this.gpuMonitor.getDetailedStats();\n        const trends = this.gpuMonitor.getPerformanceTrends();\n        \n        const result = {\n            test: 'GPU Monitoring',\n            gpuVendor: gpuStats.gpu.vendor,\n            gpuRenderer: gpuStats.gpu.renderer,\n            textureMemory: gpuStats.current.textureMemoryMB + 'MB',\n            activeTextures: gpuStats.current.activeTextures,\n            memoryPressure: gpuStats.current.memoryPressure,\n            trends: trends,\n            webGLVersion: gpuStats.gpu.webGLVersion\n        };\n        \n        this.testResults.push(result);\n        console.log('📊 GPU Monitoring Results:', result);\n        \n        // Clean up\n        sprites.forEach(sprite => {\n            this.app.stage.removeChild(sprite);\n            globalTexturePool.returnSprite(sprite);\n        });\n        \n        this.gpuMonitor.stopMonitoring();\n        \n        return result;\n    }\n    \n    /**\n     * Test 4: LRU cache effectiveness\n     */\n    async testLRUCache() {\n        console.log('🧪 Testing LRU Cache...');\n        \n        const cacheSize = 20;\n        const testIterations = 50;\n        \n        // Configure smaller cache for testing\n        const oldMaxCacheSize = globalTexturePool.maxCacheSize;\n        globalTexturePool.maxCacheSize = cacheSize;\n        \n        const startStats = globalTexturePool.getMemoryStats();\n        \n        // Access textures in patterns to test LRU\n        const unitTypes = this.assetLoader.getAvailableUnits().slice(0, 30); // More than cache size\n        \n        for (let i = 0; i < testIterations; i++) {\n            const unitType = unitTypes[i % unitTypes.length];\n            const sprite = await this.assetLoader.createUnit(unitType, 0, 0);\n            if (sprite) {\n                this.assetLoader.returnSprite(sprite);\n            }\n        }\n        \n        const endStats = globalTexturePool.getMemoryStats();\n        \n        const result = {\n            test: 'LRU Cache',\n            cacheSize: cacheSize,\n            testIterations: testIterations,\n            uniqueTextures: unitTypes.length,\n            cacheHitRate: `${((globalTexturePool.stats.cacheHits / (globalTexturePool.stats.cacheHits + globalTexturePool.stats.cacheMisses)) * 100).toFixed(1)}%`,\n            finalCachedTextures: endStats.cachedTextures,\n            memoryCleanups: globalTexturePool.stats.memoryCleanups\n        };\n        \n        this.testResults.push(result);\n        console.log('📊 LRU Cache Results:', result);\n        \n        // Restore original cache size\n        globalTexturePool.maxCacheSize = oldMaxCacheSize;\n        \n        return result;\n    }\n    \n    /**\n     * Run all tests and generate report\n     */\n    async runAllTests() {\n        console.log('🚀 Starting Texture Memory Optimization Tests...');\n        \n        try {\n            await this.initializePIXI();\n            \n            // Run tests in sequence\n            await this.testTexturePooling();\n            await this.testMemoryPressure();\n            await this.testGPUMonitoring();\n            await this.testLRUCache();\n            \n            // Generate final report\n            const report = this.generateReport();\n            console.log('📋 Final Test Report:', report);\n            \n            return report;\n            \n        } catch (error) {\n            console.error('❌ Test execution failed:', error);\n            throw error;\n        } finally {\n            await this.cleanup();\n        }\n    }\n    \n    /**\n     * Generate comprehensive test report\n     */\n    generateReport() {\n        const poolStats = globalTexturePool.getMemoryStats();\n        const assetStats = this.assetLoader.getMemoryStats();\n        \n        return {\n            timestamp: new Date().toISOString(),\n            testResults: this.testResults,\n            finalStats: {\n                texturePool: poolStats,\n                assetLoader: assetStats\n            },\n            performance: {\n                totalCacheHits: globalTexturePool.stats.cacheHits,\n                totalCacheMisses: globalTexturePool.stats.cacheMisses,\n                totalCleanups: globalTexturePool.stats.memoryCleanups,\n                objectsPooled: globalTexturePool.stats.objectsPooled,\n                texturesDisposed: globalTexturePool.stats.texturesDisposed\n            },\n            conclusions: this.generateConclusions()\n        };\n    }\n    \n    /**\n     * Generate test conclusions\n     */\n    generateConclusions() {\n        const cacheHitRate = globalTexturePool.stats.cacheHits / \n            Math.max(1, globalTexturePool.stats.cacheHits + globalTexturePool.stats.cacheMisses);\n        \n        return {\n            texturePoolingEffective: cacheHitRate > 0.7,\n            memoryManagementActive: globalTexturePool.stats.memoryCleanups > 0,\n            objectPoolingWorking: globalTexturePool.stats.objectsPooled > 0,\n            overallRating: this.calculateOverallRating(cacheHitRate)\n        };\n    }\n    \n    /**\n     * Calculate overall optimization rating\n     */\n    calculateOverallRating(cacheHitRate) {\n        let score = 0;\n        \n        // Cache hit rate (40% of score)\n        score += cacheHitRate * 0.4;\n        \n        // Memory cleanup activity (30% of score)\n        if (globalTexturePool.stats.memoryCleanups > 0) score += 0.3;\n        \n        // Object pooling usage (30% of score)\n        if (globalTexturePool.stats.objectsPooled > 0) score += 0.3;\n        \n        if (score >= 0.9) return 'Excellent';\n        if (score >= 0.7) return 'Good';\n        if (score >= 0.5) return 'Fair';\n        return 'Needs Improvement';\n    }\n    \n    /**\n     * Clean up test resources\n     */\n    async cleanup() {\n        console.log('🧹 Cleaning up test resources...');\n        \n        if (this.app) {\n            this.app.stage.removeChildren();\n        }\n        \n        if (this.gpuMonitor) {\n            this.gpuMonitor.destroy();\n        }\n        \n        if (this.assetLoader) {\n            this.assetLoader.destroy();\n        }\n        \n        if (this.atlasManager) {\n            this.atlasManager.destroy();\n        }\n        \n        // Clear texture pool\n        globalTexturePool.clear();\n        \n        console.log('✅ Test cleanup completed');\n    }\n}\n\n// Export test runner function for easy use\nexport async function runTextureMemoryTest() {\n    const test = new TextureMemoryTest();\n    return await test.runAllTests();\n}"
+     */
+    async initializePIXI() {
+        // Create PIXI application
+        this.app = new PIXI.Application({
+            width: 800,
+            height: 600,
+            backgroundColor: 0x1099bb,
+            antialias: true
+        });
+
+        // Initialize managers
+        this.atlasManager = new TextureAtlasManager();
+        this.assetLoader = new CnCAssetLoader();
+        this.gpuMonitor = new GPUMemoryMonitor(this.app.renderer);
+
+        // Load game data
+        await this.assetLoader.loadGameData();
+
+        console.log('✅ PIXI Test Environment Initialized');
+    }
+
+    /**
+     * Test 1: Basic texture pooling efficiency
+     */
+    async testTexturePooling() {
+        console.log('🧪 Testing Texture Pooling...');
+
+        const startTime = performance.now();
+        const startMemory = globalTexturePool.getMemoryStats();
+
+        // Create multiple sprites using the same texture
+        const textureKey = 'unit_GDI_MEDIUM_TANK';
+        const sprites = [];
+
+        for (let i = 0; i < 100; i++) {
+            const sprite = await this.assetLoader.createUnit('GDI_MEDIUM_TANK', i * 10, i * 10);
+            if (sprite) {
+                sprites.push(sprite);
+                this.app.stage.addChild(sprite);
+            }
+        }
+
+        const endTime = performance.now();
+        const endMemory = globalTexturePool.getMemoryStats();
+
+        const result = {
+            test: 'Texture Pooling',
+            duration: `${(endTime - startTime).toFixed(2)}ms`,
+            spritesCreated: sprites.length,
+            cacheHitRate: endMemory.cacheHitRate || 'N/A',
+            memoryUsed: `${endMemory.currentMemoryMB}MB`,
+            pooledObjects: endMemory.pooledSprites + endMemory.pooledAnimatedSprites
+        };
+
+        this.testResults.push(result);
+        console.log('📊 Texture Pooling Results:', result);
+
+        // Clean up
+        sprites.forEach(sprite => {
+            this.app.stage.removeChild(sprite);
+            this.assetLoader.returnSprite(sprite);
+        });
+
+        return result;
+    }
+
+    /**
+     * Test 2: Memory pressure and cleanup
+     */
+    async testMemoryPressure() {
+        console.log('🧪 Testing Memory Pressure Management...');
+
+        const startStats = globalTexturePool.getMemoryStats();
+        const sprites = [];
+
+        // Create many different textures to trigger memory pressure
+        const unitTypes = this.assetLoader.getAvailableUnits();
+        const buildingTypes = this.assetLoader.getAvailableBuildings();
+
+        // Load many textures
+        for (let i = 0; i < Math.min(50, unitTypes.length); i++) {
+            const sprite = await this.assetLoader.createUnit(unitTypes[i], i * 5, i * 5);
+            if (sprite) {
+                sprites.push(sprite);
+                this.app.stage.addChild(sprite);
+            }
+        }
+
+        for (let i = 0; i < Math.min(20, buildingTypes.length); i++) {
+            const sprite = await this.assetLoader.createBuilding(buildingTypes[i], i * 10, 300 + i * 10);
+            if (sprite) {
+                sprites.push(sprite);
+                this.app.stage.addChild(sprite);
+            }
+        }
+
+        const beforeCleanupStats = globalTexturePool.getMemoryStats();
+
+        // Trigger cleanup
+        globalTexturePool.performMaintenance();
+        this.atlasManager.performSmartCleanup();
+        this.assetLoader.performMemoryCleanup();
+
+        const afterCleanupStats = globalTexturePool.getMemoryStats();
+
+        const result = {
+            test: 'Memory Pressure',
+            spritesCreated: sprites.length,
+            beforeCleanup: `${beforeCleanupStats.currentMemoryMB}MB`,
+            afterCleanup: `${afterCleanupStats.currentMemoryMB}MB`,
+            memorySaved: `${(parseFloat(beforeCleanupStats.currentMemoryMB) - parseFloat(afterCleanupStats.currentMemoryMB)).toFixed(1)}MB`,
+            cleanupEfficiency: `${((parseFloat(beforeCleanupStats.currentMemoryMB) - parseFloat(afterCleanupStats.currentMemoryMB)) / parseFloat(beforeCleanupStats.currentMemoryMB) * 100).toFixed(1)}%`
+        };
+
+        this.testResults.push(result);
+        console.log('📊 Memory Pressure Results:', result);
+
+        // Clean up
+        sprites.forEach(sprite => {
+            this.app.stage.removeChild(sprite);
+            this.assetLoader.returnSprite(sprite);
+        });
+
+        return result;
+    }
+
+    /**
+     * Test 3: GPU memory monitoring
+     */
+    async testGPUMonitoring() {
+        console.log('🧪 Testing GPU Memory Monitoring...');
+
+        // Initialize GPU monitoring
+        this.gpuMonitor.startMonitoring(1000);
+
+        // Create memory pressure
+        const sprites = [];
+        for (let i = 0; i < 50; i++) {
+            const sprite = this.atlasManager.createAnimatedSprite('gdi-medium-tank', 'move');
+            if (sprite) {
+                sprite.x = Math.random() * 700;
+                sprite.y = Math.random() * 500;
+                sprites.push(sprite);
+                this.app.stage.addChild(sprite);
+            }
+        }
+
+        // Wait for monitoring to collect data
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const gpuStats = this.gpuMonitor.getDetailedStats();
+        const trends = this.gpuMonitor.getPerformanceTrends();
+
+        const result = {
+            test: 'GPU Monitoring',
+            gpuVendor: gpuStats.gpu.vendor,
+            gpuRenderer: gpuStats.gpu.renderer,
+            textureMemory: gpuStats.current.textureMemoryMB + 'MB',
+            activeTextures: gpuStats.current.activeTextures,
+            memoryPressure: gpuStats.current.memoryPressure,
+            trends: trends,
+            webGLVersion: gpuStats.gpu.webGLVersion
+        };
+
+        this.testResults.push(result);
+        console.log('📊 GPU Monitoring Results:', result);
+
+        // Clean up
+        sprites.forEach(sprite => {
+            this.app.stage.removeChild(sprite);
+            globalTexturePool.returnSprite(sprite);
+        });
+
+        this.gpuMonitor.stopMonitoring();
+
+        return result;
+    }
+
+    /**
+     * Test 4: LRU cache effectiveness
+     */
+    async testLRUCache() {
+        console.log('🧪 Testing LRU Cache...');
+
+        const cacheSize = 20;
+        const testIterations = 50;
+
+        // Configure smaller cache for testing
+        const oldMaxCacheSize = globalTexturePool.maxCacheSize;
+        globalTexturePool.maxCacheSize = cacheSize;
+
+        const startStats = globalTexturePool.getMemoryStats();
+
+        // Access textures in patterns to test LRU
+        const unitTypes = this.assetLoader.getAvailableUnits().slice(0, 30); // More than cache size
+
+        for (let i = 0; i < testIterations; i++) {
+            const unitType = unitTypes[i % unitTypes.length];
+            const sprite = await this.assetLoader.createUnit(unitType, 0, 0);
+            if (sprite) {
+                this.assetLoader.returnSprite(sprite);
+            }
+        }
+
+        const endStats = globalTexturePool.getMemoryStats();
+
+        const result = {
+            test: 'LRU Cache',
+            cacheSize: cacheSize,
+            testIterations: testIterations,
+            uniqueTextures: unitTypes.length,
+            cacheHitRate: `${((globalTexturePool.stats.cacheHits / (globalTexturePool.stats.cacheHits + globalTexturePool.stats.cacheMisses)) * 100).toFixed(1)}%`,
+            finalCachedTextures: endStats.cachedTextures,
+            memoryCleanups: globalTexturePool.stats.memoryCleanups
+        };
+
+        this.testResults.push(result);
+        console.log('📊 LRU Cache Results:', result);
+
+        // Restore original cache size
+        globalTexturePool.maxCacheSize = oldMaxCacheSize;
+
+        return result;
+    }
+
+    /**
+     * Run all tests and generate report
+     */
+    async runAllTests() {
+        console.log('🚀 Starting Texture Memory Optimization Tests...');
+
+        try {
+            await this.initializePIXI();
+
+            // Run tests in sequence
+            await this.testTexturePooling();
+            await this.testMemoryPressure();
+            await this.testGPUMonitoring();
+            await this.testLRUCache();
+
+            // Generate final report
+            const report = this.generateReport();
+            console.log('📋 Final Test Report:', report);
+
+            return report;
+
+        } catch (error) {
+            console.error('❌ Test execution failed:', error);
+            throw error;
+        } finally {
+            await this.cleanup();
+        }
+    }
+
+    /**
+     * Generate comprehensive test report
+     */
+    generateReport() {
+        const poolStats = globalTexturePool.getMemoryStats();
+        const assetStats = this.assetLoader.getMemoryStats();
+
+        return {
+            timestamp: new Date().toISOString(),
+            testResults: this.testResults,
+            finalStats: {
+                texturePool: poolStats,
+                assetLoader: assetStats
+            },
+            performance: {
+                totalCacheHits: globalTexturePool.stats.cacheHits,
+                totalCacheMisses: globalTexturePool.stats.cacheMisses,
+                totalCleanups: globalTexturePool.stats.memoryCleanups,
+                objectsPooled: globalTexturePool.stats.objectsPooled,
+                texturesDisposed: globalTexturePool.stats.texturesDisposed
+            },
+            conclusions: this.generateConclusions()
+        };
+    }
+
+    /**
+     * Generate test conclusions
+     */
+    generateConclusions() {
+        const cacheHitRate = globalTexturePool.stats.cacheHits /
+            Math.max(1, globalTexturePool.stats.cacheHits + globalTexturePool.stats.cacheMisses);
+
+        return {
+            texturePoolingEffective: cacheHitRate > 0.7,
+            memoryManagementActive: globalTexturePool.stats.memoryCleanups > 0,
+            objectPoolingWorking: globalTexturePool.stats.objectsPooled > 0,
+            overallRating: this.calculateOverallRating(cacheHitRate)
+        };
+    }
+
+    /**
+     * Calculate overall optimization rating
+     */
+    calculateOverallRating(cacheHitRate) {
+        let score = 0;
+
+        // Cache hit rate (40% of score)
+        score += cacheHitRate * 0.4;
+
+        // Memory cleanup activity (30% of score)
+        if (globalTexturePool.stats.memoryCleanups > 0) score += 0.3;
+
+        // Object pooling usage (30% of score)
+        if (globalTexturePool.stats.objectsPooled > 0) score += 0.3;
+
+        if (score >= 0.9) return 'Excellent';
+        if (score >= 0.7) return 'Good';
+        if (score >= 0.5) return 'Fair';
+        return 'Needs Improvement';
+    }
+
+    /**
+     * Clean up test resources
+     */
+    async cleanup() {
+        console.log('🧹 Cleaning up test resources...');
+
+        if (this.app) {
+            this.app.stage.removeChildren();
+        }
+
+        if (this.gpuMonitor) {
+            this.gpuMonitor.destroy();
+        }
+
+        if (this.assetLoader) {
+            this.assetLoader.destroy();
+        }
+
+        if (this.atlasManager) {
+            this.atlasManager.destroy();
+        }
+
+        // Clear texture pool
+        globalTexturePool.clear();
+
+        console.log('✅ Test cleanup completed');
+    }
+}
+
+// Export test runner function for easy use
+export async function runTextureMemoryTest() {
+    const test = new TextureMemoryTest();
+    return await test.runAllTests();
+}"

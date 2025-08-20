@@ -163,7 +163,8 @@ class SecurityValidation {
             const initialUsage = secureErrorHandler.getStorageUsage();
             
             // Generate large error data
-            const largeStack = 'Large error stack\\n'.repeat(1000);
+            const largeStack = 'Large error stack\
+'.repeat(1000);
             
             for (let i = 0; i < 10; i++) {
                 const largeError = new Error(`Large error ${i}`);
@@ -296,11 +297,13 @@ class SecurityValidation {
      * Show test results
      */
     showResults() {
-        console.log(`\\n🛡️ Security Validation Results:`);
+        console.log(`\
+🛡️ Security Validation Results:`);
         console.log(`✅ Passed: ${this.passed}`);
         console.log(`❌ Failed: ${this.failed}`);
         console.log(`📊 Total: ${this.testResults.length}`);
-        console.log(`🎯 Success Rate: ${((this.passed / this.testResults.length) * 100).toFixed(1)}%\\n`);
+        console.log(`🎯 Success Rate: ${((this.passed / this.testResults.length) * 100).toFixed(1)}%\
+`);
         
         // Show detailed results
         this.testResults.forEach(result => {
@@ -398,7 +401,8 @@ if (typeof window !== 'undefined') {
             // Store report for later access
             window.securityReport = report;
             
-            console.log('\\n🛡️ Security Validation Complete!');
+            console.log('\
+🛡️ Security Validation Complete!');
             console.log('Access detailed report via: window.securityReport');
         }, 2000);
     });
