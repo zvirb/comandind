@@ -540,15 +540,14 @@ export class OptimizedSelectionSystem extends System {
     updateSelectionBox() {
         if (!this.isBoxSelecting) return;
         
-        const startX = this.boxSelectStart.x;
-        const startY = this.boxSelectStart.y;
-        const endX = this.boxSelectEnd.x;
-        const endY = this.boxSelectEnd.y;
+        // Convert screen coordinates to world coordinates
+        const worldStart = this.camera.screenToWorld(this.boxSelectStart.x, this.boxSelectStart.y, this.canvasElement);
+        const worldEnd = this.camera.screenToWorld(this.boxSelectEnd.x, this.boxSelectEnd.y, this.canvasElement);
         
-        const minX = Math.min(startX, endX);
-        const minY = Math.min(startY, endY);
-        const width = Math.abs(endX - startX);
-        const height = Math.abs(endY - startY);
+        const minX = Math.min(worldStart.x, worldEnd.x);
+        const minY = Math.min(worldStart.y, worldEnd.y);
+        const width = Math.abs(worldEnd.x - worldStart.x);
+        const height = Math.abs(worldEnd.y - worldStart.y);
         
         this.selectionBoxGraphic.clear();
         this.selectionBoxGraphic.lineStyle(2, 0x00ff00, 0.8);
