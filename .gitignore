@@ -95,3 +95,8 @@ temp/
 # pnpm-lock.yaml
 # Cargo.lock
 # go.sum
+
+# Submodules and nested git repositories
+mcp_servers/python-sequential-thinking-mcp/
+mcp_servers/mcp-official-servers/
+tools/CnC_Tiberian_Dawn/
