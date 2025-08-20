@@ -259,9 +259,9 @@ export function getActionRewardConfig(actionId) {
     // Tactical actions (11-13)
     if (actionId >= 11 && actionId <= 13) {
         switch (actionId) {
-            case 11: return RewardConfig.tactical.retreat;
-            case 12: return RewardConfig.tactical.holdPosition;
-            case 13: return RewardConfig.tactical.patrol;
+        case 11: return RewardConfig.tactical.retreat;
+        case 12: return RewardConfig.tactical.holdPosition;
+        case 13: return RewardConfig.tactical.patrol;
         }
     }
     
@@ -285,7 +285,7 @@ export function getActionRewardConfig(actionId) {
 export function validateRewardConfig() {
     try {
         // Check that all required sections exist
-        const requiredSections = ['global', 'movement', 'combat', 'tactical', 'economic', 'idle', 'situational', 'special'];
+        const requiredSections = ["global", "movement", "combat", "tactical", "economic", "idle", "situational", "special"];
         for (const section of requiredSections) {
             if (!RewardConfig[section]) {
                 console.error(`Missing reward config section: ${section}`);
@@ -294,13 +294,13 @@ export function validateRewardConfig() {
         }
         
         // Check that reward values are reasonable
-        const checkRewardRange = (obj, path = '') => {
+        const checkRewardRange = (obj, path = "") => {
             for (const [key, value] of Object.entries(obj)) {
-                if (typeof value === 'number') {
+                if (typeof value === "number") {
                     if (Math.abs(value) > RewardConfig.global.maxRewardMagnitude) {
                         console.warn(`Reward value ${path}.${key} (${value}) exceeds maximum magnitude`);
                     }
-                } else if (typeof value === 'object' && value !== null) {
+                } else if (typeof value === "object" && value !== null) {
                     checkRewardRange(value, path ? `${path}.${key}` : key);
                 }
             }
@@ -308,11 +308,11 @@ export function validateRewardConfig() {
         
         checkRewardRange(RewardConfig);
         
-        console.log('Reward configuration validation successful');
+        console.log("Reward configuration validation successful");
         return true;
         
     } catch (error) {
-        console.error('Error validating reward configuration:', error);
+        console.error("Error validating reward configuration:", error);
         return false;
     }
 }

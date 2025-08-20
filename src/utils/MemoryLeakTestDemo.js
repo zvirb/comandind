@@ -3,16 +3,16 @@
  * Demonstrates the memory leak fixes and detection capabilities
  */
 
-import { World } from '../ecs/World.js';
-import { Entity } from '../ecs/Entity.js';
+import { World } from "../ecs/World.js";
+import { Entity } from "../ecs/Entity.js";
 import { 
     TransformComponent, 
     SpriteComponent, 
     VelocityComponent,
     HealthComponent
-} from '../ecs/Component.js';
-import { MovementSystem, RenderingSystem } from '../ecs/System.js';
-import { memoryLeakDetector } from './MemoryLeakDetector.js';
+} from "../ecs/Component.js";
+import { MovementSystem, RenderingSystem } from "../ecs/System.js";
+import { memoryLeakDetector } from "./MemoryLeakDetector.js";
 
 export class MemoryLeakTestDemo {
     constructor() {
@@ -30,7 +30,7 @@ export class MemoryLeakTestDemo {
     setupMemoryDetection() {
         // Setup memory leak detection
         memoryLeakDetector.onLeakDetected((analysis) => {
-            console.warn('🚨 Memory leak detected:', analysis);
+            console.warn("🚨 Memory leak detected:", analysis);
         });
         
         memoryLeakDetector.startMonitoring(this.world, 2000); // Check every 2 seconds
@@ -40,7 +40,7 @@ export class MemoryLeakTestDemo {
      * Test 1: Proper entity cleanup
      */
     testEntityCleanup() {
-        console.log('\n=== Test 1: Entity Cleanup ===');
+        console.log("\n=== Test 1: Entity Cleanup ===");
         
         const initialCount = this.world.entities.size;
         console.log(`Initial entities: ${initialCount}`);
@@ -85,7 +85,7 @@ export class MemoryLeakTestDemo {
      * Test 2: Component duplication detection
      */
     testComponentDuplication() {
-        console.log('\n=== Test 2: Component Duplication Detection ===');
+        console.log("\n=== Test 2: Component Duplication Detection ===");
 
         const entity = this.world.createEntity();
         
@@ -109,7 +109,7 @@ export class MemoryLeakTestDemo {
      * Test 3: Entity lifecycle validation
      */
     testEntityLifecycleValidation() {
-        console.log('\n=== Test 3: Entity Lifecycle Validation ===');
+        console.log("\n=== Test 3: Entity Lifecycle Validation ===");
 
         const entity = this.world.createEntity();
         entity.addComponent(new TransformComponent(0, 0));
@@ -135,7 +135,7 @@ export class MemoryLeakTestDemo {
      * Test 4: Memory leak detection
      */
     async testMemoryLeakDetection() {
-        console.log('\n=== Test 4: Memory Leak Detection ===');
+        console.log("\n=== Test 4: Memory Leak Detection ===");
 
         // Create a scenario that might trigger leak detection
         const entities = [];
@@ -166,7 +166,7 @@ export class MemoryLeakTestDemo {
 
         // Generate report
         const report = memoryLeakDetector.generateReport();
-        console.log('Memory leak report:', report);
+        console.log("Memory leak report:", report);
 
         // Cleanup
         entities.forEach(entity => this.world.removeEntity(entity));
@@ -177,7 +177,7 @@ export class MemoryLeakTestDemo {
      * Test 5: System cleanup
      */
     testSystemCleanup() {
-        console.log('\n=== Test 5: System Cleanup ===');
+        console.log("\n=== Test 5: System Cleanup ===");
 
         const system = new MovementSystem(this.world);
         this.world.addSystem(system);
@@ -207,7 +207,7 @@ export class MemoryLeakTestDemo {
      * Run all tests
      */
     async runAllTests() {
-        console.log('🧪 Starting ECS Memory Leak Tests...\n');
+        console.log("🧪 Starting ECS Memory Leak Tests...\n");
 
         try {
             this.testEntityCleanup();
@@ -223,13 +223,13 @@ export class MemoryLeakTestDemo {
             
             this.testSystemCleanup();
             
-            console.log('\n✅ All tests completed!');
+            console.log("\n✅ All tests completed!");
             
             // Final world state
             this.world.debugPrint();
             
         } catch (error) {
-            console.error('❌ Test failed:', error);
+            console.error("❌ Test failed:", error);
         } finally {
             this.cleanup();
         }
@@ -241,7 +241,7 @@ export class MemoryLeakTestDemo {
     cleanup() {
         memoryLeakDetector.stopMonitoring();
         this.world.destroy();
-        console.log('\n🧹 Test environment cleaned up');
+        console.log("\n🧹 Test environment cleaned up");
     }
 }
 

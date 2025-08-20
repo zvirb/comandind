@@ -6,7 +6,7 @@
  * rewards to guide Q-learning and neural network training.
  */
 
-import { RewardConfig, getActionRewardConfig } from './RewardConfig.js';
+import { RewardConfig, getActionRewardConfig } from "./RewardConfig.js";
 
 export class RewardCalculator {
     constructor(options = {}) {
@@ -86,13 +86,13 @@ export class RewardCalculator {
             
             if (this.debugMode) {
                 this.rewardBreakdown.total = totalReward;
-                console.log('Reward breakdown:', this.rewardBreakdown);
+                console.log("Reward breakdown:", this.rewardBreakdown);
             }
 
             return totalReward;
 
         } catch (error) {
-            console.error('Error calculating reward:', error);
+            console.error("Error calculating reward:", error);
             return 0; // Safe fallback
         }
     }
@@ -209,15 +209,15 @@ export class RewardCalculator {
         // Target selection bonuses based on action type
         if (outcome.attackSuccessful) {
             switch (actionId) {
-                case 8: // Attack nearest
-                    reward += config.attackNearestReward;
-                    break;
-                case 9: // Attack weakest
-                    reward += config.attackWeakestReward;
-                    break;
-                case 10: // Attack strongest
-                    reward += config.attackStrongestReward;
-                    break;
+            case 8: // Attack nearest
+                reward += config.attackNearestReward;
+                break;
+            case 9: // Attack weakest
+                reward += config.attackWeakestReward;
+                break;
+            case 10: // Attack strongest
+                reward += config.attackStrongestReward;
+                break;
             }
         }
 
@@ -274,34 +274,34 @@ export class RewardCalculator {
         let reward = 0;
 
         switch (actionId) {
-            case 11: // Retreat
-                if (outcome.successfulEscape) reward += config.successfulEscape;
-                if (outcome.retreatWhenDamaged) reward += config.retreatWhenDamaged;
-                if (outcome.unnecessaryRetreat) reward += config.unnecessaryRetreat;
-                if (outcome.retreatedToSafety) reward += config.retreatToSafety;
-                if (outcome.retreatedIntoThreat) reward += config.retreatIntoThreat;
-                if (outcome.liveToFightAgain) reward += config.liveToFightAgain;
-                break;
+        case 11: // Retreat
+            if (outcome.successfulEscape) reward += config.successfulEscape;
+            if (outcome.retreatWhenDamaged) reward += config.retreatWhenDamaged;
+            if (outcome.unnecessaryRetreat) reward += config.unnecessaryRetreat;
+            if (outcome.retreatedToSafety) reward += config.retreatToSafety;
+            if (outcome.retreatedIntoThreat) reward += config.retreatIntoThreat;
+            if (outcome.liveToFightAgain) reward += config.liveToFightAgain;
+            break;
 
-            case 12: // Hold Position
-                if (outcome.defendedObjective) reward += config.defendObjective;
-                if (outcome.blockedEnemyAdvance) reward += config.blockEnemyAdvance;
-                if (outcome.maintainedWatch) reward += config.maintainWatch;
-                if (outcome.heldUnderFire) reward += config.holdWhenAttacked;
-                if (outcome.holdUnnecessarily) reward += config.holdUnnecessarily;
-                if (outcome.fortifiedPosition) reward += config.fortifyPosition;
-                break;
+        case 12: // Hold Position
+            if (outcome.defendedObjective) reward += config.defendObjective;
+            if (outcome.blockedEnemyAdvance) reward += config.blockEnemyAdvance;
+            if (outcome.maintainedWatch) reward += config.maintainWatch;
+            if (outcome.heldUnderFire) reward += config.holdWhenAttacked;
+            if (outcome.holdUnnecessarily) reward += config.holdUnnecessarily;
+            if (outcome.fortifiedPosition) reward += config.fortifyPosition;
+            break;
 
-            case 13: // Patrol
-                if (outcome.areaCovered) {
-                    reward += outcome.areaCovered * config.areaCoverage;
-                }
-                if (outcome.enemyDetected) reward += config.enemyDetection;
-                if (outcome.routeCompleted) reward += config.routeCompletion;
-                if (outcome.vigilantPatrol) reward += config.vigilantPatrol;
-                if (outcome.patrolWhenNeeded) reward += config.patrolWhenNeeded;
-                if (outcome.inefficientPatrol) reward += config.inefficientPatrol;
-                break;
+        case 13: // Patrol
+            if (outcome.areaCovered) {
+                reward += outcome.areaCovered * config.areaCoverage;
+            }
+            if (outcome.enemyDetected) reward += config.enemyDetection;
+            if (outcome.routeCompleted) reward += config.routeCompletion;
+            if (outcome.vigilantPatrol) reward += config.vigilantPatrol;
+            if (outcome.patrolWhenNeeded) reward += config.patrolWhenNeeded;
+            if (outcome.inefficientPatrol) reward += config.inefficientPatrol;
+            break;
         }
 
         return reward;
@@ -416,36 +416,36 @@ export class RewardCalculator {
         // Threat level modifiers
         if (gameState && gameState.threatLevel !== undefined) {
             switch (gameState.threatLevel) {
-                case 'none':
-                    modifier *= this.config.situational.threatMultipliers.noThreat;
-                    break;
-                case 'low':
-                    modifier *= this.config.situational.threatMultipliers.lowThreat;
-                    break;
-                case 'high':
-                    modifier *= this.config.situational.threatMultipliers.highThreat;
-                    break;
-                case 'critical':
-                    modifier *= this.config.situational.threatMultipliers.critical;
-                    break;
+            case "none":
+                modifier *= this.config.situational.threatMultipliers.noThreat;
+                break;
+            case "low":
+                modifier *= this.config.situational.threatMultipliers.lowThreat;
+                break;
+            case "high":
+                modifier *= this.config.situational.threatMultipliers.highThreat;
+                break;
+            case "critical":
+                modifier *= this.config.situational.threatMultipliers.critical;
+                break;
             }
         }
 
         // Time pressure modifiers
         if (gameState && gameState.urgencyLevel !== undefined) {
             switch (gameState.urgencyLevel) {
-                case 'relaxed':
-                    modifier *= this.config.situational.urgencyMultipliers.relaxed;
-                    break;
-                case 'moderate':
-                    modifier *= this.config.situational.urgencyMultipliers.moderate;
-                    break;
-                case 'urgent':
-                    modifier *= this.config.situational.urgencyMultipliers.urgent;
-                    break;
-                case 'critical':
-                    modifier *= this.config.situational.urgencyMultipliers.critical;
-                    break;
+            case "relaxed":
+                modifier *= this.config.situational.urgencyMultipliers.relaxed;
+                break;
+            case "moderate":
+                modifier *= this.config.situational.urgencyMultipliers.moderate;
+                break;
+            case "urgent":
+                modifier *= this.config.situational.urgencyMultipliers.urgent;
+                break;
+            case "critical":
+                modifier *= this.config.situational.urgencyMultipliers.critical;
+                break;
             }
         }
 

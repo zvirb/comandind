@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 import { 
     TransformComponent, 
     VelocityComponent, 
@@ -7,7 +7,7 @@ import {
     MovementComponent,
     CombatComponent,
     AIComponent
-} from './Component.js';
+} from "./Component.js";
 
 /**
  * Base System class
@@ -63,21 +63,21 @@ export class System {
     /**
      * Called when entity is added
      */
-    onEntityAdded(entity) {
+    onEntityAdded() {
         // Override in subclasses
     }
     
     /**
      * Called when entity is removed
      */
-    onEntityRemoved(entity) {
+    onEntityRemoved() {
         // Override in subclasses
     }
     
     /**
      * Update system logic
      */
-    update(deltaTime) {
+    update() {
         if (this.destroyed) return;
         
         // Clean up invalid entities before processing
@@ -98,7 +98,7 @@ export class System {
     /**
      * Render system (if needed)
      */
-    render(interpolation) {
+    render() {
         if (this.destroyed) return;
         
         // Clean up invalid entities before rendering
@@ -335,11 +335,9 @@ export class CombatSystem extends System {
         this.priority = 3;
     }
     
-    update(deltaTime) {
+    update() {
         for (const entity of this.entities) {
             if (!entity.active) continue;
-            
-            const transform = entity.getComponent(TransformComponent);
             const combat = entity.getComponent(CombatComponent);
             
             // Find targets in range
@@ -428,7 +426,7 @@ export class AISystem extends System {
         this.priority = 4;
     }
     
-    update(deltaTime) {
+    update() {
         for (const entity of this.entities) {
             if (!entity.active) continue;
             
@@ -443,21 +441,20 @@ export class AISystem extends System {
     
     updateBehavior(entity) {
         const ai = entity.getComponent(AIComponent);
-        const transform = entity.getComponent(TransformComponent);
         
         switch (ai.behaviorType) {
-            case 'idle':
-                this.handleIdleBehavior(entity);
-                break;
-            case 'guard':
-                this.handleGuardBehavior(entity);
-                break;
-            case 'patrol':
-                this.handlePatrolBehavior(entity);
-                break;
-            case 'attack':
-                this.handleAttackBehavior(entity);
-                break;
+        case "idle":
+            this.handleIdleBehavior(entity);
+            break;
+        case "guard":
+            this.handleGuardBehavior(entity);
+            break;
+        case "patrol":
+            this.handlePatrolBehavior(entity);
+            break;
+        case "attack":
+            this.handleAttackBehavior(entity);
+            break;
         }
     }
     
@@ -467,7 +464,7 @@ export class AISystem extends System {
         const nearbyEnemy = this.findNearbyEnemy(entity, ai.alertRadius);
         
         if (nearbyEnemy) {
-            ai.behaviorType = 'attack';
+            ai.behaviorType = "attack";
             
             // Set movement target if entity can move
             if (entity.hasComponent(MovementComponent)) {
@@ -510,7 +507,7 @@ export class AISystem extends System {
         const nearbyEnemy = this.findNearbyEnemy(entity, ai.alertRadius);
         
         if (!nearbyEnemy) {
-            ai.behaviorType = 'guard';
+            ai.behaviorType = "guard";
             return;
         }
         

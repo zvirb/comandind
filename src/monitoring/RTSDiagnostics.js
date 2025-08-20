@@ -6,7 +6,7 @@
 export class RTSDiagnostics {
     constructor() {
         this.enabled = true;
-        this.logLevel = 'info'; // debug, info, warn, error
+        this.logLevel = "info"; // debug, info, warn, error
         this.maxLogs = 1000;
         this.startTime = performance.now();
         
@@ -30,7 +30,7 @@ export class RTSDiagnostics {
         // Event listeners for error tracking
         this.setupErrorHandling();
         
-        console.log('📊 RTS Diagnostics System initialized');
+        console.log("📊 RTS Diagnostics System initialized");
     }
     
     /**
@@ -85,8 +85,8 @@ export class RTSDiagnostics {
      */
     setupErrorHandling() {
         // Global error handler
-        window.addEventListener('error', (event) => {
-            this.logError('JavaScript Error', {
+        window.addEventListener("error", (event) => {
+            this.logError("JavaScript Error", {
                 message: event.message,
                 filename: event.filename,
                 lineno: event.lineno,
@@ -96,8 +96,8 @@ export class RTSDiagnostics {
         });
         
         // Unhandled promise rejection handler
-        window.addEventListener('unhandledrejection', (event) => {
-            this.logError('Unhandled Promise Rejection', {
+        window.addEventListener("unhandledrejection", (event) => {
+            this.logError("Unhandled Promise Rejection", {
                 reason: event.reason,
                 promise: event.promise,
                 stack: event.reason && event.reason.stack ? event.reason.stack : null
@@ -105,12 +105,12 @@ export class RTSDiagnostics {
         });
         
         // Resource loading errors
-        window.addEventListener('error', (event) => {
+        window.addEventListener("error", (event) => {
             if (event.target !== window) {
-                this.logError('Resource Loading Error', {
+                this.logError("Resource Loading Error", {
                     element: event.target.tagName,
                     source: event.target.src || event.target.href,
-                    message: 'Failed to load resource'
+                    message: "Failed to load resource"
                 });
             }
         }, true);
@@ -120,21 +120,21 @@ export class RTSDiagnostics {
      * Log debug message
      */
     debug(message, data = {}) {
-        this.log('debug', message, data);
+        this.log("debug", message, data);
     }
     
     /**
      * Log info message
      */
     info(message, data = {}) {
-        this.log('info', message, data);
+        this.log("info", message, data);
     }
     
     /**
      * Log warning message
      */
     warn(message, data = {}) {
-        this.log('warn', message, data);
+        this.log("warn", message, data);
         this.diagnosticData.warningCount++;
     }
     
@@ -142,7 +142,7 @@ export class RTSDiagnostics {
      * Log error message
      */
     error(message, data = {}) {
-        this.log('error', message, data);
+        this.log("error", message, data);
         this.logError(message, data);
     }
     
@@ -150,7 +150,7 @@ export class RTSDiagnostics {
      * Log fatal error
      */
     fatal(message, data = {}) {
-        this.log('fatal', message, data);
+        this.log("fatal", message, data);
         this.diagnosticData.fatalErrors.push({
             timestamp: Date.now(),
             message,
@@ -159,7 +159,7 @@ export class RTSDiagnostics {
         });
         
         // Send fatal error to monitoring system immediately
-        this.sendCriticalAlert('FATAL_ERROR', message, data);
+        this.sendCriticalAlert("FATAL_ERROR", message, data);
     }
     
     /**
@@ -177,7 +177,7 @@ export class RTSDiagnostics {
             message,
             data,
             uptime: this.getUptime(),
-            stack: level === 'error' || level === 'fatal' ? this.getCallStack() : null
+            stack: level === "error" || level === "fatal" ? this.getCallStack() : null
         };
         
         // Add to logs array
@@ -296,7 +296,7 @@ export class RTSDiagnostics {
                 loading: window.gameState ? window.gameState.isLoading : false
             };
         } catch (error) {
-            return { error: 'Failed to capture game state' };
+            return { error: "Failed to capture game state" };
         }
     }
     
@@ -305,16 +305,16 @@ export class RTSDiagnostics {
      */
     isSignificantEvent(eventType) {
         const significantEvents = [
-            'unit_created',
-            'building_constructed',
-            'unit_destroyed',
-            'building_destroyed',
-            'resource_depleted',
-            'player_defeated',
-            'game_won',
-            'game_lost',
-            'connection_lost',
-            'critical_error'
+            "unit_created",
+            "building_constructed",
+            "unit_destroyed",
+            "building_destroyed",
+            "resource_depleted",
+            "player_defeated",
+            "game_won",
+            "game_lost",
+            "connection_lost",
+            "critical_error"
         ];
         
         return significantEvents.includes(eventType);
@@ -358,7 +358,7 @@ export class RTSDiagnostics {
      * Check if should log based on level
      */
     shouldLog(level) {
-        const levels = ['debug', 'info', 'warn', 'error', 'fatal'];
+        const levels = ["debug", "info", "warn", "error", "fatal"];
         const currentLevelIndex = levels.indexOf(this.logLevel);
         const messageLevelIndex = levels.indexOf(level);
         
@@ -375,21 +375,21 @@ export class RTSDiagnostics {
         const logMessage = `[${timeStr}] [${level.toUpperCase()}] ${message}`;
         
         switch (level) {
-            case 'debug':
-                console.debug(logMessage, data);
-                break;
-            case 'info':
-                console.info(logMessage, data);
-                break;
-            case 'warn':
-                console.warn(logMessage, data);
-                break;
-            case 'error':
-            case 'fatal':
-                console.error(logMessage, data);
-                break;
-            default:
-                console.log(logMessage, data);
+        case "debug":
+            console.debug(logMessage, data);
+            break;
+        case "info":
+            console.info(logMessage, data);
+            break;
+        case "warn":
+            console.warn(logMessage, data);
+            break;
+        case "error":
+        case "fatal":
+            console.error(logMessage, data);
+            break;
+        default:
+            console.log(logMessage, data);
         }
     }
     
@@ -416,7 +416,7 @@ export class RTSDiagnostics {
                 message,
                 data,
                 timestamp: Date.now(),
-                severity: 'critical'
+                severity: "critical"
             });
         }
     }
@@ -447,18 +447,18 @@ export class RTSDiagnostics {
             error => Date.now() - error.timestamp < 300000 // 5 minutes
         );
         
-        let status = 'healthy';
+        let status = "healthy";
         let issues = [];
         
         if (hasRecentFatal) {
-            status = 'critical';
-            issues.push('Recent fatal errors detected');
+            status = "critical";
+            issues.push("Recent fatal errors detected");
         } else if (errorRate > 1) {
-            status = 'degraded';
+            status = "degraded";
             issues.push(`High error rate: ${errorRate.toFixed(2)} errors/minute`);
         } else if (this.diagnosticData.warningCount > 10) {
-            status = 'warning';
-            issues.push('Multiple warnings detected');
+            status = "warning";
+            issues.push("Multiple warnings detected");
         }
         
         return {
@@ -479,17 +479,17 @@ export class RTSDiagnostics {
         
         if (health.errorRate > 0.5) {
             recommendations.push({
-                type: 'stability',
-                priority: 'high',
-                message: 'High error rate detected. Review recent errors and implement fixes.'
+                type: "stability",
+                priority: "high",
+                message: "High error rate detected. Review recent errors and implement fixes."
             });
         }
         
         if (this.diagnosticData.fatalErrors.length > 0) {
             recommendations.push({
-                type: 'critical',
-                priority: 'critical',
-                message: 'Fatal errors detected. Investigate and resolve immediately.'
+                type: "critical",
+                priority: "critical",
+                message: "Fatal errors detected. Investigate and resolve immediately."
             });
         }
         
@@ -499,9 +499,9 @@ export class RTSDiagnostics {
         
         if (recentPerformanceIssues > 5) {
             recommendations.push({
-                type: 'performance',
-                priority: 'medium',
-                message: 'Multiple performance issues detected. Consider optimization.'
+                type: "performance",
+                priority: "medium",
+                message: "Multiple performance issues detected. Consider optimization."
             });
         }
         
@@ -516,16 +516,16 @@ export class RTSDiagnostics {
             metadata: {
                 exportTime: new Date().toISOString(),
                 uptime: this.getUptime(),
-                version: '1.0.0'
+                version: "1.0.0"
             },
             diagnostics: this.generateDiagnosticReport()
         };
         
         // Create downloadable file
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `rts-diagnostics-${Date.now()}.json`;
         document.body.appendChild(a);
@@ -533,7 +533,7 @@ export class RTSDiagnostics {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        console.log('📊 Diagnostic data exported');
+        console.log("📊 Diagnostic data exported");
     }
     
     /**
@@ -549,19 +549,19 @@ export class RTSDiagnostics {
         this.diagnosticData.fatalErrors = [];
         this.diagnosticData.lastError = null;
         
-        console.log('📊 Diagnostic data cleared');
+        console.log("📊 Diagnostic data cleared");
     }
     
     /**
      * Set log level
      */
     setLogLevel(level) {
-        const validLevels = ['debug', 'info', 'warn', 'error', 'fatal'];
+        const validLevels = ["debug", "info", "warn", "error", "fatal"];
         if (validLevels.includes(level)) {
             this.logLevel = level;
             console.log(`📊 Log level set to: ${level}`);
         } else {
-            console.error('📊 Invalid log level:', level);
+            console.error("📊 Invalid log level:", level);
         }
     }
     
@@ -570,7 +570,7 @@ export class RTSDiagnostics {
      */
     setEnabled(enabled) {
         this.enabled = enabled;
-        console.log(`📊 RTS Diagnostics ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`📊 RTS Diagnostics ${enabled ? "enabled" : "disabled"}`);
     }
     
     /**

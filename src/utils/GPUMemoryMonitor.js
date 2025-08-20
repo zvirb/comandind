@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 /**
  * GPU Memory Monitor - Advanced WebGL memory tracking and optimization
@@ -46,7 +46,7 @@ export class GPUMemoryMonitor {
      */
     initializeMonitoring() {
         if (!this.gl) {
-            console.warn('⚠️ WebGL context not available for GPU monitoring');
+            console.warn("⚠️ WebGL context not available for GPU monitoring");
             return;
         }
         
@@ -55,19 +55,19 @@ export class GPUMemoryMonitor {
         this.memoryStats.maxTextureUnits = this.gl.getParameter(this.gl.MAX_TEXTURE_IMAGE_UNITS);
         
         // Check for memory-related extensions
-        const memoryExt = this.gl.getExtension('WEBGL_debug_renderer_info');
+        const memoryExt = this.gl.getExtension("WEBGL_debug_renderer_info");
         if (memoryExt) {
-            this.memoryStats.extensions.add('WEBGL_debug_renderer_info');
+            this.memoryStats.extensions.add("WEBGL_debug_renderer_info");
             this.gpuVendor = this.gl.getParameter(memoryExt.UNMASKED_VENDOR_WEBGL);
             this.gpuRenderer = this.gl.getParameter(memoryExt.UNMASKED_RENDERER_WEBGL);
         }
         
         // Check for other useful extensions
         const extensions = [
-            'WEBGL_lose_context',
-            'OES_vertex_array_object',
-            'OES_element_index_uint',
-            'EXT_texture_filter_anisotropic'
+            "WEBGL_lose_context",
+            "OES_vertex_array_object",
+            "OES_element_index_uint",
+            "EXT_texture_filter_anisotropic"
         ];
         
         extensions.forEach(ext => {
@@ -76,7 +76,7 @@ export class GPUMemoryMonitor {
             }
         });
         
-        console.log('🖥️ GPU Monitor initialized:', {
+        console.log("🖥️ GPU Monitor initialized:", {
             vendor: this.gpuVendor,
             renderer: this.gpuRenderer,
             maxTextureSize: this.memoryStats.maxTextureSize,
@@ -158,12 +158,12 @@ export class GPUMemoryMonitor {
      * Check memory pressure and trigger callbacks
      */
     checkMemoryPressure(pressure) {
-        let level = 'low';
+        let level = "low";
         
         if (pressure >= this.memoryPressureThresholds.high) {
-            level = 'high';
+            level = "high";
         } else if (pressure >= this.memoryPressureThresholds.medium) {
-            level = 'medium';
+            level = "medium";
         }
         
         // Trigger callbacks for this pressure level and higher
@@ -173,7 +173,7 @@ export class GPUMemoryMonitor {
                 try {
                     callback(pressure, level);
                 } catch (error) {
-                    console.error('Memory pressure callback error:', error);
+                    console.error("Memory pressure callback error:", error);
                 }
             });
         }
@@ -205,7 +205,7 @@ export class GPUMemoryMonitor {
     forceGPUCleanup() {
         if (!this.renderer) return;
         
-        console.log('🧹 Forcing GPU resource cleanup...');
+        console.log("🧹 Forcing GPU resource cleanup...");
         
         // Force PIXI garbage collection
         if (this.renderer.textureGC) {
@@ -235,12 +235,12 @@ export class GPUMemoryMonitor {
             current: {
                 textureMemoryMB: (this.memoryStats.textureMemory / 1024 / 1024).toFixed(1),
                 activeTextures: this.memoryStats.activeTextures,
-                memoryPressure: (memoryPressure * 100).toFixed(1) + '%',
+                memoryPressure: (memoryPressure * 100).toFixed(1) + "%",
                 drawCalls: this.memoryStats.totalDrawCalls
             },
             gpu: {
-                vendor: this.gpuVendor || 'Unknown',
-                renderer: this.gpuRenderer || 'Unknown',
+                vendor: this.gpuVendor || "Unknown",
+                renderer: this.gpuRenderer || "Unknown",
                 maxTextureSize: this.memoryStats.maxTextureSize,
                 maxTextureUnits: this.memoryStats.maxTextureUnits,
                 webGLVersion: this.isWebGL2 ? 2 : 1,
@@ -256,7 +256,7 @@ export class GPUMemoryMonitor {
      */
     getPerformanceTrends() {
         if (this.performanceHistory.length < 2) {
-            return { trend: 'insufficient_data' };
+            return { trend: "insufficient_data" };
         }
 
         const recent = this.performanceHistory.slice(-10);
@@ -276,30 +276,30 @@ export class GPUMemoryMonitor {
      * Calculate trend direction for a data series
      */
     calculateTrend(data) {
-        if (data.length < 2) return 'stable';
+        if (data.length < 2) return "stable";
 
         const first = data[0];
         const last = data[data.length - 1];
         const change = (last - first) / Math.max(first, 1);
 
-        if (change > 0.1) return 'increasing';
-        if (change < -0.1) return 'decreasing';
-        return 'stable';
+        if (change > 0.1) return "increasing";
+        if (change < -0.1) return "decreasing";
+        return "stable";
     }
 
     /**
      * Get optimization recommendations
      */
     getOptimizationRecommendation(memoryTrend, pressureTrend) {
-        if (pressureTrend === 'increasing') {
-            return 'Consider reducing texture quality or implementing more aggressive cleanup';
+        if (pressureTrend === "increasing") {
+            return "Consider reducing texture quality or implementing more aggressive cleanup";
         }
 
-        if (memoryTrend === 'increasing') {
-            return 'Monitor texture usage and consider implementing texture atlasing';
+        if (memoryTrend === "increasing") {
+            return "Monitor texture usage and consider implementing texture atlasing";
         }
 
-        return 'Memory usage is stable - no immediate action required';
+        return "Memory usage is stable - no immediate action required";
     }
 
     /**
@@ -313,7 +313,7 @@ export class GPUMemoryMonitor {
      * Handle WebGL context loss
      */
     handleContextLoss() {
-        console.error('🚨 WebGL context lost!');
+        console.error("🚨 WebGL context lost!");
 
         // Clear all memory tracking
         this.memoryStats.textureMemory = 0;
@@ -324,9 +324,9 @@ export class GPUMemoryMonitor {
         for (const callbacks of this.memoryPressureCallbacks.values()) {
             callbacks.forEach(callback => {
                 try {
-                    callback(1.0, 'context_lost');
+                    callback(1.0, "context_lost");
                 } catch (error) {
-                    console.error('Context loss callback error:', error);
+                    console.error("Context loss callback error:", error);
                 }
             });
         }
@@ -360,7 +360,7 @@ export class GPUMemoryMonitor {
             this.monitoringInterval = null;
         }
 
-        console.log('⏹️ Stopped GPU memory monitoring');
+        console.log("⏹️ Stopped GPU memory monitoring");
     }
 
     /**
@@ -375,7 +375,7 @@ export class GPUMemoryMonitor {
         // Clear history
         this.performanceHistory = [];
 
-        console.log('🔚 GPU Memory Monitor destroyed');
+        console.log("🔚 GPU Memory Monitor destroyed");
     }
 }
 

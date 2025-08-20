@@ -1,8 +1,8 @@
-import { OptimizedSelectionSystem } from './OptimizedSelectionSystem.js';
-import { HarvesterAISystem } from './HarvesterAISystem.js';
-import { ResourceNodeComponent, HarvesterComponent, EconomyComponent } from './ResourceComponents.js';
-import { QuadTree } from '../utils/QuadTree.js';
-import { PerformanceValidator } from '../utils/PerformanceValidator.js';
+import { OptimizedSelectionSystem } from "./OptimizedSelectionSystem.js";
+import { HarvesterAISystem } from "./HarvesterAISystem.js";
+import { ResourceNodeComponent, HarvesterComponent, EconomyComponent } from "./ResourceComponents.js";
+import { QuadTree } from "../utils/QuadTree.js";
+import { PerformanceValidator } from "../utils/PerformanceValidator.js";
 
 /**
  * Backend System Integrator - Coordinates all optimized backend systems
@@ -32,7 +32,7 @@ export class BackendSystemIntegrator {
             performanceHistory: []
         };
         
-        console.log('🔧 BackendSystemIntegrator created');
+        console.log("🔧 BackendSystemIntegrator created");
     }
     
     /**
@@ -40,7 +40,7 @@ export class BackendSystemIntegrator {
      */
     async initialize() {
         try {
-            console.log('🚀 Initializing optimized backend systems...');
+            console.log("🚀 Initializing optimized backend systems...");
             
             // 1. Create economy manager
             await this.initializeEconomyManager();
@@ -61,12 +61,12 @@ export class BackendSystemIntegrator {
             await this.setupSystemIntegration();
             
             this.initialized = true;
-            console.log('✅ All optimized backend systems initialized successfully');
+            console.log("✅ All optimized backend systems initialized successfully");
             
             return true;
             
         } catch (error) {
-            console.error('❌ Failed to initialize backend systems:', error);
+            console.error("❌ Failed to initialize backend systems:", error);
             return false;
         }
     }
@@ -75,7 +75,7 @@ export class BackendSystemIntegrator {
      * Initialize economy management system
      */
     async initializeEconomyManager() {
-        console.log('💰 Initializing economy manager...');
+        console.log("💰 Initializing economy manager...");
 
         // Create global economy entity
         const economyEntity = this.world.createEntity();
@@ -85,14 +85,14 @@ export class BackendSystemIntegrator {
         // Store reference for easy access
         this.world.economyEntity = economyEntity;
 
-        console.log('✅ Economy manager initialized with 2000 starting credits');
+        console.log("✅ Economy manager initialized with 2000 starting credits");
     }
 
     /**
      * Initialize optimized selection system
      */
     async initializeOptimizedSelection() {
-        console.log('🎯 Initializing optimized selection system...');
+        console.log("🎯 Initializing optimized selection system...");
 
         this.optimizedSelectionSystem = new OptimizedSelectionSystem(
             this.world,
@@ -101,71 +101,71 @@ export class BackendSystemIntegrator {
             this.stage
         );
 
-        console.log('✅ Optimized selection system initialized with QuadTree spatial partitioning');
+        console.log("✅ Optimized selection system initialized with QuadTree spatial partitioning");
     }
 
     /**
      * Initialize harvester AI system
      */
     async initializeHarvesterAI() {
-        console.log('🤖 Initializing harvester AI system...');
+        console.log("🤖 Initializing harvester AI system...");
 
         this.harvesterAISystem = new HarvesterAISystem(
             this.world,
             this.economyManager
         );
 
-        console.log('✅ Harvester AI system initialized with spatial resource lookup');
+        console.log("✅ Harvester AI system initialized with spatial resource lookup");
     }
 
     /**
      * Register all systems with the world
      */
     async registerSystems() {
-        console.log('📋 Registering systems with world...');
+        console.log("📋 Registering systems with world...");
 
         // Add systems to world
         if (this.optimizedSelectionSystem) {
             this.world.addSystem(this.optimizedSelectionSystem);
-            console.log('  ✓ Optimized selection system registered');
+            console.log("  ✓ Optimized selection system registered");
         }
 
         if (this.harvesterAISystem) {
             this.world.addSystem(this.harvesterAISystem);
-            console.log('  ✓ Harvester AI system registered');
+            console.log("  ✓ Harvester AI system registered");
         }
 
         this.systemsRegistered = true;
-        console.log('✅ All systems registered with world');
+        console.log("✅ All systems registered with world");
     }
 
     /**
      * Initialize performance validator
      */
     async initializePerformanceValidator() {
-        console.log('📊 Initializing performance validator...');
+        console.log("📊 Initializing performance validator...");
 
         this.performanceValidator = new PerformanceValidator();
 
-        console.log('✅ Performance validator ready for testing');
+        console.log("✅ Performance validator ready for testing");
     }
 
     /**
      * Setup integration between systems
      */
     async setupSystemIntegration() {
-        console.log('🔗 Setting up system integration...');
+        console.log("🔗 Setting up system integration...");
 
         // Bind economy manager to harvester AI
         if (this.harvesterAISystem && this.economyManager) {
             this.harvesterAISystem.economyManager = this.economyManager;
-            console.log('  ✓ Economy manager linked to harvester AI');
+            console.log("  ✓ Economy manager linked to harvester AI");
         }
 
         // Setup performance monitoring hooks
         this.setupPerformanceMonitoring();
 
-        console.log('✅ System integration complete');
+        console.log("✅ System integration complete");
     }
 
     /**
@@ -180,13 +180,13 @@ export class BackendSystemIntegrator {
                 const result = originalGetEntityAtPosition(x, y);
                 const endTime = performance.now();
 
-                this.recordPerformanceMetric('selection', endTime - startTime);
+                this.recordPerformanceMetric("selection", endTime - startTime);
                 return result;
             };
         }
 
         // Monitor pathfinding system performance if available
-        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === 'PathfindingSystem');
+        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === "PathfindingSystem");
         if (pathfindingSystem && pathfindingSystem.calculatePath) {
             const originalCalculatePath = pathfindingSystem.calculatePath.bind(pathfindingSystem);
             pathfindingSystem.calculatePath = (entity) => {
@@ -194,7 +194,7 @@ export class BackendSystemIntegrator {
                 const result = originalCalculatePath(entity);
                 const endTime = performance.now();
 
-                this.recordPerformanceMetric('pathfinding', endTime - startTime);
+                this.recordPerformanceMetric("pathfinding", endTime - startTime);
                 return result;
             };
         }
@@ -221,7 +221,7 @@ export class BackendSystemIntegrator {
      * Create test scenario with entities
      */
     createTestScenario() {
-        console.log('🎭 Creating test scenario...');
+        console.log("🎭 Creating test scenario...");
 
         const entities = {
             harvesters: [],
@@ -231,7 +231,7 @@ export class BackendSystemIntegrator {
 
         try {
             // Import required components
-            const { TransformComponent, SelectableComponent, UnitComponent, BuildingComponent, MovementComponent } = require('./Component.js');
+            const { TransformComponent, SelectableComponent, UnitComponent, BuildingComponent, MovementComponent } = require("./Component.js");
 
             // Create resource nodes
             for (let i = 0; i < 10; i++) {
@@ -241,7 +241,7 @@ export class BackendSystemIntegrator {
                 const y = 200 + Math.floor(i / 5) * 300;
 
                 resourceEntity.addComponent(new TransformComponent(x, y));
-                resourceEntity.addComponent(new ResourceNodeComponent('tiberium', 1000, 25));
+                resourceEntity.addComponent(new ResourceNodeComponent("tiberium", 1000, 25));
                 resourceEntity.addComponent(new SelectableComponent());
 
                 entities.resourceNodes.push(resourceEntity);
@@ -256,7 +256,7 @@ export class BackendSystemIntegrator {
                 const y = 600;
 
                 refineryEntity.addComponent(new TransformComponent(x, y));
-                refineryEntity.addComponent(new BuildingComponent('refinery', 'player', 2000));
+                refineryEntity.addComponent(new BuildingComponent("refinery", "player", 2000));
                 refineryEntity.addComponent(new SelectableComponent());
 
                 entities.refineries.push(refineryEntity);
@@ -271,7 +271,7 @@ export class BackendSystemIntegrator {
                 const y = 500;
 
                 harvesterEntity.addComponent(new TransformComponent(x, y));
-                harvesterEntity.addComponent(new UnitComponent('harvester', 'player', 1400));
+                harvesterEntity.addComponent(new UnitComponent("harvester", "player", 1400));
                 harvesterEntity.addComponent(new HarvesterComponent(700, 3000));
                 harvesterEntity.addComponent(new MovementComponent());
                 harvesterEntity.addComponent(new SelectableComponent());
@@ -283,7 +283,7 @@ export class BackendSystemIntegrator {
             console.log(`✅ Test scenario created: ${entities.resourceNodes.length} resource nodes, ${entities.refineries.length} refineries, ${entities.harvesters.length} harvesters`);
 
         } catch (error) {
-            console.warn('⚠️ Could not create full test scenario (components may not be available):', error.message);
+            console.warn("⚠️ Could not create full test scenario (components may not be available):", error.message);
 
             // Create minimal test entities
             for (let i = 0; i < 50; i++) {
@@ -293,7 +293,7 @@ export class BackendSystemIntegrator {
                 entities.harvesters.push(entity);
             }
 
-            console.log('✅ Created minimal test scenario with 50 test entities');
+            console.log("✅ Created minimal test scenario with 50 test entities");
         }
 
         return entities;
@@ -304,11 +304,11 @@ export class BackendSystemIntegrator {
      */
     async runPerformanceValidation() {
         if (!this.performanceValidator) {
-            console.error('❌ Performance validator not initialized');
+            console.error("❌ Performance validator not initialized");
             return false;
         }
 
-        console.log('🧪 Running performance validation tests...');
+        console.log("🧪 Running performance validation tests...");
 
         // Create test scenario
         const testEntities = this.createTestScenario();
@@ -317,7 +317,7 @@ export class BackendSystemIntegrator {
         this.performanceValidator.startValidation(
             this.world,
             this.optimizedSelectionSystem,
-            this.world.systems.find(s => s.constructor.name === 'PathfindingSystem')
+            this.world.systems.find(s => s.constructor.name === "PathfindingSystem")
         );
 
         // Wait for validation to complete
@@ -376,8 +376,8 @@ export class BackendSystemIntegrator {
     getPerformanceStats() {
         const recent = this.performanceMonitor.performanceHistory.slice(-50); // Last 50 entries
 
-        const selectionTimes = recent.filter(entry => entry.type === 'selection').map(entry => entry.time);
-        const pathfindingTimes = recent.filter(entry => entry.type === 'pathfinding').map(entry => entry.time);
+        const selectionTimes = recent.filter(entry => entry.type === "selection").map(entry => entry.time);
+        const pathfindingTimes = recent.filter(entry => entry.type === "pathfinding").map(entry => entry.time);
 
         return {
             recentEntries: recent.length,
@@ -421,7 +421,7 @@ export class BackendSystemIntegrator {
     reportPerformanceStatus() {
         const stats = this.getSystemStats();
 
-        console.log('📊 Performance Status Report:');
+        console.log("📊 Performance Status Report:");
         console.log(`  Entities: ${stats.entityCount}`);
 
         if (stats.selection) {
@@ -442,7 +442,7 @@ export class BackendSystemIntegrator {
      * Cleanup all systems
      */
     destroy() {
-        console.log('🗑️ Destroying backend system integrator...');
+        console.log("🗑️ Destroying backend system integrator...");
 
         if (this.optimizedSelectionSystem) {
             this.optimizedSelectionSystem.destroy();
@@ -454,6 +454,6 @@ export class BackendSystemIntegrator {
 
         this.performanceMonitor.performanceHistory = [];
 
-        console.log('✅ Backend system integrator destroyed');
+        console.log("✅ Backend system integrator destroyed");
     }
 }

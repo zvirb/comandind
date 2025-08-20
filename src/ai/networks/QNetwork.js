@@ -3,8 +3,8 @@
  * Provides Q-value approximation for reinforcement learning
  */
 
-import * as tf from '@tensorflow/tfjs';
-import { NetworkConfig } from './NetworkConfig.js';
+import * as tf from "@tensorflow/tfjs";
+import { NetworkConfig } from "./NetworkConfig.js";
 
 export class QNetwork {
     constructor(config = NetworkConfig) {
@@ -36,29 +36,29 @@ export class QNetwork {
                         units: this.config.HIDDEN_SIZE,
                         activation: this.config.ACTIVATION,
                         kernelRegularizer: tf.regularizers.l2({ l2: this.config.L2_REGULARIZATION }),
-                        name: 'hidden_layer'
+                        name: "hidden_layer"
                     }),
                     
                     // Dropout for regularization
                     tf.layers.dropout({
                         rate: this.config.DROPOUT_RATE,
-                        name: 'dropout_layer'
+                        name: "dropout_layer"
                     }),
                     
                     // Output layer (Q-values)
                     tf.layers.dense({
                         units: this.config.OUTPUT_SIZE,
                         activation: this.config.OUTPUT_ACTIVATION,
-                        name: 'output_layer'
+                        name: "output_layer"
                     })
                 ]
             });
             
             this.compileModel();
-            console.log('Q-Network model initialized successfully');
+            console.log("Q-Network model initialized successfully");
             
         } catch (error) {
-            console.error('Failed to initialize Q-Network model:', error);
+            console.error("Failed to initialize Q-Network model:", error);
             throw error;
         }
     }
@@ -68,7 +68,7 @@ export class QNetwork {
      */
     initializeTargetModel() {
         if (!this.model) {
-            throw new Error('Main model must be initialized before target model');
+            throw new Error("Main model must be initialized before target model");
         }
         
         try {
@@ -80,16 +80,16 @@ export class QNetwork {
                         units: this.config.HIDDEN_SIZE,
                         activation: this.config.ACTIVATION,
                         kernelRegularizer: tf.regularizers.l2({ l2: this.config.L2_REGULARIZATION }),
-                        name: 'target_hidden_layer'
+                        name: "target_hidden_layer"
                     }),
                     tf.layers.dropout({
                         rate: this.config.DROPOUT_RATE,
-                        name: 'target_dropout_layer'
+                        name: "target_dropout_layer"
                     }),
                     tf.layers.dense({
                         units: this.config.OUTPUT_SIZE,
                         activation: this.config.OUTPUT_ACTIVATION,
-                        name: 'target_output_layer'
+                        name: "target_output_layer"
                     })
                 ]
             });
@@ -101,10 +101,10 @@ export class QNetwork {
             
             // Copy weights from main model
             this.updateTargetNetwork();
-            console.log('Target network initialized successfully');
+            console.log("Target network initialized successfully");
             
         } catch (error) {
-            console.error('Failed to initialize target network:', error);
+            console.error("Failed to initialize target network:", error);
             throw error;
         }
     }
@@ -114,17 +114,17 @@ export class QNetwork {
      */
     compileModel() {
         if (!this.model) {
-            throw new Error('Model must be initialized before compilation');
+            throw new Error("Model must be initialized before compilation");
         }
         
         this.model.compile({
             optimizer: tf.train.adam(this.config.LEARNING_RATE),
             loss: this.config.LOSS_FUNCTION,
-            metrics: ['mse']
+            metrics: ["mse"]
         });
         
         this.isCompiled = true;
-        console.log('Model compiled successfully');
+        console.log("Model compiled successfully");
     }
     
     /**
@@ -135,7 +135,7 @@ export class QNetwork {
      */
     predict(states, training = false) {
         if (!this.model || !this.isCompiled) {
-            throw new Error('Model must be compiled before prediction');
+            throw new Error("Model must be compiled before prediction");
         }
         
         const startTime = performance.now();
@@ -158,7 +158,7 @@ export class QNetwork {
             return qValues;
             
         } catch (error) {
-            console.error('Prediction failed:', error);
+            console.error("Prediction failed:", error);
             throw error;
         }
     }
@@ -170,7 +170,7 @@ export class QNetwork {
      */
     predictTarget(states) {
         if (!this.targetModel) {
-            throw new Error('Target model must be initialized');
+            throw new Error("Target model must be initialized");
         }
         
         try {
@@ -184,7 +184,7 @@ export class QNetwork {
             return targetQValues;
             
         } catch (error) {
-            console.error('Target prediction failed:', error);
+            console.error("Target prediction failed:", error);
             throw error;
         }
     }
@@ -196,7 +196,7 @@ export class QNetwork {
      */
     async update(batch) {
         if (!this.model || !this.isCompiled) {
-            throw new Error('Model must be compiled before training');
+            throw new Error("Model must be compiled before training");
         }
         
         const { states, actions, rewards, nextStates, dones } = batch;
@@ -260,7 +260,7 @@ export class QNetwork {
             };
             
         } catch (error) {
-            console.error('Training update failed:', error);
+            console.error("Training update failed:", error);
             throw error;
         }
     }
@@ -270,16 +270,16 @@ export class QNetwork {
      */
     updateTargetNetwork() {
         if (!this.model || !this.targetModel) {
-            throw new Error('Both models must be initialized');
+            throw new Error("Both models must be initialized");
         }
         
         try {
             const weights = this.model.getWeights();
             this.targetModel.setWeights(weights);
-            console.log('Target network updated');
+            console.log("Target network updated");
             
         } catch (error) {
-            console.error('Failed to update target network:', error);
+            console.error("Failed to update target network:", error);
             throw error;
         }
     }
@@ -291,16 +291,16 @@ export class QNetwork {
      */
     async saveModel(path = this.config.MODEL_SAVE_PATH) {
         if (!this.model) {
-            throw new Error('Model must be initialized before saving');
+            throw new Error("Model must be initialized before saving");
         }
         
         try {
             const saveResult = await this.model.save(`localstorage://${path}`);
-            console.log('Model saved successfully:', saveResult);
+            console.log("Model saved successfully:", saveResult);
             return saveResult;
             
         } catch (error) {
-            console.error('Failed to save model:', error);
+            console.error("Failed to save model:", error);
             throw error;
         }
     }
@@ -315,10 +315,10 @@ export class QNetwork {
             this.model = await tf.loadLayersModel(`localstorage://${path}`);
             this.compileModel();
             this.initializeTargetModel();
-            console.log('Model loaded successfully');
+            console.log("Model loaded successfully");
             
         } catch (error) {
-            console.error('Failed to load model:', error);
+            console.error("Failed to load model:", error);
             throw error;
         }
     }
@@ -329,7 +329,7 @@ export class QNetwork {
      */
     getModelInfo() {
         if (!this.model) {
-            return { error: 'Model not initialized' };
+            return { error: "Model not initialized" };
         }
         
         const memoryInfo = tf.memory();
@@ -367,7 +367,7 @@ export class QNetwork {
         }
         
         this.isCompiled = false;
-        console.log('QNetwork resources disposed');
+        console.log("QNetwork resources disposed");
     }
     
     /**

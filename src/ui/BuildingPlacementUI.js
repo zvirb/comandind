@@ -16,7 +16,7 @@
  * - Placement animation effects
  */
 
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 export class BuildingPlacementUI {
     constructor(app, camera, world, canvasElement = null, options = {}) {
@@ -52,19 +52,19 @@ export class BuildingPlacementUI {
         
         // Containers for UI elements
         this.placementContainer = new PIXI.Container();
-        this.placementContainer.name = 'building-placement';
+        this.placementContainer.name = "building-placement";
         this.placementContainer.sortableChildren = true;
         
         this.gridContainer = new PIXI.Container();
-        this.gridContainer.name = 'placement-grid';
+        this.gridContainer.name = "placement-grid";
         this.gridContainer.zIndex = 5;
         
         this.ghostContainer = new PIXI.Container();
-        this.ghostContainer.name = 'placement-ghost';
+        this.ghostContainer.name = "placement-ghost";
         this.ghostContainer.zIndex = 10;
         
         this.overlayContainer = new PIXI.Container();
-        this.overlayContainer.name = 'placement-overlay';
+        this.overlayContainer.name = "placement-overlay";
         this.overlayContainer.zIndex = 15;
         
         // Add containers in order
@@ -100,7 +100,7 @@ export class BuildingPlacementUI {
      * Initialize the building placement UI
      */
     init() {
-        console.log('🏗️  Initializing BuildingPlacementUI...');
+        console.log("🏗️  Initializing BuildingPlacementUI...");
         
         // Load building definitions
         this.loadBuildingData();
@@ -111,7 +111,7 @@ export class BuildingPlacementUI {
         // Initially hidden
         this.placementContainer.visible = false;
         
-        console.log('✅ BuildingPlacementUI initialized');
+        console.log("✅ BuildingPlacementUI initialized");
     }
     
     /**
@@ -120,7 +120,7 @@ export class BuildingPlacementUI {
     async loadBuildingData() {
         try {
             // Load building definitions from assets
-            const response = await fetch('/public/assets/cnc-data/buildings.json');
+            const response = await fetch("/public/assets/cnc-data/buildings.json");
             const buildingData = await response.json();
             
             // Process building data
@@ -133,43 +133,43 @@ export class BuildingPlacementUI {
                     cost: data.cost || 100,
                     power: data.power || 0,
                     powerRequired: data.powerRequired || 0,
-                    terrain: data.terrain || ['clear'],
-                    spriteSheet: data.spriteSheet || 'buildings',
+                    terrain: data.terrain || ["clear"],
+                    spriteSheet: data.spriteSheet || "buildings",
                     spriteFrame: data.spriteFrame || buildingId,
                     buildTime: data.buildTime || 1000,
                     prerequisites: data.prerequisites || [],
-                    description: data.description || ''
+                    description: data.description || ""
                 });
             }
             
             console.log(`📋 Loaded ${this.buildingDatabase.size} building definitions`);
             
         } catch (error) {
-            console.warn('⚠️ Failed to load building data, using defaults:', error);
+            console.warn("⚠️ Failed to load building data, using defaults:", error);
             
             // Fallback building data
-            this.buildingDatabase.set('barracks', {
-                id: 'barracks',
-                name: 'Barracks',
+            this.buildingDatabase.set("barracks", {
+                id: "barracks",
+                name: "Barracks",
                 width: 2,
                 height: 2,
                 cost: 300,
                 power: -10,
-                terrain: ['clear'],
-                spriteSheet: 'buildings',
-                spriteFrame: 'barracks'
+                terrain: ["clear"],
+                spriteSheet: "buildings",
+                spriteFrame: "barracks"
             });
             
-            this.buildingDatabase.set('power-plant', {
-                id: 'power-plant',
-                name: 'Power Plant',
+            this.buildingDatabase.set("power-plant", {
+                id: "power-plant",
+                name: "Power Plant",
                 width: 2,
                 height: 2,
                 cost: 200,
                 power: 100,
-                terrain: ['clear'],
-                spriteSheet: 'buildings',
-                spriteFrame: 'power-plant'
+                terrain: ["clear"],
+                spriteSheet: "buildings",
+                spriteFrame: "power-plant"
             });
         }
     }
@@ -201,25 +201,25 @@ export class BuildingPlacementUI {
         // Keyboard handlers
         const keyHandler = (event) => {
             if (this.isPlacementMode) {
-                if (event.key === 'Escape') {
+                if (event.key === "Escape") {
                     this.cancelPlacement();
-                } else if (event.key === 'r' || event.key === 'R') {
+                } else if (event.key === "r" || event.key === "R") {
                     this.rotateBuildingPreview();
                 }
             }
         };
         
         // Register handlers
-        if (typeof window !== 'undefined') {
-            window.addEventListener('mousemove', mouseMoveHandler);
-            window.addEventListener('mousedown', mouseClickHandler);
-            window.addEventListener('keydown', keyHandler);
+        if (typeof window !== "undefined") {
+            window.addEventListener("mousemove", mouseMoveHandler);
+            window.addEventListener("mousedown", mouseClickHandler);
+            window.addEventListener("keydown", keyHandler);
             
             // Store for cleanup
             this.eventHandlers = [
-                { type: 'mousemove', handler: mouseMoveHandler },
-                { type: 'mousedown', handler: mouseClickHandler },
-                { type: 'keydown', handler: keyHandler }
+                { type: "mousemove", handler: mouseMoveHandler },
+                { type: "mousedown", handler: mouseClickHandler },
+                { type: "keydown", handler: keyHandler }
             ];
         }
     }
@@ -255,8 +255,8 @@ export class BuildingPlacementUI {
         }
         
         // Change cursor
-        if (typeof document !== 'undefined') {
-            document.body.style.cursor = 'crosshair';
+        if (typeof document !== "undefined") {
+            document.body.style.cursor = "crosshair";
         }
         
         return true;
@@ -268,7 +268,7 @@ export class BuildingPlacementUI {
     cancelPlacement() {
         if (!this.isPlacementMode) return;
         
-        console.log('🚫 Canceling building placement');
+        console.log("🚫 Canceling building placement");
         
         this.isPlacementMode = false;
         this.currentBuilding = null;
@@ -288,12 +288,12 @@ export class BuildingPlacementUI {
         this.validationCache.clear();
         
         // Restore cursor
-        if (typeof document !== 'undefined') {
-            document.body.style.cursor = 'default';
+        if (typeof document !== "undefined") {
+            document.body.style.cursor = "default";
         }
         
         // Emit cancel event
-        this.emit('placementCanceled', { buildingId: this.currentBuilding });
+        this.emit("placementCanceled", { buildingId: this.currentBuilding });
     }
     
     /**
@@ -317,10 +317,10 @@ export class BuildingPlacementUI {
         
         // Add building icon/text
         const style = new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: "Arial",
             fontSize: 12,
             fill: 0xffffff,
-            align: 'center'
+            align: "center"
         });
         
         const text = new PIXI.Text(this.buildingData.name, style);
@@ -458,25 +458,25 @@ export class BuildingPlacementUI {
         // 1. Check if position is within world bounds
         if (!this.isWithinWorldBounds(this.gridPosition, this.buildingData)) {
             valid = false;
-            reasons.push('Outside world bounds');
+            reasons.push("Outside world bounds");
         }
         
         // 2. Check for collision with existing buildings
         if (valid && this.hasCollisionWithBuildings(this.gridPosition, this.buildingData)) {
             valid = false;
-            reasons.push('Collision with existing building');
+            reasons.push("Collision with existing building");
         }
         
         // 3. Check terrain suitability
         if (valid && !this.isTerrainSuitable(this.gridPosition, this.buildingData)) {
             valid = false;
-            reasons.push('Unsuitable terrain');
+            reasons.push("Unsuitable terrain");
         }
         
         // 4. Check resource requirements
         if (valid && this.resourceValidator && !this.resourceValidator.canAfford(this.buildingData.cost)) {
             valid = false;
-            reasons.push('Insufficient resources');
+            reasons.push("Insufficient resources");
         }
         
         // 5. Check power requirements
@@ -484,7 +484,7 @@ export class BuildingPlacementUI {
             const availablePower = this.calculateAvailablePower();
             if (availablePower < this.buildingData.powerRequired) {
                 valid = false;
-                reasons.push('Insufficient power');
+                reasons.push("Insufficient power");
             }
         }
         
@@ -492,7 +492,7 @@ export class BuildingPlacementUI {
         if (valid && this.buildingData.prerequisites.length > 0) {
             if (!this.hasPrerequisites(this.buildingData.prerequisites)) {
                 valid = false;
-                reasons.push('Missing prerequisites');
+                reasons.push("Missing prerequisites");
             }
         }
         
@@ -506,7 +506,7 @@ export class BuildingPlacementUI {
         });
         
         // Emit validation event
-        this.emit('validationChanged', {
+        this.emit("validationChanged", {
             valid: valid,
             reasons: reasons,
             position: this.gridPosition,
@@ -536,7 +536,7 @@ export class BuildingPlacementUI {
         
         // Get all building entities
         const buildings = this.world.entities.filter(entity => 
-            entity.hasComponent('BuildingComponent') && entity.active
+            entity.hasComponent("BuildingComponent") && entity.active
         );
         
         const buildingRect = {
@@ -548,8 +548,8 @@ export class BuildingPlacementUI {
         
         // Check overlap with each building
         for (const building of buildings) {
-            const transform = building.getComponent('TransformComponent');
-            const buildingComp = building.getComponent('BuildingComponent');
+            const transform = building.getComponent("TransformComponent");
+            const buildingComp = building.getComponent("BuildingComponent");
             
             if (transform && buildingComp) {
                 const existingRect = {
@@ -584,7 +584,7 @@ export class BuildingPlacementUI {
     isTerrainSuitable(position, buildingData) {
         // Simple terrain check - in real implementation, check terrain map
         // For now, assume all terrain is suitable for 'clear' requirement
-        return buildingData.terrain.includes('clear');
+        return buildingData.terrain.includes("clear");
     }
     
     /**
@@ -595,11 +595,11 @@ export class BuildingPlacementUI {
         
         let totalPower = 0;
         const buildings = this.world.entities.filter(entity => 
-            entity.hasComponent('BuildingComponent') && entity.active
+            entity.hasComponent("BuildingComponent") && entity.active
         );
         
         for (const building of buildings) {
-            const buildingComp = building.getComponent('BuildingComponent');
+            const buildingComp = building.getComponent("BuildingComponent");
             if (buildingComp && buildingComp.power) {
                 totalPower += buildingComp.power;
             }
@@ -615,12 +615,12 @@ export class BuildingPlacementUI {
         if (!this.world || prerequisites.length === 0) return true;
         
         const buildings = this.world.entities.filter(entity => 
-            entity.hasComponent('BuildingComponent') && entity.active
+            entity.hasComponent("BuildingComponent") && entity.active
         );
         
         for (const prereq of prerequisites) {
             const hasPrereq = buildings.some(building => {
-                const buildingComp = building.getComponent('BuildingComponent');
+                const buildingComp = building.getComponent("BuildingComponent");
                 return buildingComp && buildingComp.type === prereq;
             });
             
@@ -668,7 +668,7 @@ export class BuildingPlacementUI {
         };
         
         // Emit placement event
-        this.emit('buildingPlaced', buildingInfo);
+        this.emit("buildingPlaced", buildingInfo);
         
         // Show placement effect
         this.showPlacementEffect(this.gridPosition);
@@ -699,7 +699,7 @@ export class BuildingPlacementUI {
         }, 200);
         
         // Show error text briefly
-        this.showErrorMessage('Invalid placement location');
+        this.showErrorMessage("Invalid placement location");
     }
     
     /**
@@ -747,11 +747,11 @@ export class BuildingPlacementUI {
     showErrorMessage(message) {
         // Create error text
         const style = new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: "Arial",
             fontSize: 16,
             fill: 0xff0000,
-            align: 'center',
-            fontWeight: 'bold'
+            align: "center",
+            fontWeight: "bold"
         });
         
         const errorText = new PIXI.Text(message, style);
@@ -775,7 +775,7 @@ export class BuildingPlacementUI {
      */
     rotateBuildingPreview() {
         // Placeholder for building rotation
-        console.log('🔄 Building rotation not yet implemented');
+        console.log("🔄 Building rotation not yet implemented");
     }
     
     /**
@@ -806,7 +806,7 @@ export class BuildingPlacementUI {
             detail: data
         });
         
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
             window.dispatchEvent(event);
         }
     }
@@ -838,14 +838,14 @@ export class BuildingPlacementUI {
     destroy() {
         if (this.isDestroyed) return;
         
-        console.log('🗑️ Destroying BuildingPlacementUI...');
+        console.log("🗑️ Destroying BuildingPlacementUI...");
         this.isDestroyed = true;
         
         // Cancel any active placement
         this.cancelPlacement();
         
         // Remove event listeners
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
             for (const { type, handler } of this.eventHandlers) {
                 window.removeEventListener(type, handler);
             }
@@ -862,6 +862,6 @@ export class BuildingPlacementUI {
         // Destroy container
         this.placementContainer.destroy({ children: true });
         
-        console.log('✅ BuildingPlacementUI destroyed successfully');
+        console.log("✅ BuildingPlacementUI destroyed successfully");
     }
 }

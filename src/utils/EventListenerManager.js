@@ -9,11 +9,11 @@
  */
 
 export class EventListenerManager {
-    constructor(name = 'DefaultManager') {
+    constructor(name = "DefaultManager") {
         this.name = name;
         this.listeners = new Map(); // element -> Map(eventType -> handlers[])
         this.delegatedListeners = new Map(); // container -> Map(selector -> Map(eventType -> handlers[]))
-        this.passiveEvents = new Set(['scroll', 'touchmove', 'touchstart', 'touchend', 'wheel']);
+        this.passiveEvents = new Set(["scroll", "touchmove", "touchstart", "touchend", "wheel"]);
         this.isDestroyed = false;
         
         // Statistics
@@ -32,17 +32,17 @@ export class EventListenerManager {
      */
     addEventListener(element, eventType, handler, options = {}) {
         if (this.isDestroyed) {
-            console.warn('EventListenerManager destroyed, ignoring addEventListener');
+            console.warn("EventListenerManager destroyed, ignoring addEventListener");
             return false;
         }
         
-        if (!element || typeof handler !== 'function') {
-            console.error('Invalid element or handler for addEventListener');
+        if (!element || typeof handler !== "function") {
+            console.error("Invalid element or handler for addEventListener");
             return false;
         }
         
         // Auto-detect passive events for better performance
-        if (this.passiveEvents.has(eventType) && !options.hasOwnProperty('passive')) {
+        if (this.passiveEvents.has(eventType) && !options.hasOwnProperty("passive")) {
             options.passive = true;
         }
         
@@ -127,12 +127,12 @@ export class EventListenerManager {
      */
     addDelegatedListener(container, selector, eventType, handler, options = {}) {
         if (this.isDestroyed) {
-            console.warn('EventListenerManager destroyed, ignoring addDelegatedListener');
+            console.warn("EventListenerManager destroyed, ignoring addDelegatedListener");
             return false;
         }
         
-        if (!container || !selector || typeof handler !== 'function') {
-            console.error('Invalid parameters for addDelegatedListener');
+        if (!container || !selector || typeof handler !== "function") {
+            console.error("Invalid parameters for addDelegatedListener");
             return false;
         }
         
@@ -288,7 +288,7 @@ export class EventListenerManager {
         }
         
         if (stats.totalHandlers !== stats.activeListeners) {
-            warnings.push('Mismatch in listener counts - possible tracking error');
+            warnings.push("Mismatch in listener counts - possible tracking error");
         }
         
         return {
@@ -304,19 +304,19 @@ export class EventListenerManager {
     debugListeners() {
         console.group(`EventListenerManager '${this.name}' Debug Info`);
         
-        console.log('Statistics:', this.getStats());
+        console.log("Statistics:", this.getStats());
         
-        console.log('Elements with listeners:', this.listeners.size);
+        console.log("Elements with listeners:", this.listeners.size);
         for (const [element, elementListeners] of this.listeners) {
-            console.log(`  Element:`, element);
+            console.log("  Element:", element);
             for (const [eventType, handlers] of elementListeners) {
                 console.log(`    ${eventType}: ${handlers.length} handlers`);
             }
         }
         
-        console.log('Delegated listeners:', this.delegatedListeners.size);
+        console.log("Delegated listeners:", this.delegatedListeners.size);
         for (const [container, containerDelegated] of this.delegatedListeners) {
-            console.log(`  Container:`, container);
+            console.log("  Container:", container);
             for (const [selector, selectorDelegated] of containerDelegated) {
                 console.log(`    Selector '${selector}':`);
                 for (const [eventType, handlers] of selectorDelegated) {
@@ -357,7 +357,7 @@ export class EventListenerManager {
 /**
  * Global event listener manager instance
  */
-export const globalEventManager = new EventListenerManager('GlobalManager');
+export const globalEventManager = new EventListenerManager("GlobalManager");
 
 /**
  * Utility function to create a scoped event manager

@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 import { 
     TransformComponent, 
     VelocityComponent, 
@@ -11,7 +11,7 @@ import {
     AIComponent,
     SelectableComponent,
     CommandComponent
-} from './Component.js';
+} from "./Component.js";
 
 /**
  * Entity Factory - Creates common entity types with appropriate components
@@ -26,7 +26,7 @@ export class EntityFactory {
     /**
      * Create a C&C unit entity
      */
-    async createUnit(unitKey, x = 0, y = 0, faction = 'gdi') {
+    async createUnit(unitKey, x = 0, y = 0, faction = "gdi") {
         const unitInfo = this.cncAssets.getUnitInfo(unitKey);
         if (!unitInfo) {
             console.warn(`Unit type '${unitKey}' not found`);
@@ -62,7 +62,7 @@ export class EntityFactory {
         }
         
         // Add AI for computer-controlled units
-        const ai = new AIComponent('guard');
+        const ai = new AIComponent("guard");
         ai.spawnX = x;
         ai.spawnY = y;
         entity.addComponent(ai);
@@ -74,7 +74,7 @@ export class EntityFactory {
     /**
      * Create a C&C building entity
      */
-    async createBuilding(buildingKey, x = 0, y = 0, faction = 'gdi') {
+    async createBuilding(buildingKey, x = 0, y = 0, faction = "gdi") {
         const buildingInfo = this.cncAssets.getBuildingInfo(buildingKey);
         if (!buildingInfo) {
             console.warn(`Building type '${buildingKey}' not found`);
@@ -107,7 +107,7 @@ export class EntityFactory {
             ));
             
             // Add AI for defensive structures
-            const ai = new AIComponent('guard');
+            const ai = new AIComponent("guard");
             ai.spawnX = x;
             ai.spawnY = y;
             ai.alertRadius = buildingInfo.range || 150;
@@ -121,7 +121,7 @@ export class EntityFactory {
     /**
      * Create a player-controlled unit (no AI)
      */
-    createPlayerUnit(unitKey, x = 0, y = 0, faction = 'gdi') {
+    createPlayerUnit(unitKey, x = 0, y = 0, faction = "gdi") {
         const entity = this.createUnit(unitKey, x, y, faction);
         if (entity) {
             // Remove AI component for player control
@@ -140,9 +140,9 @@ export class EntityFactory {
      * Create a resource entity (Tiberium)
      */
     createTiberium(x = 0, y = 0, amount = 100) {
-        const texture = this.cncAssets.getTexture('tiberium_green');
+        const texture = this.cncAssets.getTexture("tiberium_green");
         if (!texture) {
-            console.warn('Tiberium texture not found');
+            console.warn("Tiberium texture not found");
             return null;
         }
         
@@ -189,12 +189,12 @@ export class EntityFactory {
      * Create simple projectile texture
      */
     createProjectileTexture() {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = 4;
         canvas.height = 4;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         
-        ctx.fillStyle = '#ffff00';
+        ctx.fillStyle = "#ffff00";
         ctx.fillRect(0, 0, 4, 4);
         
         return PIXI.Texture.from(canvas);
@@ -203,7 +203,7 @@ export class EntityFactory {
     /**
      * Create a group of units in formation
      */
-    createUnitSquad(unitKey, centerX, centerY, count = 4, faction = 'gdi', spacing = 40) {
+    createUnitSquad(unitKey, centerX, centerY, count = 4, faction = "gdi", spacing = 40) {
         const units = [];
         const gridSize = Math.ceil(Math.sqrt(count));
         
@@ -227,7 +227,7 @@ export class EntityFactory {
     /**
      * Create a base layout with multiple buildings
      */
-    createBase(centerX, centerY, faction = 'gdi') {
+    createBase(centerX, centerY, faction = "gdi") {
         const buildings = [];
         
         // Get available buildings for faction
@@ -240,8 +240,8 @@ export class EntityFactory {
         
         // Create construction yard at center
         const constructionYard = availableBuildings.find(b => 
-            (b.key || '').toLowerCase().includes('construction') || 
-            (b.key || '').toLowerCase().includes('mcv')
+            (b.key || "").toLowerCase().includes("construction") || 
+            (b.key || "").toLowerCase().includes("mcv")
         );
         
         if (constructionYard) {
@@ -251,8 +251,8 @@ export class EntityFactory {
         
         // Create power plant
         const powerPlant = availableBuildings.find(b => 
-            (b.key || '').toLowerCase().includes('power') ||
-            (b.key || '').toLowerCase().includes('plant')
+            (b.key || "").toLowerCase().includes("power") ||
+            (b.key || "").toLowerCase().includes("plant")
         );
         
         if (powerPlant) {
@@ -262,8 +262,8 @@ export class EntityFactory {
         
         // Create barracks
         const barracks = availableBuildings.find(b => 
-            (b.key || '').toLowerCase().includes('barracks') ||
-            (b.key || '').toLowerCase().includes('hand')
+            (b.key || "").toLowerCase().includes("barracks") ||
+            (b.key || "").toLowerCase().includes("hand")
         );
         
         if (barracks) {

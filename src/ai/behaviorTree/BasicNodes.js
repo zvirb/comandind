@@ -3,7 +3,7 @@
  * Core node types: Selector, Sequence, and Action nodes
  */
 
-import { TreeNode, NodeStatus } from './TreeNode.js';
+import { TreeNode, NodeStatus } from "./TreeNode.js";
 
 /**
  * Selector Node (OR logic)
@@ -13,7 +13,7 @@ import { TreeNode, NodeStatus } from './TreeNode.js';
  * - Returns RUNNING while children are executing
  */
 export class SelectorNode extends TreeNode {
-    constructor(name = 'Selector') {
+    constructor(name = "Selector") {
         super(name);
         this.currentChildIndex = 0;
     }
@@ -43,25 +43,25 @@ export class SelectorNode extends TreeNode {
             const childStatus = currentChild.execute(deltaTime);
 
             switch (childStatus) {
-                case NodeStatus.SUCCESS:
-                    // Child succeeded, selector succeeds
-                    this.reset();
-                    return NodeStatus.SUCCESS;
+            case NodeStatus.SUCCESS:
+                // Child succeeded, selector succeeds
+                this.reset();
+                return NodeStatus.SUCCESS;
 
-                case NodeStatus.FAILURE:
-                    // Child failed, try next child
-                    currentChild.reset();
-                    this.currentChildIndex++;
+            case NodeStatus.FAILURE:
+                // Child failed, try next child
+                currentChild.reset();
+                this.currentChildIndex++;
                     
-                    // Check time slice before continuing
-                    if (this.hasTimeSliceExpired()) {
-                        return NodeStatus.RUNNING;
-                    }
-                    break;
-
-                case NodeStatus.RUNNING:
-                    // Child is still running, keep waiting
+                // Check time slice before continuing
+                if (this.hasTimeSliceExpired()) {
                     return NodeStatus.RUNNING;
+                }
+                break;
+
+            case NodeStatus.RUNNING:
+                // Child is still running, keep waiting
+                return NodeStatus.RUNNING;
             }
         }
 
@@ -91,7 +91,7 @@ export class SelectorNode extends TreeNode {
  * - Returns RUNNING while children are executing
  */
 export class SequenceNode extends TreeNode {
-    constructor(name = 'Sequence') {
+    constructor(name = "Sequence") {
         super(name);
         this.currentChildIndex = 0;
     }
@@ -121,31 +121,31 @@ export class SequenceNode extends TreeNode {
             const childStatus = currentChild.execute(deltaTime);
 
             switch (childStatus) {
-                case NodeStatus.SUCCESS:
-                    // Child succeeded, move to next child
-                    currentChild.reset();
-                    this.currentChildIndex++;
+            case NodeStatus.SUCCESS:
+                // Child succeeded, move to next child
+                currentChild.reset();
+                this.currentChildIndex++;
                     
-                    // Check if all children completed successfully
-                    if (this.currentChildIndex >= this.children.length) {
-                        this.reset();
-                        return NodeStatus.SUCCESS;
-                    }
-                    
-                    // Check time slice before continuing
-                    if (this.hasTimeSliceExpired()) {
-                        return NodeStatus.RUNNING;
-                    }
-                    break;
-
-                case NodeStatus.FAILURE:
-                    // Child failed, sequence fails
+                // Check if all children completed successfully
+                if (this.currentChildIndex >= this.children.length) {
                     this.reset();
-                    return NodeStatus.FAILURE;
-
-                case NodeStatus.RUNNING:
-                    // Child is still running, keep waiting
+                    return NodeStatus.SUCCESS;
+                }
+                    
+                // Check time slice before continuing
+                if (this.hasTimeSliceExpired()) {
                     return NodeStatus.RUNNING;
+                }
+                break;
+
+            case NodeStatus.FAILURE:
+                // Child failed, sequence fails
+                this.reset();
+                return NodeStatus.FAILURE;
+
+            case NodeStatus.RUNNING:
+                // Child is still running, keep waiting
+                return NodeStatus.RUNNING;
             }
         }
 
@@ -176,7 +176,7 @@ export class SequenceNode extends TreeNode {
  * - Supports async actions with promise handling
  */
 export class ActionNode extends TreeNode {
-    constructor(actionFunction, name = 'Action') {
+    constructor(actionFunction, name = "Action") {
         super(name);
         this.actionFunction = actionFunction;
         this.actionContext = {};
@@ -189,8 +189,8 @@ export class ActionNode extends TreeNode {
      * @param {Function} actionFunction - Function that returns NodeStatus or Promise<NodeStatus>
      */
     setAction(actionFunction) {
-        if (typeof actionFunction !== 'function') {
-            throw new Error('Action must be a function');
+        if (typeof actionFunction !== "function") {
+            throw new Error("Action must be a function");
         }
         this.actionFunction = actionFunction;
     }
@@ -231,7 +231,7 @@ export class ActionNode extends TreeNode {
                 const result = this.actionFunction(deltaTime, this.actionContext);
 
                 // Check if result is a promise (async action)
-                if (result && typeof result.then === 'function') {
+                if (result && typeof result.then === "function") {
                     this.isAsyncAction = true;
                     this.actionPromise = result;
                     
@@ -295,7 +295,7 @@ export class ActionNode extends TreeNode {
  * @param {string} name - Name of the action
  * @returns {ActionNode} Action node that always succeeds
  */
-export function createSuccessAction(name = 'Success Action') {
+export function createSuccessAction(name = "Success Action") {
     return new ActionNode(() => NodeStatus.SUCCESS, name);
 }
 
@@ -304,7 +304,7 @@ export function createSuccessAction(name = 'Success Action') {
  * @param {string} name - Name of the action
  * @returns {ActionNode} Action node that always fails
  */
-export function createFailureAction(name = 'Failure Action') {
+export function createFailureAction(name = "Failure Action") {
     return new ActionNode(() => NodeStatus.FAILURE, name);
 }
 
@@ -338,7 +338,7 @@ export function createDelayAction(duration, name = `Delay ${duration}ms`) {
  * @param {string} name - Name of the action
  * @returns {ActionNode} Action node that succeeds if condition is true, fails otherwise
  */
-export function createConditionalAction(condition, name = 'Conditional Action') {
+export function createConditionalAction(condition, name = "Conditional Action") {
     return new ActionNode(() => {
         try {
             return condition() ? NodeStatus.SUCCESS : NodeStatus.FAILURE;
@@ -357,9 +357,9 @@ export function extendNodeFactory() {
     // This function can be called to register the basic node types
     // with the createNodeFromConfig factory function
     return {
-        'selector': (config) => new SelectorNode(config.name),
-        'sequence': (config) => new SequenceNode(config.name),
-        'action': (config) => {
+        "selector": (config) => new SelectorNode(config.name),
+        "sequence": (config) => new SequenceNode(config.name),
+        "action": (config) => {
             const node = new ActionNode(null, config.name);
             if (config.action) {
                 node.setAction(config.action);

@@ -6,7 +6,7 @@
  * and instanced rendering techniques for maximum performance.
  */
 
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 /**
  * Advanced sprite batching system for RTS games
@@ -65,10 +65,10 @@ export class SpriteBatcher {
         
         // LOD system
         this.lodLevels = [
-            { distance: 0, scale: 1.0, detail: 'high' },
-            { distance: 300, scale: 0.8, detail: 'medium' },
-            { distance: 600, scale: 0.6, detail: 'low' },
-            { distance: 1000, scale: 0.4, detail: 'minimal' }
+            { distance: 0, scale: 1.0, detail: "high" },
+            { distance: 300, scale: 0.8, detail: "medium" },
+            { distance: 600, scale: 0.6, detail: "low" },
+            { distance: 1000, scale: 0.4, detail: "minimal" }
         ];
         
         // Instancing support
@@ -83,7 +83,7 @@ export class SpriteBatcher {
      * Initialize the sprite batcher
      */
     init() {
-        console.log('🎨 Initializing SpriteBatcher...');
+        console.log("🎨 Initializing SpriteBatcher...");
         
         // Check for instancing support
         this.supportsInstancing = this.checkInstancedRenderingSupport();
@@ -96,7 +96,7 @@ export class SpriteBatcher {
         // Set up buffer pools
         this.initBufferPools();
         
-        console.log(`✅ SpriteBatcher initialized (Instancing: ${this.supportsInstancing ? 'ON' : 'OFF'})`);
+        console.log(`✅ SpriteBatcher initialized (Instancing: ${this.supportsInstancing ? "ON" : "OFF"})`);
     }
 
     /**
@@ -108,7 +108,7 @@ export class SpriteBatcher {
         }
         
         const gl = this.renderer.gl;
-        return !!(gl.getExtension('ANGLE_instanced_arrays') || 
+        return !!(gl.getExtension("ANGLE_instanced_arrays") || 
                  gl instanceof WebGL2RenderingContext);
     }
 
@@ -123,18 +123,18 @@ export class SpriteBatcher {
         const vertices = new Float32Array([
             // x, y, u, v
             -0.5, -0.5, 0, 0,
-             0.5, -0.5, 1, 0,
-             0.5,  0.5, 1, 1,
+            0.5, -0.5, 1, 0,
+            0.5,  0.5, 1, 1,
             -0.5,  0.5, 0, 1
         ]);
         
         const indices = new Uint16Array([0, 1, 2, 0, 2, 3]);
         
-        this.instanceGeometry.addAttribute('aVertexPosition', vertices, 2);
-        this.instanceGeometry.addAttribute('aTextureCoord', vertices, 2, false, PIXI.TYPES.FLOAT, 4 * 4, 2 * 4);
+        this.instanceGeometry.addAttribute("aVertexPosition", vertices, 2);
+        this.instanceGeometry.addAttribute("aTextureCoord", vertices, 2, false, PIXI.TYPES.FLOAT, 4 * 4, 2 * 4);
         this.instanceGeometry.addIndex(indices);
         
-        console.log('🔧 Instanced rendering initialized');
+        console.log("🔧 Instanced rendering initialized");
     }
 
     /**
@@ -147,7 +147,7 @@ export class SpriteBatcher {
             this.bufferPool.push(new Float32Array(this.maxSpritesPerBatch * 4 * 6)); // 4 verts, 6 components
         }
         
-        console.log('💾 Buffer pools initialized');
+        console.log("💾 Buffer pools initialized");
     }
 
     /**
@@ -388,8 +388,8 @@ export class SpriteBatcher {
         
         // Set up instanced geometry
         const geometry = this.instanceGeometry.clone();
-        geometry.addAttribute('aInstanceTransform', instanceBuffer, 4, false, PIXI.TYPES.FLOAT, 0, 0, true);
-        geometry.addAttribute('aInstanceColor', instanceBuffer, 4, false, PIXI.TYPES.FLOAT, 16, 16, true);
+        geometry.addAttribute("aInstanceTransform", instanceBuffer, 4, false, PIXI.TYPES.FLOAT, 0, 0, true);
+        geometry.addAttribute("aInstanceColor", instanceBuffer, 4, false, PIXI.TYPES.FLOAT, 16, 16, true);
         
         // Create mesh with instanced geometry
         const material = this.getInstancedMaterial(batch.texture, batch.blendMode);
@@ -583,7 +583,7 @@ export class SpriteBatcher {
      */
     updateConfig(newConfig) {
         this.config = { ...this.config, ...newConfig };
-        console.log('⚙️  SpriteBatcher config updated:', this.config);
+        console.log("⚙️  SpriteBatcher config updated:", this.config);
     }
 
     /**
@@ -641,6 +641,6 @@ export class SpriteBatcher {
         this.instancePools.clear();
         this.instancedBatches.clear();
         
-        console.log('🗑️  SpriteBatcher destroyed');
+        console.log("🗑️  SpriteBatcher destroyed");
     }
 }

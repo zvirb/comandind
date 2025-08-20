@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js';
-import { System } from './System.js';
-import { SelectableComponent, TransformComponent, SpriteComponent, HealthComponent, CommandComponent, MovementComponent } from './Component.js';
+import * as PIXI from "pixi.js";
+import { System } from "./System.js";
+import { SelectableComponent, TransformComponent, SpriteComponent, HealthComponent, CommandComponent, MovementComponent } from "./Component.js";
 
 /**
  * Selection System - Handles unit selection, box selection, and visual feedback
@@ -28,7 +28,7 @@ export class SelectionSystem extends System {
         
         // Visual elements container
         this.selectionGraphics = new PIXI.Container();
-        this.selectionGraphics.name = 'selection';
+        this.selectionGraphics.name = "selection";
         stage.addChild(this.selectionGraphics);
         
         // Selection box graphics
@@ -85,18 +85,18 @@ export class SelectionSystem extends System {
         };
         
         // Store handlers for cleanup
-        this.eventHandlers.set('mousedown', mousedownHandler);
-        this.eventHandlers.set('mousemove', mousemoveHandler);
-        this.eventHandlers.set('mouseup', mouseupHandler);
-        this.eventHandlers.set('keydown', keydownHandler);
+        this.eventHandlers.set("mousedown", mousedownHandler);
+        this.eventHandlers.set("mousemove", mousemoveHandler);
+        this.eventHandlers.set("mouseup", mouseupHandler);
+        this.eventHandlers.set("keydown", keydownHandler);
         
         // Register event handlers
-        this.inputHandler.on('mousedown', mousedownHandler);
-        this.inputHandler.on('mousemove', mousemoveHandler);
-        this.inputHandler.on('mouseup', mouseupHandler);
-        this.inputHandler.on('keydown', keydownHandler);
+        this.inputHandler.on("mousedown", mousedownHandler);
+        this.inputHandler.on("mousemove", mousemoveHandler);
+        this.inputHandler.on("mouseup", mouseupHandler);
+        this.inputHandler.on("keydown", keydownHandler);
         
-        console.log('✅ SelectionSystem input handlers setup completed');
+        console.log("✅ SelectionSystem input handlers setup completed");
     }
     
     /**
@@ -166,10 +166,10 @@ export class SelectionSystem extends System {
         
         // Issue move command to selected units
         if (this.selectedEntities.size > 0) {
-            this.issueCommandToSelected('move', { x: worldPos.x, y: worldPos.y }, event.shiftKey);
+            this.issueCommandToSelected("move", { x: worldPos.x, y: worldPos.y }, event.shiftKey);
             
             // Show move marker effect
-            this.showCommandMarker(worldPos.x, worldPos.y, 'move');
+            this.showCommandMarker(worldPos.x, worldPos.y, "move");
         }
     }
     
@@ -195,37 +195,37 @@ export class SelectionSystem extends System {
      */
     handleKeyDown(event) {
         // Ctrl+A - Select all units (only when game canvas has focus)
-        if (event.ctrlKey && event.key === 'a') {
+        if (event.ctrlKey && event.key === "a") {
             // Only handle Ctrl+A if the canvas or game area is focused
             // This prevents interfering with text selection in input fields, etc.
             const activeElement = document.activeElement;
             const isGameFocused = activeElement === document.body || 
                                 activeElement === this.stage.canvas || 
-                                activeElement.closest('#game-container');
+                                activeElement.closest("#game-container");
             
             if (isGameFocused && this.selectedEntities.size > 0) {
                 // Only prevent default if we actually have units to select
                 event.preventDefault();
                 this.selectAllUnits();
-                console.log('🎯 Selected all units with Ctrl+A');
+                console.log("🎯 Selected all units with Ctrl+A");
             } else if (!isGameFocused) {
-                console.log('🔤 Allowing browser Ctrl+A for text selection');
+                console.log("🔤 Allowing browser Ctrl+A for text selection");
                 // Let browser handle Ctrl+A for text selection
             }
         }
         
         // Escape - Clear selection
-        if (event.key === 'Escape') {
+        if (event.key === "Escape") {
             this.clearSelection();
         }
         
         // Delete - Destroy selected units (for testing)
-        if (event.key === 'Delete') {
+        if (event.key === "Delete") {
             this.destroySelected();
         }
         
         // Number keys for control groups
-        if (event.key >= '1' && event.key <= '9') {
+        if (event.key >= "1" && event.key <= "9") {
             const groupNumber = parseInt(event.key);
             if (event.ctrlKey) {
                 // Create control group
@@ -458,9 +458,9 @@ export class SelectionSystem extends System {
      */
     issueCommandToSelected(command, target, queued = false) {
         // Check if we have a pathfinding system for group movement
-        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === 'PathfindingSystem');
+        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === "PathfindingSystem");
         
-        if (command === 'move' && target) {
+        if (command === "move" && target) {
             // Use group movement if available and multiple units selected
             if (pathfindingSystem && this.selectedEntities.size > 1) {
                 const entitiesArray = Array.from(this.selectedEntities);
@@ -474,7 +474,7 @@ export class SelectionSystem extends System {
                     if (movement) {
                         movement.setTarget(target.x, target.y);
                         if (commandComp) {
-                            commandComp.issueCommand('move', target, queued);
+                            commandComp.issueCommand("move", target, queued);
                         }
                     }
                 }
@@ -487,7 +487,7 @@ export class SelectionSystem extends System {
      */
     showCommandMarker(x, y, type) {
         const marker = new PIXI.Graphics();
-        marker.lineStyle(2, type === 'move' ? 0x00ff00 : 0xff0000, 1);
+        marker.lineStyle(2, type === "move" ? 0x00ff00 : 0xff0000, 1);
         marker.drawCircle(0, 0, 10);
         marker.position.set(x, y);
         marker.alpha = 1;
@@ -592,7 +592,7 @@ export class SelectionSystem extends System {
                             fillBar.clear();
                             const healthPercent = health.getHealthPercentage();
                             const color = healthPercent > 0.6 ? 0x00ff00 : 
-                                        healthPercent > 0.3 ? 0xffff00 : 0xff0000;
+                                healthPercent > 0.3 ? 0xffff00 : 0xff0000;
                             fillBar.beginFill(color, 1);
                             fillBar.drawRect(-15, -30, 30 * healthPercent, 4);
                             fillBar.endFill();
@@ -608,11 +608,11 @@ export class SelectionSystem extends System {
      */
     destroy() {
         if (this.isDestroyed) {
-            console.warn('SelectionSystem already destroyed');
+            console.warn("SelectionSystem already destroyed");
             return;
         }
         
-        console.log('🗑️ Destroying SelectionSystem...');
+        console.log("🗑️ Destroying SelectionSystem...");
         
         this.isDestroyed = true;
         
@@ -650,7 +650,7 @@ export class SelectionSystem extends System {
         this.selectionBoxGraphic = null;
         this.hoveredEntity = null;
         
-        console.log('✅ SelectionSystem destroyed successfully');
+        console.log("✅ SelectionSystem destroyed successfully");
     }
     
     /**

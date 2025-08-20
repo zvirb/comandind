@@ -32,7 +32,7 @@ export class AStar {
         
         // Quick validation
         if (!this.grid.isWalkable(start.x, start.y)) {
-            console.warn('Start position is not walkable');
+            console.warn("Start position is not walkable");
             return [];
         }
         
@@ -40,7 +40,7 @@ export class AStar {
             // Find nearest walkable cell to goal
             const nearestGoal = this.findNearestWalkable(goal.x, goal.y);
             if (!nearestGoal) {
-                console.warn('No walkable path to goal');
+                console.warn("No walkable path to goal");
                 return [];
             }
             goal.x = nearestGoal.x;

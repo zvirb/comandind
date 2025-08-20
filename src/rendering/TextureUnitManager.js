@@ -67,11 +67,11 @@ export class TextureUnitManager {
      * Initialize the texture unit manager
      */
     init() {
-        console.log(`🎯 Texture Unit Manager initialized:`);
+        console.log("🎯 Texture Unit Manager initialized:");
         console.log(`   Total units: ${this.maxTextureUnits}`);
         console.log(`   Reserved units: ${this.reservedUnits}`);
         console.log(`   Available units: ${this.availableUnits}`);
-        console.log(`   WebGL2: ${this.isWebGL2 ? 'Yes' : 'No'}`);
+        console.log(`   WebGL2: ${this.isWebGL2 ? "Yes" : "No"}`);
         console.log(`   Estimated max GPU memory: ${this.memoryStats.maxAllocation}MB`);
         
         // Start garbage collection cycle
@@ -87,16 +87,16 @@ export class TextureUnitManager {
     estimateMaxGPUMemory() {
         try {
             // Try to get memory info from WebGL extensions
-            const debugInfo = this.gl.getExtension('WEBGL_debug_renderer_info');
+            const debugInfo = this.gl.getExtension("WEBGL_debug_renderer_info");
             if (debugInfo) {
                 const renderer = this.gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
                 
                 // Basic heuristics based on common GPU patterns
-                if (renderer.includes('Intel')) {
+                if (renderer.includes("Intel")) {
                     return 512; // Intel integrated typically 512MB-1GB
-                } else if (renderer.includes('AMD') || renderer.includes('Radeon')) {
+                } else if (renderer.includes("AMD") || renderer.includes("Radeon")) {
                     return 2048; // AMD cards typically 2GB+
-                } else if (renderer.includes('NVIDIA') || renderer.includes('GeForce')) {
+                } else if (renderer.includes("NVIDIA") || renderer.includes("GeForce")) {
                     return 4096; // NVIDIA cards typically 4GB+
                 }
             }
@@ -112,7 +112,7 @@ export class TextureUnitManager {
             }
             
         } catch (error) {
-            console.warn('Could not estimate GPU memory, using conservative default');
+            console.warn("Could not estimate GPU memory, using conservative default");
             return 512;
         }
     }
@@ -145,7 +145,7 @@ export class TextureUnitManager {
         // Find best available unit
         const unitIndex = this.allocateTextureUnit(priority);
         if (unitIndex === -1) {
-            console.warn('⚠️ No texture units available, forcing eviction');
+            console.warn("⚠️ No texture units available, forcing eviction");
             this.evictLeastRecentlyUsed();
             return this.bindTexture(texture, priority); // Retry
         }
@@ -314,12 +314,12 @@ export class TextureUnitManager {
                 await this.loadTexture(item.textureData, item.priority);
                 this.stats.streamingLoads++;
             } catch (error) {
-                console.error('❌ Failed to load queued texture:', error);
+                console.error("❌ Failed to load queued texture:", error);
             }
             
             // Check memory pressure
             if (this.isMemoryPressureHigh()) {
-                console.warn('⚠️ High memory pressure, pausing texture queue processing');
+                console.warn("⚠️ High memory pressure, pausing texture queue processing");
                 break;
             }
             
@@ -358,14 +358,14 @@ export class TextureUnitManager {
     /**
      * Estimate texture memory usage
      */
-    estimateTextureSize(width, height, format = 'RGBA') {
+    estimateTextureSize(width, height, format = "RGBA") {
         let bytesPerPixel = 4; // RGBA
         
         switch (format) {
-            case 'RGB': bytesPerPixel = 3; break;
-            case 'LUMINANCE_ALPHA': bytesPerPixel = 2; break;
-            case 'LUMINANCE': bytesPerPixel = 1; break;
-            case 'ALPHA': bytesPerPixel = 1; break;
+        case "RGB": bytesPerPixel = 3; break;
+        case "LUMINANCE_ALPHA": bytesPerPixel = 2; break;
+        case "LUMINANCE": bytesPerPixel = 1; break;
+        case "ALPHA": bytesPerPixel = 1; break;
         }
         
         // Include mipmap overhead (approximately 1.33x)
@@ -456,7 +456,7 @@ export class TextureUnitManager {
      * Handle memory pressure situation
      */
     handleMemoryPressure() {
-        console.warn('⚠️ High GPU memory pressure detected');
+        console.warn("⚠️ High GPU memory pressure detected");
         
         // Aggressive eviction of non-locked textures
         let evicted = 0;
@@ -562,7 +562,7 @@ export class TextureUnitManager {
         
         const after = this.getStats();
         
-        console.log('🔧 Texture unit optimization complete:');
+        console.log("🔧 Texture unit optimization complete:");
         console.log(`   Units in use: ${before.unitsInUse} → ${after.unitsInUse}`);
         console.log(`   Utilization: ${before.unitUtilization}% → ${after.unitUtilization}%`);
     }
@@ -579,6 +579,6 @@ export class TextureUnitManager {
         this.activeTextures.clear();
         this.streamingTextures.clear();
         
-        console.log('🗑️ Texture Unit Manager destroyed');
+        console.log("🗑️ Texture Unit Manager destroyed");
     }
 }

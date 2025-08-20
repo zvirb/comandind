@@ -3,8 +3,8 @@
  * Demonstrates how to use the reward calculator with the existing AI system
  */
 
-import { RewardCalculator, createOutcome } from './RewardCalculator.js';
-import { QLearningComponent } from '../components/QLearningComponent.js';
+import { RewardCalculator, createOutcome } from "./RewardCalculator.js";
+import { QLearningComponent } from "../components/QLearningComponent.js";
 
 /**
  * Example class showing reward system integration
@@ -25,8 +25,8 @@ export class RewardSystemExample {
         
         // Example game state
         this.currentGameState = {
-            threatLevel: 'low',
-            urgencyLevel: 'moderate',
+            threatLevel: "low",
+            urgencyLevel: "moderate",
             teamwork: {
                 coordinatedAction: false,
                 supportingAllies: false,
@@ -37,11 +37,11 @@ export class RewardSystemExample {
         
         // Example unit
         this.unit = {
-            id: 'unit_001',
+            id: "unit_001",
             health: 100,
             maxHealth: 100,
             position: { x: 100, y: 100 },
-            faction: 'player'
+            faction: "player"
         };
     }
 
@@ -49,7 +49,7 @@ export class RewardSystemExample {
      * Simulate a complete action-reward cycle
      */
     simulateActionRewardCycle() {
-        console.log('Starting action-reward simulation...\n');
+        console.log("Starting action-reward simulation...\n");
         
         // 1. Update Q-learning state
         this.qLearning.updateState(this.currentGameState);
@@ -61,7 +61,7 @@ export class RewardSystemExample {
         
         // 3. Simulate action execution and outcome
         const outcome = this.simulateActionOutcome(actionSelection.actionId);
-        console.log('Action outcome:', this.summarizeOutcome(outcome));
+        console.log("Action outcome:", this.summarizeOutcome(outcome));
         
         // 4. Calculate reward
         const reward = this.rewardCalculator.calculateReward(
@@ -80,7 +80,7 @@ export class RewardSystemExample {
         // 6. Update game state based on outcome
         this.updateGameStateFromOutcome(outcome);
         
-        console.log('Action-reward cycle completed.\n');
+        console.log("Action-reward cycle completed.\n");
         
         return {
             action: actionSelection,
@@ -99,21 +99,21 @@ export class RewardSystemExample {
         
         // Simulate different outcomes based on action type
         switch (action.type) {
-            case 'movement':
-                outcome = this.simulateMovementOutcome(actionId);
-                break;
-            case 'combat':
-                outcome = this.simulateCombatOutcome(actionId);
-                break;
-            case 'tactical':
-                outcome = this.simulateTacticalOutcome(actionId);
-                break;
-            case 'economy':
-                outcome = this.simulateEconomicOutcome();
-                break;
-            case 'passive':
-                outcome = this.simulateIdleOutcome();
-                break;
+        case "movement":
+            outcome = this.simulateMovementOutcome(actionId);
+            break;
+        case "combat":
+            outcome = this.simulateCombatOutcome(actionId);
+            break;
+        case "tactical":
+            outcome = this.simulateTacticalOutcome(actionId);
+            break;
+        case "economy":
+            outcome = this.simulateEconomicOutcome();
+            break;
+        case "passive":
+            outcome = this.simulateIdleOutcome();
+            break;
         }
         
         return outcome;
@@ -167,32 +167,32 @@ export class RewardSystemExample {
         const action = this.qLearning.getAction(actionId);
         
         switch (action.name) {
-            case 'retreat':
-                return createOutcome({
-                    successfulEscape: Math.random() > 0.3,
-                    retreatWhenDamaged: this.unit.health < this.unit.maxHealth * 0.5,
-                    retreatedToSafety: Math.random() > 0.4,
-                    liveToFightAgain: Math.random() > 0.6
-                });
+        case "retreat":
+            return createOutcome({
+                successfulEscape: Math.random() > 0.3,
+                retreatWhenDamaged: this.unit.health < this.unit.maxHealth * 0.5,
+                retreatedToSafety: Math.random() > 0.4,
+                liveToFightAgain: Math.random() > 0.6
+            });
                 
-            case 'hold_position':
-                return createOutcome({
-                    defendedObjective: Math.random() > 0.5,
-                    maintainedWatch: Math.random() > 0.3,
-                    heldUnderFire: Math.random() > 0.7,
-                    fortifiedPosition: Math.random() > 0.6
-                });
+        case "hold_position":
+            return createOutcome({
+                defendedObjective: Math.random() > 0.5,
+                maintainedWatch: Math.random() > 0.3,
+                heldUnderFire: Math.random() > 0.7,
+                fortifiedPosition: Math.random() > 0.6
+            });
                 
-            case 'patrol':
-                return createOutcome({
-                    areaCovered: Math.floor(Math.random() * 5) + 1,
-                    enemyDetected: Math.random() > 0.8,
-                    routeCompleted: Math.random() > 0.4,
-                    vigilantPatrol: Math.random() > 0.5
-                });
+        case "patrol":
+            return createOutcome({
+                areaCovered: Math.floor(Math.random() * 5) + 1,
+                enemyDetected: Math.random() > 0.8,
+                routeCompleted: Math.random() > 0.4,
+                vigilantPatrol: Math.random() > 0.5
+            });
                 
-            default:
-                return createOutcome();
+        default:
+            return createOutcome();
         }
     }
 
@@ -231,9 +231,9 @@ export class RewardSystemExample {
     updateGameStateFromOutcome(outcome) {
         // Simulate threat level changes
         if (outcome.enemyEliminated) {
-            this.currentGameState.threatLevel = 'low';
+            this.currentGameState.threatLevel = "low";
         } else if (outcome.enemyDetected) {
-            this.currentGameState.threatLevel = 'high';
+            this.currentGameState.threatLevel = "high";
         }
         
         // Simulate health changes
@@ -254,16 +254,16 @@ export class RewardSystemExample {
     summarizeOutcome(outcome) {
         const summary = [];
         
-        if (outcome.moveSuccessful) summary.push('moved successfully');
-        if (outcome.blocked) summary.push('movement blocked');
+        if (outcome.moveSuccessful) summary.push("moved successfully");
+        if (outcome.blocked) summary.push("movement blocked");
         if (outcome.attackSuccessful) summary.push(`dealt ${outcome.damageDealt} damage`);
-        if (outcome.enemyEliminated) summary.push('eliminated enemy');
+        if (outcome.enemyEliminated) summary.push("eliminated enemy");
         if (outcome.resourcesGathered > 0) summary.push(`gathered ${outcome.resourcesGathered} resources`);
-        if (outcome.successfulEscape) summary.push('escaped successfully');
-        if (outcome.defendedObjective) summary.push('defended objective');
-        if (outcome.newAreaExplored) summary.push('explored new area');
+        if (outcome.successfulEscape) summary.push("escaped successfully");
+        if (outcome.defendedObjective) summary.push("defended objective");
+        if (outcome.newAreaExplored) summary.push("explored new area");
         
-        return summary.length > 0 ? summary.join(', ') : 'no significant outcome';
+        return summary.length > 0 ? summary.join(", ") : "no significant outcome";
     }
 
     /**
@@ -284,9 +284,9 @@ export class RewardSystemExample {
         }
         
         // Print final statistics
-        console.log('=== Simulation Complete ===');
-        console.log('Final Q-Learning stats:', this.qLearning.getLearningStats());
-        console.log('Final Reward stats:', this.rewardCalculator.getRewardStats());
+        console.log("=== Simulation Complete ===");
+        console.log("Final Q-Learning stats:", this.qLearning.getLearningStats());
+        console.log("Final Reward stats:", this.rewardCalculator.getRewardStats());
         
         // Action distribution
         const actionCounts = {};
@@ -295,7 +295,7 @@ export class RewardSystemExample {
             actionCounts[actionName] = (actionCounts[actionName] || 0) + 1;
         });
         
-        console.log('\nAction distribution:');
+        console.log("\nAction distribution:");
         Object.entries(actionCounts).forEach(([action, count]) => {
             console.log(`  ${action}: ${count} times`);
         });
@@ -307,11 +307,11 @@ export class RewardSystemExample {
      * Test specific reward scenarios
      */
     testRewardScenarios() {
-        console.log('Testing specific reward scenarios...\n');
+        console.log("Testing specific reward scenarios...\n");
         
         const scenarios = [
             {
-                name: 'Successful Combat',
+                name: "Successful Combat",
                 actionId: 8, // attack_nearest
                 outcome: createOutcome({
                     attackSuccessful: true,
@@ -321,7 +321,7 @@ export class RewardSystemExample {
                 })
             },
             {
-                name: 'Resource Gathering',
+                name: "Resource Gathering",
                 actionId: 14, // gather_resource
                 outcome: createOutcome({
                     resourcesGathered: 8,
@@ -331,7 +331,7 @@ export class RewardSystemExample {
                 })
             },
             {
-                name: 'Tactical Retreat',
+                name: "Tactical Retreat",
                 actionId: 11, // retreat
                 outcome: createOutcome({
                     successfulEscape: true,
@@ -341,7 +341,7 @@ export class RewardSystemExample {
                 })
             },
             {
-                name: 'Failed Movement',
+                name: "Failed Movement",
                 actionId: 0, // move_north
                 outcome: createOutcome({
                     blocked: true,
@@ -362,7 +362,7 @@ export class RewardSystemExample {
             console.log(`${scenario.name}: ${reward.toFixed(2)} reward`);
         });
         
-        console.log('\nReward scenario testing complete.\n');
+        console.log("\nReward scenario testing complete.\n");
     }
 }
 
@@ -370,7 +370,7 @@ export class RewardSystemExample {
  * Example usage
  */
 export function runRewardSystemExample() {
-    console.log('🤖 RTS AI Reward System Example\n');
+    console.log("🤖 RTS AI Reward System Example\n");
     
     const example = new RewardSystemExample();
     
@@ -380,7 +380,7 @@ export function runRewardSystemExample() {
     // Run a simulation
     example.runSimulation(5);
     
-    console.log('✨ Example completed!');
+    console.log("✨ Example completed!");
 }
 
 // Run example if this file is executed directly

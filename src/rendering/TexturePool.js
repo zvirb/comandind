@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 /**
  * Advanced Texture Pool with LRU Cache and Memory Management
@@ -40,7 +40,7 @@ export class TexturePool {
         // Automatic cleanup interval
         this.cleanupInterval = setInterval(() => this.performMaintenance(), 30000);
         
-        console.log('🎮 TexturePool initialized with', {
+        console.log("🎮 TexturePool initialized with", {
             maxCacheSize: this.maxCacheSize,
             maxMemoryMB: this.maxMemoryMB,
             cleanupThreshold: this.cleanupThreshold
@@ -276,7 +276,7 @@ export class TexturePool {
      * Perform memory cleanup using LRU strategy
      */
     performMemoryCleanup(targetBytes = 0) {
-        console.log('🧹 Performing texture memory cleanup...');
+        console.log("🧹 Performing texture memory cleanup...");
         this.stats.memoryCleanups++;
         
         const maxBytes = this.maxMemoryMB * 1024 * 1024;
@@ -382,7 +382,7 @@ export class TexturePool {
      */
     logStats() {
         const memStats = this.getMemoryStats();
-        console.log('📊 TexturePool Stats:', {
+        console.log("📊 TexturePool Stats:", {
             ...memStats,
             cacheHitRate: `${((this.stats.cacheHits / (this.stats.cacheHits + this.stats.cacheMisses)) * 100).toFixed(1)}%`,
             performance: this.stats
@@ -393,7 +393,7 @@ export class TexturePool {
      * Clear all cached textures and reset pool
      */
     clear() {
-        console.log('🧹 Clearing texture pool...');
+        console.log("🧹 Clearing texture pool...");
         
         // Dispose all textures
         for (const key of this.textureCache.keys()) {
@@ -418,7 +418,7 @@ export class TexturePool {
         this.currentMemoryBytes = 0;
         this.accessCounter = 0;
         
-        console.log('✅ TexturePool cleared');
+        console.log("✅ TexturePool cleared");
     }
     
     /**
@@ -430,7 +430,7 @@ export class TexturePool {
         }
         
         this.clear();
-        console.log('🔚 TexturePool destroyed');
+        console.log("🔚 TexturePool destroyed");
     }
 }
 

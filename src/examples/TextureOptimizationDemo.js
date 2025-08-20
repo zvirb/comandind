@@ -1,8 +1,8 @@
-import * as PIXI from 'pixi.js';
-import { TextureAtlasManager } from '../rendering/TextureAtlasManager.js';
-import { CnCAssetLoader } from '../rendering/CnCAssetLoader.js';
-import { globalTexturePool } from '../rendering/TexturePool.js';
-import { initializeGPUMonitor } from '../utils/GPUMemoryMonitor.js';
+import * as PIXI from "pixi.js";
+import { TextureAtlasManager } from "../rendering/TextureAtlasManager.js";
+import { CnCAssetLoader } from "../rendering/CnCAssetLoader.js";
+import { globalTexturePool } from "../rendering/TexturePool.js";
+import { initializeGPUMonitor } from "../utils/GPUMemoryMonitor.js";
 
 /**
  * Texture Memory Optimization Demo
@@ -27,7 +27,7 @@ export class TextureOptimizationDemo {
      * Initialize the demo
      */
     async initialize() {
-        console.log('🚀 Initializing Texture Optimization Demo...');
+        console.log("🚀 Initializing Texture Optimization Demo...");
 
         // Create PIXI application
         this.app = new PIXI.Application({
@@ -35,11 +35,11 @@ export class TextureOptimizationDemo {
             height: 800,
             backgroundColor: 0x1a1a2e,
             antialias: true,
-            powerPreference: 'high-performance'
+            powerPreference: "high-performance"
         });
 
         // Append to DOM if running in browser
-        if (typeof document !== 'undefined') {
+        if (typeof document !== "undefined") {
             document.body.appendChild(this.app.view);
         }
 
@@ -65,7 +65,7 @@ export class TextureOptimizationDemo {
         // Create UI
         this.createUI();
 
-        console.log('✅ Demo initialization complete');
+        console.log("✅ Demo initialization complete");
     }
 
     /**
@@ -73,14 +73,14 @@ export class TextureOptimizationDemo {
      */
     setupMemoryPressureHandling() {
         // Register for different pressure levels
-        globalTexturePool.onMemoryPressure('medium', (pressure, level) => {
+        globalTexturePool.onMemoryPressure("medium", (pressure, level) => {
             console.log(`⚠️ Medium memory pressure: ${(pressure * 100).toFixed(1)}%`);
-            this.updateUI(`Memory pressure: ${(pressure * 100).toFixed(1)}%`, 'orange');
+            this.updateUI(`Memory pressure: ${(pressure * 100).toFixed(1)}%`, "orange");
         });
 
-        globalTexturePool.onMemoryPressure('high', (pressure, level) => {
+        globalTexturePool.onMemoryPressure("high", (pressure, level) => {
             console.log(`🚨 High memory pressure: ${(pressure * 100).toFixed(1)}%`);
-            this.updateUI(`HIGH memory pressure: ${(pressure * 100).toFixed(1)}%`, 'red');
+            this.updateUI(`HIGH memory pressure: ${(pressure * 100).toFixed(1)}%`, "red");
 
             // Trigger aggressive cleanup
             this.performCleanup();
@@ -103,18 +103,18 @@ export class TextureOptimizationDemo {
         this.ui.addChild(uiBackground);
 
         // Title text
-        const title = new PIXI.Text('Texture Memory Optimization Demo', {
-            fontFamily: 'Arial',
+        const title = new PIXI.Text("Texture Memory Optimization Demo", {
+            fontFamily: "Arial",
             fontSize: 18,
             fill: 0xffffff,
-            fontWeight: 'bold'
+            fontWeight: "bold"
         });
         title.position.set(20, 20);
         this.ui.addChild(title);
 
         // Stats text
-        this.statsText = new PIXI.Text('', {
-            fontFamily: 'Arial',
+        this.statsText = new PIXI.Text("", {
+            fontFamily: "Arial",
             fontSize: 12,
             fill: 0xaaaaaa
         });
@@ -122,8 +122,8 @@ export class TextureOptimizationDemo {
         this.ui.addChild(this.statsText);
 
         // Status text
-        this.statusText = new PIXI.Text('Starting demo...', {
-            fontFamily: 'Arial',
+        this.statusText = new PIXI.Text("Starting demo...", {
+            fontFamily: "Arial",
             fontSize: 12,
             fill: 0x00ff00
         });
@@ -132,9 +132,9 @@ export class TextureOptimizationDemo {
 
         // Instructions
         const instructions = new PIXI.Text(
-            'Demo automatically spawns sprites and manages memory.\nWatch the stats to see optimization in action.',
+            "Demo automatically spawns sprites and manages memory.\nWatch the stats to see optimization in action.",
             {
-                fontFamily: 'Arial',
+                fontFamily: "Arial",
                 fontSize: 10,
                 fill: 0xcccccc,
                 wordWrap: true,
@@ -148,7 +148,7 @@ export class TextureOptimizationDemo {
     /**
      * Update UI with current status
      */
-    updateUI(status, color = 'white') {
+    updateUI(status, color = "white") {
         if (!this.statusText) return;
 
         this.statusText.text = status;
@@ -171,11 +171,11 @@ export class TextureOptimizationDemo {
             `Cache Hit Rate: ${((globalTexturePool.stats.cacheHits / Math.max(1, globalTexturePool.stats.cacheHits + globalTexturePool.stats.cacheMisses)) * 100).toFixed(1)}%`,
             `Pooled Objects: ${poolStats.pooledSprites + poolStats.pooledAnimatedSprites}`,
             `Memory Cleanups: ${globalTexturePool.stats.memoryCleanups}`,
-            `GPU Textures: ${gpuStats?.current.activeTextures || 'N/A'}`,
+            `GPU Textures: ${gpuStats?.current.activeTextures || "N/A"}`,
             `Utilization: ${poolStats.utilization}%`
         ];
 
-        this.statsText.text = stats.join('\n');
+        this.statsText.text = stats.join("\n");
     }
 
     /**
@@ -222,7 +222,7 @@ export class TextureOptimizationDemo {
                 this.app.stage.addChild(sprite);
             }
         } catch (error) {
-            console.warn('Failed to create sprite:', error);
+            console.warn("Failed to create sprite:", error);
         }
     }
 
@@ -230,7 +230,7 @@ export class TextureOptimizationDemo {
      * Perform memory cleanup
      */
     performCleanup() {
-        console.log('🧹 Performing memory cleanup...');
+        console.log("🧹 Performing memory cleanup...");
 
         // Clean up asset loader
         const assetCleaned = this.assetLoader.performMemoryCleanup();
@@ -246,10 +246,10 @@ export class TextureOptimizationDemo {
             this.gpuMonitor.forceGPUCleanup();
         }
 
-        this.updateUI(`Cleanup complete: ${assetCleaned + atlasCleaned} items freed`, 'green');
+        this.updateUI(`Cleanup complete: ${assetCleaned + atlasCleaned} items freed`, "green");
 
         setTimeout(() => {
-            this.updateUI('Demo running...', 'white');
+            this.updateUI("Demo running...", "white");
         }, 3000);
     }
 
@@ -261,8 +261,8 @@ export class TextureOptimizationDemo {
 
         this.isRunning = true;
 
-        console.log('▶️ Starting texture optimization demo...');
-        this.updateUI('Demo running...', 'white');
+        console.log("▶️ Starting texture optimization demo...");
+        this.updateUI("Demo running...", "white");
 
         // Sprite spawning loop
         this.spawnInterval = setInterval(() => {
@@ -297,7 +297,7 @@ export class TextureOptimizationDemo {
 
         this.isRunning = false;
 
-        console.log('⏹️ Stopping demo...');
+        console.log("⏹️ Stopping demo...");
 
         // Clear intervals
         if (this.spawnInterval) clearInterval(this.spawnInterval);
@@ -307,7 +307,7 @@ export class TextureOptimizationDemo {
         // Remove ticker
         this.app.ticker.remove(this.animate, this);
 
-        this.updateUI('Demo stopped', 'red');
+        this.updateUI("Demo stopped", "red");
     }
 
     /**
@@ -324,7 +324,7 @@ export class TextureOptimizationDemo {
      * Clean up and destroy demo
      */
     async destroy() {
-        console.log('🔚 Destroying demo...');
+        console.log("🔚 Destroying demo...");
 
         this.stop();
 
@@ -360,7 +360,7 @@ export class TextureOptimizationDemo {
             });
         }
 
-        console.log('✅ Demo destroyed');
+        console.log("✅ Demo destroyed");
     }
 
     /**
@@ -387,12 +387,12 @@ export async function runTextureOptimizationDemo() {
         await demo.initialize();
         demo.start();
 
-        console.log('✅ Texture optimization demo is running!');
-        console.log('📊 Check browser console for performance stats');
+        console.log("✅ Texture optimization demo is running!");
+        console.log("📊 Check browser console for performance stats");
 
         return demo;
     } catch (error) {
-        console.error('❌ Failed to start demo:', error);
+        console.error("❌ Failed to start demo:", error);
         await demo.destroy();
         throw error;
     }

@@ -131,7 +131,7 @@ export class SpriteComponent extends Component {
                     });
                 }
             } catch (error) {
-                console.error('Error destroying sprite:', error);
+                console.error("Error destroying sprite:", error);
             }
             
             this.sprite = null;
@@ -154,13 +154,13 @@ export class HealthComponent extends Component {
         this.currentHealth = maxHealth;
         this.isDead = false;
         this.armor = 0;
-        this.armorType = 'none';
+        this.armorType = "none";
     }
     
     /**
      * Take damage
      */
-    takeDamage(amount, damageType = 'normal') {
+    takeDamage(amount, damageType = "normal") {
         if (this.isDead) return;
         
         // Apply armor reduction
@@ -206,7 +206,7 @@ export class UnitComponent extends Component {
         this.selected = false;
         this.facing = 0; // 0-31 for 32 directions
         this.experience = 0;
-        this.veterancy = 'rookie'; // rookie, veteran, elite
+        this.veterancy = "rookie"; // rookie, veteran, elite
         this.canAttack = true;
         this.canMove = true;
         this.sight = 4; // vision range
@@ -284,7 +284,7 @@ export class CombatComponent extends Component {
         this.canAttackGround = false;
         this.canAttackAir = true;
         this.ammo = -1; // -1 = unlimited
-        this.damageType = 'normal';
+        this.damageType = "normal";
     }
     
     /**
@@ -311,10 +311,10 @@ export class CombatComponent extends Component {
  * AI Component - Artificial intelligence behavior
  */
 export class AIComponent extends Component {
-    constructor(behaviorType = 'idle') {
+    constructor(behaviorType = "idle") {
         super();
         this.behaviorType = behaviorType; // idle, guard, patrol, attack, harvest
-        this.state = 'idle';
+        this.state = "idle";
         this.lastThinkTime = 0;
         this.thinkInterval = 100; // ms between AI updates
         this.alertRadius = 200;
@@ -388,7 +388,7 @@ export class SelectableComponent extends Component {
                     this.selectionBox.destroy({ children: true });
                 }
             } catch (error) {
-                console.error('Error destroying selection box:', error);
+                console.error("Error destroying selection box:", error);
             }
             this.selectionBox = null;
         }
@@ -403,7 +403,7 @@ export class SelectableComponent extends Component {
                     this.healthBar.destroy({ children: true });
                 }
             } catch (error) {
-                console.error('Error destroying health bar:', error);
+                console.error("Error destroying health bar:", error);
             }
             this.healthBar = null;
         }
@@ -422,7 +422,7 @@ export class CommandComponent extends Component {
         this.commandQueue = []; // Queue of commands
         this.commandTarget = null; // Target entity or position
         this.rallyPoint = null; // For buildings that produce units
-        this.stance = 'guard'; // aggressive, guard, hold
+        this.stance = "guard"; // aggressive, guard, hold
         this.formation = null; // Formation when moving in group
     }
     

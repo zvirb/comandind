@@ -1,5 +1,5 @@
-import * as PIXI from 'pixi.js';
-import { globalTexturePool } from './TexturePool.js';
+import * as PIXI from "pixi.js";
+import { globalTexturePool } from "./TexturePool.js";
 
 /**
  * C&C Asset Loader - Integrates authentic C&C data with placeholder graphics
@@ -23,18 +23,18 @@ export class CnCAssetLoader {
         // Placeholder colors for different factions/types
         this.placeholderColors = {
             gdi: {
-                structures: '#0066ff',
-                units: '#0088ff',
-                power: '#00aa00'
+                structures: "#0066ff",
+                units: "#0088ff",
+                power: "#00aa00"
             },
             nod: {
-                structures: '#ff0000',
-                units: '#ff4400',
-                power: '#ff6600'
+                structures: "#ff0000",
+                units: "#ff4400",
+                power: "#ff6600"
             },
             neutral: {
-                tiberium: '#00ff00',
-                terrain: '#ffdd88'
+                tiberium: "#00ff00",
+                terrain: "#ffdd88"
             }
         };
     }
@@ -43,18 +43,18 @@ export class CnCAssetLoader {
      * Load all C&C game data
      */
     async loadGameData() {
-        console.log('🎮 Loading C&C Game Data...');
+        console.log("🎮 Loading C&C Game Data...");
         
         try {
             // Load extracted game data from public directory
             // Note: Files in /public are served from root in Vite
             const urls = [
-                '/assets/cnc-data/units.json',
-                '/assets/cnc-data/buildings.json',
-                '/assets/cnc-data/rules.json'
+                "/assets/cnc-data/units.json",
+                "/assets/cnc-data/buildings.json",
+                "/assets/cnc-data/rules.json"
             ];
             
-            console.log('Fetching game data from:', urls);
+            console.log("Fetching game data from:", urls);
             
             const [unitsResponse, buildingsResponse, rulesResponse] = await Promise.all([
                 fetch(urls[0]),
@@ -71,7 +71,7 @@ export class CnCAssetLoader {
             this.buildingData = await buildingsResponse.json();
             this.gameRules = await rulesResponse.json();
             
-            console.log('✅ Game data loaded successfully');
+            console.log("✅ Game data loaded successfully");
             console.log(`   - ${Object.keys(this.unitData).length} unit types`);
             console.log(`   - ${Object.keys(this.buildingData).length} building types`);
             
@@ -80,7 +80,7 @@ export class CnCAssetLoader {
             
             return true;
         } catch (error) {
-            console.warn('⚠️ Failed to load game data, using defaults:', error.message);
+            console.warn("⚠️ Failed to load game data, using defaults:", error.message);
             
             // Use default data if loading fails
             this.unitData = { DEFAULT_UNIT: { name: "Default Unit", health: 100, speed: 10 } };
@@ -99,7 +99,7 @@ export class CnCAssetLoader {
      * Generate placeholder textures with memory optimization
      */
     generatePlaceholderTextures() {
-        console.log('🎨 Generating optimized placeholder textures...');
+        console.log("🎨 Generating optimized placeholder textures...");
         
         const batchSize = 10;
         const unitKeys = Object.entries(this.unitData);
@@ -107,23 +107,23 @@ export class CnCAssetLoader {
         
         // Process units in batches to prevent memory spikes
         this.processBatches(unitKeys, batchSize, ([unitKey, unitInfo]) => {
-            const faction = (unitInfo.faction || 'neutral').toLowerCase();
+            const faction = (unitInfo.faction || "neutral").toLowerCase();
             const textureKey = `unit_${unitKey}`;
             
             const texture = this.texturePool.getTexture(textureKey, () => {
                 return this.createPlaceholderTexture(
-                    unitKey.includes('MAMMOTH') ? 32 : 24,
-                    unitKey.includes('MAMMOTH') ? 32 : 24,
-                    this.placeholderColors[faction]?.units || '#666666',
+                    unitKey.includes("MAMMOTH") ? 32 : 24,
+                    unitKey.includes("MAMMOTH") ? 32 : 24,
+                    this.placeholderColors[faction]?.units || "#666666",
                     unitInfo.name
                 );
             });
             
             this.textures.set(textureKey, texture);
             this.trackTextureUsage(textureKey, {
-                type: 'unit',
+                type: "unit",
                 faction,
-                priority: this.getTexturePriority(unitKey, 'unit'),
+                priority: this.getTexturePriority(unitKey, "unit"),
                 memoryBytes: this.texturePool.calculateTextureMemory(texture)
             });
         });
@@ -133,47 +133,47 @@ export class CnCAssetLoader {
             let width = 48, height = 48;
             
             // Special sizes for certain buildings
-            if (buildingKey.includes('REFINERY')) {
+            if (buildingKey.includes("REFINERY")) {
                 width = 72;
             }
-            if (buildingKey.includes('OBELISK')) {
+            if (buildingKey.includes("OBELISK")) {
                 width = 24;
                 height = 48;
             }
             
-            const faction = (buildingInfo.faction || 'neutral').toLowerCase();
+            const faction = (buildingInfo.faction || "neutral").toLowerCase();
             const textureKey = `building_${buildingKey}`;
             
             const texture = this.texturePool.getTexture(textureKey, () => {
                 return this.createPlaceholderTexture(
                     width,
                     height,
-                    this.placeholderColors[faction]?.structures || '#666666',
+                    this.placeholderColors[faction]?.structures || "#666666",
                     buildingInfo.name
                 );
             });
             
             this.textures.set(textureKey, texture);
             this.trackTextureUsage(textureKey, {
-                type: 'building',
+                type: "building",
                 faction,
-                priority: this.getTexturePriority(buildingKey, 'building'),
+                priority: this.getTexturePriority(buildingKey, "building"),
                 memoryBytes: this.texturePool.calculateTextureMemory(texture)
             });
             
             // Mark core buildings as high priority
-            if (buildingKey.includes('CONSTRUCTION_YARD') || buildingKey.includes('POWER')) {
+            if (buildingKey.includes("CONSTRUCTION_YARD") || buildingKey.includes("POWER")) {
                 this.priorityTextures.add(textureKey);
             }
         });
         
         // Generate resource placeholders
-        const tiberiumKey = 'tiberium_green';
+        const tiberiumKey = "tiberium_green";
         const tiberiumTexture = this.texturePool.getTexture(tiberiumKey, () => {
             return this.createPlaceholderTexture(
                 24, 24,
                 this.placeholderColors.neutral.tiberium,
-                'TIB'
+                "TIB"
             );
         });
         this.textures.set(tiberiumKey, tiberiumTexture);
@@ -187,25 +187,25 @@ export class CnCAssetLoader {
      * Create a colored rectangle placeholder texture
      */
     createPlaceholderTexture(width, height, color, label) {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         
         // Fill with faction color
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, width, height);
         
         // Add border
-        ctx.strokeStyle = '#000000';
+        ctx.strokeStyle = "#000000";
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, width, height);
         
         // Add text label
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = "#ffffff";
         ctx.font = `${Math.min(width/6, 8)}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         
         // Truncate label to fit
         const maxChars = Math.floor(width / 6);
@@ -279,25 +279,25 @@ export class CnCAssetLoader {
      */
     async performLazyLoad(key, priority) {
         // Try to regenerate placeholder if it's a known type
-        if (key.startsWith('unit_') || key.startsWith('building_')) {
-            const type = key.split('_')[0];
+        if (key.startsWith("unit_") || key.startsWith("building_")) {
+            const type = key.split("_")[0];
             const entityKey = key.substring(type.length + 1);
             
             let entityInfo, color, dimensions;
             
-            if (type === 'unit' && this.unitData[entityKey]) {
+            if (type === "unit" && this.unitData[entityKey]) {
                 entityInfo = this.unitData[entityKey];
-                const faction = (entityInfo.faction || 'neutral').toLowerCase();
-                color = this.placeholderColors[faction]?.units || '#666666';
-                dimensions = entityKey.includes('MAMMOTH') ? [32, 32] : [24, 24];
-            } else if (type === 'building' && this.buildingData[entityKey]) {
+                const faction = (entityInfo.faction || "neutral").toLowerCase();
+                color = this.placeholderColors[faction]?.units || "#666666";
+                dimensions = entityKey.includes("MAMMOTH") ? [32, 32] : [24, 24];
+            } else if (type === "building" && this.buildingData[entityKey]) {
                 entityInfo = this.buildingData[entityKey];
-                const faction = (entityInfo.faction || 'neutral').toLowerCase();
-                color = this.placeholderColors[faction]?.structures || '#666666';
+                const faction = (entityInfo.faction || "neutral").toLowerCase();
+                color = this.placeholderColors[faction]?.structures || "#666666";
                 dimensions = [48, 48];
                 
-                if (entityKey.includes('REFINERY')) dimensions = [72, 48];
-                if (entityKey.includes('OBELISK')) dimensions = [24, 48];
+                if (entityKey.includes("REFINERY")) dimensions = [72, 48];
+                if (entityKey.includes("OBELISK")) dimensions = [24, 48];
             }
             
             if (entityInfo) {
@@ -355,7 +355,7 @@ export class CnCAssetLoader {
      */
     async createUnit(unitKey, x = 0, y = 0) {
         const unitInfo = this.getUnitInfo(unitKey);
-        const texture = await this.getTexture(`unit_${unitKey}`, this.getTexturePriority(unitKey, 'unit'));
+        const texture = await this.getTexture(`unit_${unitKey}`, this.getTexturePriority(unitKey, "unit"));
         
         if (!unitInfo || !texture) {
             console.warn(`Unit '${unitKey}' not found`);
@@ -415,7 +415,7 @@ export class CnCAssetLoader {
      */
     async createBuilding(buildingKey, x = 0, y = 0) {
         const buildingInfo = this.getBuildingInfo(buildingKey);
-        const texture = await this.getTexture(`building_${buildingKey}`, this.getTexturePriority(buildingKey, 'building'));
+        const texture = await this.getTexture(`building_${buildingKey}`, this.getTexturePriority(buildingKey, "building"));
         
         if (!buildingInfo || !texture) {
             console.warn(`Building '${buildingKey}' not found`);
@@ -491,7 +491,7 @@ export class CnCAssetLoader {
         if (!this.unitData) return [];
         
         return Object.entries(this.unitData)
-            .filter(([key, unit]) => (unit.faction || '').toLowerCase() === faction.toLowerCase())
+            .filter(([key, unit]) => (unit.faction || "").toLowerCase() === faction.toLowerCase())
             .map(([key, unit]) => ({ key, ...unit }));
     }
     
@@ -502,7 +502,7 @@ export class CnCAssetLoader {
         if (!this.buildingData) return [];
         
         return Object.entries(this.buildingData)
-            .filter(([key, building]) => (building.faction || '').toLowerCase() === faction.toLowerCase())
+            .filter(([key, building]) => (building.faction || "").toLowerCase() === faction.toLowerCase())
             .map(([key, building]) => ({ key, ...building }));
     }
     
@@ -526,18 +526,18 @@ export class CnCAssetLoader {
      */
     getTexturePriority(entityKey, type) {
         // High priority for core game elements
-        if (type === 'building') {
-            if (entityKey.includes('CONSTRUCTION_YARD')) return 10;
-            if (entityKey.includes('POWER')) return 9;
-            if (entityKey.includes('BARRACKS')) return 8;
-            if (entityKey.includes('REFINERY')) return 8;
+        if (type === "building") {
+            if (entityKey.includes("CONSTRUCTION_YARD")) return 10;
+            if (entityKey.includes("POWER")) return 9;
+            if (entityKey.includes("BARRACKS")) return 8;
+            if (entityKey.includes("REFINERY")) return 8;
             return 5;
         }
         
-        if (type === 'unit') {
-            if (entityKey.includes('INFANTRY')) return 7;
-            if (entityKey.includes('TANK')) return 6;
-            if (entityKey.includes('MAMMOTH')) return 5;
+        if (type === "unit") {
+            if (entityKey.includes("INFANTRY")) return 7;
+            if (entityKey.includes("TANK")) return 6;
+            if (entityKey.includes("MAMMOTH")) return 5;
             return 4;
         }
         
@@ -600,25 +600,25 @@ export class CnCAssetLoader {
      * Preload high-priority textures
      */
     async preloadCriticalTextures() {
-        console.log('🚀 Preloading critical textures...');
+        console.log("🚀 Preloading critical textures...");
         
         const criticalTextures = [];
         
         // Core buildings for both factions
         const coreBuildings = [
-            'GDI_CONSTRUCTION_YARD',
-            'NOD_CONSTRUCTION_YARD',
-            'GDI_POWER_PLANT',
-            'NOD_POWER_PLANT',
-            'GDI_BARRACKS',
-            'NOD_BARRACKS'
+            "GDI_CONSTRUCTION_YARD",
+            "NOD_CONSTRUCTION_YARD",
+            "GDI_POWER_PLANT",
+            "NOD_POWER_PLANT",
+            "GDI_BARRACKS",
+            "NOD_BARRACKS"
         ];
         
         const coreUnits = [
-            'GDI_MINIGUNNER',
-            'NOD_MINIGUNNER',
-            'GDI_MEDIUM_TANK',
-            'NOD_LIGHT_TANK'
+            "GDI_MINIGUNNER",
+            "NOD_MINIGUNNER",
+            "GDI_MEDIUM_TANK",
+            "NOD_LIGHT_TANK"
         ];
         
         // Load core buildings
@@ -636,17 +636,17 @@ export class CnCAssetLoader {
         }
         
         // Load resource textures
-        criticalTextures.push(this.getTexture('tiberium_green', 9));
+        criticalTextures.push(this.getTexture("tiberium_green", 9));
         
         await Promise.all(criticalTextures);
-        console.log('✅ Critical textures preloaded');
+        console.log("✅ Critical textures preloaded");
     }
     
     /**
      * Perform memory cleanup
      */
     performMemoryCleanup() {
-        console.log('🧹 Performing asset loader memory cleanup...');
+        console.log("🧹 Performing asset loader memory cleanup...");
         
         const now = Date.now();
         const maxIdleTime = 300000; // 5 minutes
@@ -710,7 +710,7 @@ export class CnCAssetLoader {
      * Destroy asset loader and clean up all resources
      */
     destroy() {
-        console.log('🔚 Destroying CnCAssetLoader...');
+        console.log("🔚 Destroying CnCAssetLoader...");
         
         // Clean up all textures
         for (const key of this.textures.keys()) {
@@ -728,6 +728,6 @@ export class CnCAssetLoader {
         this.buildingData = null;
         this.gameRules = null;
         
-        console.log('✅ CnCAssetLoader destroyed');
+        console.log("✅ CnCAssetLoader destroyed");
     }
 }

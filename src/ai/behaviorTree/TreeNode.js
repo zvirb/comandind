@@ -7,9 +7,9 @@
  * Node execution status enumeration
  */
 export const NodeStatus = {
-    RUNNING: 'RUNNING',    // Node is still executing
-    SUCCESS: 'SUCCESS',    // Node completed successfully
-    FAILURE: 'FAILURE'     // Node failed to complete
+    RUNNING: "RUNNING",    // Node is still executing
+    SUCCESS: "SUCCESS",    // Node completed successfully
+    FAILURE: "FAILURE"     // Node failed to complete
 };
 
 /**
@@ -17,7 +17,7 @@ export const NodeStatus = {
  * Provides common functionality and defines the contract for node implementations
  */
 export class TreeNode {
-    constructor(name = 'Unnamed Node') {
+    constructor(name = "Unnamed Node") {
         this.name = name;
         this.status = NodeStatus.RUNNING;
         this.children = [];
@@ -36,7 +36,7 @@ export class TreeNode {
      */
     addChild(child) {
         if (!(child instanceof TreeNode)) {
-            throw new Error('Child must be an instance of TreeNode');
+            throw new Error("Child must be an instance of TreeNode");
         }
         
         this.children.push(child);
@@ -95,7 +95,7 @@ export class TreeNode {
      * @returns {string} NodeStatus - Current status after execution
      */
     tick(deltaTime = 0) {
-        throw new Error('tick() method must be implemented by subclass');
+        throw new Error("tick() method must be implemented by subclass");
     }
 
     /**
@@ -167,10 +167,10 @@ export class TreeNode {
      * @returns {string} Tree structure as string
      */
     toString(depth = 0) {
-        const indent = '  '.repeat(depth);
-        const statusIcon = this.status === NodeStatus.SUCCESS ? '✓' : 
-                          this.status === NodeStatus.FAILURE ? '✗' : 
-                          this.isRunning ? '⟳' : '○';
+        const indent = "  ".repeat(depth);
+        const statusIcon = this.status === NodeStatus.SUCCESS ? "✓" : 
+            this.status === NodeStatus.FAILURE ? "✗" : 
+                this.isRunning ? "⟳" : "○";
         
         let result = `${indent}${statusIcon} ${this.name} (${this.constructor.name})\n`;
         
@@ -189,29 +189,29 @@ export class TreeNode {
  */
 export async function createNodeFromConfig(config) {
     if (!config.type) {
-        throw new Error('Node configuration must specify a type');
+        throw new Error("Node configuration must specify a type");
     }
 
     let node;
     
     // Import basic nodes dynamically to avoid circular dependencies
-    const { SelectorNode, SequenceNode, ActionNode } = await import('./BasicNodes.js');
+    const { SelectorNode, SequenceNode, ActionNode } = await import("./BasicNodes.js");
     
     switch (config.type.toLowerCase()) {
-        case 'selector':
-            node = new SelectorNode(config.name);
-            break;
-        case 'sequence':
-            node = new SequenceNode(config.name);
-            break;
-        case 'action':
-            node = new ActionNode(config.action || null, config.name);
-            if (config.context) {
-                node.setContext(config.context);
-            }
-            break;
-        default:
-            throw new Error(`Unknown node type: ${config.type}`);
+    case "selector":
+        node = new SelectorNode(config.name);
+        break;
+    case "sequence":
+        node = new SequenceNode(config.name);
+        break;
+    case "action":
+        node = new ActionNode(config.action || null, config.name);
+        if (config.context) {
+            node.setContext(config.context);
+        }
+        break;
+    default:
+        throw new Error(`Unknown node type: ${config.type}`);
     }
 
     // Set custom execution time if provided
@@ -239,27 +239,27 @@ export async function createNodeFromConfig(config) {
  */
 export function createNodeFromConfigSync(config, nodeTypes) {
     if (!config.type) {
-        throw new Error('Node configuration must specify a type');
+        throw new Error("Node configuration must specify a type");
     }
 
     let node;
     const { SelectorNode, SequenceNode, ActionNode } = nodeTypes;
     
     switch (config.type.toLowerCase()) {
-        case 'selector':
-            node = new SelectorNode(config.name);
-            break;
-        case 'sequence':
-            node = new SequenceNode(config.name);
-            break;
-        case 'action':
-            node = new ActionNode(config.action || null, config.name);
-            if (config.context) {
-                node.setContext(config.context);
-            }
-            break;
-        default:
-            throw new Error(`Unknown node type: ${config.type}`);
+    case "selector":
+        node = new SelectorNode(config.name);
+        break;
+    case "sequence":
+        node = new SequenceNode(config.name);
+        break;
+    case "action":
+        node = new ActionNode(config.action || null, config.name);
+        if (config.context) {
+            node.setContext(config.context);
+        }
+        break;
+    default:
+        throw new Error(`Unknown node type: ${config.type}`);
     }
 
     // Set custom execution time if provided

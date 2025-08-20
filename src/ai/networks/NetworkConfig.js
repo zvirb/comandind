@@ -26,17 +26,17 @@ export const NetworkConfig = {
     TARGET_INFERENCE_MS: 5,  // Target inference time
     
     // Model Configuration
-    ACTIVATION: 'relu',      // Hidden layer activation
-    OUTPUT_ACTIVATION: 'linear', // Output layer activation (Q-values)
-    LOSS_FUNCTION: 'meanSquaredError',
-    OPTIMIZER: 'adam',
+    ACTIVATION: "relu",      // Hidden layer activation
+    OUTPUT_ACTIVATION: "linear", // Output layer activation (Q-values)
+    LOSS_FUNCTION: "meanSquaredError",
+    OPTIMIZER: "adam",
     
     // Regularization
     DROPOUT_RATE: 0.1,       // Dropout for regularization
     L2_REGULARIZATION: 0.01, // L2 weight decay
     
     // Model Persistence
-    MODEL_SAVE_PATH: 'qnetwork-model',
+    MODEL_SAVE_PATH: "qnetwork-model",
     CHECKPOINT_FREQUENCY: 1000, // Save every N training steps
     
     // WebGL Backend Settings
@@ -50,7 +50,7 @@ export const NetworkConfig = {
     /**
      * Get optimized configuration for different environments
      */
-    getEnvironmentConfig(environment = 'browser') {
+    getEnvironmentConfig(environment = "browser") {
         const configs = {
             browser: {
                 ...this,
@@ -80,19 +80,19 @@ export const NetworkConfig = {
     validate() {
         const errors = [];
         
-        if (this.INPUT_SIZE <= 0) errors.push('INPUT_SIZE must be positive');
-        if (this.HIDDEN_SIZE <= 0) errors.push('HIDDEN_SIZE must be positive');
-        if (this.OUTPUT_SIZE <= 0) errors.push('OUTPUT_SIZE must be positive');
+        if (this.INPUT_SIZE <= 0) errors.push("INPUT_SIZE must be positive");
+        if (this.HIDDEN_SIZE <= 0) errors.push("HIDDEN_SIZE must be positive");
+        if (this.OUTPUT_SIZE <= 0) errors.push("OUTPUT_SIZE must be positive");
         if (this.LEARNING_RATE <= 0 || this.LEARNING_RATE >= 1) {
-            errors.push('LEARNING_RATE must be between 0 and 1');
+            errors.push("LEARNING_RATE must be between 0 and 1");
         }
         if (this.DISCOUNT_FACTOR < 0 || this.DISCOUNT_FACTOR > 1) {
-            errors.push('DISCOUNT_FACTOR must be between 0 and 1');
+            errors.push("DISCOUNT_FACTOR must be between 0 and 1");
         }
-        if (this.BATCH_SIZE <= 0) errors.push('BATCH_SIZE must be positive');
+        if (this.BATCH_SIZE <= 0) errors.push("BATCH_SIZE must be positive");
         
         if (errors.length > 0) {
-            throw new Error(`NetworkConfig validation failed: ${errors.join(', ')}`);
+            throw new Error(`NetworkConfig validation failed: ${errors.join(", ")}`);
         }
         
         return true;
@@ -100,8 +100,8 @@ export const NetworkConfig = {
 };
 
 // Export individual configurations for specific use cases
-export const COMPACT_CONFIG = NetworkConfig.getEnvironmentConfig('mobile');
-export const PERFORMANCE_CONFIG = NetworkConfig.getEnvironmentConfig('node');
-export const BROWSER_CONFIG = NetworkConfig.getEnvironmentConfig('browser');
+export const COMPACT_CONFIG = NetworkConfig.getEnvironmentConfig("mobile");
+export const PERFORMANCE_CONFIG = NetworkConfig.getEnvironmentConfig("node");
+export const BROWSER_CONFIG = NetworkConfig.getEnvironmentConfig("browser");
 
 export default NetworkConfig;

@@ -1,7 +1,7 @@
-import * as PIXI from 'pixi.js';
-import { System } from './System.js';
-import { SelectableComponent, TransformComponent, SpriteComponent, HealthComponent, CommandComponent, MovementComponent } from './Component.js';
-import { QuadTree } from '../utils/QuadTree.js';
+import * as PIXI from "pixi.js";
+import { System } from "./System.js";
+import { SelectableComponent, TransformComponent, SpriteComponent, HealthComponent, CommandComponent, MovementComponent } from "./Component.js";
+import { QuadTree } from "../utils/QuadTree.js";
 
 /**
  * Optimized Selection System - Uses QuadTree spatial partitioning for O(log n) selection
@@ -44,7 +44,7 @@ export class OptimizedSelectionSystem extends System {
         
         // Visual elements container
         this.selectionGraphics = new PIXI.Container();
-        this.selectionGraphics.name = 'optimized-selection';
+        this.selectionGraphics.name = "optimized-selection";
         stage.addChild(this.selectionGraphics);
         
         // Selection box graphics
@@ -106,18 +106,18 @@ export class OptimizedSelectionSystem extends System {
         };
         
         // Store handlers for cleanup
-        this.eventHandlers.set('mousedown', mousedownHandler);
-        this.eventHandlers.set('mousemove', mousemoveHandler);
-        this.eventHandlers.set('mouseup', mouseupHandler);
-        this.eventHandlers.set('keydown', keydownHandler);
+        this.eventHandlers.set("mousedown", mousedownHandler);
+        this.eventHandlers.set("mousemove", mousemoveHandler);
+        this.eventHandlers.set("mouseup", mouseupHandler);
+        this.eventHandlers.set("keydown", keydownHandler);
         
         // Register event handlers
-        this.inputHandler.on('mousedown', mousedownHandler);
-        this.inputHandler.on('mousemove', mousemoveHandler);
-        this.inputHandler.on('mouseup', mouseupHandler);
-        this.inputHandler.on('keydown', keydownHandler);
+        this.inputHandler.on("mousedown", mousedownHandler);
+        this.inputHandler.on("mousemove", mousemoveHandler);
+        this.inputHandler.on("mouseup", mouseupHandler);
+        this.inputHandler.on("keydown", keydownHandler);
         
-        console.log('✅ OptimizedSelectionSystem input handlers setup completed');
+        console.log("✅ OptimizedSelectionSystem input handlers setup completed");
     }
     
     /**
@@ -310,10 +310,10 @@ export class OptimizedSelectionSystem extends System {
         
         // Issue move command to selected units
         if (this.selectedEntities.size > 0) {
-            this.issueCommandToSelected('move', { x: worldPos.x, y: worldPos.y }, event.shiftKey);
+            this.issueCommandToSelected("move", { x: worldPos.x, y: worldPos.y }, event.shiftKey);
             
             // Show move marker effect
-            this.showCommandMarker(worldPos.x, worldPos.y, 'move');
+            this.showCommandMarker(worldPos.x, worldPos.y, "move");
         }
     }
     
@@ -339,31 +339,31 @@ export class OptimizedSelectionSystem extends System {
      */
     handleKeyDown(event) {
         // Ctrl+A - Select all units
-        if (event.ctrlKey && event.key === 'a') {
+        if (event.ctrlKey && event.key === "a") {
             const activeElement = document.activeElement;
             const isGameFocused = activeElement === document.body || 
                                 activeElement === this.stage.canvas || 
-                                activeElement.closest('#game-container');
+                                activeElement.closest("#game-container");
             
             if (isGameFocused && this.selectedEntities.size > 0) {
                 event.preventDefault();
                 this.selectAllUnits();
-                console.log('🎯 Selected all units with Ctrl+A');
+                console.log("🎯 Selected all units with Ctrl+A");
             }
         }
         
         // Escape - Clear selection
-        if (event.key === 'Escape') {
+        if (event.key === "Escape") {
             this.clearSelection();
         }
         
         // Delete - Destroy selected units (for testing)
-        if (event.key === 'Delete') {
+        if (event.key === "Delete") {
             this.destroySelected();
         }
         
         // Number keys for control groups
-        if (event.key >= '1' && event.key <= '9') {
+        if (event.key >= "1" && event.key <= "9") {
             const groupNumber = parseInt(event.key);
             if (event.ctrlKey) {
                 this.createControlGroup(groupNumber);
@@ -562,9 +562,9 @@ export class OptimizedSelectionSystem extends System {
      */
     issueCommandToSelected(command, target, queued = false) {
         // Check if we have a pathfinding system for group movement
-        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === 'PathfindingSystem');
+        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === "PathfindingSystem");
         
-        if (command === 'move' && target) {
+        if (command === "move" && target) {
             // Use group movement if available and multiple units selected
             if (pathfindingSystem && this.selectedEntities.size > 1) {
                 const entitiesArray = Array.from(this.selectedEntities);
@@ -578,7 +578,7 @@ export class OptimizedSelectionSystem extends System {
                     if (movement) {
                         movement.setTarget(target.x, target.y);
                         if (commandComp) {
-                            commandComp.issueCommand('move', target, queued);
+                            commandComp.issueCommand("move", target, queued);
                         }
                     }
                 }
@@ -591,7 +591,7 @@ export class OptimizedSelectionSystem extends System {
      */
     showCommandMarker(x, y, type) {
         const marker = new PIXI.Graphics();
-        marker.lineStyle(2, type === 'move' ? 0x00ff00 : 0xff0000, 1);
+        marker.lineStyle(2, type === "move" ? 0x00ff00 : 0xff0000, 1);
         marker.drawCircle(0, 0, 10);
         marker.position.set(x, y);
         marker.alpha = 1;
@@ -720,7 +720,7 @@ export class OptimizedSelectionSystem extends System {
                             fillBar.clear();
                             const healthPercent = health.getHealthPercentage();
                             const color = healthPercent > 0.6 ? 0x00ff00 : 
-                                        healthPercent > 0.3 ? 0xffff00 : 0xff0000;
+                                healthPercent > 0.3 ? 0xffff00 : 0xff0000;
                             fillBar.beginFill(color, 1);
                             fillBar.drawRect(-15, -30, 30 * healthPercent, 4);
                             fillBar.endFill();
@@ -748,11 +748,11 @@ export class OptimizedSelectionSystem extends System {
      */
     destroy() {
         if (this.isDestroyed) {
-            console.warn('OptimizedSelectionSystem already destroyed');
+            console.warn("OptimizedSelectionSystem already destroyed");
             return;
         }
         
-        console.log('🗑️ Destroying OptimizedSelectionSystem...');
+        console.log("🗑️ Destroying OptimizedSelectionSystem...");
         
         this.isDestroyed = true;
         
@@ -795,7 +795,7 @@ export class OptimizedSelectionSystem extends System {
         this.hoveredEntity = null;
         this.spatialTree = null;
         
-        console.log('✅ OptimizedSelectionSystem destroyed successfully');
+        console.log("✅ OptimizedSelectionSystem destroyed successfully");
     }
     
     /**

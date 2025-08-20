@@ -1,10 +1,10 @@
-import { Component } from './Component.js';
+import { Component } from "./Component.js";
 
 /**
  * Resource Node Component - Tiberium fields and resource deposits
  */
 export class ResourceNodeComponent extends Component {
-    constructor(resourceType = 'tiberium', amount = 1000, harvestRate = 25) {
+    constructor(resourceType = "tiberium", amount = 1000, harvestRate = 25) {
         super();
         this.resourceType = resourceType; // tiberium, ore, gems
         this.maxAmount = amount;
@@ -115,7 +115,7 @@ export class HarvesterComponent extends Component {
         this.lastHarvestTime = 0;
         
         // AI State
-        this.state = 'idle'; // idle, seeking, harvesting, returning, unloading
+        this.state = "idle"; // idle, seeking, harvesting, returning, unloading
         this.targetResourceNode = null;
         this.homeRefineryId = null;
         this.harvestStartTime = 0;
@@ -140,7 +140,7 @@ export class HarvesterComponent extends Component {
             return false;
         }
         
-        this.state = 'harvesting';
+        this.state = "harvesting";
         this.targetResourceNode = resourceNode;
         this.harvestStartTime = Date.now();
         this.isAtResource = true;
@@ -157,7 +157,7 @@ export class HarvesterComponent extends Component {
      * Complete harvesting action
      */
     completeHarvest() {
-        if (!this.targetResourceNode || this.state !== 'harvesting') {
+        if (!this.targetResourceNode || this.state !== "harvesting") {
             return 0;
         }
         
@@ -194,9 +194,9 @@ export class HarvesterComponent extends Component {
         this.isAtResource = false;
         
         if (this.isFull()) {
-            this.state = 'returning';
+            this.state = "returning";
         } else {
-            this.state = 'seeking';
+            this.state = "seeking";
         }
     }
     
@@ -208,7 +208,7 @@ export class HarvesterComponent extends Component {
             return false;
         }
         
-        this.state = 'unloading';
+        this.state = "unloading";
         this.unloadStartTime = Date.now();
         return true;
     }
@@ -219,7 +219,7 @@ export class HarvesterComponent extends Component {
     completeUnloading() {
         const credits = this.currentLoad;
         this.currentLoad = 0;
-        this.state = 'seeking';
+        this.state = "seeking";
         return credits;
     }
     
@@ -271,7 +271,7 @@ export class HarvesterComponent extends Component {
      * Reset to idle state
      */
     reset() {
-        this.state = 'idle';
+        this.state = "idle";
         this.targetResourceNode = null;
         this.isAtResource = false;
         this.harvestStartTime = 0;

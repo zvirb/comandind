@@ -100,7 +100,7 @@ export class InputBatcher {
      * Initialize the input batcher
      */
     init() {
-        console.log('⌨️  Initializing InputBatcher...');
+        console.log("⌨️  Initializing InputBatcher...");
         
         // Start processing loop
         this.startProcessingLoop();
@@ -137,7 +137,7 @@ export class InputBatcher {
         const mouseHandler = (event) => {
             this.queueEvent({
                 type: event.type,
-                sourceType: 'mouse',
+                sourceType: "mouse",
                 x: event.clientX,
                 y: event.clientY,
                 button: event.button,
@@ -158,7 +158,7 @@ export class InputBatcher {
             
             this.queueEvent({
                 type: event.type,
-                sourceType: 'touch',
+                sourceType: "touch",
                 touches: touches,
                 timestamp: performance.now(),
                 originalEvent: event
@@ -168,17 +168,17 @@ export class InputBatcher {
         // Register event listeners if inputHandler exists
         if (this.inputHandler && this.inputHandler.on) {
             // Mouse events
-            ['mousedown', 'mouseup', 'mousemove'].forEach(eventType => {
+            ["mousedown", "mouseup", "mousemove"].forEach(eventType => {
                 this.inputHandler.on(eventType, mouseHandler);
             });
             
             // Touch events
-            ['touchstart', 'touchend', 'touchmove', 'touchcancel'].forEach(eventType => {
+            ["touchstart", "touchend", "touchmove", "touchcancel"].forEach(eventType => {
                 this.inputHandler.on(eventType, touchHandler);
             });
         }
         
-        console.log('🖱️  Native event interception setup complete');
+        console.log("🖱️  Native event interception setup complete");
     }
     
     /**
@@ -259,7 +259,7 @@ export class InputBatcher {
             let shouldKeep = true;
             
             // Deduplicate mouse move events
-            if (event.type === 'mousemove' && event.sourceType === 'mouse') {
+            if (event.type === "mousemove" && event.sourceType === "mouse") {
                 if (lastMouseMove) {
                     const dx = Math.abs(event.x - lastMouseMove.x);
                     const dy = Math.abs(event.y - lastMouseMove.y);
@@ -276,7 +276,7 @@ export class InputBatcher {
             }
             
             // Deduplicate touch move events
-            if (event.type === 'touchmove' && event.sourceType === 'touch') {
+            if (event.type === "touchmove" && event.sourceType === "touch") {
                 if (lastTouchMove && event.touches.length === 1 && lastTouchMove.touches.length === 1) {
                     const dx = Math.abs(event.touches[0].x - lastTouchMove.touches[0].x);
                     const dy = Math.abs(event.touches[0].y - lastTouchMove.touches[0].y);
@@ -311,7 +311,7 @@ export class InputBatcher {
         const transformedEvent = this.transformEventCoordinates(event);
         
         // Detect gestures for touch events
-        if (event.sourceType === 'touch' && this.config.enableGestures) {
+        if (event.sourceType === "touch" && this.config.enableGestures) {
             this.processGestures(transformedEvent);
         }
         
@@ -325,33 +325,33 @@ export class InputBatcher {
     updateInputState(event) {
         const now = performance.now();
         
-        if (event.sourceType === 'mouse') {
+        if (event.sourceType === "mouse") {
             this.inputState.mouse.x = event.x;
             this.inputState.mouse.y = event.y;
             this.inputState.mouse.buttons = event.buttons || 0;
             this.inputState.mouse.lastUpdate = now;
             
             // Track dragging
-            if (event.type === 'mousedown' && event.button === 0) {
+            if (event.type === "mousedown" && event.button === 0) {
                 this.inputState.dragStart = { x: event.x, y: event.y, time: now };
                 this.inputState.isDragging = false;
-            } else if (event.type === 'mousemove' && this.inputState.dragStart) {
+            } else if (event.type === "mousemove" && this.inputState.dragStart) {
                 const dx = Math.abs(event.x - this.inputState.dragStart.x);
                 const dy = Math.abs(event.y - this.inputState.dragStart.y);
                 
                 if (!this.inputState.isDragging && (dx > this.config.dragThreshold || dy > this.config.dragThreshold)) {
                     this.inputState.isDragging = true;
                 }
-            } else if (event.type === 'mouseup') {
+            } else if (event.type === "mouseup") {
                 this.inputState.dragStart = null;
                 this.inputState.isDragging = false;
             }
         }
         
-        if (event.sourceType === 'touch') {
+        if (event.sourceType === "touch") {
             // Update touch state
             event.touches.forEach(touch => {
-                if (event.type === 'touchstart') {
+                if (event.type === "touchstart") {
                     this.inputState.touches.set(touch.id, {
                         x: touch.x,
                         y: touch.y,
@@ -361,13 +361,13 @@ export class InputBatcher {
                         force: touch.force
                     });
                     this.inputState.activePointers.add(touch.id);
-                } else if (event.type === 'touchmove') {
+                } else if (event.type === "touchmove") {
                     const existing = this.inputState.touches.get(touch.id);
                     if (existing) {
                         existing.x = touch.x;
                         existing.y = touch.y;
                     }
-                } else if (event.type === 'touchend' || event.type === 'touchcancel') {
+                } else if (event.type === "touchend" || event.type === "touchcancel") {
                     // Detect tap
                     const touchData = this.inputState.touches.get(touch.id);
                     if (touchData) {
@@ -379,7 +379,7 @@ export class InputBatcher {
                             // It's a tap - check for double tap
                             if (this.inputState.lastTap && (now - this.inputState.lastTap.time) < this.config.doubleTapTime) {
                                 // Double tap detected
-                                this.dispatchCustomEvent('doubletap', {
+                                this.dispatchCustomEvent("doubletap", {
                                     x: touch.x,
                                     y: touch.y,
                                     worldX: this.screenToWorld(touch.x, touch.y).x,
@@ -404,7 +404,7 @@ export class InputBatcher {
     transformEventCoordinates(event) {
         const transformedEvent = { ...event };
         
-        if (event.sourceType === 'mouse') {
+        if (event.sourceType === "mouse") {
             const worldPos = this.screenToWorld(event.x, event.y);
             transformedEvent.worldX = worldPos.x;
             transformedEvent.worldY = worldPos.y;
@@ -414,7 +414,7 @@ export class InputBatcher {
             this.inputState.mouse.worldY = worldPos.y;
         }
         
-        if (event.sourceType === 'touch') {
+        if (event.sourceType === "touch") {
             transformedEvent.touches = event.touches.map(touch => {
                 const worldPos = this.screenToWorld(touch.x, touch.y);
                 return {
@@ -432,7 +432,7 @@ export class InputBatcher {
      * Process touch gestures
      */
     processGestures(event) {
-        if (event.sourceType !== 'touch') return;
+        if (event.sourceType !== "touch") return;
         
         const touches = Array.from(this.inputState.touches.values());
         
@@ -444,7 +444,7 @@ export class InputBatcher {
             const centerX = (touch1.x + touch2.x) / 2;
             const centerY = (touch1.y + touch2.y) / 2;
             
-            if (event.type === 'touchstart' && !this.gestureState.twoFingerStart) {
+            if (event.type === "touchstart" && !this.gestureState.twoFingerStart) {
                 // Start two-finger gesture
                 this.gestureState.twoFingerStart = {
                     distance: currentDistance,
@@ -454,11 +454,11 @@ export class InputBatcher {
                 };
                 this.gestureState.pinchStart = currentDistance;
                 this.gestureState.rotationStart = currentAngle;
-            } else if (event.type === 'touchmove' && this.gestureState.twoFingerStart) {
+            } else if (event.type === "touchmove" && this.gestureState.twoFingerStart) {
                 // Pinch detection
                 const scaleChange = currentDistance / this.gestureState.pinchStart;
                 if (Math.abs(scaleChange - 1) > 0.1) { // 10% threshold
-                    this.dispatchCustomEvent('pinch', {
+                    this.dispatchCustomEvent("pinch", {
                         scale: scaleChange,
                         centerX: centerX,
                         centerY: centerY,
@@ -470,13 +470,13 @@ export class InputBatcher {
                 // Rotation detection
                 const rotationChange = currentAngle - this.gestureState.rotationStart;
                 if (Math.abs(rotationChange) > 0.2) { // ~11 degrees threshold
-                    this.dispatchCustomEvent('rotate', {
+                    this.dispatchCustomEvent("rotate", {
                         rotation: rotationChange,
                         centerX: centerX,
                         centerY: centerY
                     });
                 }
-            } else if (event.type === 'touchend') {
+            } else if (event.type === "touchend") {
                 this.gestureState.twoFingerStart = null;
                 this.gestureState.pinchStart = null;
                 this.gestureState.rotationStart = null;
@@ -521,8 +521,8 @@ export class InputBatcher {
     /**
      * Register event handler
      */
-    on(eventType, handler, priority = 'normal') {
-        const handlers = priority === 'high' ? this.priorityHandlers : this.eventHandlers;
+    on(eventType, handler, priority = "normal") {
+        const handlers = priority === "high" ? this.priorityHandlers : this.eventHandlers;
         
         if (!handlers.has(eventType)) {
             handlers.set(eventType, []);
@@ -582,7 +582,7 @@ export class InputBatcher {
     dispatchCustomEvent(eventType, data) {
         const customEvent = {
             type: eventType,
-            sourceType: 'gesture',
+            sourceType: "gesture",
             timestamp: performance.now(),
             ...data
         };
@@ -636,7 +636,7 @@ export class InputBatcher {
             this.processInterval = 1000 / newConfig.processFrequency;
         }
         
-        console.log('⚙️  InputBatcher config updated:', this.config);
+        console.log("⚙️  InputBatcher config updated:", this.config);
     }
     
     /**
@@ -645,7 +645,7 @@ export class InputBatcher {
     destroy() {
         if (this.isDestroyed) return;
         
-        console.log('🗑️ Destroying InputBatcher...');
+        console.log("🗑️ Destroying InputBatcher...");
         this.isDestroyed = true;
         
         // Cancel animation frame
@@ -669,6 +669,6 @@ export class InputBatcher {
         this.inputState.touches.clear();
         this.inputState.activePointers.clear();
         
-        console.log('✅ InputBatcher destroyed successfully');
+        console.log("✅ InputBatcher destroyed successfully");
     }
 }

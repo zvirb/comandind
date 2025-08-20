@@ -81,7 +81,7 @@ export class RTSProfiler {
                 bytesPerSecond: 0,
                 latency: 0,
                 packetLoss: 0,
-                connectionQuality: 'excellent'
+                connectionQuality: "excellent"
             },
             alerts: []
         };
@@ -105,7 +105,7 @@ export class RTSProfiler {
     startProfiling() {
         if (!this.enabled) return;
         
-        console.log('🔬 Starting RTS Performance Profiler');
+        console.log("🔬 Starting RTS Performance Profiler");
         
         // Start frame profiling
         this.startFrameProfiling();
@@ -139,7 +139,7 @@ export class RTSProfiler {
             this.metrics.frame.lastFrameTime = now;
             
             // Update history
-            this.updateHistory('fps', this.metrics.frame.fps);
+            this.updateHistory("fps", this.metrics.frame.fps);
             
             requestAnimationFrame(updateFrameMetrics);
         };
@@ -161,7 +161,7 @@ export class RTSProfiler {
             }
             
             // Update history
-            this.updateHistory('memoryUsage', this.metrics.memory.usedJSHeapSize);
+            this.updateHistory("memoryUsage", this.metrics.memory.usedJSHeapSize);
         };
         
         // Update memory metrics every second
@@ -193,18 +193,18 @@ export class RTSProfiler {
         this.metrics.pathfinding.pathHistogram[histogramIndex]++;
         
         // Update history
-        this.updateHistory('pathfindingTime', duration);
+        this.updateHistory("pathfindingTime", duration);
         
         // Check for performance issues
         if (duration > this.targets.maxPathfindingTime) {
-            this.addAlert('pathfinding_slow', `Pathfinding took ${duration.toFixed(2)}ms (target: ${this.targets.maxPathfindingTime}ms)`, {
+            this.addAlert("pathfinding_slow", `Pathfinding took ${duration.toFixed(2)}ms (target: ${this.targets.maxPathfindingTime}ms)`, {
                 duration,
                 pathLength,
                 operation
             });
         }
         
-        this.broadcastMetrics('pathfinding', {
+        this.broadcastMetrics("pathfinding", {
             averageCalculationTime: this.metrics.pathfinding.averageTime,
             pathsPerSecond: this.getPathsPerSecond(),
             cacheHitRatio: this.getCacheHitRatio(),
@@ -230,15 +230,15 @@ export class RTSProfiler {
         
         // Update selection type counters
         switch (selectionType) {
-            case 'drag':
-                this.metrics.selection.dragSelections++;
-                break;
-            case 'click':
-                this.metrics.selection.clickSelections++;
-                break;
-            case 'multi':
-                this.metrics.selection.multiSelections++;
-                break;
+        case "drag":
+            this.metrics.selection.dragSelections++;
+            break;
+        case "click":
+            this.metrics.selection.clickSelections++;
+            break;
+        case "multi":
+            this.metrics.selection.multiSelections++;
+            break;
         }
         
         // Update histogram by entity count
@@ -246,18 +246,18 @@ export class RTSProfiler {
         this.metrics.selection.selectionHistogram[histogramIndex]++;
         
         // Update history
-        this.updateHistory('selectionTime', duration);
+        this.updateHistory("selectionTime", duration);
         
         // Check for performance issues
         if (duration > this.targets.maxSelectionTime) {
-            this.addAlert('selection_slow', `Selection took ${duration.toFixed(2)}ms (target: ${this.targets.maxSelectionTime}ms)`, {
+            this.addAlert("selection_slow", `Selection took ${duration.toFixed(2)}ms (target: ${this.targets.maxSelectionTime}ms)`, {
                 duration,
                 entityCount,
                 selectionType
             });
         }
         
-        this.broadcastMetrics('selection', {
+        this.broadcastMetrics("selection", {
             averageSelectionTime: this.metrics.selection.averageTime,
             lastSelectionSize: entityCount,
             selectionEventsPerSecond: this.getSelectionsPerSecond(),
@@ -277,7 +277,7 @@ export class RTSProfiler {
             totalTicks: this.metrics.resources.totalTicks + 1
         };
         
-        this.broadcastMetrics('resources', this.metrics.resources);
+        this.broadcastMetrics("resources", this.metrics.resources);
     }
     
     /**
@@ -291,11 +291,11 @@ export class RTSProfiler {
         this.metrics.memory.systemCount = systemCount;
         
         // Update history
-        this.updateHistory('entityCount', entityCount);
+        this.updateHistory("entityCount", entityCount);
         
         // Check for performance issues
         if (entityCount > this.targets.maxEntities) {
-            this.addAlert('entity_overflow', `Entity count exceeded limit: ${entityCount}/${this.targets.maxEntities}`, {
+            this.addAlert("entity_overflow", `Entity count exceeded limit: ${entityCount}/${this.targets.maxEntities}`, {
                 entityCount,
                 componentCount,
                 systemCount
@@ -348,16 +348,16 @@ export class RTSProfiler {
      */
     getAlertSeverity(type) {
         const severityMap = {
-            fps_low: 'critical',
-            frame_time_high: 'warning',
-            pathfinding_slow: 'warning',
-            selection_slow: 'warning',
-            entity_overflow: 'warning',
-            memory_high: 'critical',
-            system_error: 'critical'
+            fps_low: "critical",
+            frame_time_high: "warning",
+            pathfinding_slow: "warning",
+            selection_slow: "warning",
+            entity_overflow: "warning",
+            memory_high: "critical",
+            system_error: "critical"
         };
         
-        return severityMap[type] || 'info';
+        return severityMap[type] || "info";
     }
     
     /**
@@ -399,7 +399,7 @@ export class RTSProfiler {
             
             // Check FPS
             if (this.metrics.frame.fps < this.targets.minFps) {
-                this.addAlert('fps_low', `FPS dropped to ${this.metrics.frame.fps.toFixed(1)} (target: ${this.targets.fps})`, {
+                this.addAlert("fps_low", `FPS dropped to ${this.metrics.frame.fps.toFixed(1)} (target: ${this.targets.fps})`, {
                     fps: this.metrics.frame.fps,
                     frameTime: this.metrics.frame.frameTime
                 });
@@ -407,7 +407,7 @@ export class RTSProfiler {
             
             // Check memory
             if (this.metrics.memory.usedJSHeapSize > this.targets.maxMemory) {
-                this.addAlert('memory_high', `Memory usage exceeded limit: ${this.metrics.memory.usedJSHeapSize.toFixed(1)}MB/${this.targets.maxMemory}MB`, {
+                this.addAlert("memory_high", `Memory usage exceeded limit: ${this.metrics.memory.usedJSHeapSize.toFixed(1)}MB/${this.targets.maxMemory}MB`, {
                     memoryUsage: this.metrics.memory.usedJSHeapSize
                 });
             }
@@ -419,7 +419,7 @@ export class RTSProfiler {
      * Broadcast metrics to monitoring systems
      */
     broadcastMetrics(type, data) {
-        if (typeof window !== 'undefined' && window.RTSMonitoringBridge) {
+        if (typeof window !== "undefined" && window.RTSMonitoringBridge) {
             window.RTSMonitoringBridge.updateMetrics(type, data);
         }
         
@@ -436,25 +436,25 @@ export class RTSProfiler {
     /**
      * Connect to monitoring WebSocket
      */
-    connectToMonitoring(wsUrl = 'ws://localhost:8080/ws') {
+    connectToMonitoring(wsUrl = "ws://localhost:8080/ws") {
         try {
             this.wsConnection = new WebSocket(wsUrl);
             
             this.wsConnection.onopen = () => {
-                console.log('🔌 Connected to RTS monitoring WebSocket');
+                console.log("🔌 Connected to RTS monitoring WebSocket");
             };
             
             this.wsConnection.onclose = () => {
-                console.log('🔌 Disconnected from RTS monitoring WebSocket');
+                console.log("🔌 Disconnected from RTS monitoring WebSocket");
                 // Attempt reconnection after 5 seconds
                 setTimeout(() => this.connectToMonitoring(wsUrl), 5000);
             };
             
             this.wsConnection.onerror = (error) => {
-                console.error('WebSocket connection error:', error);
+                console.error("WebSocket connection error:", error);
             };
         } catch (error) {
-            console.error('Failed to connect to monitoring WebSocket:', error);
+            console.error("Failed to connect to monitoring WebSocket:", error);
         }
     }
     
@@ -539,33 +539,33 @@ export class RTSProfiler {
         
         if (this.metrics.frame.fps < this.targets.minFps) {
             recommendations.push({
-                type: 'performance',
-                priority: 'high',
-                message: 'Consider reducing visual effects or entity count to improve FPS'
+                type: "performance",
+                priority: "high",
+                message: "Consider reducing visual effects or entity count to improve FPS"
             });
         }
         
         if (this.metrics.pathfinding.averageTime > this.targets.maxPathfindingTime) {
             recommendations.push({
-                type: 'pathfinding',
-                priority: 'medium',
-                message: 'Optimize pathfinding by reducing calculation frequency or improving caching'
+                type: "pathfinding",
+                priority: "medium",
+                message: "Optimize pathfinding by reducing calculation frequency or improving caching"
             });
         }
         
         if (this.getCacheHitRatio() < 0.7) {
             recommendations.push({
-                type: 'caching',
-                priority: 'medium',
-                message: 'Improve pathfinding cache hit ratio by increasing cache timeout or better cache keys'
+                type: "caching",
+                priority: "medium",
+                message: "Improve pathfinding cache hit ratio by increasing cache timeout or better cache keys"
             });
         }
         
         if (this.metrics.memory.usedJSHeapSize > this.targets.maxMemory * 0.8) {
             recommendations.push({
-                type: 'memory',
-                priority: 'high',
-                message: 'Memory usage is high. Consider object pooling or garbage collection optimization'
+                type: "memory",
+                priority: "high",
+                message: "Memory usage is high. Consider object pooling or garbage collection optimization"
             });
         }
         
@@ -592,14 +592,14 @@ export class RTSProfiler {
      */
     setEnabled(enabled) {
         this.enabled = enabled;
-        console.log(`🔬 RTS Profiler ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`🔬 RTS Profiler ${enabled ? "enabled" : "disabled"}`);
     }
     
     /**
      * Reset all metrics
      */
     reset() {
-        console.log('🔄 Resetting RTS Profiler metrics');
+        console.log("🔄 Resetting RTS Profiler metrics");
         
         // Reset all metrics to initial state
         this.metrics = {
@@ -662,7 +662,7 @@ export class RTSProfiler {
                 bytesPerSecond: 0,
                 latency: 0,
                 packetLoss: 0,
-                connectionQuality: 'excellent'
+                connectionQuality: "excellent"
             },
             alerts: []
         };

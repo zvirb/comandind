@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 export class TestSprites {
     constructor(application) {
@@ -40,7 +40,7 @@ export class TestSprites {
             sprite.scale.set(0.8 + Math.random() * 0.4);
             
             // Add to units layer
-            this.app.addToLayer(sprite, 'units');
+            this.app.addToLayer(sprite, "units");
             this.sprites.push(sprite);
         }
         
@@ -100,6 +100,6 @@ export class TestSprites {
         });
         this.textures = {};
         
-        console.log('Cleared all test sprites');
+        console.log("Cleared all test sprites");
     }
 }

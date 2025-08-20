@@ -5,7 +5,7 @@
  * Critical for maintaining stability with thousands of sprites and large texture atlases
  */
 
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 export class WebGLContextManager {
     constructor(application) {
@@ -53,8 +53,8 @@ export class WebGLContextManager {
         
         // Extension support tracking
         this.extensions = {
-            required: ['WEBGL_lose_context'],
-            optional: ['EXT_texture_filter_anisotropic', 'WEBGL_compressed_texture_s3tc'],
+            required: ["WEBGL_lose_context"],
+            optional: ["EXT_texture_filter_anisotropic", "WEBGL_compressed_texture_s3tc"],
             supported: new Map(),
             fallbacks: new Map()
         };
@@ -96,14 +96,14 @@ export class WebGLContextManager {
      * Initialize context management
      */
     init() {
-        console.log('🔧 Initializing WebGL Context Manager...');
+        console.log("🔧 Initializing WebGL Context Manager...");
         
         // Set up context event listeners after application is ready
         if (this.app && this.app.view) {
             this.setupContextListeners();
             this.analyzeWebGLCapabilities();
         } else {
-            console.warn('⚠️ Application not ready, deferring context setup');
+            console.warn("⚠️ Application not ready, deferring context setup");
         }
     }
     
@@ -115,7 +115,7 @@ export class WebGLContextManager {
         this.gl = this.app.renderer.gl;
         
         if (!this.canvas || !this.gl) {
-            console.error('❌ Failed to get canvas or WebGL context');
+            console.error("❌ Failed to get canvas or WebGL context");
             return;
         }
         
@@ -129,26 +129,26 @@ export class WebGLContextManager {
         this.contextLostHandler = (event) => {
             if (this.isDestroyed) return;
             
-            console.error('🚨 WebGL Context Lost!');
+            console.error("🚨 WebGL Context Lost!");
             event.preventDefault(); // Prevent default browser behavior
             
             // Enhanced logging
             const contextInfo = {
                 timestamp: Date.now(),
-                reason: event.statusMessage || 'Unknown',
+                reason: event.statusMessage || "Unknown",
                 userAgent: navigator.userAgent,
                 viewport: [this.gl?.drawingBufferWidth, this.gl?.drawingBufferHeight],
                 memoryPressure: this.contextStats.textureMemoryUsed
             };
             
-            console.error('Context loss details:', contextInfo);
+            console.error("Context loss details:", contextInfo);
             this.handleContextLost(contextInfo);
         };
         
         this.contextRestoredHandler = (event) => {
             if (this.isDestroyed) return;
             
-            console.log('✅ WebGL Context Restored');
+            console.log("✅ WebGL Context Restored");
             const restoreInfo = {
                 timestamp: Date.now(),
                 attempt: this.restoreAttempts,
@@ -159,8 +159,8 @@ export class WebGLContextManager {
         };
         
         // Add event listeners with bound handlers
-        this.canvas.addEventListener('webglcontextlost', this.contextLostHandler);
-        this.canvas.addEventListener('webglcontextrestored', this.contextRestoredHandler);
+        this.canvas.addEventListener("webglcontextlost", this.contextLostHandler);
+        this.canvas.addEventListener("webglcontextrestored", this.contextRestoredHandler);
         
         // Monitor memory pressure
         this.startMemoryMonitoring();
@@ -168,7 +168,7 @@ export class WebGLContextManager {
         // Setup periodic health checks
         this.startHealthMonitoring();
         
-        console.log('✅ Enhanced WebGL context listeners established');
+        console.log("✅ Enhanced WebGL context listeners established");
     }
     
     /**
@@ -176,7 +176,7 @@ export class WebGLContextManager {
      */
     analyzeWebGLCapabilities() {
         if (!this.gl) {
-            console.error('❌ No WebGL context available for analysis');
+            console.error("❌ No WebGL context available for analysis");
             return;
         }
         
@@ -195,7 +195,7 @@ export class WebGLContextManager {
         const renderer = gl.getParameter(gl.RENDERER);
         const vendor = gl.getParameter(gl.VENDOR);
         
-        console.log('📊 WebGL Capabilities Analysis:');
+        console.log("📊 WebGL Capabilities Analysis:");
         console.log(`   Version: ${version}`);
         console.log(`   Renderer: ${renderer}`);
         console.log(`   Vendor: ${vendor}`);
@@ -205,23 +205,23 @@ export class WebGLContextManager {
         
         // Check for useful extensions
         const extensions = [
-            'EXT_texture_filter_anisotropic',
-            'WEBGL_compressed_texture_s3tc',
-            'WEBGL_compressed_texture_pvrtc',
-            'WEBGL_compressed_texture_etc1',
-            'OES_texture_float',
-            'ANGLE_instanced_arrays',
-            'WEBGL_lose_context' // For testing
+            "EXT_texture_filter_anisotropic",
+            "WEBGL_compressed_texture_s3tc",
+            "WEBGL_compressed_texture_pvrtc",
+            "WEBGL_compressed_texture_etc1",
+            "OES_texture_float",
+            "ANGLE_instanced_arrays",
+            "WEBGL_lose_context" // For testing
         ];
         
-        console.log('   Extensions:');
+        console.log("   Extensions:");
         extensions.forEach(ext => {
             const supported = gl.getExtension(ext) !== null;
-            console.log(`     ${ext}: ${supported ? '✅' : '❌'}`);
+            console.log(`     ${ext}: ${supported ? "✅" : "❌"}`);
         });
         
         // Check memory info if available
-        const memoryInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        const memoryInfo = gl.getExtension("WEBGL_debug_renderer_info");
         if (memoryInfo) {
             const unmaskedRenderer = gl.getParameter(memoryInfo.UNMASKED_RENDERER_WEBGL);
             const unmaskedVendor = gl.getParameter(memoryInfo.UNMASKED_VENDOR_WEBGL);
@@ -239,10 +239,10 @@ export class WebGLContextManager {
         this.restoreAttempts++;
         
         console.log(`🚨 Context Loss Event #${this.restoreAttempts}`);
-        console.log('Loss details:', contextInfo);
+        console.log("Loss details:", contextInfo);
         
         // Show user notification (if in browser environment)
-        if (typeof document !== 'undefined') {
+        if (typeof document !== "undefined") {
             this.showContextLossNotification();
         }
         
@@ -256,7 +256,7 @@ export class WebGLContextManager {
         this.clearTextureCaches();
         
         // Dispatch enhanced custom event
-        const contextLostEvent = new CustomEvent('webgl-context-lost', {
+        const contextLostEvent = new CustomEvent("webgl-context-lost", {
             detail: {
                 attempt: this.restoreAttempts,
                 maxAttempts: this.maxRestoreAttempts,
@@ -267,7 +267,7 @@ export class WebGLContextManager {
         });
         
         // Dispatch event if in browser environment
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
             window.dispatchEvent(contextLostEvent);
         }
         
@@ -279,8 +279,8 @@ export class WebGLContextManager {
      * Handle WebGL context restoration with validation
      */
     async handleContextRestored(restoreInfo = {}) {
-        console.log('✅ WebGL Context Restored Successfully');
-        console.log('Restore info:', restoreInfo);
+        console.log("✅ WebGL Context Restored Successfully");
+        console.log("Restore info:", restoreInfo);
         
         // Mark recovery as in progress
         this.recoveryState.isRecovering = true;
@@ -288,7 +288,7 @@ export class WebGLContextManager {
         
         try {
             // Update progress notification
-            this.updateContextNotification('Restoring WebGL context...', 'info');
+            this.updateContextNotification("Restoring WebGL context...", "info");
             
             // Step 1: Validate context health
             const healthCheck = this.checkContextHealth();
@@ -298,14 +298,14 @@ export class WebGLContextManager {
             
             // Step 2: Re-initialize WebGL state
             await this.reinitializeWebGLState();
-            this.updateContextNotification('Reinitializing graphics state...', 'info');
+            this.updateContextNotification("Reinitializing graphics state...", "info");
             
             // Step 3: Restore context state
             this.restoreContextState();
             
             // Step 4: Reload critical textures progressively
             await this.reloadTextures((progress) => {
-                this.updateContextNotification(`Loading textures... ${Math.round(progress * 100)}%`, 'info');
+                this.updateContextNotification(`Loading textures... ${Math.round(progress * 100)}%`, "info");
             });
             
             // Step 5: Validate rendering capabilities
@@ -322,31 +322,31 @@ export class WebGLContextManager {
             this.contextLost = false;
             
             // Success notification
-            this.updateContextNotification('WebGL context restored successfully!', 'success');
+            this.updateContextNotification("WebGL context restored successfully!", "success");
             setTimeout(() => this.hideContextNotification(), 3000);
             
             // Dispatch restoration event with details
-            const contextRestoredEvent = new CustomEvent('webgl-context-restored', {
+            const contextRestoredEvent = new CustomEvent("webgl-context-restored", {
                 detail: {
                     restoreInfo,
                     recoveryTime: Date.now() - this.recoveryState.recoveryStartTime,
                     success: true
                 }
             });
-            if (typeof window !== 'undefined') {
+            if (typeof window !== "undefined") {
                 window.dispatchEvent(contextRestoredEvent);
             }
             
-            console.log('🎉 Enhanced context restoration complete');
+            console.log("🎉 Enhanced context restoration complete");
             
         } catch (error) {
-            console.error('❌ Context restoration failed:', error);
+            console.error("❌ Context restoration failed:", error);
             
             // Clear recovery state
             this.recoveryState.isRecovering = false;
             
             // Show error and attempt fallback
-            this.updateContextNotification('WebGL restoration failed, attempting fallback...', 'error');
+            this.updateContextNotification("WebGL restoration failed, attempting fallback...", "error");
             
             // Try fallback or show error
             if (this.restoreAttempts <= this.maxRestoreAttempts) {
@@ -362,8 +362,8 @@ export class WebGLContextManager {
      */
     attemptContextRestore() {
         if (this.restoreAttempts > this.maxRestoreAttempts) {
-            console.error('💪 Max context restore attempts exceeded');
-            this.updateContextNotification('WebGL restore failed, switching to Canvas mode...', 'warning');
+            console.error("💪 Max context restore attempts exceeded");
+            this.updateContextNotification("WebGL restore failed, switching to Canvas mode...", "warning");
             setTimeout(() => this.fallbackToCanvasRenderer(), 2000);
             return;
         }
@@ -375,7 +375,7 @@ export class WebGLContextManager {
         // Update user notification
         this.updateContextNotification(
             `Attempting to restore WebGL... (${this.restoreAttempts}/${this.maxRestoreAttempts})`, 
-            'info'
+            "info"
         );
         
         // Setup timeout for this restoration attempt
@@ -392,13 +392,13 @@ export class WebGLContextManager {
         
         // Try to get the context restoration extension
         setTimeout(() => {
-            const loseContextExt = this.gl?.getExtension('WEBGL_lose_context');
+            const loseContextExt = this.gl?.getExtension("WEBGL_lose_context");
             if (loseContextExt && loseContextExt.restoreContext) {
                 try {
                     loseContextExt.restoreContext();
                     console.log(`🔄 Restore context called for attempt ${this.restoreAttempts}`);
                 } catch (error) {
-                    console.error('Error calling restoreContext:', error);
+                    console.error("Error calling restoreContext:", error);
                     clearTimeout(restoreTimeout);
                     
                     if (this.restoreAttempts < this.maxRestoreAttempts) {
@@ -409,7 +409,7 @@ export class WebGLContextManager {
                     }
                 }
             } else {
-                console.error('WEBGL_lose_context extension not available');
+                console.error("WEBGL_lose_context extension not available");
                 clearTimeout(restoreTimeout);
                 this.fallbackToCanvasRenderer();
             }
@@ -420,7 +420,7 @@ export class WebGLContextManager {
      * Fallback to Canvas renderer when WebGL fails permanently
      */
     fallbackToCanvasRenderer() {
-        console.warn('⚠️ Falling back to Canvas renderer');
+        console.warn("⚠️ Falling back to Canvas renderer");
         
         try {
             // Create new PIXI app with Canvas renderer
@@ -441,13 +441,13 @@ export class WebGLContextManager {
             }
             
             // Dispatch fallback event
-            const fallbackEvent = new CustomEvent('webgl-fallback-canvas');
-            if (typeof window !== 'undefined') {
+            const fallbackEvent = new CustomEvent("webgl-fallback-canvas");
+            if (typeof window !== "undefined") {
                 window.dispatchEvent(fallbackEvent);
             }
             
         } catch (error) {
-            console.error('💀 Canvas fallback failed:', error);
+            console.error("💀 Canvas fallback failed:", error);
             
             // Last resort - show error message
             this.showWebGLErrorMessage();
@@ -458,9 +458,9 @@ export class WebGLContextManager {
      * Show WebGL error message to user
      */
     showWebGLErrorMessage() {
-        if (typeof document === 'undefined') return;
+        if (typeof document === "undefined") return;
         
-        const errorDiv = document.createElement('div');
+        const errorDiv = document.createElement("div");
         errorDiv.style.cssText = `
             position: fixed;
             top: 50%;
@@ -518,7 +518,7 @@ export class WebGLContextManager {
             PIXI.BatchRenderer.defaultBatchSize = 4096;
         }
         
-        console.log('✅ WebGL state reinitialized');
+        console.log("✅ WebGL state reinitialized");
     }
     
     /**
@@ -540,14 +540,14 @@ export class WebGLContextManager {
             });
         }
         
-        console.log('🗑️ Texture caches cleared');
+        console.log("🗑️ Texture caches cleared");
     }
     
     /**
      * Reload critical textures after context restoration
      */
     async reloadTextures(progressCallback = null) {
-        console.log('🔄 Reloading textures...');
+        console.log("🔄 Reloading textures...");
         
         // This would typically reload game-critical textures
         // In a real implementation, you'd maintain a list of essential textures
@@ -555,10 +555,10 @@ export class WebGLContextManager {
         try {
             // Example: reload placeholder textures
             const placeholderTextures = [
-                { key: 'unit_placeholder', size: 24 },
-                { key: 'building_placeholder', size: 48 },
-                { key: 'terrain_placeholder', size: 32 },
-                { key: 'effect_placeholder', size: 16 }
+                { key: "unit_placeholder", size: 24 },
+                { key: "building_placeholder", size: 48 },
+                { key: "terrain_placeholder", size: 32 },
+                { key: "effect_placeholder", size: 16 }
             ];
             
             let loadedCount = 0;
@@ -577,10 +577,10 @@ export class WebGLContextManager {
                 await new Promise(resolve => setTimeout(resolve, 10));
             }
             
-            console.log('✅ Critical textures reloaded');
+            console.log("✅ Critical textures reloaded");
             
         } catch (error) {
-            console.error('❌ Failed to reload textures:', error);
+            console.error("❌ Failed to reload textures:", error);
             throw error;
         }
     }
@@ -589,19 +589,19 @@ export class WebGLContextManager {
      * Create a placeholder texture
      */
     async createPlaceholderTexture(key, size) {
-        if (typeof document === 'undefined') {
+        if (typeof document === "undefined") {
             // Return a mock texture for Node.js environment
             return { mock: true, key, size };
         }
         
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = canvas.height = size;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         
         // Create simple colored rectangle
-        ctx.fillStyle = '#666666';
+        ctx.fillStyle = "#666666";
         ctx.fillRect(0, 0, size, size);
-        ctx.strokeStyle = '#333333';
+        ctx.strokeStyle = "#333333";
         ctx.strokeRect(0, 0, size, size);
         
         // Convert to PIXI texture
@@ -622,7 +622,7 @@ export class WebGLContextManager {
             }
         }, 30000); // Check every 30 seconds
         
-        console.log('📊 Memory monitoring started');
+        console.log("📊 Memory monitoring started");
     }
     
     /**
@@ -651,14 +651,14 @@ export class WebGLContextManager {
             // Check thresholds
             if (memoryMB > this.memoryThresholds.critical) {
                 console.warn(`🚨 Critical GPU memory usage: ${memoryMB.toFixed(2)}MB`);
-                this.handleMemoryPressure('critical');
+                this.handleMemoryPressure("critical");
             } else if (memoryMB > this.memoryThresholds.warning) {
                 console.warn(`⚠️ High GPU memory usage: ${memoryMB.toFixed(2)}MB`);
-                this.handleMemoryPressure('warning');
+                this.handleMemoryPressure("warning");
             }
             
         } catch (error) {
-            console.error('Error checking memory pressure:', error);
+            console.error("Error checking memory pressure:", error);
         }
     }
     
@@ -676,15 +676,15 @@ export class WebGLContextManager {
         // Clear unused textures from cache
         this.clearUnusedTextures();
         
-        if (level === 'critical') {
+        if (level === "critical") {
             // More aggressive cleanup
             this.forceTextureCleanup();
             
             // Dispatch memory pressure event
-            const memoryEvent = new CustomEvent('gpu-memory-pressure', {
+            const memoryEvent = new CustomEvent("gpu-memory-pressure", {
                 detail: { level, memoryMB: this.contextStats.textureMemoryUsed / (1024 * 1024) }
             });
-            if (typeof window !== 'undefined') {
+            if (typeof window !== "undefined") {
                 window.dispatchEvent(memoryEvent);
             }
         }
@@ -716,10 +716,10 @@ export class WebGLContextManager {
      * Force aggressive texture cleanup
      */
     forceTextureCleanup() {
-        console.log('🧹 Performing aggressive texture cleanup');
+        console.log("🧹 Performing aggressive texture cleanup");
         
         // Force garbage collection if available
-        if (typeof window !== 'undefined' && window.gc && typeof window.gc === 'function') {
+        if (typeof window !== "undefined" && window.gc && typeof window.gc === "function") {
             window.gc();
         }
         
@@ -732,7 +732,7 @@ export class WebGLContextManager {
      * Check WebGL context health
      */
     checkContextHealth() {
-        if (!this.gl) return { healthy: false, reason: 'No WebGL context' };
+        if (!this.gl) return { healthy: false, reason: "No WebGL context" };
         
         try {
             // Test basic WebGL operations
@@ -744,7 +744,7 @@ export class WebGLContextManager {
             
             // Check if context is lost
             if (this.gl.isContextLost && this.gl.isContextLost()) {
-                return { healthy: false, reason: 'Context is lost' };
+                return { healthy: false, reason: "Context is lost" };
             }
             
             return { healthy: true };
@@ -771,10 +771,10 @@ export class WebGLContextManager {
      */
     testContextLoss() {
         if (this.gl) {
-            const loseContextExt = this.gl.getExtension('WEBGL_lose_context');
+            const loseContextExt = this.gl.getExtension("WEBGL_lose_context");
             if (loseContextExt) {
                 loseContextExt.loseContext();
-                console.log('🧪 Context loss triggered for testing');
+                console.log("🧪 Context loss triggered for testing");
             }
         }
     }
@@ -809,10 +809,10 @@ export class WebGLContextManager {
                 dstAlpha: gl.getParameter(gl.BLEND_DST_ALPHA)
             };
             
-            console.log('📸 WebGL context state captured');
+            console.log("📸 WebGL context state captured");
             
         } catch (error) {
-            console.error('Error capturing context state:', error);
+            console.error("Error capturing context state:", error);
         }
     }
     
@@ -847,12 +847,12 @@ export class WebGLContextManager {
         });
         
         // Setup specific fallbacks
-        if (!this.extensions.supported.get('EXT_texture_filter_anisotropic')) {
-            this.extensions.fallbacks.set('anisotropic_filtering', 'disabled');
+        if (!this.extensions.supported.get("EXT_texture_filter_anisotropic")) {
+            this.extensions.fallbacks.set("anisotropic_filtering", "disabled");
         }
         
-        if (!this.extensions.supported.get('WEBGL_compressed_texture_s3tc')) {
-            this.extensions.fallbacks.set('texture_compression', 'uncompressed');
+        if (!this.extensions.supported.get("WEBGL_compressed_texture_s3tc")) {
+            this.extensions.fallbacks.set("texture_compression", "uncompressed");
         }
     }
     
@@ -887,14 +887,14 @@ export class WebGLContextManager {
     /**
      * Update context notification with progress
      */
-    updateContextNotification(message, type = 'info') {
+    updateContextNotification(message, type = "info") {
         if (!this.notificationState.currentNotification) {
             this.showContextLossNotification();
         }
         
         const notification = this.notificationState.currentNotification;
-        const textElement = notification.querySelector('.notification-text');
-        const iconElement = notification.querySelector('.notification-icon');
+        const textElement = notification.querySelector(".notification-text");
+        const iconElement = notification.querySelector(".notification-icon");
         
         if (textElement) {
             textElement.innerHTML = `<strong>${this.getNotificationTitle(type)}</strong><br>${message}`;
@@ -922,12 +922,12 @@ export class WebGLContextManager {
      * Create notification DOM element
      */
     createNotificationElement() {
-        if (typeof document === 'undefined') {
+        if (typeof document === "undefined") {
             return { mock: true };
         }
         
-        const notification = document.createElement('div');
-        notification.className = 'context-notification info';
+        const notification = document.createElement("div");
+        notification.className = "context-notification info";
         notification.style.cssText = `
             position: fixed;
             top: 20px;
@@ -951,10 +951,10 @@ export class WebGLContextManager {
      */
     getNotificationTitle(type) {
         switch (type) {
-            case 'error': return 'Graphics Error';
-            case 'warning': return 'Graphics Warning';
-            case 'success': return 'Graphics Restored';
-            default: return 'Graphics Status';
+        case "error": return "Graphics Error";
+        case "warning": return "Graphics Warning";
+        case "success": return "Graphics Restored";
+        default: return "Graphics Status";
         }
     }
     
@@ -963,10 +963,10 @@ export class WebGLContextManager {
      */
     getNotificationIcon(type) {
         switch (type) {
-            case 'error': return '❌';
-            case 'warning': return '⚠️';
-            case 'success': return '✅';
-            default: return 'ℹ️';
+        case "error": return "❌";
+        case "warning": return "⚠️";
+        case "success": return "✅";
+        default: return "ℹ️";
         }
     }
     
@@ -976,7 +976,7 @@ export class WebGLContextManager {
     pauseRenderingOperations() {
         if (this.app && this.app.ticker) {
             this.app.ticker.stop();
-            console.log('⏸️ Rendering operations paused');
+            console.log("⏸️ Rendering operations paused");
         }
     }
     
@@ -986,7 +986,7 @@ export class WebGLContextManager {
     resumeRenderingOperations() {
         if (this.app && this.app.ticker && !this.app.ticker.started) {
             this.app.ticker.start();
-            console.log('▶️ Rendering operations resumed');
+            console.log("▶️ Rendering operations resumed");
         }
     }
     
@@ -996,7 +996,7 @@ export class WebGLContextManager {
     preserveGameState() {
         // This would typically save current game state to localStorage
         // or send it to a server. For now, we'll just log it.
-        console.log('💾 Game state preservation (placeholder)');
+        console.log("💾 Game state preservation (placeholder)");
         
         // Example of what could be preserved:
         const gameState = {
@@ -1006,8 +1006,8 @@ export class WebGLContextManager {
         };
         
         // Save to localStorage if available (browser environment)
-        if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('webgl_recovery_state', JSON.stringify(gameState));
+        if (typeof localStorage !== "undefined") {
+            localStorage.setItem("webgl_recovery_state", JSON.stringify(gameState));
         }
     }
     
@@ -1037,10 +1037,10 @@ export class WebGLContextManager {
                 gl.disable(gl.BLEND);
             }
             
-            console.log('🔄 WebGL context state restored');
+            console.log("🔄 WebGL context state restored");
             
         } catch (error) {
-            console.error('Error restoring context state:', error);
+            console.error("Error restoring context state:", error);
         }
     }
     
@@ -1049,22 +1049,22 @@ export class WebGLContextManager {
      */
     async validateRenderingCapabilities() {
         if (!this.gl) {
-            return { success: false, reason: 'No WebGL context available' };
+            return { success: false, reason: "No WebGL context available" };
         }
         
         const gl = this.gl;
         
         try {
             // Test basic rendering
-            const testCanvas = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+            const testCanvas = typeof document !== "undefined" ? document.createElement("canvas") : null;
             if (!testCanvas) {
-                return { success: false, reason: 'Cannot create test canvas (no DOM)' };
+                return { success: false, reason: "Cannot create test canvas (no DOM)" };
             }
             testCanvas.width = testCanvas.height = 64;
-            const testGl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+            const testGl = testCanvas.getContext("webgl") || testCanvas.getContext("experimental-webgl");
             
             if (!testGl) {
-                return { success: false, reason: 'Cannot create test WebGL context' };
+                return { success: false, reason: "Cannot create test WebGL context" };
             }
             
             // Test shader compilation
@@ -1089,11 +1089,11 @@ export class WebGLContextManager {
             testGl.compileShader(fragmentShader);
             
             if (!testGl.getShaderParameter(vertexShader, testGl.COMPILE_STATUS)) {
-                return { success: false, reason: 'Vertex shader compilation failed' };
+                return { success: false, reason: "Vertex shader compilation failed" };
             }
             
             if (!testGl.getShaderParameter(fragmentShader, testGl.COMPILE_STATUS)) {
-                return { success: false, reason: 'Fragment shader compilation failed' };
+                return { success: false, reason: "Fragment shader compilation failed" };
             }
             
             // Test program linking
@@ -1103,22 +1103,22 @@ export class WebGLContextManager {
             testGl.linkProgram(program);
             
             if (!testGl.getProgramParameter(program, testGl.LINK_STATUS)) {
-                return { success: false, reason: 'Shader program linking failed' };
+                return { success: false, reason: "Shader program linking failed" };
             }
             
             // Test texture creation
             const texture = testGl.createTexture();
             if (!texture) {
-                return { success: false, reason: 'Texture creation failed' };
+                return { success: false, reason: "Texture creation failed" };
             }
             
             // Test buffer creation
             const buffer = testGl.createBuffer();
             if (!buffer) {
-                return { success: false, reason: 'Buffer creation failed' };
+                return { success: false, reason: "Buffer creation failed" };
             }
             
-            console.log('✅ Rendering capabilities validated');
+            console.log("✅ Rendering capabilities validated");
             return { success: true };
             
         } catch (error) {
@@ -1133,28 +1133,28 @@ export class WebGLContextManager {
         setInterval(() => {
             const health = this.checkContextHealth();
             if (!health.healthy && !this.contextLost) {
-                console.warn('⚠️ Context health check failed:', health.reason);
+                console.warn("⚠️ Context health check failed:", health.reason);
                 
                 // Dispatch warning event
-                const warningEvent = new CustomEvent('webgl-health-warning', {
+                const warningEvent = new CustomEvent("webgl-health-warning", {
                     detail: health
                 });
-                if (typeof window !== 'undefined') {
+                if (typeof window !== "undefined") {
                     window.dispatchEvent(warningEvent);
                 }
             }
         }, 10000); // Check every 10 seconds
         
-        console.log('🏥 WebGL health monitoring started');
+        console.log("🏥 WebGL health monitoring started");
     }
     
     /**
      * Enhanced Canvas fallback with better integration
      */
     async fallbackToCanvasRenderer() {
-        console.warn('⚠️ Falling back to Canvas renderer');
+        console.warn("⚠️ Falling back to Canvas renderer");
         
-        this.updateContextNotification('Switching to Canvas renderer for stability...', 'warning');
+        this.updateContextNotification("Switching to Canvas renderer for stability...", "warning");
         
         try {
             // Create new PIXI app with Canvas renderer
@@ -1203,27 +1203,27 @@ export class WebGLContextManager {
             this.fallbackMode = true;
             
             // Success notification
-            this.updateContextNotification('Successfully switched to Canvas mode', 'success');
+            this.updateContextNotification("Successfully switched to Canvas mode", "success");
             setTimeout(() => this.hideContextNotification(), 5000);
             
             // Dispatch fallback event
-            const fallbackEvent = new CustomEvent('webgl-fallback-canvas', {
+            const fallbackEvent = new CustomEvent("webgl-fallback-canvas", {
                 detail: {
-                    reason: 'context_loss_recovery_failed',
+                    reason: "context_loss_recovery_failed",
                     canvasOptions
                 }
             });
-            if (typeof window !== 'undefined') {
+            if (typeof window !== "undefined") {
                 window.dispatchEvent(fallbackEvent);
             }
             
-            console.log('✅ Successfully switched to Canvas renderer');
+            console.log("✅ Successfully switched to Canvas renderer");
             
         } catch (error) {
-            console.error('💀 Canvas fallback failed:', error);
+            console.error("💀 Canvas fallback failed:", error);
             
             // Show critical error
-            this.updateContextNotification('Graphics system failure. Please reload the page.', 'error');
+            this.updateContextNotification("Graphics system failure. Please reload the page.", "error");
             
             // Last resort - show error message
             this.showWebGLErrorMessage();
@@ -1235,21 +1235,21 @@ export class WebGLContextManager {
      */
     destroy() {
         if (this.isDestroyed) {
-            console.warn('WebGLContextManager already destroyed');
+            console.warn("WebGLContextManager already destroyed");
             return;
         }
         
-        console.log('🗑️ Destroying WebGL Context Manager...');
+        console.log("🗑️ Destroying WebGL Context Manager...");
         
         this.isDestroyed = true;
         
         // Remove event listeners with proper handlers
         if (this.canvas) {
             if (this.contextLostHandler) {
-                this.canvas.removeEventListener('webglcontextlost', this.contextLostHandler);
+                this.canvas.removeEventListener("webglcontextlost", this.contextLostHandler);
             }
             if (this.contextRestoredHandler) {
-                this.canvas.removeEventListener('webglcontextrestored', this.contextRestoredHandler);
+                this.canvas.removeEventListener("webglcontextrestored", this.contextRestoredHandler);
             }
         }
         
@@ -1281,6 +1281,6 @@ export class WebGLContextManager {
         this.contextLostHandler = null;
         this.contextRestoredHandler = null;
         
-        console.log('✅ WebGL Context Manager destroyed successfully');
+        console.log("✅ WebGL Context Manager destroyed successfully");
     }
 }

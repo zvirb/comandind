@@ -1,4 +1,4 @@
-import { Component } from '../../ecs/Component.js';
+import { Component } from "../../ecs/Component.js";
 
 /**
  * Q-Learning Component for AI decision making
@@ -61,28 +61,28 @@ export class QLearningComponent extends Component {
     defineActionSpace() {
         return [
             // Movement actions (8 directions)
-            { id: 0, name: 'move_north', type: 'movement', direction: { x: 0, y: -1 } },
-            { id: 1, name: 'move_northeast', type: 'movement', direction: { x: 1, y: -1 } },
-            { id: 2, name: 'move_east', type: 'movement', direction: { x: 1, y: 0 } },
-            { id: 3, name: 'move_southeast', type: 'movement', direction: { x: 1, y: 1 } },
-            { id: 4, name: 'move_south', type: 'movement', direction: { x: 0, y: 1 } },
-            { id: 5, name: 'move_southwest', type: 'movement', direction: { x: -1, y: 1 } },
-            { id: 6, name: 'move_west', type: 'movement', direction: { x: -1, y: 0 } },
-            { id: 7, name: 'move_northwest', type: 'movement', direction: { x: -1, y: -1 } },
+            { id: 0, name: "move_north", type: "movement", direction: { x: 0, y: -1 } },
+            { id: 1, name: "move_northeast", type: "movement", direction: { x: 1, y: -1 } },
+            { id: 2, name: "move_east", type: "movement", direction: { x: 1, y: 0 } },
+            { id: 3, name: "move_southeast", type: "movement", direction: { x: 1, y: 1 } },
+            { id: 4, name: "move_south", type: "movement", direction: { x: 0, y: 1 } },
+            { id: 5, name: "move_southwest", type: "movement", direction: { x: -1, y: 1 } },
+            { id: 6, name: "move_west", type: "movement", direction: { x: -1, y: 0 } },
+            { id: 7, name: "move_northwest", type: "movement", direction: { x: -1, y: -1 } },
             
             // Combat actions
-            { id: 8, name: 'attack_nearest', type: 'combat', priority: 'nearest' },
-            { id: 9, name: 'attack_weakest', type: 'combat', priority: 'weakest' },
-            { id: 10, name: 'attack_strongest', type: 'combat', priority: 'strongest' },
+            { id: 8, name: "attack_nearest", type: "combat", priority: "nearest" },
+            { id: 9, name: "attack_weakest", type: "combat", priority: "weakest" },
+            { id: 10, name: "attack_strongest", type: "combat", priority: "strongest" },
             
             // Tactical actions
-            { id: 11, name: 'retreat', type: 'tactical', behavior: 'defensive' },
-            { id: 12, name: 'hold_position', type: 'tactical', behavior: 'hold' },
-            { id: 13, name: 'patrol', type: 'tactical', behavior: 'patrol' },
+            { id: 11, name: "retreat", type: "tactical", behavior: "defensive" },
+            { id: 12, name: "hold_position", type: "tactical", behavior: "hold" },
+            { id: 13, name: "patrol", type: "tactical", behavior: "patrol" },
             
             // Special actions
-            { id: 14, name: 'gather_resource', type: 'economy', target: 'resource' },
-            { id: 15, name: 'idle', type: 'passive', behavior: 'wait' }
+            { id: 14, name: "gather_resource", type: "economy", target: "resource" },
+            { id: 15, name: "idle", type: "passive", behavior: "wait" }
         ];
     }
     

@@ -32,39 +32,39 @@ export class PerformanceBenchmark {
     
     setupTestScenarios() {
         // 50+ Unit Combat Scenario
-        this.testScenarios.set('combat_50_units', {
-            name: 'Combat with 50+ Units',
-            description: 'Simulates 50 units engaging in combat with pathfinding and AI',
+        this.testScenarios.set("combat_50_units", {
+            name: "Combat with 50+ Units",
+            description: "Simulates 50 units engaging in combat with pathfinding and AI",
             entityCount: 50,
             setup: this.setupCombatScenario.bind(this),
-            requirements: ['60+ FPS', '<400MB memory', '<50 draw calls']
+            requirements: ["60+ FPS", "<400MB memory", "<50 draw calls"]
         });
         
         // Stress Test - 100 Units
-        this.testScenarios.set('stress_100_units', {
-            name: 'Stress Test - 100 Units',
-            description: 'Maximum load test with 100 units for scalability assessment',
+        this.testScenarios.set("stress_100_units", {
+            name: "Stress Test - 100 Units",
+            description: "Maximum load test with 100 units for scalability assessment",
             entityCount: 100,
             setup: this.setupStressScenario.bind(this),
-            requirements: ['45+ FPS', '<600MB memory', '<80 draw calls']
+            requirements: ["45+ FPS", "<600MB memory", "<80 draw calls"]
         });
         
         // Memory Leak Detection
-        this.testScenarios.set('memory_leak_test', {
-            name: 'Memory Leak Detection',
-            description: 'Creates and destroys entities repeatedly to detect memory leaks',
+        this.testScenarios.set("memory_leak_test", {
+            name: "Memory Leak Detection",
+            description: "Creates and destroys entities repeatedly to detect memory leaks",
             entityCount: 25,
             setup: this.setupMemoryLeakTest.bind(this),
-            requirements: ['Stable memory usage', 'No continuous growth']
+            requirements: ["Stable memory usage", "No continuous growth"]
         });
         
         // Rendering Performance
-        this.testScenarios.set('rendering_stress', {
-            name: 'Rendering Stress Test',
-            description: 'Tests sprite batching efficiency with varied textures',
+        this.testScenarios.set("rendering_stress", {
+            name: "Rendering Stress Test",
+            description: "Tests sprite batching efficiency with varied textures",
             entityCount: 75,
             setup: this.setupRenderingStress.bind(this),
-            requirements: ['60+ FPS', 'Efficient sprite batching', '<100 draw calls']
+            requirements: ["60+ FPS", "Efficient sprite batching", "<100 draw calls"]
         });
     }
     
@@ -79,7 +79,7 @@ export class PerformanceBenchmark {
         
         console.log(`🚀 Starting benchmark: ${scenario.name}`);
         console.log(`📝 Description: ${scenario.description}`);
-        console.log(`🎯 Requirements: ${scenario.requirements.join(', ')}`);
+        console.log(`🎯 Requirements: ${scenario.requirements.join(", ")}`);
         
         this.isRunning = true;
         this.clearHistory();
@@ -88,7 +88,7 @@ export class PerformanceBenchmark {
         const testEntities = await scenario.setup();
         
         // Record baseline performance
-        const baselineData = this.capturePerformanceSnapshot('baseline');
+        const baselineData = this.capturePerformanceSnapshot("baseline");
         
         // Run benchmark for configured duration
         const startTime = performance.now();
@@ -157,45 +157,45 @@ export class PerformanceBenchmark {
             const entity = this.world.createEntity();
             
             // Add required components for combat testing
-            entity.addComponent('TransformComponent', {
+            entity.addComponent("TransformComponent", {
                 x: isPlayerUnit ? Math.random() * 200 + 50 : Math.random() * 200 + 600,
                 y: Math.random() * 400 + 100,
                 rotation: 0
             });
             
-            entity.addComponent('VelocityComponent', {
+            entity.addComponent("VelocityComponent", {
                 vx: 0,
                 vy: 0,
                 maxSpeed: 100,
                 friction: 0.95
             });
             
-            entity.addComponent('SpriteComponent', {
-                textureName: isPlayerUnit ? 'player_unit' : 'enemy_unit',
+            entity.addComponent("SpriteComponent", {
+                textureName: isPlayerUnit ? "player_unit" : "enemy_unit",
                 visible: true,
                 alpha: 1.0
             });
             
-            entity.addComponent('HealthComponent', {
+            entity.addComponent("HealthComponent", {
                 maxHealth: 100,
                 currentHealth: 100
             });
             
-            entity.addComponent('MovementComponent', {
+            entity.addComponent("MovementComponent", {
                 speed: 50 + Math.random() * 50,
                 isMoving: false,
                 path: []
             });
             
-            entity.addComponent('CombatComponent', {
+            entity.addComponent("CombatComponent", {
                 damage: 25,
                 range: 100,
                 attackSpeed: 2.0,
-                damageType: 'kinetic'
+                damageType: "kinetic"
             });
             
-            entity.addComponent('AIComponent', {
-                behaviorType: 'attack',
+            entity.addComponent("AIComponent", {
+                behaviorType: "attack",
                 alertRadius: 150,
                 leashRadius: 300,
                 thinkInterval: 250
@@ -215,27 +215,27 @@ export class PerformanceBenchmark {
         for (let i = 0; i < unitCount; i++) {
             const entity = this.world.createEntity();
             
-            entity.addComponent('TransformComponent', {
+            entity.addComponent("TransformComponent", {
                 x: Math.random() * 1200,
                 y: Math.random() * 700,
                 rotation: Math.random() * Math.PI * 2
             });
             
-            entity.addComponent('VelocityComponent', {
+            entity.addComponent("VelocityComponent", {
                 vx: (Math.random() - 0.5) * 100,
                 vy: (Math.random() - 0.5) * 100,
                 maxSpeed: 100,
                 friction: 0.98
             });
             
-            entity.addComponent('SpriteComponent', {
+            entity.addComponent("SpriteComponent", {
                 textureName: `unit_type_${Math.floor(Math.random() * 5)}`,
                 visible: true,
                 alpha: 0.8 + Math.random() * 0.2
             });
             
-            entity.addComponent('AIComponent', {
-                behaviorType: 'patrol',
+            entity.addComponent("AIComponent", {
+                behaviorType: "patrol",
                 alertRadius: 100,
                 leashRadius: 200,
                 thinkInterval: 200 + Math.random() * 300
@@ -272,13 +272,13 @@ export class PerformanceBenchmark {
             for (let i = 0; i < toCreate && entities.length < maxEntities; i++) {
                 const entity = this.world.createEntity();
                 
-                entity.addComponent('TransformComponent', {
+                entity.addComponent("TransformComponent", {
                     x: Math.random() * 1200,
                     y: Math.random() * 700
                 });
                 
-                entity.addComponent('SpriteComponent', {
-                    textureName: 'test_unit',
+                entity.addComponent("SpriteComponent", {
+                    textureName: "test_unit",
                     visible: true
                 });
                 
@@ -293,12 +293,12 @@ export class PerformanceBenchmark {
     setupRenderingStress() {
         const entities = [];
         const unitCount = 75;
-        const textureVariants = ['unit_a', 'unit_b', 'unit_c', 'unit_d', 'unit_e'];
+        const textureVariants = ["unit_a", "unit_b", "unit_c", "unit_d", "unit_e"];
         
         for (let i = 0; i < unitCount; i++) {
             const entity = this.world.createEntity();
             
-            entity.addComponent('TransformComponent', {
+            entity.addComponent("TransformComponent", {
                 x: Math.random() * 1200,
                 y: Math.random() * 700,
                 rotation: Math.random() * Math.PI * 2,
@@ -306,13 +306,13 @@ export class PerformanceBenchmark {
                 scaleY: 0.5 + Math.random() * 1.0
             });
             
-            entity.addComponent('VelocityComponent', {
+            entity.addComponent("VelocityComponent", {
                 vx: (Math.random() - 0.5) * 50,
                 vy: (Math.random() - 0.5) * 50,
                 maxSpeed: 75
             });
             
-            entity.addComponent('SpriteComponent', {
+            entity.addComponent("SpriteComponent", {
                 textureName: textureVariants[Math.floor(Math.random() * textureVariants.length)],
                 visible: true,
                 alpha: 0.7 + Math.random() * 0.3,
@@ -465,10 +465,10 @@ export class PerformanceBenchmark {
         if (metrics.fps && !metrics.fps.metTarget) {
             if (metrics.fps.average < 45) {
                 results.recommendations.push({
-                    priority: 'high',
-                    category: 'performance',
-                    issue: 'Low FPS performance',
-                    suggestion: 'Consider implementing object pooling, spatial partitioning, or reducing entity update frequency'
+                    priority: "high",
+                    category: "performance",
+                    issue: "Low FPS performance",
+                    suggestion: "Consider implementing object pooling, spatial partitioning, or reducing entity update frequency"
                 });
             }
         }
@@ -476,82 +476,82 @@ export class PerformanceBenchmark {
         // Memory recommendations
         if (metrics.memory && !metrics.memory.withinLimits) {
             results.recommendations.push({
-                priority: 'high',
-                category: 'memory',
-                issue: 'High memory usage',
-                suggestion: 'Implement entity pooling, texture atlasing, and aggressive garbage collection'
+                priority: "high",
+                category: "memory",
+                issue: "High memory usage",
+                suggestion: "Implement entity pooling, texture atlasing, and aggressive garbage collection"
             });
         }
         
         if (metrics.memory && metrics.memory.growth > 50) {
             results.recommendations.push({
-                priority: 'critical',
-                category: 'memory',
-                issue: 'Potential memory leak detected',
-                suggestion: 'Review entity cleanup and component destruction patterns'
+                priority: "critical",
+                category: "memory",
+                issue: "Potential memory leak detected",
+                suggestion: "Review entity cleanup and component destruction patterns"
             });
         }
         
         // Rendering recommendations
         if (metrics.rendering && !metrics.rendering.efficient) {
             results.recommendations.push({
-                priority: 'medium',
-                category: 'rendering',
-                issue: 'Inefficient sprite batching',
-                suggestion: 'Optimize sprite batching by grouping similar textures and reducing state changes'
+                priority: "medium",
+                category: "rendering",
+                issue: "Inefficient sprite batching",
+                suggestion: "Optimize sprite batching by grouping similar textures and reducing state changes"
             });
         }
     }
     
     printResults(results) {
         console.log(`\n📊 Benchmark Results: ${results.scenario}`);
-        console.log('=====================================');
+        console.log("=====================================");
         
         if (results.metrics.fps) {
             const fps = results.metrics.fps;
-            console.log(`🎯 FPS Performance:`);
+            console.log("🎯 FPS Performance:");
             console.log(`   Average: ${fps.average.toFixed(1)} FPS`);
             console.log(`   Range: ${fps.minimum.toFixed(1)} - ${fps.maximum.toFixed(1)} FPS`);
-            console.log(`   Target Met: ${fps.metTarget ? '✅' : '❌'}`);
+            console.log(`   Target Met: ${fps.metTarget ? "✅" : "❌"}`);
         }
         
         if (results.metrics.memory) {
             const mem = results.metrics.memory;
-            console.log(`🧠 Memory Performance:`);
+            console.log("🧠 Memory Performance:");
             console.log(`   Average: ${mem.average.toFixed(1)} MB`);
             console.log(`   Peak: ${mem.maximum.toFixed(1)} MB`);
             console.log(`   Growth: ${mem.growth.toFixed(1)} MB`);
-            console.log(`   Within Limits: ${mem.withinLimits ? '✅' : '❌'}`);
+            console.log(`   Within Limits: ${mem.withinLimits ? "✅" : "❌"}`);
         }
         
         if (results.metrics.rendering) {
             const render = results.metrics.rendering;
-            console.log(`🎨 Rendering Performance:`);
+            console.log("🎨 Rendering Performance:");
             console.log(`   Average Draw Calls: ${render.averageDrawCalls.toFixed(1)}`);
             console.log(`   Peak Draw Calls: ${render.maximumDrawCalls}`);
-            console.log(`   Efficient Batching: ${render.efficient ? '✅' : '❌'}`);
+            console.log(`   Efficient Batching: ${render.efficient ? "✅" : "❌"}`);
         }
         
         if (results.recommendations.length > 0) {
-            console.log(`\n💡 Recommendations:`);
+            console.log("\n💡 Recommendations:");
             results.recommendations.forEach((rec, index) => {
-                const priority = rec.priority === 'critical' ? '🚨' : 
-                               rec.priority === 'high' ? '⚠️' : '💡';
+                const priority = rec.priority === "critical" ? "🚨" : 
+                    rec.priority === "high" ? "⚠️" : "💡";
                 console.log(`   ${priority} ${rec.suggestion}`);
             });
         }
         
-        console.log('\n=====================================\n');
+        console.log("\n=====================================\n");
     }
     
     generateComprehensiveReport(allResults) {
-        console.log(`\n🏆 COMPREHENSIVE PERFORMANCE REPORT`);
-        console.log('=========================================');
+        console.log("\n🏆 COMPREHENSIVE PERFORMANCE REPORT");
+        console.log("=========================================");
         
         const successfulTests = allResults.filter(r => r.success);
         const failedTests = allResults.filter(r => !r.success);
         
-        console.log(`📈 Test Summary:`);
+        console.log("📈 Test Summary:");
         console.log(`   Successful: ${successfulTests.length}/${allResults.length}`);
         console.log(`   Failed: ${failedTests.length}/${allResults.length}`);
         
@@ -566,26 +566,26 @@ export class PerformanceBenchmark {
                 .filter(r => r.metrics.memory)
                 .map(r => r.metrics.memory.maximum));
             
-            console.log(`\n📊 Overall Performance:`);
+            console.log("\n📊 Overall Performance:");
             console.log(`   Average FPS: ${avgFPS.toFixed(1)}`);
             console.log(`   Peak Memory: ${maxMemory.toFixed(1)} MB`);
-            console.log(`   60+ FPS Target: ${avgFPS >= 54 ? '✅' : '❌'}`);
-            console.log(`   Memory Target (<400MB): ${maxMemory < 400 ? '✅' : '❌'}`);
+            console.log(`   60+ FPS Target: ${avgFPS >= 54 ? "✅" : "❌"}`);
+            console.log(`   Memory Target (<400MB): ${maxMemory < 400 ? "✅" : "❌"}`);
         }
         
         // Critical issues
         const criticalIssues = allResults
             .flatMap(r => r.recommendations || [])
-            .filter(rec => rec.priority === 'critical');
+            .filter(rec => rec.priority === "critical");
         
         if (criticalIssues.length > 0) {
-            console.log(`\n🚨 CRITICAL ISSUES DETECTED:`);
+            console.log("\n🚨 CRITICAL ISSUES DETECTED:");
             criticalIssues.forEach(issue => {
                 console.log(`   • ${issue.issue}: ${issue.suggestion}`);
             });
         }
         
-        console.log('\n=========================================\n');
+        console.log("\n=========================================\n");
     }
     
     clearHistory() {

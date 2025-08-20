@@ -39,8 +39,8 @@ export class PerformanceValidator {
      * Start performance validation tests
      */
     startValidation(world, selectionSystem, pathfindingSystem) {
-        console.log('🚀 Starting Performance Validation Tests...');
-        console.log('Targets:');
+        console.log("🚀 Starting Performance Validation Tests...");
+        console.log("Targets:");
         console.log(`  - FPS: ≥${this.targets.minFPS}`);
         console.log(`  - Selection: ≤${this.targets.maxSelectionTime}ms`);
         console.log(`  - Pathfinding: ≤${this.targets.maxPathfindingTime}ms`);
@@ -80,7 +80,7 @@ export class PerformanceValidator {
      */
     testFPS() {
         // FPS is tracked continuously through updateFPS()
-        console.log('📊 Testing FPS performance...');
+        console.log("📊 Testing FPS performance...");
     }
     
     /**
@@ -113,11 +113,11 @@ export class PerformanceValidator {
      */
     testSelectionPerformance() {
         if (!this.selectionSystem) {
-            console.warn('No selection system provided for testing');
+            console.warn("No selection system provided for testing");
             return;
         }
 
-        console.log('🎯 Testing selection performance...');
+        console.log("🎯 Testing selection performance...");
 
         // Test multiple selection scenarios
         const testPositions = [
@@ -157,7 +157,7 @@ export class PerformanceValidator {
         this.results.selectionTime.passed = averageSelectionTime <= this.targets.maxSelectionTime;
 
         console.log(`Selection test completed: ${averageSelectionTime.toFixed(2)}ms average`);
-        this.completedTests.add('selection');
+        this.completedTests.add("selection");
     }
 
     /**
@@ -165,11 +165,11 @@ export class PerformanceValidator {
      */
     testPathfindingPerformance() {
         if (!this.pathfindingSystem) {
-            console.warn('No pathfinding system provided for testing');
+            console.warn("No pathfinding system provided for testing");
             return;
         }
 
-        console.log('🗺️ Testing pathfinding performance...');
+        console.log("🗺️ Testing pathfinding performance...");
 
         // Create test entities for pathfinding
         const testPaths = [
@@ -188,8 +188,8 @@ export class PerformanceValidator {
                 const testEntity = this.world.createEntity();
 
                 // Add required components
-                const TransformComponent = this.getComponentClass('TransformComponent');
-                const MovementComponent = this.getComponentClass('MovementComponent');
+                const TransformComponent = this.getComponentClass("TransformComponent");
+                const MovementComponent = this.getComponentClass("MovementComponent");
 
                 if (TransformComponent && MovementComponent) {
                     testEntity.addComponent(new TransformComponent(path.start.x, path.start.y));
@@ -221,14 +221,14 @@ export class PerformanceValidator {
         this.results.pathfindingTime.passed = averagePathfindingTime <= this.targets.maxPathfindingTime;
 
         console.log(`Pathfinding test completed: ${averagePathfindingTime.toFixed(2)}ms average`);
-        this.completedTests.add('pathfinding');
+        this.completedTests.add("pathfinding");
     }
 
     /**
      * Test memory usage
      */
     testMemoryUsage() {
-        console.log('💾 Testing memory usage...');
+        console.log("💾 Testing memory usage...");
 
         if (performance.memory) {
             const memoryUsage = performance.memory.usedJSHeapSize;
@@ -237,11 +237,11 @@ export class PerformanceValidator {
 
             console.log(`Memory usage: ${(memoryUsage / 1024 / 1024).toFixed(2)}MB`);
         } else {
-            console.warn('Memory API not available');
+            console.warn("Memory API not available");
             this.results.memoryUsage.passed = true; // Assume pass if can't measure
         }
 
-        this.completedTests.add('memory');
+        this.completedTests.add("memory");
     }
 
     /**
@@ -249,11 +249,11 @@ export class PerformanceValidator {
      */
     testEntityHandling() {
         if (!this.world) {
-            console.warn('No world provided for entity testing');
+            console.warn("No world provided for entity testing");
             return;
         }
 
-        console.log('🎭 Testing entity handling capacity...');
+        console.log("🎭 Testing entity handling capacity...");
 
         const startTime = performance.now();
         const testEntities = [];
@@ -264,8 +264,8 @@ export class PerformanceValidator {
                 const entity = this.world.createEntity();
 
                 // Add basic components
-                const TransformComponent = this.getComponentClass('TransformComponent');
-                const SelectableComponent = this.getComponentClass('SelectableComponent');
+                const TransformComponent = this.getComponentClass("TransformComponent");
+                const SelectableComponent = this.getComponentClass("SelectableComponent");
 
                 if (TransformComponent) {
                     entity.addComponent(new TransformComponent(
@@ -299,7 +299,7 @@ export class PerformanceValidator {
             }
         }
 
-        this.completedTests.add('entities');
+        this.completedTests.add("entities");
     }
 
     /**
@@ -317,33 +317,33 @@ export class PerformanceValidator {
     completeValidation() {
         this.isRunning = false;
 
-        console.log('\
-🏁 Performance Validation Complete!');
-        console.log('=======================================');
+        console.log("\
+🏁 Performance Validation Complete!");
+        console.log("=======================================");
 
         let allPassed = true;
 
         // FPS Test
         const fpsResult = this.results.fps;
-        const fpsStatus = fpsResult.passed ? '✅ PASS' : '❌ FAIL';
+        const fpsStatus = fpsResult.passed ? "✅ PASS" : "❌ FAIL";
         console.log(`FPS: ${fpsResult.value.toFixed(1)} (target: ≥${fpsResult.target}) ${fpsStatus}`);
         allPassed = allPassed && fpsResult.passed;
 
         // Selection Test
         const selectionResult = this.results.selectionTime;
-        const selectionStatus = selectionResult.passed ? '✅ PASS' : '❌ FAIL';
+        const selectionStatus = selectionResult.passed ? "✅ PASS" : "❌ FAIL";
         console.log(`Selection: ${selectionResult.value.toFixed(2)}ms (target: ≤${selectionResult.target}ms) ${selectionStatus}`);
         allPassed = allPassed && selectionResult.passed;
 
         // Pathfinding Test
         const pathfindingResult = this.results.pathfindingTime;
-        const pathfindingStatus = pathfindingResult.passed ? '✅ PASS' : '❌ FAIL';
+        const pathfindingStatus = pathfindingResult.passed ? "✅ PASS" : "❌ FAIL";
         console.log(`Pathfinding: ${pathfindingResult.value.toFixed(2)}ms (target: ≤${pathfindingResult.target}ms) ${pathfindingStatus}`);
         allPassed = allPassed && pathfindingResult.passed;
 
         // Memory Test
         const memoryResult = this.results.memoryUsage;
-        const memoryStatus = memoryResult.passed ? '✅ PASS' : '❌ FAIL';
+        const memoryStatus = memoryResult.passed ? "✅ PASS" : "❌ FAIL";
         const memoryMB = (memoryResult.value / 1024 / 1024).toFixed(2);
         const targetMB = (memoryResult.target / 1024 / 1024).toFixed(0);
         console.log(`Memory: ${memoryMB}MB (target: ≤${targetMB}MB) ${memoryStatus}`);
@@ -351,40 +351,40 @@ export class PerformanceValidator {
 
         // Entity Handling Test
         const entityResult = this.results.entityHandling;
-        const entityStatus = entityResult.passed ? '✅ PASS' : '❌ FAIL';
+        const entityStatus = entityResult.passed ? "✅ PASS" : "❌ FAIL";
         console.log(`Entity Handling: ${entityResult.value} entities (target: ≥${entityResult.target}) ${entityStatus}`);
         allPassed = allPassed && entityResult.passed;
 
-        console.log('=======================================');
-        const overallStatus = allPassed ? '🎉 ALL TESTS PASSED' : '⚠️ SOME TESTS FAILED';
+        console.log("=======================================");
+        const overallStatus = allPassed ? "🎉 ALL TESTS PASSED" : "⚠️ SOME TESTS FAILED";
         console.log(`Overall Result: ${overallStatus}`);
 
         if (allPassed) {
-            console.log('\
-🚀 Performance targets achieved! Backend optimizations successful.');
-            console.log('- QuadTree spatial partitioning: Enabled O(log n) selection');
-            console.log('- A* pathfinding: Optimized with caching and time-slicing');
-            console.log('- Resource economy: C&C authentic mechanics implemented');
-            console.log('- Harvester AI: Spatial resource lookup functioning');
-            console.log('- ECS integration: All components registered and working');
+            console.log("\
+🚀 Performance targets achieved! Backend optimizations successful.");
+            console.log("- QuadTree spatial partitioning: Enabled O(log n) selection");
+            console.log("- A* pathfinding: Optimized with caching and time-slicing");
+            console.log("- Resource economy: C&C authentic mechanics implemented");
+            console.log("- Harvester AI: Spatial resource lookup functioning");
+            console.log("- ECS integration: All components registered and working");
         } else {
-            console.log('\
-🔧 Performance optimization recommendations:');
+            console.log("\
+🔧 Performance optimization recommendations:");
             if (!fpsResult.passed) {
-                console.log('- Optimize render pipeline and reduce draw calls');
-                console.log('- Implement object pooling for frequent allocations');
+                console.log("- Optimize render pipeline and reduce draw calls");
+                console.log("- Implement object pooling for frequent allocations");
             }
             if (!selectionResult.passed) {
-                console.log('- Increase QuadTree granularity or reduce max entities per node');
-                console.log('- Implement selection result caching');
+                console.log("- Increase QuadTree granularity or reduce max entities per node");
+                console.log("- Implement selection result caching");
             }
             if (!pathfindingResult.passed) {
-                console.log('- Increase pathfinding time slice limits');
-                console.log('- Implement hierarchical pathfinding for long distances');
+                console.log("- Increase pathfinding time slice limits");
+                console.log("- Implement hierarchical pathfinding for long distances");
             }
             if (!memoryResult.passed) {
-                console.log('- Implement aggressive garbage collection');
-                console.log('- Review for memory leaks in component lifecycle');
+                console.log("- Implement aggressive garbage collection");
+                console.log("- Review for memory leaks in component lifecycle");
             }
         }
 

@@ -21,12 +21,12 @@
  * - Debug interface for development
  */
 
-import { SelectionRenderer } from './SelectionRenderer.js';
-import { InputBatcher } from '../core/InputBatcher.js';
-import { BuildingPlacementUI } from './BuildingPlacementUI.js';
-import { ResourceEconomyUI } from './ResourceEconomyUI.js';
-import { VisualFeedbackSystem } from './VisualFeedbackSystem.js';
-import { UIUpdateManager } from '../core/UIUpdateManager.js';
+import { SelectionRenderer } from "./SelectionRenderer.js";
+import { InputBatcher } from "../core/InputBatcher.js";
+import { BuildingPlacementUI } from "./BuildingPlacementUI.js";
+import { ResourceEconomyUI } from "./ResourceEconomyUI.js";
+import { VisualFeedbackSystem } from "./VisualFeedbackSystem.js";
+import { UIUpdateManager } from "../core/UIUpdateManager.js";
 
 export class UIManager {
     constructor(app, world, camera, inputHandler, options = {}) {
@@ -47,7 +47,7 @@ export class UIManager {
                 maxInputLatency: options.maxInputLatency || 33 // ms
             },
             qualitySettings: {
-                effects: options.effectQuality || 'high',
+                effects: options.effectQuality || "high",
                 animations: options.enableAnimations !== false,
                 particles: options.enableParticles !== false
             }
@@ -101,7 +101,7 @@ export class UIManager {
      * Initialize all UI systems
      */
     async init() {
-        console.log('🎛️  Initializing UIManager...');
+        console.log("🎛️  Initializing UIManager...");
         
         try {
             // Initialize systems in dependency order
@@ -134,12 +134,12 @@ export class UIManager {
             // Apply platform-specific optimizations
             this.applyPlatformOptimizations();
             
-            console.log('✅ UIManager initialization complete');
-            console.log(`📱 Platform: ${this.config.isMobile ? 'Mobile' : 'Desktop'}`);
-            console.log(`♿ Accessibility: ${this.config.enableAccessibilityMode ? 'Enabled' : 'Disabled'}`);
+            console.log("✅ UIManager initialization complete");
+            console.log(`📱 Platform: ${this.config.isMobile ? "Mobile" : "Desktop"}`);
+            console.log(`♿ Accessibility: ${this.config.enableAccessibilityMode ? "Enabled" : "Disabled"}`);
             
         } catch (error) {
-            console.error('❌ UIManager initialization failed:', error);
+            console.error("❌ UIManager initialization failed:", error);
             throw error;
         }
     }
@@ -148,7 +148,7 @@ export class UIManager {
      * Initialize UI Update Manager
      */
     async initializeUIUpdateManager() {
-        console.log('🔄 Initializing UIUpdateManager...');
+        console.log("🔄 Initializing UIUpdateManager...");
         
         this.systems.uiUpdateManager = new UIUpdateManager({
             updateHz: this.config.isMobile ? 8 : 10, // Slower on mobile
@@ -156,16 +156,16 @@ export class UIManager {
         });
         
         this.systems.uiUpdateManager.start();
-        this.systemStatus.set('uiUpdateManager', { status: 'active', errors: 0 });
+        this.systemStatus.set("uiUpdateManager", { status: "active", errors: 0 });
         
-        console.log('✅ UIUpdateManager ready');
+        console.log("✅ UIUpdateManager ready");
     }
     
     /**
      * Initialize Selection Renderer
      */
     async initializeSelectionRenderer() {
-        console.log('🎯 Initializing SelectionRenderer...');
+        console.log("🎯 Initializing SelectionRenderer...");
         
         const spriteBatcher = this.app.spriteBatcher; // Assume app has SpriteBatcher
         
@@ -175,16 +175,16 @@ export class UIManager {
             animationSpeed: this.config.isMobile ? 0.03 : 0.05
         });
         
-        this.systemStatus.set('selectionRenderer', { status: 'active', errors: 0 });
+        this.systemStatus.set("selectionRenderer", { status: "active", errors: 0 });
         
-        console.log('✅ SelectionRenderer ready');
+        console.log("✅ SelectionRenderer ready");
     }
     
     /**
      * Initialize Input Batcher
      */
     async initializeInputBatcher() {
-        console.log('⌨️  Initializing InputBatcher...');
+        console.log("⌨️  Initializing InputBatcher...");
         
         this.systems.inputBatcher = new InputBatcher(this.inputHandler, this.camera, this.app.view, {
             batchSize: this.config.isMobile ? 8 : 16,
@@ -194,16 +194,16 @@ export class UIManager {
             touchThreshold: this.config.isMobile ? 6 : 4
         });
         
-        this.systemStatus.set('inputBatcher', { status: 'active', errors: 0 });
+        this.systemStatus.set("inputBatcher", { status: "active", errors: 0 });
         
-        console.log('✅ InputBatcher ready');
+        console.log("✅ InputBatcher ready");
     }
     
     /**
      * Initialize Building Placement UI
      */
     async initializeBuildingPlacement() {
-        console.log('🏗️  Initializing BuildingPlacementUI...');
+        console.log("🏗️  Initializing BuildingPlacementUI...");
         
         this.systems.buildingPlacement = new BuildingPlacementUI(this.app, this.camera, this.world, this.app.view, {
             gridSize: 32,
@@ -212,16 +212,16 @@ export class UIManager {
             snapToGrid: true
         });
         
-        this.systemStatus.set('buildingPlacement', { status: 'active', errors: 0 });
+        this.systemStatus.set("buildingPlacement", { status: "active", errors: 0 });
         
-        console.log('✅ BuildingPlacementUI ready');
+        console.log("✅ BuildingPlacementUI ready");
     }
     
     /**
      * Initialize Resource Economy UI
      */
     async initializeResourceEconomy() {
-        console.log('💰 Initializing ResourceEconomyUI...');
+        console.log("💰 Initializing ResourceEconomyUI...");
         
         this.systems.resourceEconomy = new ResourceEconomyUI(this.world, this.systems.uiUpdateManager, {
             updateInterval: this.config.isMobile ? 200 : 100, // Slower updates on mobile
@@ -229,49 +229,49 @@ export class UIManager {
             enablePredictions: !this.config.isMobile // Disable predictions on mobile
         });
         
-        this.systemStatus.set('resourceEconomy', { status: 'active', errors: 0 });
+        this.systemStatus.set("resourceEconomy", { status: "active", errors: 0 });
         
-        console.log('✅ ResourceEconomyUI ready');
+        console.log("✅ ResourceEconomyUI ready");
     }
     
     /**
      * Initialize Visual Feedback System
      */
     async initializeVisualFeedback() {
-        console.log('✨ Initializing VisualFeedbackSystem...');
+        console.log("✨ Initializing VisualFeedbackSystem...");
         
         this.systems.visualFeedback = new VisualFeedbackSystem(this.app, this.systems.selectionRenderer, {
-            enableEffects: this.config.qualitySettings.effects !== 'off',
+            enableEffects: this.config.qualitySettings.effects !== "off",
             effectQuality: this.config.qualitySettings.effects,
             maxParticles: this.config.isMobile ? 100 : 500,
             particlePoolSize: this.config.isMobile ? 50 : 200,
-            enableScreenShake: !this.config.isMobile && this.config.qualitySettings.effects !== 'low',
+            enableScreenShake: !this.config.isMobile && this.config.qualitySettings.effects !== "low",
             accessibilityMode: this.config.enableAccessibilityMode
         });
         
-        this.systemStatus.set('visualFeedback', { status: 'active', errors: 0 });
+        this.systemStatus.set("visualFeedback", { status: "active", errors: 0 });
         
-        console.log('✅ VisualFeedbackSystem ready');
+        console.log("✅ VisualFeedbackSystem ready");
     }
     
     /**
      * Setup coordination between systems
      */
     setupSystemCoordination() {
-        console.log('🔗 Setting up system coordination...');
+        console.log("🔗 Setting up system coordination...");
         
         // Connect selection renderer to input events
         if (this.systems.inputBatcher && this.systems.selectionRenderer) {
-            this.systems.inputBatcher.on('mousedown', (event) => {
+            this.systems.inputBatcher.on("mousedown", (event) => {
                 if (event.button === 0) { // Left click
                     this.handleSelectionInput(event);
                 }
-            }, 'high');
+            }, "high");
         }
         
         // Connect building placement to resource economy
         if (this.systems.buildingPlacement && this.systems.resourceEconomy) {
-            window.addEventListener('buildingPlacement:buildingPlaced', (event) => {
+            window.addEventListener("buildingPlacement:buildingPlaced", (event) => {
                 const buildingData = event.detail;
                 this.systems.visualFeedback?.showBuildingPlaced(
                     buildingData.position.x,
@@ -284,12 +284,12 @@ export class UIManager {
         // Connect visual feedback to various events
         if (this.systems.visualFeedback) {
             // Selection events
-            window.addEventListener('entity:selected', (event) => {
+            window.addEventListener("entity:selected", (event) => {
                 this.systems.visualFeedback.showSelectionPulse(event.detail.entity);
             });
             
             // Command events
-            window.addEventListener('command:move', (event) => {
+            window.addEventListener("command:move", (event) => {
                 this.systems.visualFeedback.showMoveCommand(
                     event.detail.x,
                     event.detail.y,
@@ -297,7 +297,7 @@ export class UIManager {
                 );
             });
             
-            window.addEventListener('command:attack', (event) => {
+            window.addEventListener("command:attack", (event) => {
                 this.systems.visualFeedback.showAttackCommand(
                     event.detail.x,
                     event.detail.y,
@@ -306,7 +306,7 @@ export class UIManager {
             });
         }
         
-        console.log('✅ System coordination setup complete');
+        console.log("✅ System coordination setup complete");
     }
     
     /**
@@ -314,26 +314,26 @@ export class UIManager {
      */
     setupEventRouting() {
         // Route input events through the batcher
-        this.eventRoutes.set('input', this.systems.inputBatcher);
+        this.eventRoutes.set("input", this.systems.inputBatcher);
         
         // Route selection events through selection renderer
-        this.eventRoutes.set('selection', this.systems.selectionRenderer);
+        this.eventRoutes.set("selection", this.systems.selectionRenderer);
         
         // Route building events through placement system
-        this.eventRoutes.set('building', this.systems.buildingPlacement);
+        this.eventRoutes.set("building", this.systems.buildingPlacement);
         
         // Route resource events through economy UI
-        this.eventRoutes.set('resource', this.systems.resourceEconomy);
+        this.eventRoutes.set("resource", this.systems.resourceEconomy);
         
         // Route visual effects through feedback system
-        this.eventRoutes.set('effects', this.systems.visualFeedback);
+        this.eventRoutes.set("effects", this.systems.visualFeedback);
     }
     
     /**
      * Setup performance monitoring
      */
     setupPerformanceMonitoring() {
-        console.log('📊 Setting up performance monitoring...');
+        console.log("📊 Setting up performance monitoring...");
         
         let lastTime = performance.now();
         let frameCount = 0;
@@ -367,7 +367,7 @@ export class UIManager {
         
         requestAnimationFrame(monitorLoop);
         
-        console.log('✅ Performance monitoring active');
+        console.log("✅ Performance monitoring active");
     }
     
     /**
@@ -379,9 +379,9 @@ export class UIManager {
         
         // Auto-adjust quality if performance is poor
         if (fps < performanceTarget.fps * 0.8) { // 80% of target
-            this.autoAdjustQuality('down');
+            this.autoAdjustQuality("down");
         } else if (fps > performanceTarget.fps * 1.1) { // 110% of target
-            this.autoAdjustQuality('up');
+            this.autoAdjustQuality("up");
         }
         
         // Warn about performance issues
@@ -394,26 +394,26 @@ export class UIManager {
      * Auto-adjust quality settings based on performance
      */
     autoAdjustQuality(direction) {
-        if (direction === 'down') {
+        if (direction === "down") {
             // Reduce quality
-            if (this.config.qualitySettings.effects === 'high') {
-                this.config.qualitySettings.effects = 'medium';
-                this.systems.visualFeedback?.updateConfig({ effectQuality: 'medium' });
-            } else if (this.config.qualitySettings.effects === 'medium') {
-                this.config.qualitySettings.effects = 'low';
-                this.systems.visualFeedback?.updateConfig({ effectQuality: 'low' });
+            if (this.config.qualitySettings.effects === "high") {
+                this.config.qualitySettings.effects = "medium";
+                this.systems.visualFeedback?.updateConfig({ effectQuality: "medium" });
+            } else if (this.config.qualitySettings.effects === "medium") {
+                this.config.qualitySettings.effects = "low";
+                this.systems.visualFeedback?.updateConfig({ effectQuality: "low" });
             }
             
             console.log(`📉 Quality adjusted down: ${this.config.qualitySettings.effects}`);
             
-        } else if (direction === 'up') {
+        } else if (direction === "up") {
             // Increase quality
-            if (this.config.qualitySettings.effects === 'low') {
-                this.config.qualitySettings.effects = 'medium';
-                this.systems.visualFeedback?.updateConfig({ effectQuality: 'medium' });
-            } else if (this.config.qualitySettings.effects === 'medium') {
-                this.config.qualitySettings.effects = 'high';
-                this.systems.visualFeedback?.updateConfig({ effectQuality: 'high' });
+            if (this.config.qualitySettings.effects === "low") {
+                this.config.qualitySettings.effects = "medium";
+                this.systems.visualFeedback?.updateConfig({ effectQuality: "medium" });
+            } else if (this.config.qualitySettings.effects === "medium") {
+                this.config.qualitySettings.effects = "high";
+                this.systems.visualFeedback?.updateConfig({ effectQuality: "high" });
             }
             
             console.log(`📈 Quality adjusted up: ${this.config.qualitySettings.effects}`);
@@ -440,28 +440,28 @@ export class UIManager {
      * Setup debug interface
      */
     setupDebugInterface() {
-        console.log('🐛 Setting up debug interface...');
+        console.log("🐛 Setting up debug interface...");
         
         // Create debug UI overlay
         this.createDebugUI();
         
         // Keyboard shortcut to toggle debug (F12)
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'F12') {
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "F12") {
                 event.preventDefault();
                 this.toggleDebugInterface();
             }
         });
         
-        console.log('✅ Debug interface ready (F12 to toggle)');
+        console.log("✅ Debug interface ready (F12 to toggle)");
     }
     
     /**
      * Create debug UI overlay
      */
     createDebugUI() {
-        const debugContainer = document.createElement('div');
-        debugContainer.id = 'ui-debug-interface';
+        const debugContainer = document.createElement("div");
+        debugContainer.id = "ui-debug-interface";
         debugContainer.innerHTML = `
             <div class="debug-panel">
                 <div class="debug-header">🎛️ UI Debug Interface</div>
@@ -489,7 +489,7 @@ export class UIManager {
         `;
         
         // Add styles
-        const styles = document.createElement('style');
+        const styles = document.createElement("style");
         styles.textContent = `
             #ui-debug-interface {
                 position: fixed;
@@ -556,20 +556,20 @@ export class UIManager {
         this.debugUI = debugContainer;
         
         // Setup debug controls
-        document.getElementById('debug-clear-effects')?.addEventListener('click', () => {
+        document.getElementById("debug-clear-effects")?.addEventListener("click", () => {
             this.systems.visualFeedback?.clearAllEffects();
         });
         
-        document.getElementById('debug-reset-quality')?.addEventListener('click', () => {
+        document.getElementById("debug-reset-quality")?.addEventListener("click", () => {
             this.resetQualitySettings();
         });
         
-        document.getElementById('debug-force-gc')?.addEventListener('click', () => {
+        document.getElementById("debug-force-gc")?.addEventListener("click", () => {
             if (window.gc) {
                 window.gc();
-                console.log('🗑️ Garbage collection forced');
+                console.log("🗑️ Garbage collection forced");
             } else {
-                console.warn('GC not available');
+                console.warn("GC not available");
             }
         });
         
@@ -598,7 +598,7 @@ export class UIManager {
         if (!this.debugUI) return;
         
         // Performance stats
-        const perfElement = document.getElementById('debug-performance');
+        const perfElement = document.getElementById("debug-performance");
         if (perfElement) {
             const stats = this.getPerformanceStats();
             perfElement.innerHTML = `
@@ -611,18 +611,18 @@ export class UIManager {
         }
         
         // System status
-        const systemsElement = document.getElementById('debug-systems');
+        const systemsElement = document.getElementById("debug-systems");
         if (systemsElement) {
-            let statusHTML = '';
+            let statusHTML = "";
             for (const [name, status] of this.systemStatus) {
-                const statusColor = status.status === 'active' ? '#00ff00' : '#ff0000';
+                const statusColor = status.status === "active" ? "#00ff00" : "#ff0000";
                 statusHTML += `<span style="color: ${statusColor}">●</span> ${name}<br>`;
             }
             systemsElement.innerHTML = statusHTML;
         }
         
         // Active effects
-        const effectsElement = document.getElementById('debug-effects');
+        const effectsElement = document.getElementById("debug-effects");
         if (effectsElement) {
             const effectStats = this.systems.visualFeedback?.getStats() || {};
             effectsElement.innerHTML = `
@@ -642,9 +642,9 @@ export class UIManager {
         if (!this.debugUI) return;
         
         this.showDebugStats = !this.showDebugStats;
-        this.debugUI.style.display = this.showDebugStats ? 'block' : 'none';
+        this.debugUI.style.display = this.showDebugStats ? "block" : "none";
         
-        console.log(`🐛 Debug interface ${this.showDebugStats ? 'shown' : 'hidden'}`);
+        console.log(`🐛 Debug interface ${this.showDebugStats ? "shown" : "hidden"}`);
     }
     
     /**
@@ -653,7 +653,7 @@ export class UIManager {
     setupAccessibilityFeatures() {
         if (!this.config.enableAccessibilityMode) return;
         
-        console.log('♿ Setting up accessibility features...');
+        console.log("♿ Setting up accessibility features...");
         
         // Check for user preferences
         this.detectAccessibilityPreferences();
@@ -661,7 +661,7 @@ export class UIManager {
         // Apply accessibility modifications
         this.applyAccessibilityModifications();
         
-        console.log('✅ Accessibility features configured');
+        console.log("✅ Accessibility features configured");
     }
     
     /**
@@ -669,15 +669,15 @@ export class UIManager {
      */
     detectAccessibilityPreferences() {
         // Check for reduced motion preference
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             this.accessibility.reduceMotion = true;
-            console.log('🔄 Reduced motion detected');
+            console.log("🔄 Reduced motion detected");
         }
         
         // Check for high contrast preference
-        if (window.matchMedia && window.matchMedia('(prefers-contrast: high)').matches) {
+        if (window.matchMedia && window.matchMedia("(prefers-contrast: high)").matches) {
             this.accessibility.highContrast = true;
-            console.log('🎨 High contrast detected');
+            console.log("🎨 High contrast detected");
         }
     }
     
@@ -695,7 +695,7 @@ export class UIManager {
         if (this.accessibility.highContrast) {
             // Apply high contrast colors
             // This would modify color schemes across all UI systems
-            console.log('🎨 High contrast mode applied');
+            console.log("🎨 High contrast mode applied");
         }
     }
     
@@ -703,11 +703,11 @@ export class UIManager {
      * Apply platform-specific optimizations
      */
     applyPlatformOptimizations() {
-        console.log(`🔧 Applying ${this.config.isMobile ? 'mobile' : 'desktop'} optimizations...`);
+        console.log(`🔧 Applying ${this.config.isMobile ? "mobile" : "desktop"} optimizations...`);
         
         if (this.config.isMobile) {
             // Mobile optimizations
-            this.config.qualitySettings.effects = 'medium';
+            this.config.qualitySettings.effects = "medium";
             
             // Reduce update frequencies
             this.systems.uiUpdateManager?.setUpdateRate(8);
@@ -719,10 +719,10 @@ export class UIManager {
                 maxParticles: 100
             });
             
-            console.log('📱 Mobile optimizations applied');
+            console.log("📱 Mobile optimizations applied");
         } else {
             // Desktop optimizations
-            console.log('💻 Desktop optimizations applied');
+            console.log("💻 Desktop optimizations applied");
         }
     }
     
@@ -760,8 +760,8 @@ export class UIManager {
         for (const entity of this.world.entities) {
             if (!entity.active) continue;
             
-            const transform = entity.getComponent('TransformComponent');
-            const selectable = entity.getComponent('SelectableComponent');
+            const transform = entity.getComponent("TransformComponent");
+            const selectable = entity.getComponent("SelectableComponent");
             
             if (transform && selectable) {
                 const distance = Math.hypot(transform.x - x, transform.y - y);
@@ -779,14 +779,14 @@ export class UIManager {
      */
     selectEntity(entity, addToSelection = false) {
         // Emit selection event
-        const selectionEvent = new CustomEvent('entity:selected', {
+        const selectionEvent = new CustomEvent("entity:selected", {
             detail: { entity: entity, addToSelection: addToSelection }
         });
         window.dispatchEvent(selectionEvent);
         
         // Update selection renderer
-        const transform = entity.getComponent('TransformComponent');
-        const health = entity.getComponent('HealthComponent');
+        const transform = entity.getComponent("TransformComponent");
+        const health = entity.getComponent("HealthComponent");
         
         if (transform) {
             this.systems.selectionRenderer?.showSelection(entity.id, transform, health);
@@ -801,7 +801,7 @@ export class UIManager {
         this.systems.selectionRenderer?.clearAll();
         
         // Emit clear event
-        const clearEvent = new CustomEvent('selection:cleared');
+        const clearEvent = new CustomEvent("selection:cleared");
         window.dispatchEvent(clearEvent);
     }
     
@@ -857,16 +857,16 @@ export class UIManager {
      */
     resetQualitySettings() {
         this.config.qualitySettings = {
-            effects: 'high',
+            effects: "high",
             animations: true,
             particles: true
         };
         
         // Update all systems
         this.systems.selectionRenderer?.setAnimationsEnabled(true);
-        this.systems.visualFeedback?.updateConfig({ effectQuality: 'high' });
+        this.systems.visualFeedback?.updateConfig({ effectQuality: "high" });
         
-        console.log('⚙️  Quality settings reset to defaults');
+        console.log("⚙️  Quality settings reset to defaults");
     }
     
     /**
@@ -883,7 +883,7 @@ export class UIManager {
         this.systems.resourceEconomy?.forceUpdate();
         this.systems.uiUpdateManager?.forceUpdate();
         
-        console.log('🔄 Forced UI update');
+        console.log("🔄 Forced UI update");
     }
     
     /**
@@ -892,7 +892,7 @@ export class UIManager {
     destroy() {
         if (this.isDestroyed) return;
         
-        console.log('🗑️ Destroying UIManager...');
+        console.log("🗑️ Destroying UIManager...");
         this.isDestroyed = true;
         
         // Destroy all systems
@@ -901,7 +901,7 @@ export class UIManager {
                 try {
                     system.destroy();
                 } catch (error) {
-                    console.error('❌ Error destroying UI system:', error);
+                    console.error("❌ Error destroying UI system:", error);
                 }
             }
         });
@@ -915,6 +915,6 @@ export class UIManager {
         this.systemStatus.clear();
         this.eventRoutes.clear();
         
-        console.log('✅ UIManager destroyed successfully');
+        console.log("✅ UIManager destroyed successfully");
     }
 }

@@ -13,7 +13,7 @@
  * - Support for different selection states (selected, hovered, commanding)
  */
 
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 export class SelectionRenderer {
     constructor(app, spriteBatcher, options = {}) {
@@ -45,7 +45,7 @@ export class SelectionRenderer {
         
         // Container for all selection visuals
         this.selectionContainer = new PIXI.Container();
-        this.selectionContainer.name = 'selection-visuals';
+        this.selectionContainer.name = "selection-visuals";
         this.selectionContainer.sortableChildren = true;
         
         // Add to UI layer to render on top
@@ -72,11 +72,11 @@ export class SelectionRenderer {
      */
     init() {
         // Pre-populate sprite pools
-        this.createSpritePool('selectionBox', this.config.poolSize / 2);
-        this.createSpritePool('healthBar', this.config.poolSize / 2);
-        this.createSpritePool('effect', 20);
+        this.createSpritePool("selectionBox", this.config.poolSize / 2);
+        this.createSpritePool("healthBar", this.config.poolSize / 2);
+        this.createSpritePool("effect", 20);
         
-        console.log('✅ SelectionRenderer initialized with pooled sprites');
+        console.log("✅ SelectionRenderer initialized with pooled sprites");
     }
     
     /**
@@ -89,20 +89,20 @@ export class SelectionRenderer {
             let sprite;
             
             switch (type) {
-                case 'selectionBox':
-                    sprite = this.createSelectionBoxSprite();
-                    this.selectionBoxPool.push(sprite);
-                    break;
+            case "selectionBox":
+                sprite = this.createSelectionBoxSprite();
+                this.selectionBoxPool.push(sprite);
+                break;
                     
-                case 'healthBar':
-                    sprite = this.createHealthBarSprite();
-                    this.healthBarPool.push(sprite);
-                    break;
+            case "healthBar":
+                sprite = this.createHealthBarSprite();
+                this.healthBarPool.push(sprite);
+                break;
                     
-                case 'effect':
-                    sprite = this.createEffectSprite();
-                    this.effectPool.push(sprite);
-                    break;
+            case "effect":
+                sprite = this.createEffectSprite();
+                this.effectPool.push(sprite);
+                break;
             }
             
             if (sprite) {
@@ -129,7 +129,7 @@ export class SelectionRenderer {
         const texture = this.renderer.generateTexture(graphics);
         const sprite = new PIXI.Sprite(texture);
         sprite.anchor.set(0.5);
-        sprite.userData = { type: 'selectionBox' };
+        sprite.userData = { type: "selectionBox" };
         
         return sprite;
     }
@@ -168,7 +168,7 @@ export class SelectionRenderer {
         container.addChild(fillSprite);
         
         container.userData = { 
-            type: 'healthBar',
+            type: "healthBar",
             fillSprite: fillSprite,
             maxWidth: this.config.healthBarWidth
         };
@@ -188,7 +188,7 @@ export class SelectionRenderer {
         const texture = this.renderer.generateTexture(graphics);
         const sprite = new PIXI.Sprite(texture);
         sprite.anchor.set(0.5);
-        sprite.userData = { type: 'effect' };
+        sprite.userData = { type: "effect" };
         
         return sprite;
     }
@@ -200,18 +200,18 @@ export class SelectionRenderer {
         let pool, sprite;
         
         switch (type) {
-            case 'selectionBox':
-                pool = this.selectionBoxPool;
-                break;
-            case 'healthBar':
-                pool = this.healthBarPool;
-                break;
-            case 'effect':
-                pool = this.effectPool;
-                break;
-            default:
-                console.warn(`Unknown sprite type: ${type}`);
-                return null;
+        case "selectionBox":
+            pool = this.selectionBoxPool;
+            break;
+        case "healthBar":
+            pool = this.healthBarPool;
+            break;
+        case "effect":
+            pool = this.effectPool;
+            break;
+        default:
+            console.warn(`Unknown sprite type: ${type}`);
+            return null;
         }
         
         // Try to get from pool
@@ -238,14 +238,14 @@ export class SelectionRenderer {
      */
     createSpriteByType(type) {
         switch (type) {
-            case 'selectionBox':
-                return this.createSelectionBoxSprite();
-            case 'healthBar':
-                return this.createHealthBarSprite();
-            case 'effect':
-                return this.createEffectSprite();
-            default:
-                return null;
+        case "selectionBox":
+            return this.createSelectionBoxSprite();
+        case "healthBar":
+            return this.createHealthBarSprite();
+        case "effect":
+            return this.createEffectSprite();
+        default:
+            return null;
         }
     }
     
@@ -278,7 +278,7 @@ export class SelectionRenderer {
         };
         
         // Create selection box
-        const selectionBox = this.getPooledSprite('selectionBox');
+        const selectionBox = this.getPooledSprite("selectionBox");
         if (selectionBox) {
             selectionBox.position.set(transform.x, transform.y);
             selectionBox.visible = true;
@@ -289,7 +289,7 @@ export class SelectionRenderer {
         
         // Create health bar if health component exists
         if (health && health.getHealthPercentage) {
-            const healthBar = this.getPooledSprite('healthBar');
+            const healthBar = this.getPooledSprite("healthBar");
             if (healthBar) {
                 healthBar.position.set(transform.x, transform.y - 30);
                 healthBar.visible = true;
@@ -332,7 +332,7 @@ export class SelectionRenderer {
         // Remove existing hover if any
         this.hideHover(entityId);
         
-        const hoverBox = this.getPooledSprite('selectionBox');
+        const hoverBox = this.getPooledSprite("selectionBox");
         if (hoverBox) {
             hoverBox.position.set(transform.x, transform.y);
             hoverBox.visible = true;
@@ -358,17 +358,17 @@ export class SelectionRenderer {
     /**
      * Show command effect at position
      */
-    showCommandEffect(x, y, type = 'move', duration = 1000) {
+    showCommandEffect(x, y, type = "move", duration = 1000) {
         if (this.isDestroyed || !this.config.enableAnimations) return;
         
-        const effect = this.getPooledSprite('effect');
+        const effect = this.getPooledSprite("effect");
         if (!effect) return;
         
         effect.position.set(x, y);
         effect.visible = true;
         effect.scale.set(0.5, 0.5);
         effect.alpha = 1;
-        effect.tint = type === 'move' ? 0x00ff00 : 0xff0000;
+        effect.tint = type === "move" ? 0x00ff00 : 0xff0000;
         
         const effectId = `effect_${Date.now()}_${Math.random()}`;
         this.activeEffects.set(effectId, {
@@ -538,7 +538,7 @@ export class SelectionRenderer {
      */
     setAnimationsEnabled(enabled) {
         this.config.enableAnimations = enabled;
-        console.log(`🎬 Selection animations ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`🎬 Selection animations ${enabled ? "enabled" : "disabled"}`);
     }
     
     /**
@@ -548,8 +548,8 @@ export class SelectionRenderer {
         const currentSize = this.config.poolSize;
         if (newSize > currentSize) {
             const additional = newSize - currentSize;
-            this.createSpritePool('selectionBox', Math.floor(additional / 2));
-            this.createSpritePool('healthBar', Math.floor(additional / 2));
+            this.createSpritePool("selectionBox", Math.floor(additional / 2));
+            this.createSpritePool("healthBar", Math.floor(additional / 2));
             this.config.poolSize = newSize;
             console.log(`📈 Selection sprite pools expanded to ${newSize}`);
         }
@@ -561,7 +561,7 @@ export class SelectionRenderer {
     destroy() {
         if (this.isDestroyed) return;
         
-        console.log('🗑️ Destroying SelectionRenderer...');
+        console.log("🗑️ Destroying SelectionRenderer...");
         this.isDestroyed = true;
         
         // Clear all active visuals
@@ -593,6 +593,6 @@ export class SelectionRenderer {
         // Destroy container
         this.selectionContainer.destroy({ children: true });
         
-        console.log('✅ SelectionRenderer destroyed successfully');
+        console.log("✅ SelectionRenderer destroyed successfully");
     }
 }

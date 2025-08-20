@@ -4,9 +4,9 @@
  * This file shows how to use the components but doesn't implement actual learning
  */
 
-import { QLearningComponent, ExperienceBuffer } from './index.js';
-import { Entity } from '../../ecs/Entity.js';
-import { UnitComponent, AIComponent } from '../../ecs/Component.js';
+import { QLearningComponent, ExperienceBuffer } from "./index.js";
+import { Entity } from "../../ecs/Entity.js";
+import { UnitComponent, AIComponent } from "../../ecs/Component.js";
 
 /**
  * Example: Creating a unit with Q-learning capability
@@ -15,8 +15,8 @@ export function createQLearningUnit(x, y, unitType) {
     const entity = new Entity();
     
     // Add standard RTS components
-    entity.addComponent(new UnitComponent(unitType, 'gdi', 100));
-    entity.addComponent(new AIComponent('ai_qlearning'));
+    entity.addComponent(new UnitComponent(unitType, "gdi", 100));
+    entity.addComponent(new AIComponent("ai_qlearning"));
     
     // Add Q-learning component with custom parameters
     const qLearning = new QLearningComponent({
@@ -52,7 +52,7 @@ export function createTrainingBuffer() {
  * Example: Basic Q-learning decision loop (structure only)
  */
 export function processQLearningDecision(entity, gameState, experienceBuffer) {
-    const qlearning = entity.getComponent('QLearningComponent');
+    const qlearning = entity.getComponent("QLearningComponent");
     if (!qlearning || !qlearning.shouldMakeDecision()) {
         return null;
     }
@@ -107,7 +107,7 @@ export function processTrainingBatch(experienceBuffer, qNetwork) {
  * Example: Episode management
  */
 export function startNewEpisode(entity) {
-    const qlearning = entity.getComponent('QLearningComponent');
+    const qlearning = entity.getComponent("QLearningComponent");
     if (qlearning) {
         qlearning.startNewEpisode();
         console.log(`Started episode ${qlearning.getLearningStats().episodeCount}`);
@@ -118,7 +118,7 @@ export function startNewEpisode(entity) {
  * Example: Getting learning progress
  */
 export function getTrainingProgress(entity, experienceBuffer) {
-    const qlearning = entity.getComponent('QLearningComponent');
+    const qlearning = entity.getComponent("QLearningComponent");
     if (!qlearning) return null;
     
     return {

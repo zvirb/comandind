@@ -16,7 +16,7 @@
  * - Resource shortage warnings
  */
 
-import { UIUpdateManager } from '../core/UIUpdateManager.js';
+import { UIUpdateManager } from "../core/UIUpdateManager.js";
 
 export class ResourceEconomyUI {
     constructor(world, uiUpdateManager, options = {}) {
@@ -37,7 +37,7 @@ export class ResourceEconomyUI {
             formatOptions: {
                 useThousandsSeparator: true,
                 showDecimals: false,
-                currency: '$'
+                currency: "$"
             }
         };
         
@@ -102,7 +102,7 @@ export class ResourceEconomyUI {
      * Initialize the resource economy UI
      */
     init() {
-        console.log('💰 Initializing ResourceEconomyUI...');
+        console.log("💰 Initializing ResourceEconomyUI...");
         
         // Create DOM elements
         this.createUI();
@@ -113,7 +113,7 @@ export class ResourceEconomyUI {
         // Setup event listeners
         this.setupEventListeners();
         
-        console.log('✅ ResourceEconomyUI initialized');
+        console.log("✅ ResourceEconomyUI initialized");
     }
     
     /**
@@ -121,13 +121,13 @@ export class ResourceEconomyUI {
      */
     createUI() {
         // Create main container
-        const container = document.createElement('div');
-        container.id = 'resource-economy-ui';
-        container.className = 'resource-ui';
+        const container = document.createElement("div");
+        container.id = "resource-economy-ui";
+        container.className = "resource-ui";
         container.innerHTML = this.getUIHTML();
         
         // Add styles
-        const styles = document.createElement('style');
+        const styles = document.createElement("style");
         styles.textContent = this.getUICSS();
         document.head.appendChild(styles);
         
@@ -137,7 +137,7 @@ export class ResourceEconomyUI {
         // Cache DOM elements
         this.cacheUIElements();
         
-        console.log('🎨 Resource UI DOM elements created');
+        console.log("🎨 Resource UI DOM elements created");
     }
     
     /**
@@ -447,39 +447,39 @@ export class ResourceEconomyUI {
     cacheUIElements() {
         this.elements = {
             // Main elements
-            container: document.getElementById('resource-economy-ui'),
-            minimizeBtn: document.getElementById('resource-minimize'),
+            container: document.getElementById("resource-economy-ui"),
+            minimizeBtn: document.getElementById("resource-minimize"),
             
             // Resource values
-            creditsValue: document.getElementById('credits-value'),
-            creditsTrend: document.getElementById('credits-trend'),
-            creditsStatus: document.getElementById('credits-status'),
+            creditsValue: document.getElementById("credits-value"),
+            creditsTrend: document.getElementById("credits-trend"),
+            creditsStatus: document.getElementById("credits-status"),
             
-            powerValue: document.getElementById('power-value'),
-            powerBarFill: document.getElementById('power-bar-fill'),
-            powerStatus: document.getElementById('power-status'),
+            powerValue: document.getElementById("power-value"),
+            powerBarFill: document.getElementById("power-bar-fill"),
+            powerStatus: document.getElementById("power-status"),
             
-            incomeValue: document.getElementById('income-value'),
-            incomeBreakdown: document.getElementById('income-breakdown'),
-            incomeStatus: document.getElementById('income-status'),
+            incomeValue: document.getElementById("income-value"),
+            incomeBreakdown: document.getElementById("income-breakdown"),
+            incomeStatus: document.getElementById("income-status"),
             
             // Harvester elements
-            harvestersCount: document.getElementById('harvesters-count'),
-            harvestersActive: document.getElementById('harvesters-active'),
-            harvestersIdle: document.getElementById('harvesters-idle'),
-            harvestersEfficiency: document.getElementById('harvesters-efficiency'),
-            harvestersStatus: document.getElementById('harvesters-status'),
+            harvestersCount: document.getElementById("harvesters-count"),
+            harvestersActive: document.getElementById("harvesters-active"),
+            harvestersIdle: document.getElementById("harvesters-idle"),
+            harvestersEfficiency: document.getElementById("harvesters-efficiency"),
+            harvestersStatus: document.getElementById("harvesters-status"),
             
             // Building counts
-            powerPlantsCount: document.getElementById('power-plants-count'),
-            refineriesCount: document.getElementById('refineries-count'),
-            factoriesCount: document.getElementById('factories-count'),
+            powerPlantsCount: document.getElementById("power-plants-count"),
+            refineriesCount: document.getElementById("refineries-count"),
+            factoriesCount: document.getElementById("factories-count"),
             
             // Warnings and predictions
-            warningsSection: document.getElementById('warnings-section'),
-            warningList: document.getElementById('warning-list'),
-            predictionsSection: document.getElementById('predictions-section'),
-            creditsPrediction: document.getElementById('credits-prediction')
+            warningsSection: document.getElementById("warnings-section"),
+            warningList: document.getElementById("warning-list"),
+            predictionsSection: document.getElementById("predictions-section"),
+            creditsPrediction: document.getElementById("credits-prediction")
         };
     }
     
@@ -489,14 +489,14 @@ export class ResourceEconomyUI {
     setupEventListeners() {
         // Minimize/maximize toggle
         if (this.elements.minimizeBtn) {
-            this.elements.minimizeBtn.addEventListener('click', () => {
+            this.elements.minimizeBtn.addEventListener("click", () => {
                 this.toggleMinimize();
             });
         }
         
         // Keyboard shortcuts
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'F4') {
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "F4") {
                 event.preventDefault();
                 this.toggleVisibility();
             }
@@ -554,7 +554,7 @@ export class ResourceEconomyUI {
             this.stats.maxUpdateTime = Math.max(this.stats.maxUpdateTime, updateTime);
             
         } catch (error) {
-            console.error('❌ Error updating resource UI:', error);
+            console.error("❌ Error updating resource UI:", error);
         }
     }
     
@@ -575,25 +575,25 @@ export class ResourceEconomyUI {
         
         for (const entity of entities) {
             // Power generation
-            const powerGen = entity.getComponent('PowerGeneratorComponent');
+            const powerGen = entity.getComponent("PowerGeneratorComponent");
             if (powerGen) {
                 totalPower += powerGen.output;
             }
             
             // Power consumption
-            const powerCons = entity.getComponent('PowerConsumerComponent');
+            const powerCons = entity.getComponent("PowerConsumerComponent");
             if (powerCons) {
                 usedPower += powerCons.consumption;
             }
             
             // Income generation
-            const income = entity.getComponent('IncomeComponent');
+            const income = entity.getComponent("IncomeComponent");
             if (income) {
                 totalIncome += income.rate;
             }
             
             // Expenses
-            const expense = entity.getComponent('ExpenseComponent');
+            const expense = entity.getComponent("ExpenseComponent");
             if (expense) {
                 totalExpenses += expense.rate;
             }
@@ -623,7 +623,7 @@ export class ResourceEconomyUI {
         
         // Find all harvester entities
         const harvesters = this.world.entities.filter(entity => 
-            entity.hasComponent('HarvesterComponent') && entity.active
+            entity.hasComponent("HarvesterComponent") && entity.active
         );
         
         // Reset stats
@@ -635,15 +635,15 @@ export class ResourceEconomyUI {
         
         // Analyze each harvester
         for (const harvester of harvesters) {
-            const harvesterComp = harvester.getComponent('HarvesterComponent');
-            const movement = harvester.getComponent('MovementComponent');
+            const harvesterComp = harvester.getComponent("HarvesterComponent");
+            const movement = harvester.getComponent("MovementComponent");
             
             if (harvesterComp) {
                 // Update harvester tracking
                 const entityId = harvester.id;
                 const harvesterData = {
                     id: entityId,
-                    state: harvesterComp.state || 'idle',
+                    state: harvesterComp.state || "idle",
                     cargo: harvesterComp.cargo || 0,
                     maxCargo: harvesterComp.maxCargo || 100,
                     efficiency: harvesterComp.efficiency || 100,
@@ -654,16 +654,16 @@ export class ResourceEconomyUI {
                 
                 // Count states
                 switch (harvesterData.state) {
-                    case 'harvesting':
-                    case 'moving_to_resource':
-                        this.harvestStats.active++;
-                        break;
-                    case 'returning':
-                    case 'moving_to_refinery':
-                        this.harvestStats.returning++;
-                        break;
-                    default:
-                        this.harvestStats.idle++;
+                case "harvesting":
+                case "moving_to_resource":
+                    this.harvestStats.active++;
+                    break;
+                case "returning":
+                case "moving_to_refinery":
+                    this.harvestStats.returning++;
+                    break;
+                default:
+                    this.harvestStats.idle++;
                 }
                 
                 this.harvestStats.totalIncome += harvesterData.incomeGenerated;
@@ -694,28 +694,28 @@ export class ResourceEconomyUI {
         
         // Count buildings by type
         const buildings = this.world.entities.filter(entity => 
-            entity.hasComponent('BuildingComponent') && entity.active
+            entity.hasComponent("BuildingComponent") && entity.active
         );
         
         for (const building of buildings) {
-            const buildingComp = building.getComponent('BuildingComponent');
+            const buildingComp = building.getComponent("BuildingComponent");
             if (buildingComp) {
                 switch (buildingComp.type) {
-                    case 'power-plant':
-                        this.buildings.powerPlants++;
-                        break;
-                    case 'refinery':
-                        this.buildings.refineries++;
-                        break;
-                    case 'factory':
-                    case 'barracks':
-                    case 'vehicle-factory':
-                        this.buildings.factories++;
-                        break;
-                    case 'turret':
-                    case 'defense':
-                        this.buildings.defense++;
-                        break;
+                case "power-plant":
+                    this.buildings.powerPlants++;
+                    break;
+                case "refinery":
+                    this.buildings.refineries++;
+                    break;
+                case "factory":
+                case "barracks":
+                case "vehicle-factory":
+                    this.buildings.factories++;
+                    break;
+                case "turret":
+                case "defense":
+                    this.buildings.defense++;
+                    break;
                 }
             }
         }
@@ -781,14 +781,14 @@ export class ResourceEconomyUI {
         
         // No harvesters warning
         if (this.harvestStats.total === 0) {
-            this.warnings.add('No harvesters deployed');
+            this.warnings.add("No harvesters deployed");
         } else if (this.harvestStats.active === 0) {
-            this.warnings.add('All harvesters idle');
+            this.warnings.add("All harvesters idle");
         }
         
         // Power shortage warning
         if (this.resources.powerUsed > this.resources.power) {
-            this.warnings.add('Power shortage detected');
+            this.warnings.add("Power shortage detected");
         }
     }
     
@@ -833,21 +833,21 @@ export class ResourceEconomyUI {
         const formattedCredits = this.formatCredits(this.resources.credits);
         
         // Use UIUpdateManager for smooth updates
-        this.uiUpdateManager.queueTextUpdate('credits-value', formattedCredits);
+        this.uiUpdateManager.queueTextUpdate("credits-value", formattedCredits);
         
         // Update trend
         if (this.elements.creditsTrend) {
-            const trend = this.resources.netIncome >= 0 ? '+' : '';
+            const trend = this.resources.netIncome >= 0 ? "+" : "";
             const formattedTrend = `${trend}${this.formatCredits(this.resources.netIncome)}/min`;
-            this.uiUpdateManager.queueTextUpdate('credits-trend', formattedTrend);
+            this.uiUpdateManager.queueTextUpdate("credits-trend", formattedTrend);
         }
         
         // Update status indicator
-        this.updateStatusIndicator('credits-status', this.getCreditsStatus());
+        this.updateStatusIndicator("credits-status", this.getCreditsStatus());
         
         // Add pulse animation if credits changed significantly
         if (this.config.enableAnimations) {
-            this.animateValueChange('credits-value');
+            this.animateValueChange("credits-value");
         }
     }
     
@@ -858,20 +858,20 @@ export class ResourceEconomyUI {
         if (!this.elements.powerValue) return;
         
         const powerText = `${this.resources.powerUsed}/${this.resources.power}`;
-        this.uiUpdateManager.queueTextUpdate('power-value', powerText);
+        this.uiUpdateManager.queueTextUpdate("power-value", powerText);
         
         // Update power bar
         const powerPercent = this.resources.power > 0 ? 
             (this.resources.powerUsed / this.resources.power) * 100 : 0;
         
         if (this.elements.powerBarFill) {
-            this.uiUpdateManager.queueStyleChange('power-bar-fill', {
+            this.uiUpdateManager.queueStyleChange("power-bar-fill", {
                 width: `${Math.min(100, powerPercent)}%`
             });
         }
         
         // Update status
-        this.updateStatusIndicator('power-status', this.getPowerStatus());
+        this.updateStatusIndicator("power-status", this.getPowerStatus());
     }
     
     /**
@@ -881,16 +881,16 @@ export class ResourceEconomyUI {
         if (!this.elements.incomeValue) return;
         
         const formattedIncome = `+${this.formatCredits(this.resources.income)}/min`;
-        this.uiUpdateManager.queueTextUpdate('income-value', formattedIncome);
+        this.uiUpdateManager.queueTextUpdate("income-value", formattedIncome);
         
         // Update breakdown
         if (this.elements.incomeBreakdown) {
             const harvesterIncome = this.formatCredits(this.harvestStats.incomeRate);
-            this.uiUpdateManager.queueTextUpdate('income-breakdown', `Harvesters: ${harvesterIncome}`);
+            this.uiUpdateManager.queueTextUpdate("income-breakdown", `Harvesters: ${harvesterIncome}`);
         }
         
         // Update status
-        this.updateStatusIndicator('income-status', this.getIncomeStatus());
+        this.updateStatusIndicator("income-status", this.getIncomeStatus());
     }
     
     /**
@@ -899,33 +899,33 @@ export class ResourceEconomyUI {
     updateHarvesterDisplay() {
         if (!this.elements.harvestersCount) return;
         
-        this.uiUpdateManager.queueTextUpdate('harvesters-count', 
+        this.uiUpdateManager.queueTextUpdate("harvesters-count", 
             `${this.harvestStats.active + this.harvestStats.returning}/${this.harvestStats.total}`);
         
-        this.uiUpdateManager.queueTextUpdate('harvesters-active', 
+        this.uiUpdateManager.queueTextUpdate("harvesters-active", 
             this.harvestStats.active.toString());
         
-        this.uiUpdateManager.queueTextUpdate('harvesters-idle', 
+        this.uiUpdateManager.queueTextUpdate("harvesters-idle", 
             this.harvestStats.idle.toString());
         
-        this.uiUpdateManager.queueTextUpdate('harvesters-efficiency', 
+        this.uiUpdateManager.queueTextUpdate("harvesters-efficiency", 
             `${this.harvestStats.efficiency}%`);
         
         // Update status
-        this.updateStatusIndicator('harvesters-status', this.getHarvestersStatus());
+        this.updateStatusIndicator("harvesters-status", this.getHarvestersStatus());
     }
     
     /**
      * Update building display
      */
     updateBuildingDisplay() {
-        this.uiUpdateManager.queueTextUpdate('power-plants-count', 
+        this.uiUpdateManager.queueTextUpdate("power-plants-count", 
             this.buildings.powerPlants.toString());
         
-        this.uiUpdateManager.queueTextUpdate('refineries-count', 
+        this.uiUpdateManager.queueTextUpdate("refineries-count", 
             this.buildings.refineries.toString());
         
-        this.uiUpdateManager.queueTextUpdate('factories-count', 
+        this.uiUpdateManager.queueTextUpdate("factories-count", 
             this.buildings.factories.toString());
     }
     
@@ -936,12 +936,12 @@ export class ResourceEconomyUI {
         if (!this.elements.warningsSection) return;
         
         if (this.warnings.size > 0) {
-            this.elements.warningsSection.style.display = 'block';
+            this.elements.warningsSection.style.display = "block";
             
-            const warningText = Array.from(this.warnings).join('<br>');
-            this.uiUpdateManager.queueTextUpdate('warning-list', warningText);
+            const warningText = Array.from(this.warnings).join("<br>");
+            this.uiUpdateManager.queueTextUpdate("warning-list", warningText);
         } else {
-            this.elements.warningsSection.style.display = 'none';
+            this.elements.warningsSection.style.display = "none";
         }
     }
     
@@ -954,21 +954,21 @@ export class ResourceEconomyUI {
         // Calculate credit prediction for 5 minutes
         const creditsIn5Min = this.resources.credits + (this.resources.netIncome * 5);
         
-        this.uiUpdateManager.queueTextUpdate('credits-prediction', 
+        this.uiUpdateManager.queueTextUpdate("credits-prediction", 
             this.formatCredits(creditsIn5Min));
         
-        this.elements.predictionsSection.style.display = 'block';
+        this.elements.predictionsSection.style.display = "block";
     }
     
     /**
      * Update status indicator
      */
     updateStatusIndicator(elementId, status) {
-        const statusClass = status === 'good' ? 'good' : 
-                           status === 'warning' ? 'warning' : 'critical';
+        const statusClass = status === "good" ? "good" : 
+            status === "warning" ? "warning" : "critical";
         
         this.uiUpdateManager.queueClassChange(elementId, {
-            remove: ['good', 'warning', 'critical'],
+            remove: ["good", "warning", "critical"],
             add: [statusClass]
         });
     }
@@ -978,12 +978,12 @@ export class ResourceEconomyUI {
      */
     animateValueChange(elementId) {
         this.uiUpdateManager.queueClassChange(elementId, {
-            add: ['updating']
+            add: ["updating"]
         });
         
         setTimeout(() => {
             this.uiUpdateManager.queueClassChange(elementId, {
-                remove: ['updating']
+                remove: ["updating"]
             });
         }, 500);
     }
@@ -993,11 +993,11 @@ export class ResourceEconomyUI {
      */
     getCreditsStatus() {
         if (this.resources.credits < this.config.warningThresholds.lowCredits) {
-            return 'critical';
+            return "critical";
         } else if (this.resources.netIncome < 0) {
-            return 'warning';
+            return "warning";
         } else {
-            return 'good';
+            return "good";
         }
     }
     
@@ -1006,11 +1006,11 @@ export class ResourceEconomyUI {
      */
     getPowerStatus() {
         if (this.resources.powerUsed > this.resources.power) {
-            return 'critical';
+            return "critical";
         } else if ((this.resources.powerUsed / this.resources.power) > 0.8) {
-            return 'warning';
+            return "warning";
         } else {
-            return 'good';
+            return "good";
         }
     }
     
@@ -1019,11 +1019,11 @@ export class ResourceEconomyUI {
      */
     getIncomeStatus() {
         if (this.resources.netIncome < 0) {
-            return 'critical';
+            return "critical";
         } else if (this.resources.netIncome < this.config.warningThresholds.lowIncome) {
-            return 'warning';
+            return "warning";
         } else {
-            return 'good';
+            return "good";
         }
     }
     
@@ -1032,11 +1032,11 @@ export class ResourceEconomyUI {
      */
     getHarvestersStatus() {
         if (this.harvestStats.total === 0) {
-            return 'critical';
+            return "critical";
         } else if (this.harvestStats.efficiency < 50) {
-            return 'warning';
+            return "warning";
         } else {
-            return 'good';
+            return "good";
         }
     }
     
@@ -1051,7 +1051,7 @@ export class ResourceEconomyUI {
             Math.round(amount).toString();
         
         if (useThousandsSeparator) {
-            formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         
         return `${currency}${formatted}`;
@@ -1061,14 +1061,14 @@ export class ResourceEconomyUI {
      * Toggle minimize state
      */
     toggleMinimize() {
-        const isMinimized = this.elements.container.classList.contains('minimized');
+        const isMinimized = this.elements.container.classList.contains("minimized");
         
         if (isMinimized) {
-            this.elements.container.classList.remove('minimized');
-            this.elements.minimizeBtn.textContent = '−';
+            this.elements.container.classList.remove("minimized");
+            this.elements.minimizeBtn.textContent = "−";
         } else {
-            this.elements.container.classList.add('minimized');
-            this.elements.minimizeBtn.textContent = '+';
+            this.elements.container.classList.add("minimized");
+            this.elements.minimizeBtn.textContent = "+";
         }
     }
     
@@ -1077,7 +1077,7 @@ export class ResourceEconomyUI {
      */
     toggleVisibility() {
         this.isVisible = !this.isVisible;
-        this.elements.container.style.display = this.isVisible ? 'block' : 'none';
+        this.elements.container.style.display = this.isVisible ? "block" : "none";
     }
     
     /**
@@ -1097,7 +1097,7 @@ export class ResourceEconomyUI {
      */
     updateConfig(newConfig) {
         this.config = { ...this.config, ...newConfig };
-        console.log('⚙️  ResourceEconomyUI config updated');
+        console.log("⚙️  ResourceEconomyUI config updated");
     }
     
     /**
@@ -1113,7 +1113,7 @@ export class ResourceEconomyUI {
     destroy() {
         if (this.isDestroyed) return;
         
-        console.log('🗑️ Destroying ResourceEconomyUI...');
+        console.log("🗑️ Destroying ResourceEconomyUI...");
         this.isDestroyed = true;
         
         // Remove DOM elements
@@ -1128,6 +1128,6 @@ export class ResourceEconomyUI {
         this.history.income = [];
         this.history.expenses = [];
         
-        console.log('✅ ResourceEconomyUI destroyed successfully');
+        console.log("✅ ResourceEconomyUI destroyed successfully");
     }
 }

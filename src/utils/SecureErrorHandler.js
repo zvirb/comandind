@@ -22,7 +22,7 @@ class SecureErrorHandler {
             /127\.0\.0\.1:\d+/g, // Local IPs with ports
         ];
         this.initialized = false;
-        this.storagePrefix = 'secure_errors_';
+        this.storagePrefix = "secure_errors_";
         this.storageQuotaLimit = 2 * 1024 * 1024; // 2MB limit for error storage
     }
 
@@ -37,22 +37,22 @@ class SecureErrorHandler {
         this.setupStorageQuotaManagement();
         this.initialized = true;
 
-        console.log('🛡️ Secure Error Handler initialized');
+        console.log("🛡️ Secure Error Handler initialized");
     }
 
     /**
      * Sanitize text to prevent XSS attacks
      */
     sanitizeText(text) {
-        if (!text) return '';
+        if (!text) return "";
         
         return String(text)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#x27;')
-            .replace(/\//g, '&#x2F;');
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#x27;")
+            .replace(/\//g, "&#x2F;");
     }
 
     /**
@@ -63,13 +63,13 @@ class SecureErrorHandler {
         
         // Remove sensitive patterns
         this.sensitivePatterns.forEach(pattern => {
-            sanitized = sanitized.replace(pattern, '[REDACTED]');
+            sanitized = sanitized.replace(pattern, "[REDACTED]");
         });
 
         // Limit stack trace depth to prevent information disclosure
-        const lines = sanitized.split('\n');
+        const lines = sanitized.split("\n");
         if (lines.length > 10) {
-            sanitized = lines.slice(0, 10).join('\n') + '\n[Stack trace truncated for security]';
+            sanitized = lines.slice(0, 10).join("\n") + "\n[Stack trace truncated for security]";
         }
 
         return sanitized;
@@ -92,7 +92,7 @@ class SecureErrorHandler {
         const currentCount = this.errorCounts.get(windowKey) || 0;
         
         if (currentCount >= this.maxErrorsPerWindow) {
-            console.warn('🚨 Error rate limit exceeded, dropping error');
+            console.warn("🚨 Error rate limit exceeded, dropping error");
             return false;
         }
 
@@ -103,7 +103,7 @@ class SecureErrorHandler {
     /**
      * Capture and process errors securely
      */
-    captureError(error, source = 'unknown', extraInfo = {}) {
+    captureError(error, source = "unknown", extraInfo = {}) {
         // Rate limiting check
         if (!this.checkRateLimit()) {
             return false;
@@ -114,8 +114,8 @@ class SecureErrorHandler {
             timestamp: new Date().toISOString(),
             source: this.sanitizeText(source),
             message: this.sanitizeErrorContent(error?.message || String(error)),
-            stack: this.sanitizeErrorContent(error?.stack || 'No stack trace'),
-            filename: this.sanitizeFilename(error?.filename || extraInfo.filename || 'unknown'),
+            stack: this.sanitizeErrorContent(error?.stack || "No stack trace"),
+            filename: this.sanitizeFilename(error?.filename || extraInfo.filename || "unknown"),
             lineno: this.sanitizeNumber(error?.lineno || extraInfo.lineno || 0),
             colno: this.sanitizeNumber(error?.colno || extraInfo.colno || 0),
             userAgent: this.sanitizeText(navigator.userAgent),
@@ -141,7 +141,7 @@ class SecureErrorHandler {
      * Generate a secure, non-predictable ID
      */
     generateSecureId() {
-        return 'err_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        return "err_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
     }
 
     /**
@@ -155,12 +155,12 @@ class SecureErrorHandler {
         const justFilename = parts[parts.length - 1];
         
         // If it's a URL, keep the last part
-        if (sanitized.includes('://')) {
-            const urlParts = sanitized.split('/');
-            return urlParts[urlParts.length - 1] || 'unknown';
+        if (sanitized.includes("://")) {
+            const urlParts = sanitized.split("/");
+            return urlParts[urlParts.length - 1] || "unknown";
         }
         
-        return justFilename || 'unknown';
+        return justFilename || "unknown";
     }
 
     /**
@@ -178,11 +178,11 @@ class SecureErrorHandler {
         try {
             const urlObj = new URL(url);
             // Remove query parameters that might contain sensitive data
-            urlObj.search = '';
-            urlObj.hash = '';
+            urlObj.search = "";
+            urlObj.hash = "";
             return this.sanitizeText(urlObj.toString());
         } catch {
-            return '[Invalid URL]';
+            return "[Invalid URL]";
         }
     }
 
@@ -191,7 +191,7 @@ class SecureErrorHandler {
      */
     sanitizeExtraInfo(extraInfo) {
         const sanitized = {};
-        const allowedKeys = ['type', 'context', 'component', 'action', 'severity'];
+        const allowedKeys = ["type", "context", "component", "action", "severity"];
         
         allowedKeys.forEach(key => {
             if (extraInfo[key] !== undefined) {
@@ -206,19 +206,19 @@ class SecureErrorHandler {
      * Determine error severity for prioritization
      */
     determineSeverity(error) {
-        const message = (error?.message || '').toLowerCase();
+        const message = (error?.message || "").toLowerCase();
         
-        if (message.includes('script error') || message.includes('network')) {
-            return 'low';
+        if (message.includes("script error") || message.includes("network")) {
+            return "low";
         }
-        if (message.includes('reference') || message.includes('undefined')) {
-            return 'medium';
+        if (message.includes("reference") || message.includes("undefined")) {
+            return "medium";
         }
-        if (message.includes('syntax') || message.includes('security')) {
-            return 'high';
+        if (message.includes("syntax") || message.includes("security")) {
+            return "high";
         }
         
-        return 'medium';
+        return "medium";
     }
 
     /**
@@ -226,24 +226,24 @@ class SecureErrorHandler {
      */
     setupGlobalErrorHandlers() {
         // Window error handler
-        window.addEventListener('error', (event) => {
+        window.addEventListener("error", (event) => {
             event.preventDefault();
-            this.captureError(event.error, 'window_error', {
+            this.captureError(event.error, "window_error", {
                 filename: event.filename,
                 lineno: event.lineno,
                 colno: event.colno,
-                type: 'javascript_error'
+                type: "javascript_error"
             });
         }, true);
 
         // Promise rejection handler
-        window.addEventListener('unhandledrejection', (event) => {
+        window.addEventListener("unhandledrejection", (event) => {
             event.preventDefault();
             this.captureError(
                 new Error(`Promise rejection: ${event.reason?.message || event.reason}`),
-                'promise_rejection',
+                "promise_rejection",
                 {
-                    type: 'promise_rejection',
+                    type: "promise_rejection",
                     reason: String(event.reason)
                 }
             );
@@ -258,14 +258,14 @@ class SecureErrorHandler {
             
             if (consoleErrorInProgress) return;
             
-            const errorMessage = args.join(' ');
-            if (errorMessage && !errorMessage.includes('[CAPTURED')) {
+            const errorMessage = args.join(" ");
+            if (errorMessage && !errorMessage.includes("[CAPTURED")) {
                 consoleErrorInProgress = true;
                 try {
                     this.captureError(
                         new Error(`Console Error: ${errorMessage}`),
-                        'console_error',
-                        { type: 'console_error' }
+                        "console_error",
+                        { type: "console_error" }
                     );
                 } finally {
                     consoleErrorInProgress = false;
@@ -286,7 +286,7 @@ class SecureErrorHandler {
                     this.cleanupOldErrors();
                 }
             } catch (error) {
-                console.warn('Storage quota check failed:', error);
+                console.warn("Storage quota check failed:", error);
             }
         }, 30000); // Check every 30 seconds
     }
@@ -325,7 +325,7 @@ class SecureErrorHandler {
             const errorData = {
                 errors: this.errors,
                 timestamp: Date.now(),
-                version: '1.0'
+                version: "1.0"
             };
             
             const serialized = JSON.stringify(errorData);
@@ -336,13 +336,13 @@ class SecureErrorHandler {
                 return; // Try again after cleanup
             }
             
-            localStorage.setItem(this.storagePrefix + 'data', serialized);
+            localStorage.setItem(this.storagePrefix + "data", serialized);
         } catch (error) {
-            if (error.name === 'QuotaExceededError') {
+            if (error.name === "QuotaExceededError") {
                 this.cleanupOldErrors();
-                console.warn('🚨 Storage quota exceeded, cleaned up old errors');
+                console.warn("🚨 Storage quota exceeded, cleaned up old errors");
             } else {
-                console.warn('Failed to persist errors:', error);
+                console.warn("Failed to persist errors:", error);
             }
         }
     }
@@ -352,7 +352,7 @@ class SecureErrorHandler {
      */
     loadPersistedErrors() {
         try {
-            const stored = localStorage.getItem(this.storagePrefix + 'data');
+            const stored = localStorage.getItem(this.storagePrefix + "data");
             if (stored) {
                 const errorData = JSON.parse(stored);
                 if (errorData.errors && Array.isArray(errorData.errors)) {
@@ -360,7 +360,7 @@ class SecureErrorHandler {
                 }
             }
         } catch (error) {
-            console.warn('Failed to load persisted errors:', error);
+            console.warn("Failed to load persisted errors:", error);
             this.errors = [];
         }
     }
@@ -384,8 +384,8 @@ class SecureErrorHandler {
         const keysToRemove = [];
         for (let key in localStorage) {
             if (key.startsWith(this.storagePrefix) || 
-                key.includes('error') || 
-                key.includes('emergency')) {
+                key.includes("error") || 
+                key.includes("emergency")) {
                 keysToRemove.push(key);
             }
         }
@@ -394,7 +394,7 @@ class SecureErrorHandler {
             localStorage.removeItem(key);
         });
         
-        console.log('🧹 All errors cleared');
+        console.log("🧹 All errors cleared");
     }
 
     /**
@@ -402,7 +402,7 @@ class SecureErrorHandler {
      */
     notifyErrorCaptured(errorInfo) {
         // Dispatch custom event for UI components to listen to
-        const event = new CustomEvent('secureErrorCaptured', {
+        const event = new CustomEvent("secureErrorCaptured", {
             detail: {
                 id: errorInfo.id,
                 severity: errorInfo.severity,
@@ -445,6 +445,6 @@ class SecureErrorHandler {
 export const secureErrorHandler = new SecureErrorHandler();
 
 // Auto-initialize when module is loaded
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
     secureErrorHandler.initialize();
 }

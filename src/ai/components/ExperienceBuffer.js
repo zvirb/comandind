@@ -46,12 +46,12 @@ export class ExperienceBuffer {
     add(state, action, reward, nextState, done, priority = null) {
         // Validate inputs
         if (!this.isValidState(state) || !this.isValidState(nextState)) {
-            console.warn('ExperienceBuffer: Invalid state dimensions');
+            console.warn("ExperienceBuffer: Invalid state dimensions");
             return false;
         }
         
         if (!this.isValidAction(action)) {
-            console.warn('ExperienceBuffer: Invalid action ID');
+            console.warn("ExperienceBuffer: Invalid action ID");
             return false;
         }
         
@@ -302,7 +302,7 @@ export class ExperienceBuffer {
      * Validates action ID
      */
     isValidAction(action) {
-        return typeof action === 'number' && action >= 0 && action <= 15;
+        return typeof action === "number" && action >= 0 && action <= 15;
     }
     
     /**

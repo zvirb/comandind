@@ -3,8 +3,8 @@
  * Handles initialization, fallback, and performance monitoring for ML features
  */
 
-import * as tf from '@tensorflow/tfjs';
-import { MLConfig } from './MLConfig.js';
+import * as tf from "@tensorflow/tfjs";
+import { MLConfig } from "./MLConfig.js";
 
 export class TensorFlowManager {
     constructor() {
@@ -39,8 +39,8 @@ export class TensorFlowManager {
         this.cleanup = this.cleanup.bind(this);
         
         // Setup cleanup on page unload
-        if (typeof window !== 'undefined') {
-            window.addEventListener('beforeunload', this.cleanup);
+        if (typeof window !== "undefined") {
+            window.addEventListener("beforeunload", this.cleanup);
         }
     }
 
@@ -49,7 +49,7 @@ export class TensorFlowManager {
      */
     async initialize() {
         if (this.isInitialized) {
-            console.warn('TensorFlow.js is already initialized');
+            console.warn("TensorFlow.js is already initialized");
             return true;
         }
 
@@ -73,7 +73,7 @@ export class TensorFlowManager {
                 // Perform validation test
                 const testResult = await this.validateBackend();
                 if (!testResult.success) {
-                    console.warn('⚠️ Backend validation failed, attempting fallback');
+                    console.warn("⚠️ Backend validation failed, attempting fallback");
                     return this.fallbackToNextBackend();
                 }
                 
@@ -93,7 +93,7 @@ export class TensorFlowManager {
             }
             
         } catch (error) {
-            console.error('❌ TensorFlow.js initialization failed:', error);
+            console.error("❌ TensorFlow.js initialization failed:", error);
             return this.fallbackToNextBackend();
         }
     }
@@ -104,37 +104,37 @@ export class TensorFlowManager {
     configureTensorFlowFlags() {
         // Enable debug mode if requested
         if (MLConfig.debug.enableTFDebug) {
-            tf.ENV.set('DEBUG', true);
+            tf.ENV.set("DEBUG", true);
         }
         
         // WebGL-specific flags
-        if (MLConfig.backend.preferred === 'webgl') {
+        if (MLConfig.backend.preferred === "webgl") {
             // Force float32 precision if configured
             if (!MLConfig.backend.webgl.forceHalfFloat) {
-                tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', false);
+                tf.ENV.set("WEBGL_FORCE_F16_TEXTURES", false);
             }
             
             // Disable numerical problem checking for performance
             if (!MLConfig.backend.webgl.checkNumericalProblems) {
-                tf.ENV.set('WEBGL_CHECK_NUMERICAL_PROBLEMS', false);
+                tf.ENV.set("WEBGL_CHECK_NUMERICAL_PROBLEMS", false);
             }
             
             // Memory growth setting
             if (MLConfig.backend.webgl.memoryGrowth) {
-                tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+                tf.ENV.set("WEBGL_DELETE_TEXTURE_THRESHOLD", 0);
             }
         }
         
         // CPU backend configuration
         if (MLConfig.backend.cpu.numThreads > 0) {
-            tf.ENV.set('WASM_HAS_MULTITHREAD_SUPPORT', true);
+            tf.ENV.set("WASM_HAS_MULTITHREAD_SUPPORT", true);
         }
         
         if (MLConfig.debug.verbose) {
-            console.log('🔧 TensorFlow.js flags configured:', {
-                DEBUG: tf.ENV.getBool('DEBUG'),
-                WEBGL_FORCE_F16_TEXTURES: tf.ENV.getBool('WEBGL_FORCE_F16_TEXTURES'),
-                WEBGL_CHECK_NUMERICAL_PROBLEMS: tf.ENV.getBool('WEBGL_CHECK_NUMERICAL_PROBLEMS')
+            console.log("🔧 TensorFlow.js flags configured:", {
+                DEBUG: tf.ENV.getBool("DEBUG"),
+                WEBGL_FORCE_F16_TEXTURES: tf.ENV.getBool("WEBGL_FORCE_F16_TEXTURES"),
+                WEBGL_CHECK_NUMERICAL_PROBLEMS: tf.ENV.getBool("WEBGL_CHECK_NUMERICAL_PROBLEMS")
             });
         }
     }
@@ -167,20 +167,20 @@ export class TensorFlowManager {
      */
     async fallbackToNextBackend() {
         if (this.initializationAttempts >= this.maxInitAttempts) {
-            console.error('💀 All backend initialization attempts failed');
+            console.error("💀 All backend initialization attempts failed");
             return false;
         }
 
         // Try CPU backend as fallback
-        console.log('🔄 Attempting CPU backend fallback...');
+        console.log("🔄 Attempting CPU backend fallback...");
         
         try {
-            const success = await this.initializeWithBackend('cpu');
+            const success = await this.initializeWithBackend("cpu");
             if (success) {
                 this.isInitialized = true;
-                this.currentBackend = 'cpu';
+                this.currentBackend = "cpu";
                 
-                console.warn('⚠️ Running on CPU backend - performance may be reduced');
+                console.warn("⚠️ Running on CPU backend - performance may be reduced");
                 
                 // Still validate and test
                 const testResult = await this.validateBackend();
@@ -191,7 +191,7 @@ export class TensorFlowManager {
                 }
             }
         } catch (error) {
-            console.error('❌ CPU backend fallback failed:', error);
+            console.error("❌ CPU backend fallback failed:", error);
         }
 
         return false;
@@ -229,16 +229,16 @@ export class TensorFlowManager {
             
             if (sumValid && productValid) {
                 if (MLConfig.debug.verbose) {
-                    console.log('✅ Backend validation passed');
+                    console.log("✅ Backend validation passed");
                 }
                 return { success: true };
             } else {
-                console.error('❌ Backend validation failed - incorrect computation results');
-                return { success: false, reason: 'Incorrect computation results' };
+                console.error("❌ Backend validation failed - incorrect computation results");
+                return { success: false, reason: "Incorrect computation results" };
             }
             
         } catch (error) {
-            console.error('❌ Backend validation failed:', error);
+            console.error("❌ Backend validation failed:", error);
             return { success: false, reason: error.message };
         }
     }
@@ -248,7 +248,7 @@ export class TensorFlowManager {
      */
     async performanceTest() {
         if (!this.isInitialized) {
-            console.warn('⚠️ TensorFlow.js not initialized, skipping performance test');
+            console.warn("⚠️ TensorFlow.js not initialized, skipping performance test");
             return;
         }
 
@@ -272,7 +272,7 @@ export class TensorFlowManager {
                         input.expandDims(0).expandDims(-1), 
                         tf.randomNormal([3, 3, 1, 1]), 
                         [1, 1], 
-                        'same'
+                        "same"
                     );
                     return tf.relu(conv);
                 });
@@ -307,16 +307,16 @@ export class TensorFlowManager {
             } else if (avgTime > MLConfig.performance.thresholds.slowInference) {
                 console.warn(`⚠️ Performance warning: Average inference time (${avgTime.toFixed(2)}ms) exceeds slow threshold (${MLConfig.performance.thresholds.slowInference}ms)`);
             } else {
-                console.log('✅ Performance test passed - inference times within acceptable limits');
+                console.log("✅ Performance test passed - inference times within acceptable limits");
             }
             
             // Check frame budget compliance
             if (avgTime > MLConfig.performance.thresholds.frameBudget) {
-                console.warn(`⚠️ Frame budget warning: Inference time may impact 60 FPS target`);
+                console.warn("⚠️ Frame budget warning: Inference time may impact 60 FPS target");
             }
             
         } catch (error) {
-            console.error('❌ Performance test failed:', error);
+            console.error("❌ Performance test failed:", error);
         }
     }
 
@@ -391,7 +391,7 @@ export class TensorFlowManager {
             }
             
         } catch (error) {
-            console.error('❌ Garbage collection failed:', error);
+            console.error("❌ Garbage collection failed:", error);
         }
     }
 
@@ -422,9 +422,9 @@ export class TensorFlowManager {
         return {
             available: true,
             backend: this.currentBackend,
-            webglSupport: this.currentBackend === 'webgl',
-            performanceClass: this.performanceMetrics.averageInferenceTime < MLConfig.performance.thresholds.slowInference ? 'fast' : 'slow',
-            memoryClass: this.memoryTracker.peakMemoryUsage < MLConfig.memory.maxGpuMemory * 0.5 ? 'low' : 'high'
+            webglSupport: this.currentBackend === "webgl",
+            performanceClass: this.performanceMetrics.averageInferenceTime < MLConfig.performance.thresholds.slowInference ? "fast" : "slow",
+            memoryClass: this.memoryTracker.peakMemoryUsage < MLConfig.memory.maxGpuMemory * 0.5 ? "low" : "high"
         };
     }
 
@@ -433,7 +433,7 @@ export class TensorFlowManager {
      */
     async testInference(inputData = null) {
         if (!this.isInitialized) {
-            throw new Error('TensorFlow.js not initialized');
+            throw new Error("TensorFlow.js not initialized");
         }
 
         const start = performance.now();
@@ -444,10 +444,10 @@ export class TensorFlowManager {
             
             // Simple test operation (placeholder for actual model inference)
             const result = tf.tidy(() => {
-                const conv = tf.conv2d(input, tf.randomNormal([3, 3, 1, 8]), [1, 1], 'same');
+                const conv = tf.conv2d(input, tf.randomNormal([3, 3, 1, 8]), [1, 1], "same");
                 const relu = tf.relu(conv);
                 // Use maxPool2d instead of globalMaxPool for broader compatibility
-                return tf.maxPool(relu, [2, 2], [2, 2], 'valid');
+                return tf.maxPool(relu, [2, 2], [2, 2], "valid");
             });
             
             // Wait for completion
@@ -480,7 +480,7 @@ export class TensorFlowManager {
             
         } catch (error) {
             const end = performance.now();
-            console.error('❌ Test inference failed:', error);
+            console.error("❌ Test inference failed:", error);
             
             return {
                 success: false,
@@ -494,7 +494,7 @@ export class TensorFlowManager {
      * Cleanup resources
      */
     cleanup() {
-        console.log('🧹 Cleaning up TensorFlow.js resources...');
+        console.log("🧹 Cleaning up TensorFlow.js resources...");
         
         try {
             // Clear memory monitor
@@ -518,10 +518,10 @@ export class TensorFlowManager {
             this.isInitialized = false;
             this.currentBackend = null;
             
-            console.log('✅ TensorFlow.js cleanup completed');
+            console.log("✅ TensorFlow.js cleanup completed");
             
         } catch (error) {
-            console.error('❌ Cleanup failed:', error);
+            console.error("❌ Cleanup failed:", error);
         }
     }
 
@@ -529,7 +529,7 @@ export class TensorFlowManager {
      * Reinitialize if needed (useful for context loss recovery)
      */
     async reinitialize() {
-        console.log('🔄 Reinitializing TensorFlow.js...');
+        console.log("🔄 Reinitializing TensorFlow.js...");
         this.cleanup();
         this.initializationAttempts = 0;
         return this.initialize();

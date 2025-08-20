@@ -53,8 +53,8 @@ export const TrainingConfig = {
         inputSize: 36,               // State vector size
         outputSize: 16,              // Action space size
         hiddenLayers: [128, 128, 64], // Hidden layer sizes
-        activation: 'relu',          // Activation function
-        outputActivation: 'linear',  // Output layer activation
+        activation: "relu",          // Activation function
+        outputActivation: "linear",  // Output layer activation
         dropout: 0.1,                // Dropout rate
         batchNormalization: false,   // Use batch normalization
         l2Regularization: 0.0001,    // L2 regularization strength
@@ -62,7 +62,7 @@ export const TrainingConfig = {
 
     // Optimizer settings
     optimizer: {
-        type: 'adam',                // Optimizer type: 'adam', 'sgd', 'rmsprop'
+        type: "adam",                // Optimizer type: 'adam', 'sgd', 'rmsprop'
         beta1: 0.9,                  // Adam beta1 parameter
         beta2: 0.999,                // Adam beta2 parameter
         epsilon: 1e-8,               // Adam epsilon parameter
@@ -85,7 +85,7 @@ export const TrainingConfig = {
 
     // Checkpoint settings
     checkpoints: {
-        saveDirectory: './checkpoints',  // Directory to save checkpoints
+        saveDirectory: "./checkpoints",  // Directory to save checkpoints
         keepLastN: 10,               // Number of checkpoints to keep
         saveOnBestReward: true,      // Save when achieving best reward
         saveOnConvergence: true,     // Save when converged
@@ -119,8 +119,8 @@ export const TrainingConfig = {
         enabled: true,               // Enable early stopping
         patience: 500,               // Episodes to wait without improvement
         minDelta: 0.001,             // Minimum improvement threshold
-        monitorMetric: 'averageReward', // Metric to monitor: 'loss' or 'averageReward'
-        mode: 'max',                 // 'min' for loss, 'max' for reward
+        monitorMetric: "averageReward", // Metric to monitor: 'loss' or 'averageReward'
+        mode: "max",                 // 'min' for loss, 'max' for reward
     },
 
     // Training phases
@@ -210,32 +210,32 @@ export function validateTrainingConfig(config) {
 
     // Required parameters
     if (!config.learning || config.learning.learningRate <= 0) {
-        errors.push('Learning rate must be positive');
+        errors.push("Learning rate must be positive");
     }
 
     if (!config.learning || config.learning.batchSize <= 0) {
-        errors.push('Batch size must be positive');
+        errors.push("Batch size must be positive");
     }
 
     if (!config.network || config.network.inputSize !== 36) {
-        errors.push('Input size must be 36 for state vector');
+        errors.push("Input size must be 36 for state vector");
     }
 
     if (!config.network || config.network.outputSize !== 16) {
-        errors.push('Output size must be 16 for action space');
+        errors.push("Output size must be 16 for action space");
     }
 
     // Warnings for suboptimal settings
     if (config.learning && config.learning.learningRate > 0.1) {
-        warnings.push('Learning rate seems very high, may cause instability');
+        warnings.push("Learning rate seems very high, may cause instability");
     }
 
     if (config.exploration && config.exploration.epsilonDecaySteps < 1000) {
-        warnings.push('Epsilon decay seems too fast, may reduce exploration too quickly');
+        warnings.push("Epsilon decay seems too fast, may reduce exploration too quickly");
     }
 
     if (config.training && config.training.targetUpdateFrequency < 10) {
-        warnings.push('Target update frequency is very low, may cause instability');
+        warnings.push("Target update frequency is very low, may cause instability");
     }
 
     return {

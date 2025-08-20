@@ -1,5 +1,5 @@
-import * as PIXI from 'pixi.js';
-import { globalTexturePool } from './TexturePool.js';
+import * as PIXI from "pixi.js";
+import { globalTexturePool } from "./TexturePool.js";
 
 export class TextureAtlasManager {
     constructor() {
@@ -21,8 +21,8 @@ export class TextureAtlasManager {
         // Sprite sheet configurations for C&C sprites
         this.spriteConfigs = {
             // GDI Structures
-            'gdi-construction-yard': {
-                url: '/assets/sprites/structures/gdi/construction-yard.png',
+            "gdi-construction-yard": {
+                url: "/assets/sprites/structures/gdi/construction-yard.png",
                 frameWidth: 48,
                 frameHeight: 48,
                 animations: {
@@ -31,8 +31,8 @@ export class TextureAtlasManager {
                     damaged: { frames: [4], speed: 0 }
                 }
             },
-            'gdi-power-plant': {
-                url: '/assets/sprites/structures/gdi/power-plant.png',
+            "gdi-power-plant": {
+                url: "/assets/sprites/structures/gdi/power-plant.png",
                 frameWidth: 48,
                 frameHeight: 48,
                 animations: {
@@ -40,8 +40,8 @@ export class TextureAtlasManager {
                     active: { frames: [0, 1, 2], speed: 0.15 }
                 }
             },
-            'gdi-barracks': {
-                url: '/assets/sprites/structures/gdi/barracks.png',
+            "gdi-barracks": {
+                url: "/assets/sprites/structures/gdi/barracks.png",
                 frameWidth: 48,
                 frameHeight: 48,
                 animations: {
@@ -49,8 +49,8 @@ export class TextureAtlasManager {
                     active: { frames: [0, 1], speed: 0.1 }
                 }
             },
-            'gdi-refinery': {
-                url: '/assets/sprites/structures/gdi/refinery.png',
+            "gdi-refinery": {
+                url: "/assets/sprites/structures/gdi/refinery.png",
                 frameWidth: 72,
                 frameHeight: 48,
                 animations: {
@@ -60,8 +60,8 @@ export class TextureAtlasManager {
             },
             
             // GDI Units
-            'gdi-medium-tank': {
-                url: '/assets/sprites/units/gdi/medium-tank.png',
+            "gdi-medium-tank": {
+                url: "/assets/sprites/units/gdi/medium-tank.png",
                 frameWidth: 24,
                 frameHeight: 24,
                 animations: {
@@ -71,8 +71,8 @@ export class TextureAtlasManager {
                     turret: { frames: Array.from({length: 32}, (_, i) => i + 32), speed: 0 }
                 }
             },
-            'gdi-mammoth-tank': {
-                url: '/assets/sprites/units/gdi/mammoth-tank.png',
+            "gdi-mammoth-tank": {
+                url: "/assets/sprites/units/gdi/mammoth-tank.png",
                 frameWidth: 32,
                 frameHeight: 32,
                 animations: {
@@ -80,8 +80,8 @@ export class TextureAtlasManager {
                     turret: { frames: Array.from({length: 32}, (_, i) => i + 32), speed: 0 }
                 }
             },
-            'gdi-orca': {
-                url: '/assets/sprites/units/gdi/orca.png',
+            "gdi-orca": {
+                url: "/assets/sprites/units/gdi/orca.png",
                 frameWidth: 32,
                 frameHeight: 32,
                 animations: {
@@ -91,8 +91,8 @@ export class TextureAtlasManager {
             },
             
             // NOD Structures
-            'nod-construction-yard': {
-                url: '/assets/sprites/structures/nod/construction-yard.png',
+            "nod-construction-yard": {
+                url: "/assets/sprites/structures/nod/construction-yard.png",
                 frameWidth: 48,
                 frameHeight: 48,
                 animations: {
@@ -100,8 +100,8 @@ export class TextureAtlasManager {
                     active: { frames: [0, 1, 2, 3], speed: 0.1 }
                 }
             },
-            'nod-obelisk': {
-                url: '/assets/sprites/structures/nod/obelisk.png',
+            "nod-obelisk": {
+                url: "/assets/sprites/structures/nod/obelisk.png",
                 frameWidth: 24,
                 frameHeight: 48,
                 animations: {
@@ -112,8 +112,8 @@ export class TextureAtlasManager {
             },
             
             // NOD Units
-            'nod-recon-bike': {
-                url: '/assets/sprites/units/nod/recon-bike.png',
+            "nod-recon-bike": {
+                url: "/assets/sprites/units/nod/recon-bike.png",
                 frameWidth: 24,
                 frameHeight: 24,
                 animations: {
@@ -122,16 +122,16 @@ export class TextureAtlasManager {
             },
             
             // Resources
-            'tiberium-green': {
-                url: '/assets/sprites/resources/tiberium-green.png',
+            "tiberium-green": {
+                url: "/assets/sprites/resources/tiberium-green.png",
                 frameWidth: 24,
                 frameHeight: 24,
                 animations: {
                     idle: { frames: [0, 1, 2, 3], speed: 0.05 }
                 }
             },
-            'tiberium-blue': {
-                url: '/assets/sprites/resources/tiberium-blue.png',
+            "tiberium-blue": {
+                url: "/assets/sprites/resources/tiberium-blue.png",
                 frameWidth: 24,
                 frameHeight: 24,
                 animations: {
@@ -446,7 +446,7 @@ export class TextureAtlasManager {
      * Perform smart cleanup based on usage patterns
      */
     async performSmartCleanup() {
-        console.log('🧹 Performing smart atlas cleanup...');
+        console.log("🧹 Performing smart atlas cleanup...");
         let cleaned = 0;
         
         // Get all atlases sorted by priority and usage
@@ -507,7 +507,7 @@ export class TextureAtlasManager {
      * Perform maintenance cleanup
      */
     async performMaintenanceCleanup() {
-        console.log('🔧 Performing maintenance cleanup...');
+        console.log("🔧 Performing maintenance cleanup...");
         
         // Clean up texture pool
         this.texturePool.performMaintenance();
@@ -551,7 +551,7 @@ export class TextureAtlasManager {
      * Clear unused textures with improved algorithm
      */
     clearUnused() {
-        console.log('🧹 Clearing unused textures...');
+        console.log("🧹 Clearing unused textures...");
         let cleared = 0;
         
         const now = Date.now();
@@ -577,7 +577,7 @@ export class TextureAtlasManager {
      * Destroy all loaded atlases with proper cleanup
      */
     destroy() {
-        console.log('🔚 Destroying TextureAtlasManager...');
+        console.log("🔚 Destroying TextureAtlasManager...");
         
         // Dispose all atlases through texture pool
         for (const key of this.atlases.keys()) {
@@ -591,7 +591,7 @@ export class TextureAtlasManager {
         this.priorityQueue.clear();
         this.loadQueue = [];
         
-        console.log('✅ TextureAtlasManager destroyed');
+        console.log("✅ TextureAtlasManager destroyed");
     }
     
     /**
@@ -633,7 +633,7 @@ export class TextureAtlasManager {
                     .reduce((sum, u) => sum + (u.accessCount || 0), 0) / atlasCount : 0,
                 memoryPerAccess: totalBytes > 0 ? totalBytes / Math.max(1, 
                     Array.from(this.textureUsageTracking.values())
-                    .reduce((sum, u) => sum + (u.accessCount || 0), 0)) : 0
+                        .reduce((sum, u) => sum + (u.accessCount || 0), 0)) : 0
             }
         };
     }

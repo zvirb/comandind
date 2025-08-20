@@ -6,8 +6,8 @@
 export const MLConfig = {
     // Backend configuration
     backend: {
-        preferred: 'webgl',
-        fallbacks: ['cpu'],
+        preferred: "webgl",
+        fallbacks: ["cpu"],
         // WebGL-specific settings
         webgl: {
             // Force 32-bit floats for better performance 
@@ -95,7 +95,7 @@ export const MLConfig = {
 };
 
 // Environment-specific overrides
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
     // Browser-specific configurations
     if (navigator.hardwareConcurrency) {
         MLConfig.backend.cpu.numThreads = Math.min(navigator.hardwareConcurrency, 4);
@@ -112,7 +112,7 @@ if (typeof window !== 'undefined') {
     }
     
     // Development vs production
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
         MLConfig.debug.enableTFDebug = true;
         MLConfig.debug.verbose = true;
     }

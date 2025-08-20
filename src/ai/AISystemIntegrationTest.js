@@ -4,16 +4,16 @@
  * Tests performance, functionality, and graceful degradation
  */
 
-import { World } from '../ecs/World.js';
-import { AISystem } from './systems/AISystem.js';
-import { AIComponent } from './components/AIComponent.js';
+import { World } from "../ecs/World.js";
+import { AISystem } from "./systems/AISystem.js";
+import { AIComponent } from "./components/AIComponent.js";
 import { 
     TransformComponent, 
     VelocityComponent, 
     HealthComponent, 
     MovementComponent,
     CombatComponent
-} from '../ecs/Component.js';
+} from "../ecs/Component.js";
 
 /**
  * Integration test suite for AI system
@@ -40,7 +40,7 @@ export class AISystemIntegrationTest {
      * Run all integration tests
      */
     async runAllTests() {
-        console.log('🧪 Starting AI System Integration Tests...');
+        console.log("🧪 Starting AI System Integration Tests...");
         
         try {
             await this.setupTestEnvironment();
@@ -53,7 +53,7 @@ export class AISystemIntegrationTest {
             this.printTestResults();
             
         } catch (error) {
-            console.error('❌ Test suite failed:', error);
+            console.error("❌ Test suite failed:", error);
             this.testResults.errors.push(`Test suite failure: ${error.message}`);
         } finally {
             this.cleanup();
@@ -66,7 +66,7 @@ export class AISystemIntegrationTest {
      * Set up test environment
      */
     async setupTestEnvironment() {
-        console.log('🔧 Setting up test environment...');
+        console.log("🔧 Setting up test environment...");
         
         // Create world and AI system
         this.world = new World();
@@ -81,37 +81,37 @@ export class AISystemIntegrationTest {
         }
         
         if (!this.aiSystem.isAIInitialized) {
-            console.warn('⚠️ AI system not fully initialized, testing degraded mode');
+            console.warn("⚠️ AI system not fully initialized, testing degraded mode");
         }
         
-        console.log('✅ Test environment ready');
+        console.log("✅ Test environment ready");
     }
     
     /**
      * Test basic ECS integration
      */
     async testBasicIntegration() {
-        console.log('🔍 Testing basic ECS integration...');
+        console.log("🔍 Testing basic ECS integration...");
         
         try {
             // Test 1: AI System should be added to world
-            this.assertTrue(this.world.systems.includes(this.aiSystem), 'AI System added to world');
+            this.assertTrue(this.world.systems.includes(this.aiSystem), "AI System added to world");
             
             // Test 2: Create entity with AI component
-            const entity = this.createTestEntity('basic');
-            this.assertTrue(entity.hasComponent(AIComponent), 'Entity has AI component');
+            const entity = this.createTestEntity("basic");
+            this.assertTrue(entity.hasComponent(AIComponent), "Entity has AI component");
             
             // Test 3: AI System should track the entity
-            this.assertTrue(this.aiSystem.entities.has(entity), 'AI System tracks AI entities');
+            this.assertTrue(this.aiSystem.entities.has(entity), "AI System tracks AI entities");
             
             // Test 4: Update cycle should work without errors
             this.world.update(16.67); // 60 FPS
-            this.assertTrue(true, 'Update cycle completed without errors');
+            this.assertTrue(true, "Update cycle completed without errors");
             
-            console.log('✅ Basic integration tests passed');
+            console.log("✅ Basic integration tests passed");
             
         } catch (error) {
-            this.recordTestFailure('Basic Integration', error);
+            this.recordTestFailure("Basic Integration", error);
         }
     }
     
@@ -119,26 +119,26 @@ export class AISystemIntegrationTest {
      * Test AI decision making pipeline
      */
     async testAIDecisionMaking() {
-        console.log('🧠 Testing AI decision making...');
+        console.log("🧠 Testing AI decision making...");
         
         try {
             // Create test entities
-            const combatEntity = this.createTestEntity('combat');
-            const harvesterEntity = this.createTestEntity('harvester');
+            const combatEntity = this.createTestEntity("combat");
+            const harvesterEntity = this.createTestEntity("harvester");
             
             const combatAI = combatEntity.getComponent(AIComponent);
             const harvesterAI = harvesterEntity.getComponent(AIComponent);
             
             // Test 1: AI components should be properly initialized
-            this.assertTrue(combatAI.enabled, 'Combat AI is enabled');
-            this.assertTrue(harvesterAI.enabled, 'Harvester AI is enabled');
+            this.assertTrue(combatAI.enabled, "Combat AI is enabled");
+            this.assertTrue(harvesterAI.enabled, "Harvester AI is enabled");
             
             // Test 2: Different behavior types should be set
-            this.assertEqual(combatAI.behaviorType, 'combatUnit', 'Combat unit behavior type');
-            this.assertEqual(harvesterAI.behaviorType, 'harvester', 'Harvester behavior type');
+            this.assertEqual(combatAI.behaviorType, "combatUnit", "Combat unit behavior type");
+            this.assertEqual(harvesterAI.behaviorType, "harvester", "Harvester behavior type");
             
             // Test 3: Decision timing should work
-            this.assertTrue(combatAI.shouldMakeDecision(), 'Combat AI should make initial decision');
+            this.assertTrue(combatAI.shouldMakeDecision(), "Combat AI should make initial decision");
             
             // Test 4: Run several update cycles to trigger decisions
             for (let i = 0; i < 10; i++) {
@@ -147,13 +147,13 @@ export class AISystemIntegrationTest {
             }
             
             // Test 5: AI should have made decisions
-            this.assertTrue(combatAI.lastDecisionTime > 0, 'Combat AI made decisions');
-            this.assertTrue(harvesterAI.lastDecisionTime > 0, 'Harvester AI made decisions');
+            this.assertTrue(combatAI.lastDecisionTime > 0, "Combat AI made decisions");
+            this.assertTrue(harvesterAI.lastDecisionTime > 0, "Harvester AI made decisions");
             
-            console.log('✅ AI decision making tests passed');
+            console.log("✅ AI decision making tests passed");
             
         } catch (error) {
-            this.recordTestFailure('AI Decision Making', error);
+            this.recordTestFailure("AI Decision Making", error);
         }
     }
     
@@ -161,7 +161,7 @@ export class AISystemIntegrationTest {
      * Test performance budget compliance
      */
     async testPerformanceBudget() {
-        console.log('⏱️ Testing performance budget...');
+        console.log("⏱️ Testing performance budget...");
         
         try {
             // Create many AI entities to stress test
@@ -169,7 +169,7 @@ export class AISystemIntegrationTest {
             const stressEntities = [];
             
             for (let i = 0; i < entityCount; i++) {
-                stressEntities.push(this.createTestEntity('combat'));
+                stressEntities.push(this.createTestEntity("combat"));
             }
             
             // Measure frame times over multiple updates
@@ -205,12 +205,12 @@ export class AISystemIntegrationTest {
             
             // Test 3: AI system should report reasonable performance
             const aiStatus = this.aiSystem.getSystemStatus();
-            this.assertTrue(aiStatus.performance.performanceClass !== 'critical', 'AI system not in critical performance state');
+            this.assertTrue(aiStatus.performance.performanceClass !== "critical", "AI system not in critical performance state");
             
             console.log(`✅ Performance tests passed (avg: ${avgFrameTime.toFixed(2)}ms, max: ${maxFrameTime.toFixed(2)}ms)`);
             
         } catch (error) {
-            this.recordTestFailure('Performance Budget', error);
+            this.recordTestFailure("Performance Budget", error);
         }
     }
     
@@ -218,7 +218,7 @@ export class AISystemIntegrationTest {
      * Test graceful degradation when AI fails
      */
     async testGracefulDegradation() {
-        console.log('🛡️ Testing graceful degradation...');
+        console.log("🛡️ Testing graceful degradation...");
         
         try {
             // Test 1: System should handle entities without AI gracefully
@@ -226,24 +226,24 @@ export class AISystemIntegrationTest {
             nonAIEntity.addComponent(new TransformComponent(100, 100));
             
             this.world.update(16.67);
-            this.assertTrue(nonAIEntity.isValid(), 'Non-AI entities should continue working');
+            this.assertTrue(nonAIEntity.isValid(), "Non-AI entities should continue working");
             
             // Test 2: System should handle disabled AI components
-            const aiEntity = this.createTestEntity('combat');
+            const aiEntity = this.createTestEntity("combat");
             const aiComponent = aiEntity.getComponent(AIComponent);
             aiComponent.enabled = false;
             
             this.world.update(16.67);
-            this.assertTrue(aiEntity.isValid(), 'Entities with disabled AI should continue working');
+            this.assertTrue(aiEntity.isValid(), "Entities with disabled AI should continue working");
             
             // Test 3: System should continue working even if TensorFlow fails
             const systemStatus = this.aiSystem.getSystemStatus();
-            this.assertTrue(systemStatus.enabled, 'AI system remains enabled even with potential TensorFlow issues');
+            this.assertTrue(systemStatus.enabled, "AI system remains enabled even with potential TensorFlow issues");
             
-            console.log('✅ Graceful degradation tests passed');
+            console.log("✅ Graceful degradation tests passed");
             
         } catch (error) {
-            this.recordTestFailure('Graceful Degradation', error);
+            this.recordTestFailure("Graceful Degradation", error);
         }
     }
     
@@ -251,38 +251,38 @@ export class AISystemIntegrationTest {
      * Test entity lifecycle with AI
      */
     async testEntityLifecycle() {
-        console.log('🔄 Testing entity lifecycle...');
+        console.log("🔄 Testing entity lifecycle...");
         
         try {
             // Test 1: Entity creation and AI initialization
-            const entity = this.createTestEntity('guard');
+            const entity = this.createTestEntity("guard");
             const aiComponent = entity.getComponent(AIComponent);
             
-            this.assertTrue(this.aiSystem.entities.has(entity), 'New entity added to AI system');
-            this.assertNotNull(aiComponent.qLearning, 'Q-learning component initialized');
+            this.assertTrue(this.aiSystem.entities.has(entity), "New entity added to AI system");
+            this.assertNotNull(aiComponent.qLearning, "Q-learning component initialized");
             
             // Test 2: Entity updates and state changes
-            aiComponent.setState('combat');
-            this.assertEqual(aiComponent.currentState, 'combat', 'AI state updated correctly');
+            aiComponent.setState("combat");
+            this.assertEqual(aiComponent.currentState, "combat", "AI state updated correctly");
             
             // Test 3: Entity removal and cleanup
             entity.active = false;
             this.world.update(16.67); // This should trigger cleanup
             
-            this.assertFalse(this.aiSystem.entities.has(entity), 'Removed entity cleaned up from AI system');
-            this.assertTrue(aiComponent.destroyed, 'AI component properly destroyed');
+            this.assertFalse(this.aiSystem.entities.has(entity), "Removed entity cleaned up from AI system");
+            this.assertTrue(aiComponent.destroyed, "AI component properly destroyed");
             
-            console.log('✅ Entity lifecycle tests passed');
+            console.log("✅ Entity lifecycle tests passed");
             
         } catch (error) {
-            this.recordTestFailure('Entity Lifecycle', error);
+            this.recordTestFailure("Entity Lifecycle", error);
         }
     }
     
     /**
      * Create a test entity with specified AI type
      */
-    createTestEntity(aiType = 'combatUnit') {
+    createTestEntity(aiType = "combatUnit") {
         const entity = this.world.createEntity();
         
         // Add basic components
@@ -297,7 +297,7 @@ export class AISystemIntegrationTest {
         
         // Add AI component with appropriate configuration
         const aiConfig = {
-            behaviorType: aiType === 'combat' ? 'combatUnit' : aiType, // Fix behavior type mapping
+            behaviorType: aiType === "combat" ? "combatUnit" : aiType, // Fix behavior type mapping
             enableQLearning: true,
             decisionInterval: 100, // Faster decisions for testing
             debugMode: true
@@ -348,36 +348,36 @@ export class AISystemIntegrationTest {
      * Print comprehensive test results
      */
     printTestResults() {
-        console.log('\n🏁 AI System Integration Test Results');
-        console.log('======================================');
+        console.log("\n🏁 AI System Integration Test Results");
+        console.log("======================================");
         console.log(`Total Tests: ${this.testResults.totalTests}`);
         console.log(`Passed: ${this.testResults.passedTests}`);
         console.log(`Failed: ${this.testResults.failedTests}`);
         console.log(`Success Rate: ${((this.testResults.passedTests / this.testResults.totalTests) * 100).toFixed(1)}%`);
         
-        console.log('\nPerformance Metrics:');
+        console.log("\nPerformance Metrics:");
         console.log(`Average Frame Time: ${this.testResults.performance.averageFrameTime.toFixed(2)}ms`);
         console.log(`Max Frame Time: ${this.testResults.performance.maxFrameTime.toFixed(2)}ms`);
         console.log(`Frame Budget Violations: ${this.testResults.performance.frameBudgetViolations}`);
         
         if (this.aiSystem) {
             const systemStatus = this.aiSystem.getSystemStatus();
-            console.log('\nAI System Status:');
+            console.log("\nAI System Status:");
             console.log(`Enabled: ${systemStatus.enabled}`);
             console.log(`Initialized: ${systemStatus.initialized}`);
             console.log(`Entity Count: ${systemStatus.entityCount}`);
             console.log(`Performance Class: ${systemStatus.performance.performanceClass}`);
-            console.log(`TensorFlow Backend: ${systemStatus.tensorFlow.backend || 'none'}`);
+            console.log(`TensorFlow Backend: ${systemStatus.tensorFlow.backend || "none"}`);
         }
         
         if (this.testResults.errors.length > 0) {
-            console.log('\nErrors:');
+            console.log("\nErrors:");
             this.testResults.errors.forEach((error, index) => {
                 console.log(`${index + 1}. ${error}`);
             });
         }
         
-        const overallResult = this.testResults.failedTests === 0 ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED';
+        const overallResult = this.testResults.failedTests === 0 ? "✅ ALL TESTS PASSED" : "❌ SOME TESTS FAILED";
         console.log(`\n${overallResult}\n`);
     }
     
@@ -401,7 +401,7 @@ export async function runAIIntegrationTest() {
 }
 
 // Export for use in browser console or testing environments
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
     window.runAIIntegrationTest = runAIIntegrationTest;
     window.AISystemIntegrationTest = AISystemIntegrationTest;
 }

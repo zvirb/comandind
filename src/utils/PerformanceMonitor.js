@@ -71,6 +71,6 @@ export class PerformanceMonitor {
         this.memoryUsage = 0;
         this.frameTimes.fill(16.67);
         this.frameTimeIndex = 0;
-        console.log('📊 PerformanceMonitor stopped and reset');
+        console.log("📊 PerformanceMonitor stopped and reset");
     }
 }

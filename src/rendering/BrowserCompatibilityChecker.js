@@ -41,7 +41,7 @@ export class BrowserCompatibilityChecker {
      * Perform comprehensive compatibility check
      */
     performCheck() {
-        console.log('🔍 Performing Browser Compatibility Check...');
+        console.log("🔍 Performing Browser Compatibility Check...");
         
         this.checkBrowserInfo();
         this.checkDeviceInfo();
@@ -50,7 +50,7 @@ export class BrowserCompatibilityChecker {
         this.checkPerformanceHints();
         this.generateRecommendations();
         
-        console.log('✅ Browser Compatibility Check Complete');
+        console.log("✅ Browser Compatibility Check Complete");
         this.logResults();
     }
     
@@ -81,12 +81,12 @@ export class BrowserCompatibilityChecker {
      */
     detectBrowser(ua) {
         const browsers = [
-            { name: 'Chrome', pattern: /Chrome\/([0-9.]+)/, engine: 'Blink' },
-            { name: 'Firefox', pattern: /Firefox\/([0-9.]+)/, engine: 'Gecko' },
-            { name: 'Safari', pattern: /Safari\/[0-9.]+ .*Version\/([0-9.]+)/, engine: 'WebKit' },
-            { name: 'Edge', pattern: /Edg\/([0-9.]+)/, engine: 'Blink' },
-            { name: 'Opera', pattern: /OPR\/([0-9.]+)/, engine: 'Blink' },
-            { name: 'IE', pattern: /MSIE ([0-9.]+)/, engine: 'Trident' }
+            { name: "Chrome", pattern: /Chrome\/([0-9.]+)/, engine: "Blink" },
+            { name: "Firefox", pattern: /Firefox\/([0-9.]+)/, engine: "Gecko" },
+            { name: "Safari", pattern: /Safari\/[0-9.]+ .*Version\/([0-9.]+)/, engine: "WebKit" },
+            { name: "Edge", pattern: /Edg\/([0-9.]+)/, engine: "Blink" },
+            { name: "Opera", pattern: /OPR\/([0-9.]+)/, engine: "Blink" },
+            { name: "IE", pattern: /MSIE ([0-9.]+)/, engine: "Trident" }
         ];
         
         for (const browser of browsers) {
@@ -100,7 +100,7 @@ export class BrowserCompatibilityChecker {
             }
         }
         
-        return { name: 'Unknown', version: 'Unknown', engine: 'Unknown' };
+        return { name: "Unknown", version: "Unknown", engine: "Unknown" };
     }
     
     /**
@@ -116,7 +116,7 @@ export class BrowserCompatibilityChecker {
     checkDeviceInfo() {
         this.capabilities.device = {
             mobile: this.isMobile(),
-            touchSupport: 'ontouchstart' in window,
+            touchSupport: "ontouchstart" in window,
             devicePixelRatio: window.devicePixelRatio || 1,
             screenWidth: screen.width,
             screenHeight: screen.height,
@@ -129,7 +129,7 @@ export class BrowserCompatibilityChecker {
         // Estimate device performance tier
         this.capabilities.device.performanceTier = this.estimatePerformanceTier();
         
-        console.log(`📱 Device: ${this.capabilities.device.mobile ? 'Mobile' : 'Desktop'} (Performance: ${this.capabilities.device.performanceTier})`);
+        console.log(`📱 Device: ${this.capabilities.device.mobile ? "Mobile" : "Desktop"} (Performance: ${this.capabilities.device.performanceTier})`);
     }
     
     /**
@@ -142,14 +142,14 @@ export class BrowserCompatibilityChecker {
         
         if (this.capabilities.device.mobile) {
             // Mobile device classification
-            if (cores >= 8 && pixelRatio >= 3) return 'high';
-            if (cores >= 4 && pixelRatio >= 2) return 'medium';
-            return 'low';
+            if (cores >= 8 && pixelRatio >= 3) return "high";
+            if (cores >= 4 && pixelRatio >= 2) return "medium";
+            return "low";
         } else {
             // Desktop device classification
-            if (cores >= 8 && screenSize >= 1920 * 1080) return 'high';
-            if (cores >= 4 && screenSize >= 1280 * 720) return 'medium';
-            return 'low';
+            if (cores >= 8 && screenSize >= 1920 * 1080) return "high";
+            if (cores >= 4 && screenSize >= 1280 * 720) return "medium";
+            return "low";
         }
     }
     
@@ -158,29 +158,29 @@ export class BrowserCompatibilityChecker {
      */
     checkBrowserSpecificIssues(browser) {
         switch (browser.name) {
-            case 'Safari':
-                if (parseFloat(browser.version) < 14) {
-                    this.warnings.push('Safari versions before 14 may have WebGL context loss issues');
-                }
-                // Safari has strict memory limits on mobile
-                if (this.capabilities.device.mobile) {
-                    this.warnings.push('Safari on iOS has strict memory limits - reduce texture sizes');
-                }
-                break;
+        case "Safari":
+            if (parseFloat(browser.version) < 14) {
+                this.warnings.push("Safari versions before 14 may have WebGL context loss issues");
+            }
+            // Safari has strict memory limits on mobile
+            if (this.capabilities.device.mobile) {
+                this.warnings.push("Safari on iOS has strict memory limits - reduce texture sizes");
+            }
+            break;
                 
-            case 'Firefox':
-                if (parseFloat(browser.version) < 90) {
-                    this.warnings.push('Firefox versions before 90 may have WebGL2 compatibility issues');
-                }
-                break;
+        case "Firefox":
+            if (parseFloat(browser.version) < 90) {
+                this.warnings.push("Firefox versions before 90 may have WebGL2 compatibility issues");
+            }
+            break;
                 
-            case 'Chrome':
-                // Chrome generally has good WebGL support
-                break;
+        case "Chrome":
+            // Chrome generally has good WebGL support
+            break;
                 
-            case 'IE':
-                this.errors.push('Internet Explorer is not supported - please use a modern browser');
-                break;
+        case "IE":
+            this.errors.push("Internet Explorer is not supported - please use a modern browser");
+            break;
         }
     }
 
@@ -188,38 +188,38 @@ export class BrowserCompatibilityChecker {
      * Check WebGL support and capabilities
      */
     checkWebGLSupport() {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         let webgl1 = null;
         let webgl2 = null;
 
         try {
-            webgl2 = canvas.getContext('webgl2', {
+            webgl2 = canvas.getContext("webgl2", {
                 alpha: false,
                 antialias: true,
                 depth: false,
-                powerPreference: 'high-performance'
+                powerPreference: "high-performance"
             });
         } catch (e) {
-            console.warn('WebGL2 context creation failed:', e);
+            console.warn("WebGL2 context creation failed:", e);
         }
 
         if (!webgl2) {
             try {
-                webgl1 = canvas.getContext('webgl', {
+                webgl1 = canvas.getContext("webgl", {
                     alpha: false,
                     antialias: true,
                     depth: false,
-                    powerPreference: 'high-performance'
-                }) || canvas.getContext('experimental-webgl');
+                    powerPreference: "high-performance"
+                }) || canvas.getContext("experimental-webgl");
             } catch (e) {
-                console.warn('WebGL1 context creation failed:', e);
+                console.warn("WebGL1 context creation failed:", e);
             }
         }
 
         const gl = webgl2 || webgl1;
 
         if (!gl) {
-            this.errors.push('WebGL is not supported in this browser');
+            this.errors.push("WebGL is not supported in this browser");
             this.capabilities.webgl = { supported: false };
             return;
         }
@@ -261,16 +261,16 @@ export class BrowserCompatibilityChecker {
      */
     checkWebGLExtensions(gl) {
         const importantExtensions = [
-            'ANGLE_instanced_arrays',
-            'EXT_texture_filter_anisotropic',
-            'WEBGL_compressed_texture_s3tc',
-            'WEBGL_compressed_texture_pvrtc',
-            'WEBGL_compressed_texture_etc1',
-            'OES_texture_float',
-            'OES_texture_half_float',
-            'WEBGL_depth_texture',
-            'WEBGL_lose_context',
-            'OES_vertex_array_object'
+            "ANGLE_instanced_arrays",
+            "EXT_texture_filter_anisotropic",
+            "WEBGL_compressed_texture_s3tc",
+            "WEBGL_compressed_texture_pvrtc",
+            "WEBGL_compressed_texture_etc1",
+            "OES_texture_float",
+            "OES_texture_half_float",
+            "WEBGL_depth_texture",
+            "WEBGL_lose_context",
+            "OES_vertex_array_object"
         ];
 
         const supported = {};
@@ -288,8 +288,8 @@ export class BrowserCompatibilityChecker {
     checkWebGLIssues(gl) {
         // Check for software rendering
         const renderer = this.capabilities.webgl.renderer.toLowerCase();
-        if (renderer.includes('software') || renderer.includes('swiftshader')) {
-            this.warnings.push('Software WebGL rendering detected - performance will be limited');
+        if (renderer.includes("software") || renderer.includes("swiftshader")) {
+            this.warnings.push("Software WebGL rendering detected - performance will be limited");
         }
 
         // Check texture unit count
@@ -304,11 +304,11 @@ export class BrowserCompatibilityChecker {
 
         // Check for mobile GPU limitations
         if (this.capabilities.device.mobile) {
-            if (renderer.includes('adreno') && renderer.includes('3')) {
-                this.warnings.push('Older Adreno GPU detected - may have WebGL stability issues');
+            if (renderer.includes("adreno") && renderer.includes("3")) {
+                this.warnings.push("Older Adreno GPU detected - may have WebGL stability issues");
             }
-            if (renderer.includes('mali-400')) {
-                this.warnings.push('Mali-400 GPU detected - has known WebGL limitations');
+            if (renderer.includes("mali-400")) {
+                this.warnings.push("Mali-400 GPU detected - has known WebGL limitations");
             }
         }
     }
@@ -317,13 +317,13 @@ export class BrowserCompatibilityChecker {
      * Estimate GPU memory based on renderer string and device characteristics
      */
     estimateGPUMemory() {
-        const renderer = this.capabilities.webgl?.renderer?.toLowerCase() || '';
+        const renderer = this.capabilities.webgl?.renderer?.toLowerCase() || "";
 
         // Mobile devices
         if (this.capabilities.device.mobile) {
-            if (renderer.includes('adreno 6') || renderer.includes('mali-g7')) {
+            if (renderer.includes("adreno 6") || renderer.includes("mali-g7")) {
                 return 1024; // 1GB - high-end mobile
-            } else if (renderer.includes('adreno 5') || renderer.includes('mali-g5')) {
+            } else if (renderer.includes("adreno 5") || renderer.includes("mali-g5")) {
                 return 512; // 512MB - mid-range mobile
             } else {
                 return 256; // 256MB - low-end mobile
@@ -331,28 +331,28 @@ export class BrowserCompatibilityChecker {
         }
 
         // Desktop/laptop
-        if (renderer.includes('nvidia') || renderer.includes('geforce')) {
-            if (renderer.includes('rtx') || renderer.includes('gtx 16') || renderer.includes('gtx 20')) {
+        if (renderer.includes("nvidia") || renderer.includes("geforce")) {
+            if (renderer.includes("rtx") || renderer.includes("gtx 16") || renderer.includes("gtx 20")) {
                 return 8192; // 8GB - high-end NVIDIA
-            } else if (renderer.includes('gtx')) {
+            } else if (renderer.includes("gtx")) {
                 return 4096; // 4GB - mid-range NVIDIA
             } else {
                 return 2048; // 2GB - entry-level NVIDIA
             }
         }
 
-        if (renderer.includes('amd') || renderer.includes('radeon')) {
-            if (renderer.includes('rx 6') || renderer.includes('rx 5700')) {
+        if (renderer.includes("amd") || renderer.includes("radeon")) {
+            if (renderer.includes("rx 6") || renderer.includes("rx 5700")) {
                 return 8192; // 8GB - high-end AMD
-            } else if (renderer.includes('rx 5') || renderer.includes('rx 4')) {
+            } else if (renderer.includes("rx 5") || renderer.includes("rx 4")) {
                 return 4096; // 4GB - mid-range AMD
             } else {
                 return 2048; // 2GB - entry-level AMD
             }
         }
 
-        if (renderer.includes('intel')) {
-            if (renderer.includes('iris xe') || renderer.includes('iris pro')) {
+        if (renderer.includes("intel")) {
+            if (renderer.includes("iris xe") || renderer.includes("iris pro")) {
                 return 1024; // 1GB - high-end Intel integrated
             } else {
                 return 512; // 512MB - standard Intel integrated
@@ -373,8 +373,8 @@ export class BrowserCompatibilityChecker {
      * Check canvas size limits
      */
     checkCanvasLimits() {
-        const testCanvas = document.createElement('canvas');
-        const ctx = testCanvas.getContext('2d');
+        const testCanvas = document.createElement("canvas");
+        const ctx = testCanvas.getContext("2d");
 
         // Test maximum canvas size
         this.limits.maxCanvasSize = this.findMaxCanvasSize(testCanvas, ctx);
@@ -433,7 +433,7 @@ export class BrowserCompatibilityChecker {
             canvas.height = height;
 
             // Try to draw something to verify it works
-            ctx.fillStyle = '#ff0000';
+            ctx.fillStyle = "#ff0000";
             ctx.fillRect(0, 0, 1, 1);
 
             // Check if we can read pixels back
@@ -458,7 +458,7 @@ export class BrowserCompatibilityChecker {
         this.capabilities.performance = {
             deviceMemory: memory,
             hardwareConcurrency: navigator.hardwareConcurrency || 1,
-            connectionType: connection.effectiveType || 'unknown',
+            connectionType: connection.effectiveType || "unknown",
             downlink: connection.downlink || 0,
             rtt: connection.rtt || 0,
             saveData: connection.saveData || false
@@ -473,13 +473,13 @@ export class BrowserCompatibilityChecker {
     estimateMemory() {
         if (this.capabilities.device.mobile) {
             // Mobile device memory estimation
-            if (this.capabilities.device.performanceTier === 'high') return 8;
-            if (this.capabilities.device.performanceTier === 'medium') return 4;
+            if (this.capabilities.device.performanceTier === "high") return 8;
+            if (this.capabilities.device.performanceTier === "medium") return 4;
             return 2;
         } else {
             // Desktop memory estimation
-            if (this.capabilities.device.performanceTier === 'high') return 16;
-            if (this.capabilities.device.performanceTier === 'medium') return 8;
+            if (this.capabilities.device.performanceTier === "high") return 16;
+            if (this.capabilities.device.performanceTier === "medium") return 8;
             return 4;
         }
     }
@@ -497,12 +497,12 @@ export class BrowserCompatibilityChecker {
         this.recommendations.useWebGL2 = webglVersion === 2 && !mobile;
 
         // Antialiasing recommendation
-        this.recommendations.enableAntialiasing = perf === 'high' && gpuMemory > 1024;
+        this.recommendations.enableAntialiasing = perf === "high" && gpuMemory > 1024;
 
         // Sprite count recommendations
-        if (perf === 'high' && !mobile) {
+        if (perf === "high" && !mobile) {
             this.recommendations.maxSpriteCount = 5000;
-        } else if (perf === 'medium') {
+        } else if (perf === "medium") {
             this.recommendations.maxSpriteCount = 2000;
         } else {
             this.recommendations.maxSpriteCount = 1000;
@@ -518,7 +518,7 @@ export class BrowserCompatibilityChecker {
         }
 
         // Batch size recommendations
-        if (this.limits.maxTextureUnits >= 16 && perf === 'high') {
+        if (this.limits.maxTextureUnits >= 16 && perf === "high") {
             this.recommendations.batchSize = 2000;
         } else if (this.limits.maxTextureUnits >= 8) {
             this.recommendations.batchSize = 1000;
@@ -533,20 +533,20 @@ export class BrowserCompatibilityChecker {
             this.recommendations.enableAntialiasing = false;
         }
 
-        console.log('💡 Generated performance recommendations');
+        console.log("💡 Generated performance recommendations");
     }
 
     /**
      * Log comprehensive results
      */
     logResults() {
-        console.log('\
-📊 Browser Compatibility Report:');
-        console.log('================================');
+        console.log("\
+📊 Browser Compatibility Report:");
+        console.log("================================");
 
         // Browser info
         console.log(`🌐 Browser: ${this.capabilities.browser.name} ${this.capabilities.browser.version}`);
-        console.log(`📱 Device: ${this.capabilities.device.mobile ? 'Mobile' : 'Desktop'} (${this.capabilities.device.performanceTier} performance)`);
+        console.log(`📱 Device: ${this.capabilities.device.mobile ? "Mobile" : "Desktop"} (${this.capabilities.device.performanceTier} performance)`);
 
         // WebGL support
         if (this.capabilities.webgl.supported) {
@@ -554,34 +554,34 @@ export class BrowserCompatibilityChecker {
             console.log(`   GPU: ${this.capabilities.webgl.renderer}`);
             console.log(`   Memory: ~${this.limits.estimatedGPUMemory}MB`);
         } else {
-            console.log('🎮 WebGL: ❌ Not supported');
+            console.log("🎮 WebGL: ❌ Not supported");
         }
 
         // Recommendations
-        console.log('\
-💡 Recommendations:');
-        console.log(`   Use WebGL2: ${this.recommendations.useWebGL2 ? '✅' : '❌'}`);
-        console.log(`   Enable Antialiasing: ${this.recommendations.enableAntialiasing ? '✅' : '❌'}`);
+        console.log("\
+💡 Recommendations:");
+        console.log(`   Use WebGL2: ${this.recommendations.useWebGL2 ? "✅" : "❌"}`);
+        console.log(`   Enable Antialiasing: ${this.recommendations.enableAntialiasing ? "✅" : "❌"}`);
         console.log(`   Max Sprites: ${this.recommendations.maxSpriteCount}`);
         console.log(`   Texture Atlas Size: ${this.recommendations.textureAtlasSize}px`);
         console.log(`   Batch Size: ${this.recommendations.batchSize}`);
 
         // Warnings
         if (this.warnings.length > 0) {
-            console.log('\
-⚠️ Warnings:');
+            console.log("\
+⚠️ Warnings:");
             this.warnings.forEach(warning => console.log(`   - ${warning}`));
         }
 
         // Errors
         if (this.errors.length > 0) {
-            console.log('\
-❌ Errors:');
+            console.log("\
+❌ Errors:");
             this.errors.forEach(error => console.log(`   - ${error}`));
         }
 
-        console.log('================================\
-');
+        console.log("================================\
+");
     }
 
     /**
@@ -613,7 +613,7 @@ export class BrowserCompatibilityChecker {
             alpha: false,
             antialias: this.recommendations.enableAntialiasing,
             depth: false,
-            powerPreference: 'high-performance',
+            powerPreference: "high-performance",
             premultipliedAlpha: true,
             preserveDrawingBuffer: false,
             stencil: true
@@ -621,13 +621,13 @@ export class BrowserCompatibilityChecker {
 
         // Try WebGL2 if recommended
         if (this.recommendations.useWebGL2) {
-            const gl2 = canvas.getContext('webgl2', contextOptions);
+            const gl2 = canvas.getContext("webgl2", contextOptions);
             if (gl2) return gl2;
         }
 
         // Fallback to WebGL1
-        return canvas.getContext('webgl', contextOptions) ||
-               canvas.getContext('experimental-webgl', contextOptions);
+        return canvas.getContext("webgl", contextOptions) ||
+               canvas.getContext("experimental-webgl", contextOptions);
     }
 }
 

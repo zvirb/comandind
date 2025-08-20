@@ -5,9 +5,9 @@
 
 export const OllamaConfig = {
     // Connection settings
-    host: 'http://127.0.0.1:11434',
-    model: 'llama3.1:8b',
-    fallbackModel: 'llama3.2:3b',
+    host: "http://127.0.0.1:11434",
+    model: "llama3.1:8b",
+    fallbackModel: "llama3.2:3b",
     
     // Timeout settings (focused on quick responses)
     connectionTimeout: 5000, // 5 seconds for connection test
@@ -22,16 +22,16 @@ export const OllamaConfig = {
     
     // API endpoints
     endpoints: {
-        tags: '/api/tags',
-        generate: '/api/generate',
-        health: '/api/tags'  // Using tags endpoint as health check
+        tags: "/api/tags",
+        generate: "/api/generate",
+        health: "/api/tags"  // Using tags endpoint as health check
     },
     
     // Default request options
     defaultOptions: {
         temperature: 0.3,
         num_predict: 50,
-        stop: ['###', '---']
+        stop: ["###", "---"]
     }
 };
 

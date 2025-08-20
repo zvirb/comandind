@@ -1,7 +1,7 @@
 // Enable CSP support for unsafe-eval restrictions - MUST import before PixiJS
-import '@pixi/unsafe-eval';
-import * as PIXI from 'pixi.js';
-import { WebGLContextManager } from '../rendering/WebGLContextManager.js';
+import "@pixi/unsafe-eval";
+import * as PIXI from "pixi.js";
+import { WebGLContextManager } from "../rendering/WebGLContextManager.js";
 
 export class Application {
     constructor(options = {}) {
@@ -10,9 +10,9 @@ export class Application {
             height: options.height || 720,
             backgroundColor: options.backgroundColor || 0x1a1a1a,
             antialias: options.antialias !== undefined ? options.antialias : true,
-            resolution: options.resolution || (typeof window !== 'undefined' ? window.devicePixelRatio : 1) || 1,
+            resolution: options.resolution || (typeof window !== "undefined" ? window.devicePixelRatio : 1) || 1,
             autoDensity: options.autoDensity !== undefined ? options.autoDensity : true,
-            powerPreference: options.powerPreference || 'high-performance',
+            powerPreference: options.powerPreference || "high-performance",
             ...options
         };
         
@@ -46,7 +46,7 @@ export class Application {
         // Check WebGL support with detailed analysis
         const webglResult = this.checkWebGLSupport();
         if (!webglResult.supported) {
-            console.warn('⚠️ WebGL not supported, attempting Canvas fallback');
+            console.warn("⚠️ WebGL not supported, attempting Canvas fallback");
             return this.initializeCanvasFallback(webglResult.reason);
         }
         
@@ -66,7 +66,7 @@ export class Application {
             }
             
         } catch (error) {
-            console.error('❌ Failed to create WebGL application:', error);
+            console.error("❌ Failed to create WebGL application:", error);
             return this.initializeCanvasFallback(error.message);
         }
         
@@ -81,14 +81,14 @@ export class Application {
     }
     
     checkWebGLSupport() {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         let gl = null;
         let version = 0;
-        let reason = '';
+        let reason = "";
         
         try {
             // Try WebGL2 first
-            gl = canvas.getContext('webgl2', {
+            gl = canvas.getContext("webgl2", {
                 powerPreference: this.options.powerPreference,
                 antialias: this.options.antialias,
                 alpha: false
@@ -98,16 +98,16 @@ export class Application {
                 version = 2;
             } else {
                 // Fallback to WebGL1
-                gl = canvas.getContext('webgl', {
+                gl = canvas.getContext("webgl", {
                     powerPreference: this.options.powerPreference,
                     antialias: this.options.antialias,
                     alpha: false
-                }) || canvas.getContext('experimental-webgl');
+                }) || canvas.getContext("experimental-webgl");
                 
                 if (gl) {
                     version = 1;
                 } else {
-                    reason = 'WebGL not supported by browser';
+                    reason = "WebGL not supported by browser";
                 }
             }
             
@@ -147,18 +147,18 @@ export class Application {
             const vertexShader = gl.createShader(gl.VERTEX_SHADER);
             const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
             
-            gl.shaderSource(vertexShader, 'attribute vec2 position; void main() { gl_Position = vec4(position, 0.0, 1.0); }');
-            gl.shaderSource(fragmentShader, 'precision mediump float; void main() { gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); }');
+            gl.shaderSource(vertexShader, "attribute vec2 position; void main() { gl_Position = vec4(position, 0.0, 1.0); }");
+            gl.shaderSource(fragmentShader, "precision mediump float; void main() { gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); }");
             
             gl.compileShader(vertexShader);
             gl.compileShader(fragmentShader);
             
             if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-                return { success: false, reason: 'Vertex shader compilation failed' };
+                return { success: false, reason: "Vertex shader compilation failed" };
             }
             
             if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-                return { success: false, reason: 'Fragment shader compilation failed' };
+                return { success: false, reason: "Fragment shader compilation failed" };
             }
             
             // Test program linking
@@ -168,19 +168,19 @@ export class Application {
             gl.linkProgram(program);
             
             if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                return { success: false, reason: 'Shader program linking failed' };
+                return { success: false, reason: "Shader program linking failed" };
             }
             
             // Test buffer creation
             const buffer = gl.createBuffer();
             if (!buffer) {
-                return { success: false, reason: 'Buffer creation failed' };
+                return { success: false, reason: "Buffer creation failed" };
             }
             
             // Test texture creation
             const texture = gl.createTexture();
             if (!texture) {
-                return { success: false, reason: 'Texture creation failed' };
+                return { success: false, reason: "Texture creation failed" };
             }
             
             // Cleanup
@@ -208,7 +208,7 @@ export class Application {
             antialias: this.options.antialias,
             resolution: this.options.resolution,
             autoDensity: this.options.autoDensity,
-            preference: 'webgl', // Use modern preference key
+            preference: "webgl", // Use modern preference key
             // WebGL configuration for v7
             forceCanvas: false,
             sharedTicker: true,
@@ -232,12 +232,12 @@ export class Application {
                 
                 // Verify the application was created successfully
                 if (!app || !app.renderer || !app.stage) {
-                    throw new Error('PIXI Application incomplete after creation');
+                    throw new Error("PIXI Application incomplete after creation");
                 }
                 
                 // Test that WebGL context is working (using string key for v7)
-                if (app.renderer.type === 'webgl' && !app.renderer.gl) {
-                    throw new Error('WebGL renderer created but no GL context available');
+                if (app.renderer.type === "webgl" && !app.renderer.gl) {
+                    throw new Error("WebGL renderer created but no GL context available");
                 }
                 
                 return app;
@@ -277,10 +277,10 @@ export class Application {
                 forceCanvas: true // Force Canvas renderer
             });
             
-            console.warn('⚠️ Running in Canvas mode - performance may be reduced');
+            console.warn("⚠️ Running in Canvas mode - performance may be reduced");
             
         } catch (error) {
-            console.error('💀 Canvas fallback also failed:', error);
+            console.error("💀 Canvas fallback also failed:", error);
             throw new Error(`Both WebGL and Canvas initialization failed. WebGL: ${reason}, Canvas: ${error.message}`);
         }
         
@@ -308,7 +308,7 @@ export class Application {
         
         // Check for texture arrays
         try {
-            const ext = gl.getExtension('WEBGL_texture_arrays') || 
+            const ext = gl.getExtension("WEBGL_texture_arrays") || 
                        (gl instanceof WebGL2RenderingContext);
             this.webgl2Features.textureArrays = !!ext;
         } catch (e) {
@@ -318,14 +318,14 @@ export class Application {
         // Check for uniform buffer objects
         this.webgl2Features.uniformBuffers = gl instanceof WebGL2RenderingContext;
         
-        console.log('🔧 WebGL2 Features:', this.webgl2Features);
+        console.log("🔧 WebGL2 Features:", this.webgl2Features);
     }
     
     /**
      * Add visual indicator for fallback mode
      */
     addFallbackIndicator() {
-        const indicator = document.createElement('div');
+        const indicator = document.createElement("div");
         indicator.style.cssText = `
             position: fixed;
             top: 10px;
@@ -338,8 +338,8 @@ export class Application {
             font-size: 12px;
             z-index: 1000;
         `;
-        indicator.textContent = 'Canvas Mode';
-        indicator.title = 'Running in Canvas fallback mode - WebGL unavailable';
+        indicator.textContent = "Canvas Mode";
+        indicator.title = "Running in Canvas fallback mode - WebGL unavailable";
         
         document.body.appendChild(indicator);
         
@@ -357,15 +357,15 @@ export class Application {
     completeInitialization() {
         // CRITICAL FIX: Verify canvas element exists
         if (!this.view) {
-            console.error('PIXI Application view/canvas is null!');
-            console.error('App object:', this.app);
-            console.error('Available properties:', Object.keys(this.app));
-            throw new Error('PIXI Application failed to create canvas element');
+            console.error("PIXI Application view/canvas is null!");
+            console.error("App object:", this.app);
+            console.error("Available properties:", Object.keys(this.app));
+            throw new Error("PIXI Application failed to create canvas element");
         }
         
-        console.log('✅ PIXI Application created successfully');
-        console.log('Canvas element:', this.view);
-        console.log('Canvas dimensions:', this.view.width, 'x', this.view.height);
+        console.log("✅ PIXI Application created successfully");
+        console.log("Canvas element:", this.view);
+        console.log("Canvas dimensions:", this.view.width, "x", this.view.height);
         
         // Configure renderer for optimal performance
         this.configureRenderer();
@@ -374,24 +374,24 @@ export class Application {
         this.createLayers();
         
         // Add canvas to DOM
-        const container = document.getElementById('game-container');
+        const container = document.getElementById("game-container");
         if (container) {
-            console.log('Adding canvas to game-container');
+            console.log("Adding canvas to game-container");
             container.appendChild(this.view);
-            console.log('✅ Canvas successfully added to DOM');
+            console.log("✅ Canvas successfully added to DOM");
         } else {
-            console.warn('game-container not found, adding to document.body');
+            console.warn("game-container not found, adding to document.body");
             document.body.appendChild(this.view);
-            console.log('✅ Canvas added to document.body');
+            console.log("✅ Canvas added to document.body");
         }
         
         // Verify canvas is in DOM and visible
         if (!document.body.contains(this.view)) {
-            throw new Error('Canvas was not properly added to DOM');
+            throw new Error("Canvas was not properly added to DOM");
         }
         
         // Log canvas styling for debugging
-        console.log('Canvas computed style:', {
+        console.log("Canvas computed style:", {
             display: window.getComputedStyle(this.view).display,
             visibility: window.getComputedStyle(this.view).visibility,
             width: window.getComputedStyle(this.view).width,
@@ -447,7 +447,7 @@ export class Application {
                 const maxVertexAttribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
                 const maxVaryingVectors = gl.getParameter(gl.MAX_VARYING_VECTORS);
                 
-                console.log('📊 WebGL Capabilities:');
+                console.log("📊 WebGL Capabilities:");
                 console.log(`   Max texture units: ${maxTextures}`);
                 console.log(`   Max texture size: ${maxTextureSize}px`);
                 console.log(`   Max vertex attributes: ${maxVertexAttribs}`);
@@ -455,16 +455,16 @@ export class Application {
                 
                 // Check for useful extensions
                 const extensions = [
-                    'OES_vertex_array_object',
-                    'WEBGL_depth_texture',
-                    'EXT_texture_filter_anisotropic',
-                    'WEBGL_compressed_texture_s3tc'
+                    "OES_vertex_array_object",
+                    "WEBGL_depth_texture",
+                    "EXT_texture_filter_anisotropic",
+                    "WEBGL_compressed_texture_s3tc"
                 ];
                 
-                console.log('   Available extensions:');
+                console.log("   Available extensions:");
                 extensions.forEach(ext => {
                     const supported = gl.getExtension(ext) !== null;
-                    console.log(`     ${ext}: ${supported ? '✅' : '❌'}`);
+                    console.log(`     ${ext}: ${supported ? "✅" : "❌"}`);
                 });
                 
                 // Configure WebGL state for optimal performance
@@ -472,41 +472,41 @@ export class Application {
                 
                 // Warn about potential issues
                 if (maxTextures < 8) {
-                    console.warn('⚠️ Low texture unit count - may impact batching performance');
+                    console.warn("⚠️ Low texture unit count - may impact batching performance");
                 }
                 
                 if (maxTextureSize < 2048) {
-                    console.warn('⚠️ Small max texture size - may impact atlas efficiency');
+                    console.warn("⚠️ Small max texture size - may impact atlas efficiency");
                 }
                 
             } catch (error) {
-                console.error('❌ Error querying WebGL capabilities:', error);
+                console.error("❌ Error querying WebGL capabilities:", error);
             }
         } else if (this.fallbackMode) {
-            console.log('🎨 Canvas renderer configured with reduced settings');
+            console.log("🎨 Canvas renderer configured with reduced settings");
         }
     }
     
     createLayers() {
         // Create layer containers in rendering order
         this.layers.terrain = new PIXI.Container();
-        this.layers.terrain.name = 'terrain';
+        this.layers.terrain.name = "terrain";
         this.layers.terrain.sortableChildren = false;
         
         this.layers.buildings = new PIXI.Container();
-        this.layers.buildings.name = 'buildings';
+        this.layers.buildings.name = "buildings";
         this.layers.buildings.sortableChildren = true;
         
         this.layers.units = new PIXI.Container();
-        this.layers.units.name = 'units';
+        this.layers.units.name = "units";
         this.layers.units.sortableChildren = true;
         
         this.layers.effects = new PIXI.Container();
-        this.layers.effects.name = 'effects';
+        this.layers.effects.name = "effects";
         this.layers.effects.sortableChildren = false;
         
         this.layers.ui = new PIXI.Container();
-        this.layers.ui.name = 'ui';
+        this.layers.ui.name = "ui";
         this.layers.ui.sortableChildren = false;
         
         // Add layers to stage in correct order
@@ -574,7 +574,7 @@ export class Application {
             });
         }
         
-        console.log('🗑️ Application destroyed');
+        console.log("🗑️ Application destroyed");
     }
     
     // Helper method to add sprites to appropriate layer
@@ -593,7 +593,7 @@ export class Application {
             drawCalls: this.drawCalls,
             textureCount: Object.keys(PIXI.utils.TextureCache).length || 0,
             spriteCount: this.countSprites(this.stage),
-            rendererType: this.renderer.type === 1 ? 'WebGL' : 'Canvas', // v7 uses numeric types
+            rendererType: this.renderer.type === 1 ? "WebGL" : "Canvas", // v7 uses numeric types
             webglVersion: this.webglVersion,
             fallbackMode: this.fallbackMode
         };

@@ -4,15 +4,15 @@
  * Respects frame budget and provides graceful degradation
  */
 
-import { System } from '../../ecs/System.js';
-import { TransformComponent } from '../../ecs/Component.js';
-import { TensorFlowManager } from '../TensorFlowManager.js';
-import { QLearningComponent } from '../components/QLearningComponent.js';
-import { TreeNode, NodeStatus, createNodeFromConfigSync } from '../behaviorTree/TreeNode.js';
-import { SelectorNode, SequenceNode, ActionNode } from '../behaviorTree/BasicNodes.js';
+import { System } from "../../ecs/System.js";
+import { TransformComponent } from "../../ecs/Component.js";
+import { TensorFlowManager } from "../TensorFlowManager.js";
+import { QLearningComponent } from "../components/QLearningComponent.js";
+import { TreeNode, NodeStatus, createNodeFromConfigSync } from "../behaviorTree/TreeNode.js";
+import { SelectorNode, SequenceNode, ActionNode } from "../behaviorTree/BasicNodes.js";
 
 // Import the unified AI component
-import { AIComponent } from '../components/AIComponent.js';
+import { AIComponent } from "../components/AIComponent.js";
 
 /**
  * Performance monitoring for AI system
@@ -25,7 +25,7 @@ class AIPerformanceMonitor {
         this.processedEntities = 0;
         this.skippedEntities = 0;
         this.averageEntityTime = 0;
-        this.performanceClass = 'normal'; // normal, degraded, critical
+        this.performanceClass = "normal"; // normal, degraded, critical
         
         // Statistics for adaptation
         this.frameHistory = [];
@@ -97,11 +97,11 @@ class AIPerformanceMonitor {
         const avgSkipped = recentFrames.reduce((sum, frame) => sum + frame.skipped, 0) / recentFrames.length;
         
         if (avgFrameTime > this.frameBudget * 1.5 || avgSkipped > 2) {
-            this.performanceClass = 'critical';
+            this.performanceClass = "critical";
         } else if (avgFrameTime > this.frameBudget || avgSkipped > 0) {
-            this.performanceClass = 'degraded';
+            this.performanceClass = "degraded";
         } else {
-            this.performanceClass = 'normal';
+            this.performanceClass = "normal";
         }
     }
     
@@ -176,18 +176,18 @@ export class AISystem extends System {
             const tfInitialized = await this.tensorFlowManager.initialize();
             
             if (tfInitialized) {
-                console.log('✅ AI System initialized successfully');
+                console.log("✅ AI System initialized successfully");
                 this.isAIInitialized = true;
                 
                 // Run a test to validate everything works
                 await this.validateAISystem();
             } else {
-                console.warn('⚠️ TensorFlow initialization failed, AI will run in degraded mode');
+                console.warn("⚠️ TensorFlow initialization failed, AI will run in degraded mode");
                 this.handleInitializationFailure();
             }
             
         } catch (error) {
-            console.error('❌ AI System initialization failed:', error);
+            console.error("❌ AI System initialization failed:", error);
             this.handleInitializationFailure();
         }
     }
@@ -197,10 +197,10 @@ export class AISystem extends System {
      */
     handleInitializationFailure() {
         if (this.initializationAttempts >= this.maxInitAttempts) {
-            console.error('💀 AI System failed to initialize after maximum attempts');
+            console.error("💀 AI System failed to initialize after maximum attempts");
             this.isSystemEnabled = false;
         } else {
-            console.log('🔄 Retrying AI initialization in degraded mode...');
+            console.log("🔄 Retrying AI initialization in degraded mode...");
             // Enable basic AI without TensorFlow
             this.isAIInitialized = true;
             this.gracefulDegradation = true;
@@ -216,15 +216,15 @@ export class AISystem extends System {
             if (this.tensorFlowManager.isInitialized) {
                 const testResult = await this.tensorFlowManager.testInference();
                 if (!testResult.success) {
-                    console.warn('⚠️ TensorFlow test failed, disabling ML features');
+                    console.warn("⚠️ TensorFlow test failed, disabling ML features");
                     this.gracefulDegradation = true;
                 }
             }
             
-            console.log('✅ AI System validation completed');
+            console.log("✅ AI System validation completed");
             
         } catch (error) {
-            console.error('❌ AI System validation failed:', error);
+            console.error("❌ AI System validation failed:", error);
             this.gracefulDegradation = true;
         }
     }
@@ -238,61 +238,61 @@ export class AISystem extends System {
         return {
             // Basic combat unit behavior
             combatUnit: createNodeFromConfigSync({
-                type: 'selector',
-                name: 'Combat Unit AI',
+                type: "selector",
+                name: "Combat Unit AI",
                 children: [
                     {
-                        type: 'sequence',
-                        name: 'Combat Sequence',
+                        type: "sequence",
+                        name: "Combat Sequence",
                         children: [
-                            { type: 'action', name: 'Find Enemy', action: 'findEnemy' },
-                            { type: 'action', name: 'Attack Enemy', action: 'attackEnemy' }
+                            { type: "action", name: "Find Enemy", action: "findEnemy" },
+                            { type: "action", name: "Attack Enemy", action: "attackEnemy" }
                         ]
                     },
                     {
-                        type: 'sequence',
-                        name: 'Patrol Sequence',
+                        type: "sequence",
+                        name: "Patrol Sequence",
                         children: [
-                            { type: 'action', name: 'Move to Patrol Point', action: 'patrol' },
-                            { type: 'action', name: 'Wait', action: 'wait' }
+                            { type: "action", name: "Move to Patrol Point", action: "patrol" },
+                            { type: "action", name: "Wait", action: "wait" }
                         ]
                     },
-                    { type: 'action', name: 'Idle', action: 'idle' }
+                    { type: "action", name: "Idle", action: "idle" }
                 ]
             }, nodeTypes),
             
             // Harvester unit behavior
             harvester: createNodeFromConfigSync({
-                type: 'selector',
-                name: 'Harvester AI',
+                type: "selector",
+                name: "Harvester AI",
                 children: [
                     {
-                        type: 'sequence',
-                        name: 'Harvest Sequence',
+                        type: "sequence",
+                        name: "Harvest Sequence",
                         children: [
-                            { type: 'action', name: 'Find Resource', action: 'findResource' },
-                            { type: 'action', name: 'Harvest Resource', action: 'harvest' },
-                            { type: 'action', name: 'Return to Base', action: 'returnToBase' }
+                            { type: "action", name: "Find Resource", action: "findResource" },
+                            { type: "action", name: "Harvest Resource", action: "harvest" },
+                            { type: "action", name: "Return to Base", action: "returnToBase" }
                         ]
                     },
-                    { type: 'action', name: 'Idle', action: 'idle' }
+                    { type: "action", name: "Idle", action: "idle" }
                 ]
             }, nodeTypes),
             
             // Guard unit behavior
             guard: createNodeFromConfigSync({
-                type: 'selector',
-                name: 'Guard AI',
+                type: "selector",
+                name: "Guard AI",
                 children: [
                     {
-                        type: 'sequence',
-                        name: 'Threat Response',
+                        type: "sequence",
+                        name: "Threat Response",
                         children: [
-                            { type: 'action', name: 'Detect Threat', action: 'detectThreat' },
-                            { type: 'action', name: 'Engage Threat', action: 'engageThreat' }
+                            { type: "action", name: "Detect Threat", action: "detectThreat" },
+                            { type: "action", name: "Engage Threat", action: "engageThreat" }
                         ]
                     },
-                    { type: 'action', name: 'Hold Position', action: 'holdPosition' }
+                    { type: "action", name: "Hold Position", action: "holdPosition" }
                 ]
             }, nodeTypes)
         };
@@ -351,7 +351,7 @@ export class AISystem extends System {
             
             // Assign behavior tree based on unit type or AI type
             if (!aiComponent.behaviorTree) {
-                const behaviorType = aiComponent.behaviorType || 'combatUnit';
+                const behaviorType = aiComponent.behaviorType || "combatUnit";
                 aiComponent.behaviorTree = this.getBehaviorTreeForType(behaviorType);
             }
             
@@ -400,7 +400,7 @@ export class AISystem extends System {
             this.processAIEntities(deltaTime);
             
         } catch (error) {
-            console.error('Error in AI system update:', error);
+            console.error("Error in AI system update:", error);
         } finally {
             // End performance monitoring
             this.performanceMonitor.endFrame();
@@ -615,20 +615,20 @@ export class AISystem extends System {
         
         try {
             switch (action.type) {
-                case 'movement':
-                    this.executeMovementAction(entity, action);
-                    break;
-                case 'combat':
-                    this.executeCombatAction(entity, action);
-                    break;
-                case 'tactical':
-                    this.executeTacticalAction(entity, action);
-                    break;
-                case 'economy':
-                    this.executeEconomyAction(entity, action);
-                    break;
-                default:
-                    console.warn(`Unknown action type: ${action.type}`);
+            case "movement":
+                this.executeMovementAction(entity, action);
+                break;
+            case "combat":
+                this.executeCombatAction(entity, action);
+                break;
+            case "tactical":
+                this.executeTacticalAction(entity, action);
+                break;
+            case "economy":
+                this.executeEconomyAction(entity, action);
+                break;
+            default:
+                console.warn(`Unknown action type: ${action.type}`);
             }
             
         } catch (error) {
@@ -640,7 +640,7 @@ export class AISystem extends System {
      * Execute movement actions
      */
     executeMovementAction(entity, action) {
-        const movementComponent = entity.getComponent('MovementComponent');
+        const movementComponent = entity.getComponent("MovementComponent");
         const transform = entity.getComponent(TransformComponent);
         
         if (!movementComponent || !transform) return;
@@ -659,7 +659,7 @@ export class AISystem extends System {
      * Execute combat actions
      */
     executeCombatAction(entity, action) {
-        const combatComponent = entity.getComponent('CombatComponent');
+        const combatComponent = entity.getComponent("CombatComponent");
         if (!combatComponent) return;
         
         // Find target based on action priority
@@ -703,22 +703,22 @@ export class AISystem extends System {
         if (enemies.length === 0) return null;
         
         switch (priority) {
-            case 'nearest':
-                return enemies.sort((a, b) => a.distance - b.distance)[0]?.entity;
-            case 'weakest':
-                return enemies.sort((a, b) => {
-                    const aHealth = a.entity.getComponent('HealthComponent')?.currentHealth || 100;
-                    const bHealth = b.entity.getComponent('HealthComponent')?.currentHealth || 100;
-                    return aHealth - bHealth;
-                })[0]?.entity;
-            case 'strongest':
-                return enemies.sort((a, b) => {
-                    const aHealth = a.entity.getComponent('HealthComponent')?.currentHealth || 100;
-                    const bHealth = b.entity.getComponent('HealthComponent')?.currentHealth || 100;
-                    return bHealth - aHealth;
-                })[0]?.entity;
-            default:
-                return enemies[0]?.entity;
+        case "nearest":
+            return enemies.sort((a, b) => a.distance - b.distance)[0]?.entity;
+        case "weakest":
+            return enemies.sort((a, b) => {
+                const aHealth = a.entity.getComponent("HealthComponent")?.currentHealth || 100;
+                const bHealth = b.entity.getComponent("HealthComponent")?.currentHealth || 100;
+                return aHealth - bHealth;
+            })[0]?.entity;
+        case "strongest":
+            return enemies.sort((a, b) => {
+                const aHealth = a.entity.getComponent("HealthComponent")?.currentHealth || 100;
+                const bHealth = b.entity.getComponent("HealthComponent")?.currentHealth || 100;
+                return bHealth - aHealth;
+            })[0]?.entity;
+        default:
+            return enemies[0]?.entity;
         }
     }
     
@@ -782,7 +782,7 @@ export class AISystem extends System {
      */
     setEnabled(enabled) {
         this.isSystemEnabled = enabled;
-        console.log(`AI System ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`AI System ${enabled ? "enabled" : "disabled"}`);
     }
     
     /**
@@ -799,7 +799,7 @@ export class AISystem extends System {
     destroy() {
         if (this.destroyed) return;
         
-        console.log('🧹 Cleaning up AI System...');
+        console.log("🧹 Cleaning up AI System...");
         
         // Cleanup TensorFlow
         if (this.tensorFlowManager) {
@@ -814,6 +814,6 @@ export class AISystem extends System {
         
         super.destroy();
         
-        console.log('✅ AI System cleanup completed');
+        console.log("✅ AI System cleanup completed");
     }
 }

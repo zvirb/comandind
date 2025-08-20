@@ -1,4 +1,4 @@
-import { Entity } from './Entity.js';
+import { Entity } from "./Entity.js";
 
 /**
  * World - ECS World manager that handles entities and systems
@@ -320,14 +320,14 @@ export class World {
      * Debug: Print world state
      */
     debugPrint() {
-        console.log('=== ECS World Debug ===');
+        console.log("=== ECS World Debug ===");
         console.log(`Entities: ${this.entities.size}`);
         console.log(`Systems: ${this.systems.length}`);
         console.log(`Pending removal: ${this.entitiesToRemove.size}`);
         console.log(`World age: ${Date.now() - this.creationTime}ms`);
         
         // Print system info
-        console.log('Systems:');
+        console.log("Systems:");
         for (const system of this.systems) {
             const memInfo = system.getMemoryInfo ? system.getMemoryInfo() : { entityCount: system.entities.size };
             console.log(`  - ${system.constructor.name} (priority: ${system.priority}, entities: ${memInfo.entityCount}, destroyed: ${system.destroyed || false})`);
@@ -348,19 +348,19 @@ export class World {
             }
         }
         
-        console.log('Component usage:');
+        console.log("Component usage:");
         for (const [name, count] of componentCounts.entries()) {
             console.log(`  - ${name}: ${count}`);
         }
         
         if (invalidEntities.length > 0) {
-            console.warn(`Invalid entities detected: ${invalidEntities.join(', ')}`);
+            console.warn(`Invalid entities detected: ${invalidEntities.join(", ")}`);
         }
         
         // Print memory leak detection results
         const leaks = this.detectMemoryLeaks();
         if (leaks) {
-            console.log('Memory leak detection:');
+            console.log("Memory leak detection:");
             if (leaks.longLivedEntities.length > 0) {
                 console.warn(`  Long-lived entities: ${leaks.longLivedEntities.length}`);
             }

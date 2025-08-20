@@ -4,7 +4,7 @@
  * Integrates with local Ollama instance for privacy-first AI assistance
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 export class OllamaStrategicAdvisor extends EventEmitter {
     constructor(options = {}) {
@@ -13,9 +13,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
         // Configuration
         this.config = {
             // Ollama connection settings
-            host: options.host || 'http://127.0.0.1:11434',
-            model: options.model || 'llama3.1:8b',
-            fallbackModel: options.fallbackModel || 'llama3.2:3b',
+            host: options.host || "http://127.0.0.1:11434",
+            model: options.model || "llama3.1:8b",
+            fallbackModel: options.fallbackModel || "llama3.2:3b",
             
             // Performance optimization
             maxResponseTime: options.maxResponseTime || 500, // ms
@@ -47,7 +47,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
         this.activeRequests = new Map();
         this.requestQueue = [];
         this.circuitBreaker = {
-            state: 'closed', // closed, open, half-open
+            state: "closed", // closed, open, half-open
             failures: 0,
             maxFailures: 5,
             timeout: 60000, // 1 minute
@@ -84,7 +84,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
      * Initialize the Ollama connection and health monitoring
      */
     async initialize() {
-        console.log('🤖 Initializing Ollama Strategic Advisor...');
+        console.log("🤖 Initializing Ollama Strategic Advisor...");
         
         try {
             // Test initial connection
@@ -98,13 +98,13 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                 await this.warmupModel();
             }
             
-            console.log('✅ Ollama Strategic Advisor initialized successfully');
-            this.emit('initialized');
+            console.log("✅ Ollama Strategic Advisor initialized successfully");
+            this.emit("initialized");
             
         } catch (error) {
-            console.warn('⚠️ Ollama initialization failed, using fallback mode:', error.message);
+            console.warn("⚠️ Ollama initialization failed, using fallback mode:", error.message);
             this.config.offlineMode = true;
-            this.emit('fallback-activated', 'initialization-failed');
+            this.emit("fallback-activated", "initialization-failed");
         }
     }
     
@@ -117,9 +117,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
         
         try {
             const response = await fetch(`${this.config.host}/api/tags`, {
-                method: 'GET',
+                method: "GET",
                 signal: controller.signal,
-                headers: { 'Content-Type': 'application/json' }
+                headers: { "Content-Type": "application/json" }
             });
             
             clearTimeout(timeoutId);
@@ -167,9 +167,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                 await this.testConnection();
                 
                 // Reset circuit breaker on successful health check
-                if (this.circuitBreaker.state === 'open') {
-                    console.log('🔄 Circuit breaker transitioning to half-open');
-                    this.circuitBreaker.state = 'half-open';
+                if (this.circuitBreaker.state === "open") {
+                    console.log("🔄 Circuit breaker transitioning to half-open");
+                    this.circuitBreaker.state = "half-open";
                 }
                 
             } catch (error) {
@@ -190,13 +190,13 @@ export class OllamaStrategicAdvisor extends EventEmitter {
         console.warn(`❌ Ollama connection failed (${this.circuitBreaker.failures}/${this.circuitBreaker.maxFailures}):`, error.message);
         
         if (this.circuitBreaker.failures >= this.circuitBreaker.maxFailures) {
-            console.warn('⚡ Circuit breaker opened - switching to offline mode');
-            this.circuitBreaker.state = 'open';
+            console.warn("⚡ Circuit breaker opened - switching to offline mode");
+            this.circuitBreaker.state = "open";
             this.config.offlineMode = true;
-            this.emit('circuit-breaker-opened');
+            this.emit("circuit-breaker-opened");
         }
         
-        this.emit('connection-failed', error);
+        this.emit("connection-failed", error);
     }
     
     /**
@@ -214,9 +214,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                     temperature: 0.1
                 }
             });
-            console.log('🔥 Model warmed up successfully');
+            console.log("🔥 Model warmed up successfully");
         } catch (error) {
-            console.warn('⚠️ Model warmup failed:', error.message);
+            console.warn("⚠️ Model warmup failed:", error.message);
         }
     }
     
@@ -225,13 +225,13 @@ export class OllamaStrategicAdvisor extends EventEmitter {
      */
     async makeRequest(requestBody, retryCount = 0) {
         // Check circuit breaker
-        if (this.circuitBreaker.state === 'open') {
+        if (this.circuitBreaker.state === "open") {
             const timeSinceLastFailure = Date.now() - this.circuitBreaker.lastFailureTime;
             if (timeSinceLastFailure < this.circuitBreaker.timeout) {
-                throw new Error('Circuit breaker is open');
+                throw new Error("Circuit breaker is open");
             } else {
-                console.log('🔄 Circuit breaker timeout expired, transitioning to half-open');
-                this.circuitBreaker.state = 'half-open';
+                console.log("🔄 Circuit breaker timeout expired, transitioning to half-open");
+                this.circuitBreaker.state = "half-open";
             }
         }
         
@@ -247,8 +247,8 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             }, this.config.maxResponseTime);
             
             const response = await fetch(`${this.config.host}/api/generate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody),
                 signal: controller.signal
             });
@@ -271,9 +271,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             this.updateMetrics(true, responseTime);
             
             // Reset circuit breaker on success
-            if (this.circuitBreaker.state === 'half-open') {
-                console.log('✅ Circuit breaker reset to closed');
-                this.circuitBreaker.state = 'closed';
+            if (this.circuitBreaker.state === "half-open") {
+                console.log("✅ Circuit breaker reset to closed");
+                this.circuitBreaker.state = "closed";
                 this.circuitBreaker.failures = 0;
             }
             
@@ -283,9 +283,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             this.updateMetrics(false, Date.now() - startTime);
             
             // Handle timeout specifically
-            if (error.name === 'AbortError') {
+            if (error.name === "AbortError") {
                 console.warn(`⏰ Request ${requestId} timed out after ${this.config.maxResponseTime}ms`);
-                throw new Error('Request timeout');
+                throw new Error("Request timeout");
             }
             
             // Retry logic
@@ -312,7 +312,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
     async handleStreamResponse(response) {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-        let fullResponse = '';
+        let fullResponse = "";
         
         try {
             while (true) {
@@ -320,20 +320,20 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                 if (done) break;
                 
                 const chunk = decoder.decode(value, { stream: true });
-                const lines = chunk.split('\n').filter(line => line.trim());
+                const lines = chunk.split("\n").filter(line => line.trim());
                 
                 for (const line of lines) {
                     try {
                         const data = JSON.parse(line);
                         if (data.response) {
                             fullResponse += data.response;
-                            this.emit('stream-token', data.response);
+                            this.emit("stream-token", data.response);
                         }
                         if (data.done) {
                             return { response: fullResponse, ...data };
                         }
                     } catch (parseError) {
-                        console.warn('Failed to parse stream chunk:', parseError);
+                        console.warn("Failed to parse stream chunk:", parseError);
                     }
                 }
             }
@@ -368,7 +368,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                     temperature: 0.3, // Lower temperature for more consistent analysis
                     top_p: 0.9,
                     num_predict: 300,
-                    stop: ['###', '---']
+                    stop: ["###", "---"]
                 }
             });
             
@@ -381,7 +381,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             return analysis;
             
         } catch (error) {
-            console.warn('Strategic analysis failed:', error.message);
+            console.warn("Strategic analysis failed:", error.message);
             
             // Try fallback strategies
             if (this.config.enableFallback) {
@@ -411,14 +411,14 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                     temperature: 0.1, // Very low temperature for precise command parsing
                     top_p: 0.8,
                     num_predict: 150,
-                    stop: ['###', '---', 'Human:']
+                    stop: ["###", "---", "Human:"]
                 }
             });
             
             return this.parseCommandResponse(response.response);
             
         } catch (error) {
-            console.warn('Command parsing failed:', error.message);
+            console.warn("Command parsing failed:", error.message);
             return this.parseCommandOffline(naturalLanguageCommand, gameContext);
         }
     }
@@ -442,8 +442,8 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             
             // Strategic context
             mapInfo: {
-                size: gameState.mapSize || 'unknown',
-                terrain: gameState.terrain || 'mixed'
+                size: gameState.mapSize || "unknown",
+                terrain: gameState.terrain || "mixed"
             },
             
             // Threats and opportunities
@@ -477,9 +477,9 @@ export class OllamaStrategicAdvisor extends EventEmitter {
         const template = this.promptTemplates.strategicAnalysis;
         
         return template
-            .replace('{gameState}', JSON.stringify(gameState, null, 2))
-            .replace('{timestamp}', new Date().toISOString())
-            .replace('{gamePhase}', gameState.phase || 'mid-game');
+            .replace("{gameState}", JSON.stringify(gameState, null, 2))
+            .replace("{timestamp}", new Date().toISOString())
+            .replace("{gamePhase}", gameState.phase || "mid-game");
     }
     
     /**
@@ -488,12 +488,12 @@ export class OllamaStrategicAdvisor extends EventEmitter {
     buildCommandPrompt(command, context) {
         const template = this.promptTemplates.commandParsing;
         
-        const availableCommands = Object.keys(this.commandMapping).join(', ');
+        const availableCommands = Object.keys(this.commandMapping).join(", ");
         
         return template
-            .replace('{command}', command)
-            .replace('{context}', JSON.stringify(context, null, 2))
-            .replace('{availableCommands}', availableCommands);
+            .replace("{command}", command)
+            .replace("{context}", JSON.stringify(context, null, 2))
+            .replace("{availableCommands}", availableCommands);
     }
     
     /**
@@ -511,7 +511,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             return this.parseTextResponse(response);
             
         } catch (error) {
-            console.warn('Failed to parse strategic response:', error);
+            console.warn("Failed to parse strategic response:", error);
             return this.createDefaultAnalysis(response);
         }
     }
@@ -532,8 +532,8 @@ export class OllamaStrategicAdvisor extends EventEmitter {
             return this.extractCommandFromText(response);
             
         } catch (error) {
-            console.warn('Failed to parse command response:', error);
-            return { type: 'unknown', confidence: 0, raw: response };
+            console.warn("Failed to parse command response:", error);
+            return { type: "unknown", confidence: 0, raw: response };
         }
     }
     
@@ -541,32 +541,32 @@ export class OllamaStrategicAdvisor extends EventEmitter {
      * Offline analysis using rule-based system
      */
     getOfflineAnalysis(gameState) {
-        console.log('🔄 Using offline strategic analysis');
+        console.log("🔄 Using offline strategic analysis");
         
         const analysis = {
-            type: 'strategic_analysis',
+            type: "strategic_analysis",
             confidence: 0.7,
             timestamp: Date.now(),
             recommendations: [],
             threats: [],
             opportunities: [],
-            source: 'offline-rules'
+            source: "offline-rules"
         };
         
         // Basic rule-based analysis
         if (gameState.economy && gameState.economy.credits < 1000) {
             analysis.recommendations.push({
-                priority: 'high',
-                action: 'focus_economy',
-                description: 'Low credits detected - prioritize resource gathering'
+                priority: "high",
+                action: "focus_economy",
+                description: "Low credits detected - prioritize resource gathering"
             });
         }
         
         if (gameState.units && gameState.units.length < 5) {
             analysis.recommendations.push({
-                priority: 'medium',
-                action: 'build_units',
-                description: 'Limited military force - consider unit production'
+                priority: "medium",
+                action: "build_units",
+                description: "Limited military force - consider unit production"
             });
         }
         
@@ -577,7 +577,7 @@ export class OllamaStrategicAdvisor extends EventEmitter {
      * Offline command parsing using pattern matching
      */
     parseCommandOffline(command, context) {
-        console.log('🔄 Using offline command parsing');
+        console.log("🔄 Using offline command parsing");
         
         const lowerCommand = command.toLowerCase();
         
@@ -588,16 +588,16 @@ export class OllamaStrategicAdvisor extends EventEmitter {
                     type: action.type,
                     parameters: action.extractParams ? action.extractParams(command) : {},
                     confidence: 0.8,
-                    source: 'offline-pattern-matching'
+                    source: "offline-pattern-matching"
                 };
             }
         }
         
         return {
-            type: 'unknown',
+            type: "unknown",
             confidence: 0,
             raw: command,
-            source: 'offline-fallback'
+            source: "offline-fallback"
         };
     }
     
@@ -680,8 +680,8 @@ Respond with this JSON format:
      */
     initializeCommandMapping() {
         return {
-            'build': {
-                type: 'build',
+            "build": {
+                type: "build",
                 extractParams: (cmd) => {
                     const unitMatch = cmd.match(/(tank|infantry|harvester|refinery|barracks|factory)/i);
                     const quantityMatch = cmd.match(/(\d+)/);
@@ -691,17 +691,17 @@ Respond with this JSON format:
                     };
                 }
             },
-            'attack': {
-                type: 'attack',
+            "attack": {
+                type: "attack",
                 extractParams: (cmd) => {
                     const targetMatch = cmd.match(/(base|enemy|unit|building)/i);
                     return {
-                        target: targetMatch ? targetMatch[1].toLowerCase() : 'enemy'
+                        target: targetMatch ? targetMatch[1].toLowerCase() : "enemy"
                     };
                 }
             },
-            'move': {
-                type: 'move',
+            "move": {
+                type: "move",
                 extractParams: (cmd) => {
                     const directionMatch = cmd.match(/(north|south|east|west|up|down|left|right)/i);
                     return {
@@ -709,19 +709,19 @@ Respond with this JSON format:
                     };
                 }
             },
-            'select': {
-                type: 'select',
+            "select": {
+                type: "select",
                 extractParams: (cmd) => {
                     const allMatch = cmd.match(/all/i);
                     const typeMatch = cmd.match(/(tank|infantry|harvester)/i);
                     return {
-                        target: allMatch ? 'all' : (typeMatch ? typeMatch[1].toLowerCase() : null)
+                        target: allMatch ? "all" : (typeMatch ? typeMatch[1].toLowerCase() : null)
                     };
                 }
             },
-            'stop': { type: 'stop' },
-            'hold': { type: 'hold_position' },
-            'patrol': { type: 'patrol' }
+            "stop": { type: "stop" },
+            "hold": { type: "hold_position" },
+            "patrol": { type: "patrol" }
         };
     }
     
@@ -733,7 +733,7 @@ Respond with this JSON format:
             // Rule-based strategic advice
             economicPriority: (gameState) => {
                 if (!gameState.economy || gameState.economy.credits < 500) {
-                    return { action: 'build_harvester', priority: 'high' };
+                    return { action: "build_harvester", priority: "high" };
                 }
                 return null;
             },
@@ -741,16 +741,16 @@ Respond with this JSON format:
             // Basic threat assessment
             threatAssessment: (gameState) => {
                 if (gameState.units && gameState.units.length < 3) {
-                    return { threat: 'insufficient_defense', severity: 'medium' };
+                    return { threat: "insufficient_defense", severity: "medium" };
                 }
                 return null;
             },
             
             // Simple command templates
             commandTemplates: {
-                'build tank': { type: 'build', parameters: { unit: 'tank', quantity: 1 } },
-                'attack enemy': { type: 'attack', parameters: { target: 'enemy' } },
-                'select all': { type: 'select', parameters: { target: 'all' } }
+                "build tank": { type: "build", parameters: { unit: "tank", quantity: 1 } },
+                "attack enemy": { type: "attack", parameters: { target: "enemy" } },
+                "select all": { type: "select", parameters: { target: "all" } }
             }
         };
     }
@@ -811,7 +811,7 @@ Respond with this JSON format:
      * Cleanup resources
      */
     destroy() {
-        console.log('🗑️ Destroying Ollama Strategic Advisor...');
+        console.log("🗑️ Destroying Ollama Strategic Advisor...");
         
         // Cancel active requests
         this.activeRequests.clear();
@@ -824,7 +824,7 @@ Respond with this JSON format:
         // Remove all listeners
         this.removeAllListeners();
         
-        console.log('✅ Ollama Strategic Advisor destroyed');
+        console.log("✅ Ollama Strategic Advisor destroyed");
     }
     
     // Additional helper methods for game state analysis would be implemented here
@@ -833,10 +833,10 @@ Respond with this JSON format:
     summarizeResources(economy) { return { credits: economy.credits || 0 }; } // Simplified
     identifyThreats(gameState) { return []; } // Simplified
     identifyOpportunities(gameState) { return []; } // Simplified
-    determineGamePhase(gameState) { return 'mid-game'; } // Simplified
-    parseTextResponse(response) { return { type: 'text', content: response }; } // Simplified
-    createDefaultAnalysis(response) { return { type: 'default', content: response }; } // Simplified
+    determineGamePhase(gameState) { return "mid-game"; } // Simplified
+    parseTextResponse(response) { return { type: "text", content: response }; } // Simplified
+    createDefaultAnalysis(response) { return { type: "default", content: response }; } // Simplified
     validateCommand(command) { return command; } // Simplified
-    extractCommandFromText(text) { return { type: 'extracted', raw: text }; } // Simplified
+    extractCommandFromText(text) { return { type: "extracted", raw: text }; } // Simplified
     cacheAnalysis(gameState, analysis) { /* Implementation */ } // Simplified
 }

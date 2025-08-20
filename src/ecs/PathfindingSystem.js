@@ -1,9 +1,9 @@
-import * as PIXI from 'pixi.js';
-import { System } from './System.js';
-import { MovementComponent, TransformComponent, SelectableComponent, UnitComponent, BuildingComponent, VelocityComponent } from './Component.js';
-import { NavigationGrid } from '../pathfinding/NavigationGrid.js';
-import { AStar } from '../pathfinding/AStar.js';
-import { extendPathfindingSystem } from './PathfindingSystemExtensions.js';
+import * as PIXI from "pixi.js";
+import { System } from "./System.js";
+import { MovementComponent, TransformComponent, SelectableComponent, UnitComponent, BuildingComponent, VelocityComponent } from "./Component.js";
+import { NavigationGrid } from "../pathfinding/NavigationGrid.js";
+import { AStar } from "../pathfinding/AStar.js";
+import { extendPathfindingSystem } from "./PathfindingSystemExtensions.js";
 
 /**
  * Pathfinding System - Manages pathfinding and movement for all entities
@@ -59,7 +59,7 @@ export class PathfindingSystem extends System {
         this.pathVisuals = new Map();
         
         // Group movement
-        this.groupMoveFormation = 'box'; // box, line, wedge
+        this.groupMoveFormation = "box"; // box, line, wedge
         this.groupSpacing = 40;
         
         // Initialize spatial grid
@@ -74,7 +74,7 @@ export class PathfindingSystem extends System {
         
         // Create debug graphics layers
         this.debugGraphics = new PIXI.Container();
-        this.debugGraphics.name = 'pathfinding-debug';
+        this.debugGraphics.name = "pathfinding-debug";
         
         // Grid visualization
         this.gridGraphics = new PIXI.Graphics();
@@ -104,7 +104,7 @@ export class PathfindingSystem extends System {
             const width = 64; // Default building size
             const height = 64;
             this.navGrid.addStaticObstacle(transform.x, transform.y, width, height);
-            this.obstacles.set(entity.id, { type: 'static', entity });
+            this.obstacles.set(entity.id, { type: "static", entity });
         }
         // Register units as dynamic obstacles
         else if (entity.hasComponent(UnitComponent)) {
@@ -112,7 +112,7 @@ export class PathfindingSystem extends System {
             const radius = 8; // Unit collision radius
             
             this.navGrid.addDynamicObstacle(entity.id, transform.x, transform.y, radius);
-            this.obstacles.set(entity.id, { type: 'dynamic', entity });
+            this.obstacles.set(entity.id, { type: "dynamic", entity });
         }
     }
     
@@ -124,7 +124,7 @@ export class PathfindingSystem extends System {
         if (this.obstacles.has(entity.id)) {
             const obstacle = this.obstacles.get(entity.id);
             
-            if (obstacle.type === 'dynamic') {
+            if (obstacle.type === "dynamic") {
                 this.navGrid.removeDynamicObstacle(entity.id);
             }
             // Static obstacles remain (buildings don't move)
@@ -390,57 +390,57 @@ export class PathfindingSystem extends System {
     /**
      * Get formation positions for group movement
      */
-    getFormationPositions(count, centerX, centerY, formation = 'box') {
+    getFormationPositions(count, centerX, centerY, formation = "box") {
         const positions = [];
         const spacing = this.groupSpacing;
         
         switch (formation) {
-            case 'box': {
-                const cols = Math.ceil(Math.sqrt(count));
-                const rows = Math.ceil(count / cols);
+        case "box": {
+            const cols = Math.ceil(Math.sqrt(count));
+            const rows = Math.ceil(count / cols);
                 
-                for (let i = 0; i < count; i++) {
-                    const row = Math.floor(i / cols);
-                    const col = i % cols;
+            for (let i = 0; i < count; i++) {
+                const row = Math.floor(i / cols);
+                const col = i % cols;
                     
-                    positions.push({
-                        x: centerX + (col - cols/2) * spacing,
-                        y: centerY + (row - rows/2) * spacing
-                    });
-                }
-                break;
+                positions.push({
+                    x: centerX + (col - cols/2) * spacing,
+                    y: centerY + (row - rows/2) * spacing
+                });
             }
+            break;
+        }
             
-            case 'line': {
-                for (let i = 0; i < count; i++) {
-                    positions.push({
-                        x: centerX + (i - count/2) * spacing,
-                        y: centerY
-                    });
-                }
-                break;
+        case "line": {
+            for (let i = 0; i < count; i++) {
+                positions.push({
+                    x: centerX + (i - count/2) * spacing,
+                    y: centerY
+                });
             }
+            break;
+        }
             
-            case 'wedge': {
-                let row = 0;
-                let posInRow = 0;
-                let maxInRow = 1;
+        case "wedge": {
+            let row = 0;
+            let posInRow = 0;
+            let maxInRow = 1;
                 
-                for (let i = 0; i < count; i++) {
-                    positions.push({
-                        x: centerX + (posInRow - maxInRow/2) * spacing,
-                        y: centerY + row * spacing
-                    });
+            for (let i = 0; i < count; i++) {
+                positions.push({
+                    x: centerX + (posInRow - maxInRow/2) * spacing,
+                    y: centerY + row * spacing
+                });
                     
-                    posInRow++;
-                    if (posInRow >= maxInRow) {
-                        row++;
-                        maxInRow = Math.min(row + 1, 5); // Cap at 5 wide
-                        posInRow = 0;
-                    }
+                posInRow++;
+                if (posInRow >= maxInRow) {
+                    row++;
+                    maxInRow = Math.min(row + 1, 5); // Cap at 5 wide
+                    posInRow = 0;
                 }
-                break;
             }
+            break;
+        }
         }
         
         return positions;
@@ -509,7 +509,7 @@ export class PathfindingSystem extends System {
         }
         
         // Higher priority for combat units
-        if (entity.hasComponent('CombatComponent')) {
+        if (entity.hasComponent("CombatComponent")) {
             priority += 20;
         }
         

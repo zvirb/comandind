@@ -1,4 +1,4 @@
-import { inputConfig } from './InputConfig.js';
+import { inputConfig } from "./InputConfig.js";
 
 export class InputHandler {
     constructor(element) {
@@ -35,12 +35,12 @@ export class InputHandler {
             
             // Allow browser navigation shortcuts
             if (this.isNavigationKey(e)) {
-                console.log(`🔑 Allowing navigation key: ${e.key} ${e.ctrlKey ? '+ Ctrl' : ''} ${e.metaKey ? '+ Meta' : ''}`);
+                console.log(`🔑 Allowing navigation key: ${e.key} ${e.ctrlKey ? "+ Ctrl" : ""} ${e.metaKey ? "+ Meta" : ""}`);
                 return; // Don't prevent default or emit for navigation keys
             }
             
             this.keys.add(e.key);
-            this.emit('keydown', e);
+            this.emit("keydown", e);
         };
         
         const keyupHandler = (e) => {
@@ -52,26 +52,26 @@ export class InputHandler {
             }
             
             this.keys.delete(e.key);
-            this.emit('keyup', e);
+            this.emit("keyup", e);
         };
         
         const mousedownHandler = (e) => {
             if (this.isDestroyed) return;
             this.mouseButtons.add(e.button);
-            this.emit('mousedown', e);
+            this.emit("mousedown", e);
         };
         
         const mouseupHandler = (e) => {
             if (this.isDestroyed) return;
             this.mouseButtons.delete(e.button);
-            this.emit('mouseup', e);
+            this.emit("mouseup", e);
         };
         
         const mousemoveHandler = (e) => {
             if (this.isDestroyed) return;
             this.mousePosition.x = e.clientX;
             this.mousePosition.y = e.clientY;
-            this.emit('mousemove', e);
+            this.emit("mousemove", e);
         };
         
         const wheelHandler = (e) => {
@@ -99,54 +99,54 @@ export class InputHandler {
             
             // Only prevent context menu on the game canvas, not on other elements
             const target = e.target;
-            const isCanvasElement = target.tagName === 'CANVAS' || 
-                                  target.closest('#game-container') ||
-                                  target.closest('canvas');
+            const isCanvasElement = target.tagName === "CANVAS" || 
+                                  target.closest("#game-container") ||
+                                  target.closest("canvas");
             
             if (isCanvasElement) {
                 e.preventDefault(); // Prevent context menu on game elements
-                console.log('🚫 Context menu prevented on game canvas');
+                console.log("🚫 Context menu prevented on game canvas");
             } else {
-                console.log('📋 Allowing context menu on non-game element');
+                console.log("📋 Allowing context menu on non-game element");
             }
         };
         
         // Store handlers for cleanup
-        this.eventListeners.set('keydown', keydownHandler);
-        this.eventListeners.set('keyup', keyupHandler);
-        this.eventListeners.set('mousedown', mousedownHandler);
-        this.eventListeners.set('mouseup', mouseupHandler);
-        this.eventListeners.set('mousemove', mousemoveHandler);
-        this.eventListeners.set('wheel', wheelHandler);
-        this.eventListeners.set('touchstart', touchstartHandler);
-        this.eventListeners.set('touchmove', touchmoveHandler);
-        this.eventListeners.set('touchend', touchendHandler);
-        this.eventListeners.set('contextmenu', contextmenuHandler);
+        this.eventListeners.set("keydown", keydownHandler);
+        this.eventListeners.set("keyup", keyupHandler);
+        this.eventListeners.set("mousedown", mousedownHandler);
+        this.eventListeners.set("mouseup", mouseupHandler);
+        this.eventListeners.set("mousemove", mousemoveHandler);
+        this.eventListeners.set("wheel", wheelHandler);
+        this.eventListeners.set("touchstart", touchstartHandler);
+        this.eventListeners.set("touchmove", touchmoveHandler);
+        this.eventListeners.set("touchend", touchendHandler);
+        this.eventListeners.set("contextmenu", contextmenuHandler);
         
         // Add event listeners with proper options
-        this.element.addEventListener('keydown', keydownHandler);
-        this.element.addEventListener('keyup', keyupHandler);
-        this.element.addEventListener('mousedown', mousedownHandler);
-        this.element.addEventListener('mouseup', mouseupHandler);
+        this.element.addEventListener("keydown", keydownHandler);
+        this.element.addEventListener("keyup", keyupHandler);
+        this.element.addEventListener("mousedown", mousedownHandler);
+        this.element.addEventListener("mouseup", mouseupHandler);
         
         // Use passive for mousemove when possible (better performance)
-        this.element.addEventListener('mousemove', mousemoveHandler, { passive: true });
+        this.element.addEventListener("mousemove", mousemoveHandler, { passive: true });
         
         // Wheel event needs to be non-passive since we prevent default for zoom
-        this.element.addEventListener('wheel', wheelHandler, { passive: false });
+        this.element.addEventListener("wheel", wheelHandler, { passive: false });
         
         // Touch events - optimize passive usage
         // touchstart: need preventDefault for pinch detection
-        this.element.addEventListener('touchstart', touchstartHandler, { passive: false });
+        this.element.addEventListener("touchstart", touchstartHandler, { passive: false });
         // touchmove: need preventDefault for pan/pinch control
-        this.element.addEventListener('touchmove', touchmoveHandler, { passive: false });
+        this.element.addEventListener("touchmove", touchmoveHandler, { passive: false });
         // touchend: can be passive since we don't prevent default
-        this.element.addEventListener('touchend', touchendHandler, { passive: true });
+        this.element.addEventListener("touchend", touchendHandler, { passive: true });
         
         // Context menu prevention (for right-click commands)
-        this.element.addEventListener('contextmenu', contextmenuHandler);
+        this.element.addEventListener("contextmenu", contextmenuHandler);
         
-        console.log('✅ InputHandler event listeners setup completed');
+        console.log("✅ InputHandler event listeners setup completed");
     }
     
     on(event, callback) {
@@ -196,47 +196,47 @@ export class InputHandler {
         const shift = event.shiftKey;
         
         // Function keys for refresh
-        if (key === 'F5' || (key === 'F5' && ctrl)) {
+        if (key === "F5" || (key === "F5" && ctrl)) {
             return true; // Allow F5 and Ctrl+F5 for refresh
         }
         
         // Browser refresh shortcuts
-        if (ctrl && key === 'r') {
+        if (ctrl && key === "r") {
             return true; // Ctrl+R for refresh
         }
         
         // Hard refresh
-        if (ctrl && shift && key === 'r') {
+        if (ctrl && shift && key === "r") {
             return true; // Ctrl+Shift+R for hard refresh
         }
         
         // Navigation shortcuts
-        if (alt && (key === 'ArrowLeft' || key === 'ArrowRight')) {
+        if (alt && (key === "ArrowLeft" || key === "ArrowRight")) {
             return true; // Alt+Arrow for back/forward
         }
         
         // Address bar focus
-        if (ctrl && key === 'l') {
+        if (ctrl && key === "l") {
             return true; // Ctrl+L for address bar
         }
         
         // New tab/window
-        if (ctrl && (key === 't' || key === 'n')) {
+        if (ctrl && (key === "t" || key === "n")) {
             return true; // Ctrl+T/N for new tab/window
         }
         
         // Close tab/window
-        if (ctrl && key === 'w') {
+        if (ctrl && key === "w") {
             return true; // Ctrl+W to close
         }
         
         // Other browser shortcuts we shouldn't interfere with
-        if (ctrl && ['d', 'f', 'g', 'h', 'j', 'k', 'o', 'p', 'u', 'y', 'z'].includes(key)) {
+        if (ctrl && ["d", "f", "g", "h", "j", "k", "o", "p", "u", "y", "z"].includes(key)) {
             return true; // Various browser shortcuts
         }
         
         // Developer tools
-        if (event.key === 'F12' || (ctrl && shift && key === 'I')) {
+        if (event.key === "F12" || (ctrl && shift && key === "I")) {
             return true; // F12 or Ctrl+Shift+I for dev tools
         }
         
@@ -255,7 +255,7 @@ export class InputHandler {
             e.preventDefault();
         } else {
             // Allow normal browser scrolling for page navigation
-            console.log('🔄 Allowing browser scroll event');
+            console.log("🔄 Allowing browser scroll event");
         }
         
         // Update trackpad detection
@@ -270,7 +270,7 @@ export class InputHandler {
         if (e.ctrlKey || e.metaKey) {
             // Pinch zoom on trackpad (browsers send ctrl+wheel for pinch)
             const zoomDelta = -e.deltaY * config.pinchZoomSpeed;
-            this.emit('pinchzoom', {
+            this.emit("pinchzoom", {
                 delta: config.zoomInverted ? -zoomDelta : zoomDelta,
                 clientX: e.clientX,
                 clientY: e.clientY
@@ -285,14 +285,14 @@ export class InputHandler {
                 const panX = e.deltaX * config.trackpadPanSpeed;
                 const panY = e.deltaY * config.trackpadPanSpeed;
                 
-                this.emit('trackpadpan', {
+                this.emit("trackpadpan", {
                     deltaX: config.trackpadPanInverted ? -panX : panX,
                     deltaY: config.trackpadPanInverted ? -panY : panY
                 });
             } else {
                 // Regular mouse wheel zoom
                 const zoomDelta = -e.deltaY * config.wheelZoomSpeed;
-                this.emit('wheelzoom', {
+                this.emit("wheelzoom", {
                     delta: config.zoomInverted ? -zoomDelta : zoomDelta,
                     clientX: e.clientX,
                     clientY: e.clientY
@@ -301,7 +301,7 @@ export class InputHandler {
         }
         
         // Always emit the raw wheel event for compatibility
-        this.emit('wheel', e);
+        this.emit("wheel", e);
     }
     
     /**
@@ -331,7 +331,7 @@ export class InputHandler {
             this.isPinching = false;
         }
         
-        this.emit('touchstart', e);
+        this.emit("touchstart", e);
     }
     
     /**
@@ -364,7 +364,7 @@ export class InputHandler {
                 const centerX = (touch1.clientX + touch2.clientX) / 2;
                 const centerY = (touch1.clientY + touch2.clientY) / 2;
                 
-                this.emit('pinchzoom', {
+                this.emit("pinchzoom", {
                     delta: (scale - 1) * 2, // Convert scale to delta
                     clientX: centerX,
                     clientY: centerY
@@ -386,7 +386,7 @@ export class InputHandler {
                 if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
                     shouldPreventDefault = true;
                     
-                    this.emit('touchpan', {
+                    this.emit("touchpan", {
                         deltaX: deltaX,
                         deltaY: deltaY,
                         clientX: touch.clientX,
@@ -402,7 +402,7 @@ export class InputHandler {
             e.stopPropagation();
         }
         
-        this.emit('touchmove', e);
+        this.emit("touchmove", e);
     }
     
     /**
@@ -435,7 +435,7 @@ export class InputHandler {
             }
         }
         
-        this.emit('touchend', e);
+        this.emit("touchend", e);
     }
     
     /**
@@ -483,11 +483,11 @@ export class InputHandler {
      */
     destroy() {
         if (this.isDestroyed) {
-            console.warn('InputHandler already destroyed');
+            console.warn("InputHandler already destroyed");
             return;
         }
         
-        console.log('🗑️ Destroying InputHandler...');
+        console.log("🗑️ Destroying InputHandler...");
         
         this.isDestroyed = true;
         
@@ -514,7 +514,7 @@ export class InputHandler {
         this.inputConfig = null;
         this.mousePosition = null;
         
-        console.log('✅ InputHandler destroyed successfully');
+        console.log("✅ InputHandler destroyed successfully");
     }
     
     /**
@@ -530,7 +530,7 @@ export class InputHandler {
     cleanup() {
         if (this.isDestroyed) return;
         
-        console.log('🧹 Cleaning up InputHandler...');
+        console.log("🧹 Cleaning up InputHandler...");
         
         // Remove all DOM event listeners
         for (const [eventName, handler] of this.eventListeners) {
@@ -547,7 +547,7 @@ export class InputHandler {
         this.touches.clear();
         
         this.isDestroyed = true;
-        console.log('✅ InputHandler cleanup completed');
+        console.log("✅ InputHandler cleanup completed");
     }
     
     /**

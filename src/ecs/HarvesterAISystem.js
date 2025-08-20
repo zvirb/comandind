@@ -1,7 +1,7 @@
-import { System } from './System.js';
-import { HarvesterComponent, ResourceNodeComponent, TransformComponent, MovementComponent, BuildingComponent, UnitComponent } from './Component.js';
-import { ResourceNodeComponent as ExtendedResourceNodeComponent, EconomyComponent } from './ResourceComponents.js';
-import { QuadTree, SpatialHashGrid } from '../utils/QuadTree.js';
+import { System } from "./System.js";
+import { HarvesterComponent, ResourceNodeComponent, TransformComponent, MovementComponent, BuildingComponent } from "./Component.js";
+import { ResourceNodeComponent as ExtendedResourceNodeComponent } from "./ResourceComponents.js";
+import { SpatialHashGrid } from "../utils/QuadTree.js";
 
 /**
  * Harvester AI System - Manages autonomous resource gathering behavior
@@ -32,10 +32,10 @@ export class HarvesterAISystem extends System {
         
         // AI behaviors and states
         this.behaviors = {
-            'resource-seeker': this.seekResourceBehavior.bind(this),
-            'harvester': this.harvestBehavior.bind(this),
-            'returner': this.returnBehavior.bind(this),
-            'unloader': this.unloadBehavior.bind(this)
+            "resource-seeker": this.seekResourceBehavior.bind(this),
+            "harvester": this.harvestBehavior.bind(this),
+            "returner": this.returnBehavior.bind(this),
+            "unloader": this.unloadBehavior.bind(this)
         };
         
         // Performance tracking
@@ -56,7 +56,7 @@ export class HarvesterAISystem extends System {
             idleHarvesters: 0
         };
         
-        console.log('✅ HarvesterAISystem initialized with spatial optimization');
+        console.log("✅ HarvesterAISystem initialized with spatial optimization");
     }
     
     /**
@@ -71,7 +71,7 @@ export class HarvesterAISystem extends System {
         // Register refineries
         if (entity.hasComponent(BuildingComponent)) {
             const building = entity.getComponent(BuildingComponent);
-            if (building.buildingType === 'refinery' || building.buildingType === 'construction_yard') {
+            if (building.buildingType === "refinery" || building.buildingType === "construction_yard") {
                 this.registerRefinery(entity);
             }
         }
@@ -79,8 +79,8 @@ export class HarvesterAISystem extends System {
         // Initialize harvester AI state
         if (entity.hasComponent(HarvesterComponent)) {
             const harvester = entity.getComponent(HarvesterComponent);
-            if (harvester.state === 'idle') {
-                harvester.state = 'seeking';
+            if (harvester.state === "idle") {
+                harvester.state = "seeking";
             }
             
             // Assign to nearest refinery if none assigned
@@ -199,7 +199,6 @@ export class HarvesterAISystem extends System {
      * Find nearest resource node using spatial optimization
      */
     findNearestResourceNode(entity, maxDistance = 500) {
-        const startTime = performance.now();
         const transform = entity.getComponent(TransformComponent);
         
         if (!transform) return null;
@@ -232,7 +231,6 @@ export class HarvesterAISystem extends System {
         }
         
         // Update performance stats
-        const searchTime = performance.now() - startTime;
         this.performanceStats.resourceSearches++;
         
         return nearestNode?.entity || null;
@@ -287,9 +285,8 @@ export class HarvesterAISystem extends System {
     /**
      * Resource seeking behavior
      */
-    seekResourceBehavior(entity, deltaTime) {
+    seekResourceBehavior(entity) {
         const harvester = entity.getComponent(HarvesterComponent);
-        const transform = entity.getComponent(TransformComponent);
         const movement = entity.getComponent(MovementComponent);
 
         // Skip if not ready to search
@@ -307,7 +304,7 @@ export class HarvesterAISystem extends System {
             // Reserve the resource node
             if (resourceComponent.reserve(entity.id)) {
                 harvester.targetResourceNode = resourceComponent;
-                harvester.state = 'moving_to_resource';
+                harvester.state = "moving_to_resource";
 
                 // Issue move command to resource node
                 const resourceTransform = resourceNode.getComponent(TransformComponent);
@@ -323,7 +320,7 @@ export class HarvesterAISystem extends System {
     /**
      * Harvesting behavior
      */
-    harvestBehavior(entity, deltaTime) {
+    harvestBehavior(entity) {
         const harvester = entity.getComponent(HarvesterComponent);
         const transform = entity.getComponent(TransformComponent);
         const movement = entity.getComponent(MovementComponent);
@@ -347,7 +344,7 @@ export class HarvesterAISystem extends System {
         }
 
         // Process harvesting
-        if (harvester.state === 'harvesting' && harvester.canHarvest()) {
+        if (harvester.state === "harvesting" && harvester.canHarvest()) {
             const creditsHarvested = harvester.completeHarvest();
 
             if (creditsHarvested > 0) {
@@ -359,7 +356,7 @@ export class HarvesterAISystem extends System {
 
             // Check if harvester is full or resource is depleted
             if (harvester.isFull() || !harvester.targetResourceNode.canHarvest()) {
-                harvester.state = 'returning';
+                harvester.state = "returning";
             }
         }
     }
@@ -367,7 +364,7 @@ export class HarvesterAISystem extends System {
     /**
      * Return to refinery behavior
      */
-    returnBehavior(entity, deltaTime) {
+    returnBehavior(entity) {
         const harvester = entity.getComponent(HarvesterComponent);
         const transform = entity.getComponent(TransformComponent);
         const movement = entity.getComponent(MovementComponent);
@@ -407,7 +404,7 @@ export class HarvesterAISystem extends System {
             }
         } else {
             // No refinery found, go idle
-            harvester.state = 'idle';
+            harvester.state = "idle";
             console.warn(`Harvester ${entity.id} could not find refinery to return to`);
         }
     }
@@ -415,7 +412,7 @@ export class HarvesterAISystem extends System {
     /**
      * Unloading behavior
      */
-    unloadBehavior(entity, deltaTime) {
+    unloadBehavior(entity) {
         const harvester = entity.getComponent(HarvesterComponent);
 
         // Check if unloading is complete
@@ -429,7 +426,7 @@ export class HarvesterAISystem extends System {
             }
 
             // Return to seeking resources
-            harvester.state = 'seeking';
+            harvester.state = "seeking";
         }
     }
 
@@ -437,7 +434,7 @@ export class HarvesterAISystem extends System {
      * Find entity by resource component (helper method)
      */
     findEntityByResourceComponent(resourceComponent) {
-        for (const [entityId, nodeData] of this.resourceNodes) {
+        for (const nodeData of this.resourceNodes.values()) {
             if (nodeData.resource === resourceComponent) {
                 return nodeData.entity;
             }
@@ -477,7 +474,7 @@ export class HarvesterAISystem extends System {
             if (!harvester) continue;
 
             // Update economic statistics
-            if (harvester.state === 'idle') {
+            if (harvester.state === "idle") {
                 this.economicStats.idleHarvesters++;
             } else {
                 this.economicStats.activeHarvesters++;
@@ -485,35 +482,36 @@ export class HarvesterAISystem extends System {
 
             // Execute behavior based on state
             switch (harvester.state) {
-                case 'seeking':
-                    this.seekResourceBehavior(entity, deltaTime);
-                    break;
+            case "seeking":
+                this.seekResourceBehavior(entity, deltaTime);
+                break;
 
-                case 'moving_to_resource':
-                    // Check if arrived at resource
-                    const movement = entity.getComponent(MovementComponent);
-                    if (!movement.isMoving) {
-                        harvester.state = 'harvesting';
-                    }
-                    break;
+            case "moving_to_resource": {
+                // Check if arrived at resource
+                const movement = entity.getComponent(MovementComponent);
+                if (!movement.isMoving) {
+                    harvester.state = "harvesting";
+                }
+                break;
+            }
 
-                case 'harvesting':
-                    this.harvestBehavior(entity, deltaTime);
-                    break;
+            case "harvesting":
+                this.harvestBehavior(entity, deltaTime);
+                break;
 
-                case 'returning':
-                    this.returnBehavior(entity, deltaTime);
-                    break;
+            case "returning":
+                this.returnBehavior(entity, deltaTime);
+                break;
 
-                case 'unloading':
-                    this.unloadBehavior(entity, deltaTime);
-                    break;
+            case "unloading":
+                this.unloadBehavior(entity, deltaTime);
+                break;
 
-                case 'idle':
-                default:
-                    // Transition to seeking if idle
-                    harvester.state = 'seeking';
-                    break;
+            case "idle":
+            default:
+                // Transition to seeking if idle
+                harvester.state = "seeking";
+                break;
             }
 
             processedCount++;
@@ -583,6 +581,6 @@ export class HarvesterAISystem extends System {
         this.refineries.clear();
         this.harvesterUpdateQueue = [];
 
-        console.log('🗑️ HarvesterAISystem destroyed');
+        console.log("🗑️ HarvesterAISystem destroyed");
     }
 }

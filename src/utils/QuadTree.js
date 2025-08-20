@@ -131,8 +131,8 @@ export class QuadTree {
         
         // ECS component format
         if (entity.getComponent) {
-            const transform = entity.getComponent('TransformComponent');
-            const selectable = entity.getComponent('SelectableComponent');
+            const transform = entity.getComponent("TransformComponent");
+            const selectable = entity.getComponent("SelectableComponent");
             
             if (transform) {
                 const radius = selectable?.selectableRadius || 16;
@@ -531,8 +531,8 @@ export class SpatialHashGrid {
         }
         
         if (entity.getComponent) {
-            const transform = entity.getComponent('TransformComponent');
-            const selectable = entity.getComponent('SelectableComponent');
+            const transform = entity.getComponent("TransformComponent");
+            const selectable = entity.getComponent("SelectableComponent");
             
             if (transform) {
                 const radius = selectable?.selectableRadius || 16;

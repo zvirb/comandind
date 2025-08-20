@@ -48,7 +48,7 @@ export class MemoryLeakDetector {
             this.monitorInterval = null;
         }
         this.monitoring = false;
-        console.log('Memory leak detection stopped');
+        console.log("Memory leak detection stopped");
     }
 
     /**
@@ -126,7 +126,7 @@ export class MemoryLeakDetector {
             details.push({
                 ...memInfo,
                 hasWeakReferences: !!system.entityReferences,
-                weakReferenceCount: system.entityReferences ? 'unknown' : 0
+                weakReferenceCount: system.entityReferences ? "unknown" : 0
             });
         }
 
@@ -217,8 +217,8 @@ export class MemoryLeakDetector {
 
         if (entityGrowthRate > this.alertThresholds.entityGrowthRate) {
             analysis.leaksDetected.push({
-                type: 'entityGrowth',
-                severity: 'high',
+                type: "entityGrowth",
+                severity: "high",
                 message: `High entity growth rate: ${entityGrowthRate.toFixed(2)} entities/second`,
                 data: { entityGrowth, entityGrowthRate }
             });
@@ -233,8 +233,8 @@ export class MemoryLeakDetector {
 
         if (componentGrowthRate > this.alertThresholds.componentGrowthRate) {
             analysis.leaksDetected.push({
-                type: 'componentGrowth',
-                severity: 'high',
+                type: "componentGrowth",
+                severity: "high",
                 message: `High component growth rate: ${componentGrowthRate.toFixed(2)} components/second`,
                 data: { componentGrowth, componentGrowthRate }
             });
@@ -247,8 +247,8 @@ export class MemoryLeakDetector {
 
         if (memoryGrowthRate > this.alertThresholds.memoryGrowthRate) {
             analysis.leaksDetected.push({
-                type: 'memoryGrowth',
-                severity: 'high',
+                type: "memoryGrowth",
+                severity: "high",
                 message: `High memory growth rate: ${(memoryGrowthRate / 1024 / 1024).toFixed(2)} MB/second`,
                 data: { memoryGrowth, memoryGrowthRate }
             });
@@ -261,9 +261,9 @@ export class MemoryLeakDetector {
 
         if (invalidComponents.length > 0) {
             analysis.warnings.push({
-                type: 'invalidComponents',
-                severity: 'medium',
-                message: `Invalid components detected: ${invalidComponents.map(c => `${c.name}(${c.invalid})`).join(', ')}`,
+                type: "invalidComponents",
+                severity: "medium",
+                message: `Invalid components detected: ${invalidComponents.map(c => `${c.name}(${c.invalid})`).join(", ")}`,
                 data: invalidComponents
             });
         }
@@ -276,8 +276,8 @@ export class MemoryLeakDetector {
 
         if (longLivedEntities.length > 0) {
             analysis.warnings.push({
-                type: 'longLivedEntities',
-                severity: 'low',
+                type: "longLivedEntities",
+                severity: "low",
                 message: `${longLivedEntities.length} entities have lived longer than ${this.alertThresholds.entityLifetime / 1000} seconds`,
                 data: longLivedEntities
             });
@@ -290,8 +290,8 @@ export class MemoryLeakDetector {
 
         if (unusedEntities.length > 0) {
             analysis.warnings.push({
-                type: 'unusedEntities',
-                severity: 'medium',
+                type: "unusedEntities",
+                severity: "medium",
                 message: `${unusedEntities.length} entities haven't been accessed in ${this.alertThresholds.unusedEntityTime / 1000} seconds`,
                 data: unusedEntities
             });
@@ -304,9 +304,9 @@ export class MemoryLeakDetector {
 
         if (overloadedSystems.length > 0) {
             analysis.warnings.push({
-                type: 'systemOverload',
-                severity: 'medium',
-                message: `Systems with too many entities: ${overloadedSystems.map(s => `${s.name}(${s.entityCount})`).join(', ')}`,
+                type: "systemOverload",
+                severity: "medium",
+                message: `Systems with too many entities: ${overloadedSystems.map(s => `${s.name}(${s.entityCount})`).join(", ")}`,
                 data: overloadedSystems
             });
         }
@@ -322,7 +322,7 @@ export class MemoryLeakDetector {
             try {
                 callback(analysis);
             } catch (error) {
-                console.error('Error in leak detection callback:', error);
+                console.error("Error in leak detection callback:", error);
             }
         }
     }
@@ -332,7 +332,7 @@ export class MemoryLeakDetector {
      */
     generateReport() {
         if (this.snapshots.length === 0) {
-            return { message: 'No data available. Start monitoring first.' };
+            return { message: "No data available. Start monitoring first." };
         }
 
         const latest = this.snapshots[this.snapshots.length - 1];
@@ -355,7 +355,7 @@ export class MemoryLeakDetector {
             report.trends = analysis.metrics;
             
             if (analysis.leaksDetected.length > 0) {
-                report.recommendations.push('High-priority memory leaks detected - investigate immediately');
+                report.recommendations.push("High-priority memory leaks detected - investigate immediately");
             }
             
             if (analysis.warnings.length > 0) {

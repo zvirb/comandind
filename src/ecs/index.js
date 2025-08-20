@@ -4,13 +4,13 @@
  */
 
 // Core ECS classes
-export { Entity } from './Entity.js';
-export { World } from './World.js';
-export { EntityFactory } from './EntityFactory.js';
+export { Entity } from "./Entity.js";
+export { World } from "./World.js";
+export { EntityFactory } from "./EntityFactory.js";
 
 // Base classes
-export { Component } from './Component.js';
-export { System } from './System.js';
+export { Component } from "./Component.js";
+export { System } from "./System.js";
 
 // Components
 export {
@@ -25,7 +25,7 @@ export {
     AIComponent,
     SelectableComponent,
     CommandComponent
-} from './Component.js';
+} from "./Component.js";
 
 // Systems
 export {
@@ -34,6 +34,6 @@ export {
     UnitMovementSystem,
     CombatSystem,
     AISystem
-} from './System.js';
+} from "./System.js";
 
-export { SelectionSystem } from './SelectionSystem.js';
+export { SelectionSystem } from "./SelectionSystem.js";

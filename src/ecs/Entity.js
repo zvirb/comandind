@@ -41,7 +41,7 @@ export class Entity {
         this.components.set(componentName, component);
         
         // Use weak reference pattern
-        Object.defineProperty(component, 'entity', {
+        Object.defineProperty(component, "entity", {
             value: this,
             writable: false,
             enumerable: false,
@@ -57,7 +57,7 @@ export class Entity {
      */
     getComponent(ComponentType) {
         // Handle both class and string inputs
-        const componentName = typeof ComponentType === 'string' 
+        const componentName = typeof ComponentType === "string" 
             ? ComponentType 
             : ComponentType.name;
         return this.components.get(componentName) || null;
@@ -68,7 +68,7 @@ export class Entity {
      */
     hasComponent(ComponentType) {
         // Handle both class and string inputs
-        const componentName = typeof ComponentType === 'string' 
+        const componentName = typeof ComponentType === "string" 
             ? ComponentType 
             : ComponentType.name;
         return this.components.has(componentName);
@@ -84,7 +84,7 @@ export class Entity {
         }
         
         // Handle both class and string inputs
-        const componentName = typeof ComponentType === 'string' 
+        const componentName = typeof ComponentType === "string" 
             ? ComponentType 
             : ComponentType.name;
         const component = this.components.get(componentName);

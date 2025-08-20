@@ -3,10 +3,10 @@
  * Tests the optimized pathfinding system to validate 60 FPS performance goals
  */
 
-import { PathfindingSystem } from '../ecs/PathfindingSystem.js';
-import { NavigationGrid } from '../pathfinding/NavigationGrid.js';
-import { AStar } from '../pathfinding/AStar.js';
-import { PerformanceBenchmark } from './PerformanceBenchmark.js';
+import { PathfindingSystem } from "../ecs/PathfindingSystem.js";
+import { NavigationGrid } from "../pathfinding/NavigationGrid.js";
+import { AStar } from "../pathfinding/AStar.js";
+import { PerformanceBenchmark } from "./PerformanceBenchmark.js";
 
 export class PathfindingPerformanceTest {
     constructor() {
@@ -16,25 +16,25 @@ export class PathfindingPerformanceTest {
         
         // Test configurations
         this.testConfigs = {
-            'small_scale': {
+            "small_scale": {
                 unitCount: 10,
                 mapSize: 500,
                 duration: 5000,
                 targetFPS: 60
             },
-            'medium_scale': {
+            "medium_scale": {
                 unitCount: 25,
                 mapSize: 1000,
                 duration: 10000,
                 targetFPS: 60
             },
-            'large_scale': {
+            "large_scale": {
                 unitCount: 50,
                 mapSize: 1500,
                 duration: 15000,
                 targetFPS: 55
             },
-            'stress_test': {
+            "stress_test": {
                 unitCount: 100,
                 mapSize: 2000,
                 duration: 20000,
@@ -47,7 +47,7 @@ export class PathfindingPerformanceTest {
      * Initialize test environment
      */
     async setupTestEnvironment() {
-        console.log('🚀 Setting up pathfinding performance test environment...');
+        console.log("🚀 Setting up pathfinding performance test environment...");
         
         // Create mock world
         this.world = {
@@ -94,7 +94,7 @@ export class PathfindingPerformanceTest {
             }
         };
         
-        console.log('✅ Test environment ready');
+        console.log("✅ Test environment ready");
     }
     
     /**
@@ -103,8 +103,8 @@ export class PathfindingPerformanceTest {
     async runPerformanceTests() {
         await this.setupTestEnvironment();
         
-        console.log('\\n🎯 Starting Pathfinding Performance Tests\\n');
-        console.log('='.repeat(60));
+        console.log("\\n🎯 Starting Pathfinding Performance Tests\\n");
+        console.log("=".repeat(60));
         
         for (const [testName, config] of Object.entries(this.testConfigs)) {
             console.log(`\\n📋 Running test: ${testName}`);
@@ -230,13 +230,13 @@ export class PathfindingPerformanceTest {
         const entity = this.world.createEntity();
         
         // Add required components
-        entity.addComponent('TransformComponent', {
+        entity.addComponent("TransformComponent", {
             x: Math.random() * mapSize,
             y: Math.random() * mapSize,
             rotation: 0
         });
         
-        entity.addComponent('MovementComponent', {
+        entity.addComponent("MovementComponent", {
             speed: 50 + Math.random() * 100,
             isMoving: false,
             targetX: null,
@@ -262,9 +262,9 @@ export class PathfindingPerformanceTest {
             }
         });
         
-        entity.addComponent('UnitComponent', {
+        entity.addComponent("UnitComponent", {
             facing: 0,
-            unitType: 'test_unit'
+            unitType: "test_unit"
         });
         
         return entity;
@@ -279,7 +279,7 @@ export class PathfindingPerformanceTest {
         
         entities.forEach(entity => {
             if (Math.random() < commandProbability) {
-                const movement = entity.getComponent('MovementComponent');
+                const movement = entity.getComponent("MovementComponent");
                 const targetX = Math.random() * mapSize;
                 const targetY = Math.random() * mapSize;
                 
@@ -298,8 +298,8 @@ export class PathfindingPerformanceTest {
         
         // Update entity positions
         entities.forEach(entity => {
-            const transform = entity.getComponent('TransformComponent');
-            const movement = entity.getComponent('MovementComponent');
+            const transform = entity.getComponent("TransformComponent");
+            const movement = entity.getComponent("MovementComponent");
             
             if (movement.isMoving && movement.targetX !== null) {
                 const dx = movement.targetX - transform.x;
@@ -339,8 +339,8 @@ export class PathfindingPerformanceTest {
         const { testName, success, metrics, config } = result;
         
         console.log(`\\n📊 Results for ${testName}:`);
-        console.log('   ' + '='.repeat(50));
-        console.log(`   ✅ Success: ${success ? 'PASSED' : 'FAILED'}`);
+        console.log("   " + "=".repeat(50));
+        console.log(`   ✅ Success: ${success ? "PASSED" : "FAILED"}`);
         console.log(`   🎯 Target FPS: ${config.targetFPS} | Achieved: ${metrics.averageFPS.toFixed(1)}`);
         console.log(`   📈 FPS Range: ${metrics.minimumFPS.toFixed(1)} - ${metrics.maximumFPS.toFixed(1)}`);
         console.log(`   ⏱️ Frame Time: ${metrics.averageFrameTime.toFixed(2)}ms`);
@@ -363,17 +363,17 @@ export class PathfindingPerformanceTest {
      * Generate comprehensive performance report
      */
     generatePerformanceReport() {
-        console.log('\\n' + '='.repeat(80));
-        console.log('🏆 PATHFINDING PERFORMANCE REPORT');
-        console.log('='.repeat(80));
+        console.log("\\n" + "=".repeat(80));
+        console.log("🏆 PATHFINDING PERFORMANCE REPORT");
+        console.log("=".repeat(80));
         
         const successfulTests = this.testResults.filter(r => r.success);
         const failedTests = this.testResults.filter(r => !r.success);
         
-        console.log(`\\n📈 Test Summary:`);
+        console.log("\\n📈 Test Summary:");
         console.log(`   Total Tests: ${this.testResults.length}`);
         console.log(`   Passed: ${successfulTests.length} ✅`);
-        console.log(`   Failed: ${failedTests.length} ${failedTests.length > 0 ? '❌' : ''}`);
+        console.log(`   Failed: ${failedTests.length} ${failedTests.length > 0 ? "❌" : ""}`);
         console.log(`   Success Rate: ${(successfulTests.length / this.testResults.length * 100).toFixed(1)}%`);
         
         if (successfulTests.length > 0) {
@@ -381,15 +381,15 @@ export class PathfindingPerformanceTest {
             const avgFrameTime = successfulTests.reduce((sum, test) => sum + test.metrics.averageFrameTime, 0) / successfulTests.length;
             const totalPathCalcs = successfulTests.reduce((sum, test) => sum + test.metrics.pathCalculations, 0);
             
-            console.log(`\\n🎯 Performance Metrics:`);
+            console.log("\\n🎯 Performance Metrics:");
             console.log(`   Overall Average FPS: ${avgFPS.toFixed(1)}`);
             console.log(`   Overall Frame Time: ${avgFrameTime.toFixed(2)}ms`);
             console.log(`   Total Path Calculations: ${totalPathCalcs}`);
-            console.log(`   60+ FPS Target: ${avgFPS >= 60 ? '✅ MET' : '❌ NOT MET'}`);
+            console.log(`   60+ FPS Target: ${avgFPS >= 60 ? "✅ MET" : "❌ NOT MET"}`);
         }
         
         if (failedTests.length > 0) {
-            console.log(`\\n⚠️ Performance Issues Detected:`);
+            console.log("\\n⚠️ Performance Issues Detected:");
             failedTests.forEach(test => {
                 const shortfall = test.config.targetFPS - test.metrics.averageFPS;
                 console.log(`   • ${test.testName}: ${shortfall.toFixed(1)} FPS below target`);
@@ -399,14 +399,14 @@ export class PathfindingPerformanceTest {
         // Optimization recommendations
         this.generateOptimizationRecommendations();
         
-        console.log('\\n' + '='.repeat(80));
+        console.log("\\n" + "=".repeat(80));
     }
     
     /**
      * Generate optimization recommendations based on test results
      */
     generateOptimizationRecommendations() {
-        console.log(`\\n💡 Optimization Recommendations:`);
+        console.log("\\n💡 Optimization Recommendations:");
         
         const hasFailures = this.testResults.some(r => !r.success);
         const highPathCalculations = this.testResults.some(r => r.metrics.pathCalculations > 1000);
@@ -415,23 +415,23 @@ export class PathfindingPerformanceTest {
         );
         
         if (!hasFailures) {
-            console.log(`   ✅ All performance targets met! System is well optimized.`);
+            console.log("   ✅ All performance targets met! System is well optimized.");
         } else {
-            console.log(`   🔧 Consider the following optimizations:`);
+            console.log("   🔧 Consider the following optimizations:");
             
             if (highPathCalculations) {
-                console.log(`   • Reduce maximum paths per frame (currently processing many paths)`);
-                console.log(`   • Increase spatial partitioning cell size to reduce queries`);
+                console.log("   • Reduce maximum paths per frame (currently processing many paths)");
+                console.log("   • Increase spatial partitioning cell size to reduce queries");
             }
             
             if (lowCacheHitRate) {
-                console.log(`   • Increase path cache timeout for better hit rates`);
-                console.log(`   • Optimize cache key generation for more cache reuse`);
+                console.log("   • Increase path cache timeout for better hit rates");
+                console.log("   • Optimize cache key generation for more cache reuse");
             }
             
-            console.log(`   • Consider implementing hierarchical pathfinding for long distances`);
-            console.log(`   • Enable flow field pathfinding for large group movements`);
-            console.log(`   • Optimize navigation grid resolution vs. accuracy trade-offs`);
+            console.log("   • Consider implementing hierarchical pathfinding for long distances");
+            console.log("   • Enable flow field pathfinding for large group movements");
+            console.log("   • Optimize navigation grid resolution vs. accuracy trade-offs");
         }
     }
     

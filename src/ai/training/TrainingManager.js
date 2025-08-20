@@ -1,6 +1,6 @@
-import * as tf from '@tensorflow/tfjs';
-import { TrainingConfig, validateTrainingConfig, getPhaseConfig } from './TrainingConfig.js';
-import { ExperienceBuffer } from '../components/ExperienceBuffer.js';
+import * as tf from "@tensorflow/tfjs";
+import { TrainingConfig, validateTrainingConfig, getPhaseConfig } from "./TrainingConfig.js";
+import { ExperienceBuffer } from "../components/ExperienceBuffer.js";
 
 /**
  * Training Manager for Q-Learning Neural Networks
@@ -20,7 +20,7 @@ export class TrainingManager {
         this.currentStep = 0;
         this.trainingStep = 0;
         this.lastTargetUpdate = 0;
-        this.currentPhase = 'warmup';
+        this.currentPhase = "warmup";
 
         // Networks
         this.qNetwork = options.qNetwork || null;
@@ -92,7 +92,7 @@ export class TrainingManager {
         this.runTrainingLoop = this.runTrainingLoop.bind(this);
         this.validatePerformance = this.validatePerformance.bind(this);
 
-        console.log('🧠 Training Manager initialized with configuration:', {
+        console.log("🧠 Training Manager initialized with configuration:", {
             batchSize: this.config.learning.batchSize,
             learningRate: this.config.learning.learningRate,
             targetUpdateFreq: this.config.learning.targetUpdateFrequency,
@@ -107,11 +107,11 @@ export class TrainingManager {
         const validation = validateTrainingConfig(this.config);
         
         if (!validation.valid) {
-            throw new Error(`Invalid training configuration: ${validation.errors.join(', ')}`);
+            throw new Error(`Invalid training configuration: ${validation.errors.join(", ")}`);
         }
 
         if (validation.warnings.length > 0) {
-            console.warn('⚠️ Training configuration warnings:', validation.warnings);
+            console.warn("⚠️ Training configuration warnings:", validation.warnings);
         }
     }
 
@@ -132,9 +132,9 @@ export class TrainingManager {
             this.optimizer = this.createOptimizer();
         }
 
-        console.log('🔧 Neural networks initialized:', {
-            qNetwork: this.qNetwork.summary ? 'Custom Model' : 'TensorFlow Model',
-            targetNetwork: 'Initialized',
+        console.log("🔧 Neural networks initialized:", {
+            qNetwork: this.qNetwork.summary ? "Custom Model" : "TensorFlow Model",
+            targetNetwork: "Initialized",
             optimizer: this.config.optimizer.type
         });
     }
@@ -193,24 +193,24 @@ export class TrainingManager {
         const config = this.config.optimizer;
         
         switch (config.type.toLowerCase()) {
-            case 'adam':
-                return tf.train.adam(
-                    this.config.learning.learningRate,
-                    config.beta1,
-                    config.beta2,
-                    config.epsilon
-                );
-            case 'sgd':
-                return tf.train.sgd(this.config.learning.learningRate);
-            case 'rmsprop':
-                return tf.train.rmsprop(
-                    this.config.learning.learningRate,
-                    config.rho,
-                    config.momentum,
-                    config.epsilon
-                );
-            default:
-                throw new Error(`Unknown optimizer type: ${config.type}`);
+        case "adam":
+            return tf.train.adam(
+                this.config.learning.learningRate,
+                config.beta1,
+                config.beta2,
+                config.epsilon
+            );
+        case "sgd":
+            return tf.train.sgd(this.config.learning.learningRate);
+        case "rmsprop":
+            return tf.train.rmsprop(
+                this.config.learning.learningRate,
+                config.rho,
+                config.momentum,
+                config.epsilon
+            );
+        default:
+            throw new Error(`Unknown optimizer type: ${config.type}`);
         }
     }
 
@@ -219,11 +219,11 @@ export class TrainingManager {
      */
     async startTraining() {
         if (this.isTraining) {
-            console.warn('⚠️ Training is already running');
+            console.warn("⚠️ Training is already running");
             return;
         }
 
-        console.log('🚀 Starting Q-Learning training...');
+        console.log("🚀 Starting Q-Learning training...");
         
         await this.initializeNetworks();
         
@@ -281,7 +281,7 @@ export class TrainingManager {
 
                 // Check early stopping
                 if (this.shouldStopEarly()) {
-                    console.log('🛑 Early stopping triggered');
+                    console.log("🛑 Early stopping triggered");
                     break;
                 }
 
@@ -296,11 +296,11 @@ export class TrainingManager {
                 this.currentEpisode++;
 
             } catch (error) {
-                console.error('❌ Episode failed:', error);
+                console.error("❌ Episode failed:", error);
                 
                 // Implement error recovery or stop training
                 if (this.currentEpisode > 10) {
-                    console.error('💀 Too many consecutive failures, stopping training');
+                    console.error("💀 Too many consecutive failures, stopping training");
                     break;
                 }
             }
@@ -310,7 +310,7 @@ export class TrainingManager {
         }
 
         this.isTraining = false;
-        console.log('✅ Training completed');
+        console.log("✅ Training completed");
         
         await this.finalizeTraining();
     }
@@ -443,7 +443,7 @@ export class TrainingManager {
             }
 
         } catch (error) {
-            console.error('❌ Training step failed:', error);
+            console.error("❌ Training step failed:", error);
         }
     }
 
@@ -457,7 +457,7 @@ export class TrainingManager {
         const statesTensor = tf.tensor2d(states);
         const nextStatesTensor = tf.tensor2d(nextStates);
         const rewardsTensor = tf.tensor1d(rewards);
-        const actionsTensor = tf.tensor1d(actions, 'int32');
+        const actionsTensor = tf.tensor1d(actions, "int32");
         const donesTensor = tf.tensor1d(doneFlags.map(d => d ? 0 : 1)); // Invert done flags
 
         let loss = 0;
@@ -652,10 +652,10 @@ export class TrainingManager {
         
         const config = this.config.earlyStopping;
         
-        if (config.mode === 'max' && currentScore > this.earlyStopping.bestScore + config.minDelta) {
+        if (config.mode === "max" && currentScore > this.earlyStopping.bestScore + config.minDelta) {
             this.earlyStopping.bestScore = currentScore;
             this.earlyStopping.patienceCounter = 0;
-        } else if (config.mode === 'min' && currentScore < this.earlyStopping.bestScore - config.minDelta) {
+        } else if (config.mode === "min" && currentScore < this.earlyStopping.bestScore - config.minDelta) {
             this.earlyStopping.bestScore = currentScore;
             this.earlyStopping.patienceCounter = 0;
         } else {
@@ -677,13 +677,13 @@ export class TrainingManager {
         let newPhase = this.currentPhase;
         
         if (episode >= phases.warmup.episodes + phases.exploration.episodes + phases.exploitation.episodes) {
-            newPhase = 'finetuning';
+            newPhase = "finetuning";
         } else if (episode >= phases.warmup.episodes + phases.exploration.episodes) {
-            newPhase = 'exploitation';
+            newPhase = "exploitation";
         } else if (episode >= phases.warmup.episodes) {
-            newPhase = 'exploration';
+            newPhase = "exploration";
         } else {
-            newPhase = 'warmup';
+            newPhase = "warmup";
         }
         
         if (newPhase !== this.currentPhase) {
@@ -705,7 +705,7 @@ export class TrainingManager {
      * Validates performance with dedicated episodes
      */
     async validatePerformance() {
-        console.log('🔍 Running validation...');
+        console.log("🔍 Running validation...");
         
         const validationConfig = this.config.validation;
         const results = [];
@@ -774,7 +774,7 @@ export class TrainingManager {
             }
             
         } catch (error) {
-            console.error('❌ Failed to save checkpoint:', error);
+            console.error("❌ Failed to save checkpoint:", error);
         }
     }
 
@@ -804,7 +804,7 @@ export class TrainingManager {
      */
     pause() {
         this.isPaused = true;
-        console.log('⏸️ Training paused');
+        console.log("⏸️ Training paused");
     }
 
     /**
@@ -812,7 +812,7 @@ export class TrainingManager {
      */
     resume() {
         this.isPaused = false;
-        console.log('▶️ Training resumed');
+        console.log("▶️ Training resumed");
     }
 
     /**
@@ -820,7 +820,7 @@ export class TrainingManager {
      */
     stop() {
         this.isTraining = false;
-        console.log('⏹️ Training stopped');
+        console.log("⏹️ Training stopped");
     }
 
     /**
@@ -862,7 +862,7 @@ export class TrainingManager {
      * Finalizes training process
      */
     async finalizeTraining() {
-        console.log('🏁 Finalizing training...');
+        console.log("🏁 Finalizing training...");
         
         // Save final checkpoint
         await this.saveCheckpoint();
@@ -872,7 +872,7 @@ export class TrainingManager {
         
         // Generate training summary
         const summary = this.generateTrainingSummary();
-        console.log('📋 Training Summary:', summary);
+        console.log("📋 Training Summary:", summary);
         
         // Clean up timers
         Object.values(this.timers).forEach(timer => {
@@ -952,6 +952,6 @@ export class TrainingManager {
             this.experienceBuffer.clear();
         }
         
-        console.log('🧹 Training Manager destroyed');
+        console.log("🧹 Training Manager destroyed");
     }
 }

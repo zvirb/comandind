@@ -30,7 +30,7 @@ export class GameLoop {
     
     start() {
         if (this.isRunning) {
-            console.warn('Game loop is already running');
+            console.warn("Game loop is already running");
             return;
         }
         
@@ -45,7 +45,7 @@ export class GameLoop {
     
     stop() {
         if (!this.isRunning) {
-            console.warn('Game loop is not running');
+            console.warn("Game loop is not running");
             return;
         }
         
@@ -55,7 +55,7 @@ export class GameLoop {
             this.rafId = null;
         }
         
-        console.log('Game loop stopped');
+        console.log("Game loop stopped");
     }
     
     loop(timestamp) {
@@ -79,8 +79,8 @@ export class GameLoop {
                     // Call update with fixed delta time
                     this.updateCallback(this.fixedDeltaTime / 1000); // Convert to seconds
                 } catch (updateError) {
-                    console.error('Error in update callback:', updateError);
-                    console.error('Stack trace:', updateError.stack);
+                    console.error("Error in update callback:", updateError);
+                    console.error("Stack trace:", updateError.stack);
                     this.stop();
                     return;
                 }
@@ -103,8 +103,8 @@ export class GameLoop {
                 // Render with interpolation
                 this.renderCallback(interpolation);
             } catch (renderError) {
-                console.error('Error in render callback:', renderError);
-                console.error('Stack trace:', renderError.stack);
+                console.error("Error in render callback:", renderError);
+                console.error("Stack trace:", renderError.stack);
                 this.stop();
                 return;
             }
@@ -116,8 +116,8 @@ export class GameLoop {
             this.rafId = requestAnimationFrame(this.loop);
             
         } catch (loopError) {
-            console.error('Critical error in game loop:', loopError);
-            console.error('Stack trace:', loopError.stack);
+            console.error("Critical error in game loop:", loopError);
+            console.error("Stack trace:", loopError.stack);
             this.stop();
             
             // Prevent endless error loops
@@ -163,14 +163,14 @@ export class GameLoop {
     pause() {
         if (this.isRunning) {
             this.stop();
-            console.log('Game loop paused');
+            console.log("Game loop paused");
         }
     }
     
     resume() {
         if (!this.isRunning) {
             this.start();
-            console.log('Game loop resumed');
+            console.log("Game loop resumed");
         }
     }
     

@@ -4,8 +4,8 @@
  * Replaces the basic AIComponent in the ECS system with advanced AI capabilities
  */
 
-import { Component } from '../../ecs/Component.js';
-import { QLearningComponent } from './QLearningComponent.js';
+import { Component } from "../../ecs/Component.js";
+import { QLearningComponent } from "./QLearningComponent.js";
 
 /**
  * Advanced AI Component that integrates all AI subsystems
@@ -17,8 +17,8 @@ export class AIComponent extends Component {
         
         // Basic AI settings
         this.enabled = options.enabled !== undefined ? options.enabled : true;
-        this.behaviorType = options.behaviorType || 'combatUnit'; // combatUnit, harvester, guard, scout
-        this.aiLevel = options.aiLevel || 'normal'; // basic, normal, advanced, expert
+        this.behaviorType = options.behaviorType || "combatUnit"; // combatUnit, harvester, guard, scout
+        this.aiLevel = options.aiLevel || "normal"; // basic, normal, advanced, expert
         
         // Decision timing
         this.lastDecisionTime = 0;
@@ -56,7 +56,7 @@ export class AIComponent extends Component {
         };
         
         // State management
-        this.currentState = 'initializing'; // initializing, idle, thinking, acting, learning
+        this.currentState = "initializing"; // initializing, idle, thinking, acting, learning
         this.lastStateChange = Date.now();
         this.stateHistory = [];
         this.maxStateHistoryLength = 20;
@@ -68,7 +68,7 @@ export class AIComponent extends Component {
         
         // Tactical awareness
         this.tacticalContext = {
-            alertLevel: 'normal', // calm, alert, combat, panic
+            alertLevel: "normal", // calm, alert, combat, panic
             lastThreatSeen: 0,
             lastDamageTaken: 0,
             alliesNearby: 0,
@@ -97,12 +97,12 @@ export class AIComponent extends Component {
             lastDecision: null,
             lastAction: null,
             lastReward: 0,
-            decisionReason: '',
+            decisionReason: "",
             performanceWarnings: []
         };
         
         // Initialize state
-        this.setState('idle');
+        this.setState("idle");
     }
     
     /**
@@ -145,18 +145,18 @@ export class AIComponent extends Component {
         if (this.adaptiveDecisionTiming) {
             // Make decisions faster in combat or high-alert situations
             switch (this.tacticalContext.alertLevel) {
-                case 'combat':
-                    effectiveInterval *= 0.5; // 2x faster
-                    break;
-                case 'alert':
-                    effectiveInterval *= 0.75; // 25% faster
-                    break;
-                case 'panic':
-                    effectiveInterval *= 0.3; // 3x faster
-                    break;
-                default:
-                    // Normal timing
-                    break;
+            case "combat":
+                effectiveInterval *= 0.5; // 2x faster
+                break;
+            case "alert":
+                effectiveInterval *= 0.75; // 25% faster
+                break;
+            case "panic":
+                effectiveInterval *= 0.3; // 3x faster
+                break;
+            default:
+                // Normal timing
+                break;
             }
             
             // Slower decisions for less experienced units
@@ -175,7 +175,7 @@ export class AIComponent extends Component {
         
         if (decision) {
             this.debugInfo.lastDecision = decision;
-            this.setState('acting');
+            this.setState("acting");
         }
         
         // Update performance metrics
@@ -217,23 +217,23 @@ export class AIComponent extends Component {
      */
     updateAlertLevel() {
         const now = Date.now();
-        let newAlertLevel = 'calm';
+        let newAlertLevel = "calm";
         
         // Recent damage increases alert
         if (now - this.tacticalContext.lastDamageTaken < 5000) { // 5 seconds
-            newAlertLevel = 'combat';
+            newAlertLevel = "combat";
         }
         // Recent threats increase alert
         else if (now - this.tacticalContext.lastThreatSeen < 10000) { // 10 seconds
-            newAlertLevel = 'alert';
+            newAlertLevel = "alert";
         }
         // Enemies nearby
         else if (this.tacticalContext.enemiesNearby > 0) {
-            newAlertLevel = 'alert';
+            newAlertLevel = "alert";
         }
         // Outnumbered = panic
         if (this.tacticalContext.enemiesNearby > this.tacticalContext.alliesNearby + 2) {
-            newAlertLevel = 'panic';
+            newAlertLevel = "panic";
         }
         
         this.tacticalContext.alertLevel = newAlertLevel;
@@ -255,8 +255,8 @@ export class AIComponent extends Component {
                 this.memory.knownEnemies.set(entityId, {
                     lastSeen: now,
                     position: {
-                        x: nearby.entity.getComponent?.('TransformComponent')?.x,
-                        y: nearby.entity.getComponent?.('TransformComponent')?.y
+                        x: nearby.entity.getComponent?.("TransformComponent")?.x,
+                        y: nearby.entity.getComponent?.("TransformComponent")?.y
                     },
                     distance: nearby.distance,
                     angle: nearby.angle
@@ -328,7 +328,7 @@ export class AIComponent extends Component {
         
         // Calculate decisions per second (over last 10 seconds)
         const recentDecisions = this.stateHistory.filter(entry => 
-            now - entry.timestamp < 10000 && entry.state === 'acting'
+            now - entry.timestamp < 10000 && entry.state === "acting"
         ).length;
         
         this.performanceMetrics.decisionsPerSecond = recentDecisions / 10;
@@ -429,10 +429,10 @@ export class AIComponent extends Component {
      * Reset AI state to initial conditions
      */
     reset() {
-        this.setState('idle');
+        this.setState("idle");
         this.lastDecisionTime = 0;
         this.experienceLevel = 0;
-        this.tacticalContext.alertLevel = 'normal';
+        this.tacticalContext.alertLevel = "normal";
         this.tacticalContext.lastThreatSeen = 0;
         this.tacticalContext.lastDamageTaken = 0;
         

@@ -13,14 +13,14 @@
  * - Resource management
  */
 
-import { Application } from '../core/Application.js';
-import { GameLoop } from '../core/GameLoop.js';
-import { InputHandler } from '../core/InputHandler.js';
-import { Camera } from '../core/Camera.js';
-import { World } from '../ecs/World.js';
-import { UIManager } from '../ui/UIManager.js';
-import { SelectionSystem } from '../ecs/SelectionSystem.js';
-import { SpriteBatcher } from '../rendering/SpriteBatcher.js';
+import { Application } from "../core/Application.js";
+import { GameLoop } from "../core/GameLoop.js";
+import { InputHandler } from "../core/InputHandler.js";
+import { Camera } from "../core/Camera.js";
+import { World } from "../ecs/World.js";
+import { UIManager } from "../ui/UIManager.js";
+import { SelectionSystem } from "../ecs/SelectionSystem.js";
+import { SpriteBatcher } from "../rendering/SpriteBatcher.js";
 
 export class UIIntegratedGame {
     constructor(options = {}) {
@@ -56,7 +56,7 @@ export class UIIntegratedGame {
      * Initialize the complete game with UI integration
      */
     async init() {
-        console.log('🎮 Initializing UI-integrated RTS game...');
+        console.log("🎮 Initializing UI-integrated RTS game...");
         
         try {
             // Step 1: Initialize core application
@@ -82,13 +82,13 @@ export class UIIntegratedGame {
             
             this.isInitialized = true;
             
-            console.log('✅ UI-integrated game initialization complete!');
+            console.log("✅ UI-integrated game initialization complete!");
             
             // Show initialization complete message
             this.showInitializationComplete();
             
         } catch (error) {
-            console.error('❌ Game initialization failed:', error);
+            console.error("❌ Game initialization failed:", error);
             throw error;
         }
     }
@@ -97,14 +97,14 @@ export class UIIntegratedGame {
      * Initialize PIXI application
      */
     async initializeApplication() {
-        console.log('🖼️  Initializing PIXI Application...');
+        console.log("🖼️  Initializing PIXI Application...");
         
         this.app = new Application({
             width: 1280,
             height: 720,
             backgroundColor: 0x1a1a2e,
             antialias: true,
-            powerPreference: 'high-performance'
+            powerPreference: "high-performance"
         });
         
         await this.app.initialize();
@@ -113,14 +113,14 @@ export class UIIntegratedGame {
         this.spriteBatcher = new SpriteBatcher(this.app.renderer, 1000);
         this.app.spriteBatcher = this.spriteBatcher; // Make available to UI systems
         
-        console.log('✅ PIXI Application ready');
+        console.log("✅ PIXI Application ready");
     }
     
     /**
      * Initialize core game systems
      */
     async initializeCoreSystems() {
-        console.log('⚙️  Initializing core systems...');
+        console.log("⚙️  Initializing core systems...");
         
         // Initialize input handler
         this.inputHandler = new InputHandler(this.app.view, {
@@ -146,14 +146,14 @@ export class UIIntegratedGame {
             enableDebugStats: true
         });
         
-        console.log('✅ Core systems ready');
+        console.log("✅ Core systems ready");
     }
     
     /**
      * Initialize ECS world and systems
      */
     async initializeECS() {
-        console.log('🌍 Initializing ECS World...');
+        console.log("🌍 Initializing ECS World...");
         
         // Create ECS world
         this.world = new World();
@@ -171,14 +171,14 @@ export class UIIntegratedGame {
         
         // Note: Other game systems (pathfinding, combat, etc.) would be added here
         
-        console.log('✅ ECS World ready');
+        console.log("✅ ECS World ready");
     }
     
     /**
      * Initialize UI Manager (coordinates all UI systems)
      */
     async initializeUIManager() {
-        console.log('🎛️  Initializing UI Manager...');
+        console.log("🎛️  Initializing UI Manager...");
         
         // Detect if running on mobile for optimization
         const isMobile = this.detectMobile();
@@ -189,21 +189,21 @@ export class UIIntegratedGame {
             isMobile: isMobile,
             enableAccessibilityMode: false, // Can be enabled based on user preference
             targetFPS: 60,
-            effectQuality: this.options.effectQuality || (isMobile ? 'medium' : 'high'),
+            effectQuality: this.options.effectQuality || (isMobile ? "medium" : "high"),
             enableAnimations: this.options.enableAnimations !== false,
             enableParticles: this.options.enableParticles !== false
         });
         
         await this.uiManager.init();
         
-        console.log('✅ UI Manager ready');
+        console.log("✅ UI Manager ready");
     }
     
     /**
      * Setup integrations between systems
      */
     setupSystemIntegrations() {
-        console.log('🔗 Setting up system integrations...');
+        console.log("🔗 Setting up system integrations...");
         
         // Integrate old selection system with new UI systems
         this.integrateSelectionSystem();
@@ -217,7 +217,7 @@ export class UIIntegratedGame {
         // Setup resource tracking
         this.setupResourceTracking();
         
-        console.log('✅ System integrations complete');
+        console.log("✅ System integrations complete");
     }
     
     /**
@@ -234,8 +234,8 @@ export class UIIntegratedGame {
             const result = originalSelectEntity(entity);
 
             // Use new selection renderer
-            const transform = entity.getComponent('TransformComponent');
-            const health = entity.getComponent('HealthComponent');
+            const transform = entity.getComponent("TransformComponent");
+            const health = entity.getComponent("HealthComponent");
 
             if (transform) {
                 this.uiManager.systems.selectionRenderer?.showSelection(entity.id, transform, health);
@@ -272,11 +272,11 @@ export class UIIntegratedGame {
             const result = originalIssueCommand(command, target, queued);
 
             // Show visual feedback based on command type
-            if (command === 'move' && target) {
+            if (command === "move" && target) {
                 this.uiManager.systems.visualFeedback?.showMoveCommand(target.x, target.y, queued);
 
                 // Emit game event
-                window.dispatchEvent(new CustomEvent('command:move', {
+                window.dispatchEvent(new CustomEvent("command:move", {
                     detail: { x: target.x, y: target.y, queued: queued }
                 }));
             }
@@ -284,7 +284,7 @@ export class UIIntegratedGame {
             return result;
         };
 
-        console.log('🎯 Selection system integrated with new UI systems');
+        console.log("🎯 Selection system integrated with new UI systems");
     }
 
     /**
@@ -292,7 +292,7 @@ export class UIIntegratedGame {
      */
     setupGameEventHandlers() {
         // Handle building placement events
-        window.addEventListener('buildingPlacement:buildingPlaced', (event) => {
+        window.addEventListener("buildingPlacement:buildingPlaced", (event) => {
             const { type, position, data } = event.detail;
 
             console.log(`🏗️  Building placed: ${type} at (${position.x}, ${position.y})`);
@@ -305,7 +305,7 @@ export class UIIntegratedGame {
         });
 
         // Handle unit damage events
-        window.addEventListener('unit:damaged', (event) => {
+        window.addEventListener("unit:damaged", (event) => {
             const { entity, damage, damageType } = event.detail;
 
             // Show damage feedback
@@ -313,7 +313,7 @@ export class UIIntegratedGame {
         });
 
         // Handle resource collection events
-        window.addEventListener('resource:collected', (event) => {
+        window.addEventListener("resource:collected", (event) => {
             const { x, y, amount, type } = event.detail;
 
             // Show resource gain feedback
@@ -329,17 +329,17 @@ export class UIIntegratedGame {
      */
     setupUIEventHandlers() {
         // Handle keyboard shortcuts
-        document.addEventListener('keydown', (event) => {
+        document.addEventListener("keydown", (event) => {
             this.handleKeyboardInput(event);
         });
 
         // Handle window resize
-        window.addEventListener('resize', () => {
+        window.addEventListener("resize", () => {
             this.handleResize();
         });
 
         // Handle visibility change (tab switching)
-        document.addEventListener('visibilitychange', () => {
+        document.addEventListener("visibilitychange", () => {
             if (document.hidden) {
                 this.pauseGame();
             } else {
@@ -390,7 +390,7 @@ export class UIIntegratedGame {
      * Create initial game content for demonstration
      */
     createInitialContent() {
-        console.log('🎨 Creating initial game content...');
+        console.log("🎨 Creating initial game content...");
 
         // Create some test entities for selection demonstration
         this.createTestEntities();
@@ -399,8 +399,8 @@ export class UIIntegratedGame {
         setTimeout(() => {
             this.uiManager.systems.visualFeedback?.showAlert(
                 640, 300,
-                'Welcome to the RTS Game!\\nPress F12 for debug interface',
-                'info'
+                "Welcome to the RTS Game!\\nPress F12 for debug interface",
+                "info"
             );
         }, 2000);
     }
@@ -414,23 +414,23 @@ export class UIIntegratedGame {
             const entity = this.world.createEntity();
 
             // Add components
-            entity.addComponent('TransformComponent', {
+            entity.addComponent("TransformComponent", {
                 x: 400 + i * 80,
                 y: 400,
                 rotation: 0
             });
 
-            entity.addComponent('SelectableComponent', {
+            entity.addComponent("SelectableComponent", {
                 selectableRadius: 20,
                 isSelected: false
             });
 
-            entity.addComponent('HealthComponent', {
+            entity.addComponent("HealthComponent", {
                 maxHealth: 100,
                 currentHealth: 100 - i * 10
             });
 
-            entity.addComponent('MovementComponent', {
+            entity.addComponent("MovementComponent", {
                 speed: 50,
                 targetX: null,
                 targetY: null
@@ -445,10 +445,10 @@ export class UIIntegratedGame {
 
             this.app.layers.units.addChild(sprite);
 
-            entity.addComponent('SpriteComponent', { sprite: sprite });
+            entity.addComponent("SpriteComponent", { sprite: sprite });
         }
 
-        console.log('🎮 Created 5 test entities');
+        console.log("🎮 Created 5 test entities");
     }
 
     /**
@@ -457,13 +457,13 @@ export class UIIntegratedGame {
     createBuildingEntity(type, position, data) {
         const entity = this.world.createEntity();
 
-        entity.addComponent('TransformComponent', {
+        entity.addComponent("TransformComponent", {
             x: position.x,
             y: position.y,
             rotation: 0
         });
 
-        entity.addComponent('BuildingComponent', {
+        entity.addComponent("BuildingComponent", {
             type: type,
             width: data.width,
             height: data.height,
@@ -474,7 +474,7 @@ export class UIIntegratedGame {
 
         // Simulate construction progress
         const constructionInterval = setInterval(() => {
-            const buildingComp = entity.getComponent('BuildingComponent');
+            const buildingComp = entity.getComponent("BuildingComponent");
             buildingComp.constructionProgress += 10;
 
             // Show construction effects
@@ -497,14 +497,14 @@ export class UIIntegratedGame {
      * Start the main game loop
      */
     startGameLoop() {
-        console.log('🔄 Starting game loop...');
+        console.log("🔄 Starting game loop...");
 
         this.gameLoop.start((deltaTime, interpolation) => {
             this.update(deltaTime);
             this.render(interpolation);
         });
 
-        console.log('✅ Game loop started');
+        console.log("✅ Game loop started");
     }
 
     /**
@@ -565,22 +565,22 @@ export class UIIntegratedGame {
      */
     handleKeyboardInput(event) {
         switch (event.key) {
-            case 'b':
-            case 'B':
-                // Start building placement
-                this.startBuildingPlacement();
-                break;
+        case "b":
+        case "B":
+            // Start building placement
+            this.startBuildingPlacement();
+            break;
 
-            case 'Escape':
-                // Cancel any active UI mode
-                this.cancelActiveUIMode();
-                break;
+        case "Escape":
+            // Cancel any active UI mode
+            this.cancelActiveUIMode();
+            break;
 
-            case 'p':
-            case 'P':
-                // Pause/unpause game
-                this.togglePause();
-                break;
+        case "p":
+        case "P":
+            // Pause/unpause game
+            this.togglePause();
+            break;
         }
     }
 
@@ -597,8 +597,8 @@ export class UIIntegratedGame {
                 deductCost: (cost) => { this.gameResources.credits -= cost; }
             };
 
-            buildingPlacement.startPlacement('barracks', resourceValidator);
-            console.log('🏗️  Building placement mode started');
+            buildingPlacement.startPlacement("barracks", resourceValidator);
+            console.log("🏗️  Building placement mode started");
         }
     }
 
@@ -633,7 +633,7 @@ export class UIIntegratedGame {
     pauseGame() {
         this.isPaused = true;
         this.gameLoop.pause();
-        console.log('⏸️  Game paused');
+        console.log("⏸️  Game paused");
     }
 
     /**
@@ -642,7 +642,7 @@ export class UIIntegratedGame {
     resumeGame() {
         this.isPaused = false;
         this.gameLoop.resume();
-        console.log('▶️  Game resumed');
+        console.log("▶️  Game resumed");
     }
 
     /**
@@ -684,8 +684,8 @@ export class UIIntegratedGame {
         setTimeout(() => {
             this.uiManager.systems.visualFeedback?.showAlert(
                 640, 200,
-                'UI Integration Demo Ready!\\n\\nControls:\\nB - Build mode\\nP - Pause\\nF12 - Debug',
-                'info'
+                "UI Integration Demo Ready!\\n\\nControls:\\nB - Build mode\\nP - Pause\\nF12 - Debug",
+                "info"
             );
         }, 1000);
     }
@@ -716,7 +716,7 @@ export class UIIntegratedGame {
      * Cleanup and destroy the game
      */
     destroy() {
-        console.log('🗑️ Destroying UI-integrated game...');
+        console.log("🗑️ Destroying UI-integrated game...");
 
         // Stop game loop
         if (this.gameLoop) {
@@ -750,7 +750,7 @@ export class UIIntegratedGame {
             this.app.destroy();
         }
 
-        console.log('✅ Game destroyed successfully');
+        console.log("✅ Game destroyed successfully");
     }
 }
 

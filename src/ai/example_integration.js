@@ -3,7 +3,7 @@
  * This shows basic integration patterns without modifying existing game code
  */
 
-import { OllamaClient } from './OllamaClient.js';
+import { OllamaClient } from "./OllamaClient.js";
 
 /**
  * Example game AI integration using OllamaClient
@@ -26,12 +26,12 @@ export class GameAIIntegration {
      * Initialize AI system (call this during game startup)
      */
     async initialize() {
-        console.log('🎮 Initializing Game AI Integration...');
+        console.log("🎮 Initializing Game AI Integration...");
         
         try {
             const connected = await this.ollama.testConnection();
             if (connected) {
-                console.log('✅ AI system ready');
+                console.log("✅ AI system ready");
                 this.isInitialized = true;
                 
                 // Test with game-specific prompt
@@ -40,14 +40,14 @@ export class GameAIIntegration {
                 );
                 
                 if (testResult.success) {
-                    console.log('✅ AI tactical analysis confirmed');
+                    console.log("✅ AI tactical analysis confirmed");
                 }
             } else {
-                console.log('⚠️ AI system unavailable, using fallback strategies');
+                console.log("⚠️ AI system unavailable, using fallback strategies");
                 this.isInitialized = false;
             }
         } catch (error) {
-            console.warn('⚠️ AI initialization failed:', error.message);
+            console.warn("⚠️ AI initialization failed:", error.message);
             this.isInitialized = false;
         }
         
@@ -68,7 +68,7 @@ export class GameAIIntegration {
         // Create cache key for similar game states
         const stateKey = this.createStateKey(gameState);
         if (this.analysisCache.has(stateKey)) {
-            console.log('🎯 Using cached analysis');
+            console.log("🎯 Using cached analysis");
             return this.analysisCache.get(stateKey);
         }
         
@@ -86,15 +86,15 @@ export class GameAIIntegration {
                 this.analysisCache.set(stateKey, analysis);
                 this.lastAnalysis = analysis;
                 
-                console.log('🧠 AI tactical analysis completed');
+                console.log("🧠 AI tactical analysis completed");
                 return analysis;
             } else {
-                console.log('⚠️ AI analysis failed, using fallback');
+                console.log("⚠️ AI analysis failed, using fallback");
                 return this.getFallbackAnalysis(gameState);
             }
             
         } catch (error) {
-            console.warn('❌ AI analysis error:', error.message);
+            console.warn("❌ AI analysis error:", error.message);
             return this.getFallbackAnalysis(gameState);
         }
     }
@@ -145,7 +145,7 @@ export class GameAIIntegration {
         this.ollama.resetCircuitBreaker();
         this.analysisCache.clear();
         this.lastAnalysis = null;
-        console.log('🔄 AI system reset');
+        console.log("🔄 AI system reset");
     }
     
     // Private helper methods
@@ -160,8 +160,8 @@ export class GameAIIntegration {
         return `Tactical Analysis Request:
 Units: ${gameState.playerUnits || 0} friendly, ${gameState.enemyUnits || 0} enemy
 Resources: ${gameState.resources || 0} credits
-Map Control: ${gameState.mapControl || 'unknown'}
-Immediate Threats: ${gameState.threats || 'none detected'}
+Map Control: ${gameState.mapControl || "unknown"}
+Immediate Threats: ${gameState.threats || "none detected"}
 
 Provide concise tactical recommendation (max 50 words).`;
     }
@@ -170,7 +170,7 @@ Provide concise tactical recommendation (max 50 words).`;
         return `URGENT: Enemy contact!
 Friendly: ${gameState.playerUnits || 0} units
 Enemy: ${gameState.enemyUnits || 0} units  
-Status: ${gameState.combatStatus || 'engaged'}
+Status: ${gameState.combatStatus || "engaged"}
 
 Immediate tactical advice:`;
     }
@@ -178,22 +178,22 @@ Immediate tactical advice:`;
     parseAIResponse(response) {
         // Basic response parsing
         return {
-            type: 'ai_analysis',
+            type: "ai_analysis",
             recommendation: response.trim(),
             confidence: 0.8,
             timestamp: Date.now(),
-            source: 'ollama'
+            source: "ollama"
         };
     }
     
     getFallbackAnalysis(gameState) {
         // Simple rule-based fallback
         const analysis = {
-            type: 'fallback_analysis',
-            recommendation: '',
+            type: "fallback_analysis",
+            recommendation: "",
             confidence: 0.6,
             timestamp: Date.now(),
-            source: 'fallback'
+            source: "fallback"
         };
         
         // Basic tactical rules
@@ -216,7 +216,7 @@ Immediate tactical advice:`;
  */
 export class GameAIExamples {
     static async demoBasicUsage() {
-        console.log('🎮 Demo: Basic AI Integration');
+        console.log("🎮 Demo: Basic AI Integration");
         
         const ai = new GameAIIntegration({ aiTimeout: 500 });
         await ai.initialize();
@@ -226,21 +226,21 @@ export class GameAIExamples {
             playerUnits: 8,
             enemyUnits: 12,
             resources: 750,
-            mapControl: 'contested',
-            threats: 'enemy tank formation approaching'
+            mapControl: "contested",
+            threats: "enemy tank formation approaching"
         };
         
         // Get tactical analysis
         const analysis = await ai.analyzeGameState(gameState);
-        console.log('📊 Analysis:', analysis);
+        console.log("📊 Analysis:", analysis);
         
         // Check AI status
         const status = ai.getAIStatus();
-        console.log('🔍 AI Status:', status);
+        console.log("🔍 AI Status:", status);
     }
     
     static async demoStreamingAdvice() {
-        console.log('🌊 Demo: Streaming Tactical Advice');
+        console.log("🌊 Demo: Streaming Tactical Advice");
         
         const ai = new GameAIIntegration();
         await ai.initialize();
@@ -248,17 +248,17 @@ export class GameAIExamples {
         const urgentState = {
             playerUnits: 5,
             enemyUnits: 8,
-            combatStatus: 'under attack',
-            threats: 'multiple enemy units'
+            combatStatus: "under attack",
+            threats: "multiple enemy units"
         };
         
         await ai.getStreamingAdvice(urgentState, (chunk) => {
-            console.log('📡 AI Advice:', chunk);
+            console.log("📡 AI Advice:", chunk);
         });
     }
     
     static async demoFallbackBehavior() {
-        console.log('🔄 Demo: Fallback Behavior');
+        console.log("🔄 Demo: Fallback Behavior");
         
         // Create AI with very aggressive circuit breaker for demo
         const ai = new GameAIIntegration({ maxFailures: 1 });
@@ -271,7 +271,7 @@ export class GameAIExamples {
         
         // This will use fallback since Ollama isn't available
         const analysis = await ai.analyzeGameState(gameState);
-        console.log('📊 Fallback Analysis:', analysis);
+        console.log("📊 Fallback Analysis:", analysis);
     }
 }
 

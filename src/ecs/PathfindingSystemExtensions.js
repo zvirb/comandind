@@ -39,8 +39,8 @@ export function extendPathfindingSystem(PathfindingSystemClass) {
      * OPTIMIZATION: Check if path needs recalculation
      */
     PathfindingSystemClass.prototype.shouldRecalculatePath = function(entity) {
-        const movement = entity.getComponent('MovementComponent');
-        const transform = entity.getComponent('TransformComponent');
+        const movement = entity.getComponent("MovementComponent");
+        const transform = entity.getComponent("TransformComponent");
         
         // Don't recalculate too frequently
         if (!movement.lastPathUpdate || 
@@ -67,8 +67,8 @@ export function extendPathfindingSystem(PathfindingSystemClass) {
      * OPTIMIZATION: Invalidate cached path
      */
     PathfindingSystemClass.prototype.invalidatePath = function(entity) {
-        const movement = entity.getComponent('MovementComponent');
-        const transform = entity.getComponent('TransformComponent');
+        const movement = entity.getComponent("MovementComponent");
+        const transform = entity.getComponent("TransformComponent");
         
         const cacheKey = this.getPathCacheKey(
             transform.x, transform.y,
@@ -114,40 +114,40 @@ export function extendPathfindingSystem(PathfindingSystemClass) {
         // Cache performance
         if (stats.performance.cacheHitRatio < 0.7) {
             recommendations.push({
-                category: 'caching',
-                priority: 'high',
-                issue: 'Low cache hit ratio',
-                suggestion: 'Consider increasing cache timeout or grid rounding precision'
+                category: "caching",
+                priority: "high",
+                issue: "Low cache hit ratio",
+                suggestion: "Consider increasing cache timeout or grid rounding precision"
             });
         }
         
         // Queue performance
         if (stats.performance.queueLength > 10) {
             recommendations.push({
-                category: 'queueing',
-                priority: 'medium',
-                issue: 'High path request queue length',
-                suggestion: 'Consider increasing maxPathsPerFrame or improving path priority calculation'
+                category: "queueing",
+                priority: "medium",
+                issue: "High path request queue length",
+                suggestion: "Consider increasing maxPathsPerFrame or improving path priority calculation"
             });
         }
         
         // Calculation time
         if (stats.performance.averagePathCalculationTime > 5) {
             recommendations.push({
-                category: 'performance',
-                priority: 'high',
-                issue: 'Long path calculation times',
-                suggestion: 'Consider reducing navigation grid resolution or implementing hierarchical pathfinding'
+                category: "performance",
+                priority: "high",
+                issue: "Long path calculation times",
+                suggestion: "Consider reducing navigation grid resolution or implementing hierarchical pathfinding"
             });
         }
         
         // Spatial query frequency
         if (stats.performance.spatialQueriesPerFrame > 50) {
             recommendations.push({
-                category: 'spatial',
-                priority: 'medium',
-                issue: 'High spatial query frequency',
-                suggestion: 'Consider increasing spatial cell size or reducing query frequency'
+                category: "spatial",
+                priority: "medium",
+                issue: "High spatial query frequency",
+                suggestion: "Consider increasing spatial cell size or reducing query frequency"
             });
         }
         

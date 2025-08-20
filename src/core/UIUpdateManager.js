@@ -54,7 +54,7 @@ export class UIUpdateManager {
      */
     start() {
         if (this.isRunning) {
-            console.warn('UIUpdateManager already running');
+            console.warn("UIUpdateManager already running");
             return;
         }
         
@@ -62,7 +62,7 @@ export class UIUpdateManager {
         this.lastUpdateTime = performance.now();
         this.rafId = requestAnimationFrame(this.rafUpdate);
         
-        console.log('🎨 UIUpdateManager started');
+        console.log("🎨 UIUpdateManager started");
     }
     
     /**
@@ -77,7 +77,7 @@ export class UIUpdateManager {
             this.rafId = null;
         }
         
-        console.log('🎨 UIUpdateManager stopped');
+        console.log("🎨 UIUpdateManager stopped");
     }
     
     /**
@@ -118,7 +118,7 @@ export class UIUpdateManager {
             }
             
         } catch (error) {
-            console.error('Error in UIUpdateManager update:', error);
+            console.error("Error in UIUpdateManager update:", error);
         }
     }
     
@@ -217,7 +217,7 @@ export class UIUpdateManager {
             const element = this.getElement(elementId);
             if (element) {
                 // Use CSS transforms for optimal performance
-                let transformStr = '';
+                let transformStr = "";
                 
                 if (transform.x !== undefined || transform.y !== undefined) {
                     transformStr += `translate(${transform.x || 0}px, ${transform.y || 0}px) `;
@@ -284,19 +284,19 @@ export class UIUpdateManager {
      */
     updatePerformanceStats(stats) {
         if (stats.fps !== undefined) {
-            this.queueTextUpdate('fps', Math.round(stats.fps));
+            this.queueTextUpdate("fps", Math.round(stats.fps));
         }
         
         if (stats.drawCalls !== undefined) {
-            this.queueTextUpdate('draw-calls', stats.drawCalls);
+            this.queueTextUpdate("draw-calls", stats.drawCalls);
         }
         
         if (stats.spriteCount !== undefined) {
-            this.queueTextUpdate('sprite-count', stats.spriteCount);
+            this.queueTextUpdate("sprite-count", stats.spriteCount);
         }
         
         if (stats.memory !== undefined) {
-            this.queueTextUpdate('memory', `${Math.round(stats.memory)} MB`);
+            this.queueTextUpdate("memory", `${Math.round(stats.memory)} MB`);
         }
     }
     
@@ -372,6 +372,6 @@ export class UIUpdateManager {
         if (!enabled) {
             this.lastKnownState.clear();
         }
-        console.log(`🎨 Virtual DOM ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`🎨 Virtual DOM ${enabled ? "enabled" : "disabled"}`);
     }
 }

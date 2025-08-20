@@ -8,19 +8,19 @@
  * - Common UI interaction patterns
  */
 
-import { createEventManager } from './EventListenerManager.js';
+import { createEventManager } from "./EventListenerManager.js";
 
 export class UIEventDelegator {
     constructor(container = document.body) {
         this.container = container;
-        this.eventManager = createEventManager('UIEventDelegator');
+        this.eventManager = createEventManager("UIEventDelegator");
         this.handlers = new Map(); // selector -> Map(eventType -> handlers[])
         this.isDestroyed = false;
         
         // Common UI patterns
         this.setupCommonPatterns();
         
-        console.log('✅ UIEventDelegator initialized');
+        console.log("✅ UIEventDelegator initialized");
     }
     
     /**
@@ -28,71 +28,71 @@ export class UIEventDelegator {
      */
     setupCommonPatterns() {
         // Button click delegation
-        this.delegate('button, [role="button"], .btn', 'click', (event, element) => {
+        this.delegate("button, [role=\"button\"], .btn", "click", (event, element) => {
             // Prevent double-clicks and provide feedback
-            if (element.disabled || element.classList.contains('processing')) {
+            if (element.disabled || element.classList.contains("processing")) {
                 event.preventDefault();
                 return;
             }
             
             // Add visual feedback
-            element.classList.add('clicked');
+            element.classList.add("clicked");
             setTimeout(() => {
-                element.classList.remove('clicked');
+                element.classList.remove("clicked");
             }, 150);
         });
         
         // Form validation on input
-        this.delegate('input, textarea, select', 'input', (event, element) => {
+        this.delegate("input, textarea, select", "input", (event, element) => {
             // Remove error states on input
-            element.classList.remove('error', 'invalid');
-            const errorMsg = element.parentNode.querySelector('.error-message');
+            element.classList.remove("error", "invalid");
+            const errorMsg = element.parentNode.querySelector(".error-message");
             if (errorMsg) {
-                errorMsg.style.display = 'none';
+                errorMsg.style.display = "none";
             }
         });
         
         // Tooltip hover handling
-        this.delegate('[data-tooltip]', 'mouseenter', (event, element) => {
+        this.delegate("[data-tooltip]", "mouseenter", (event, element) => {
             this.showTooltip(element, element.dataset.tooltip);
         });
         
-        this.delegate('[data-tooltip]', 'mouseleave', (event, element) => {
+        this.delegate("[data-tooltip]", "mouseleave", () => {
             this.hideTooltip();
         });
         
         // Modal/dialog handling
-        this.delegate('[data-modal-trigger]', 'click', (event, element) => {
+        this.delegate("[data-modal-trigger]", "click", (event, element) => {
             const modalId = element.dataset.modalTrigger;
             this.openModal(modalId);
         });
         
-        this.delegate('[data-modal-close]', 'click', (event, element) => {
-            this.closeModal(element.closest('.modal'));
+        this.delegate("[data-modal-close]", "click", (event, element) => {
+            this.closeModal(element.closest(".modal"));
         });
         
         // Keyboard navigation
-        this.delegate('[tabindex], input, button, select, textarea, [role="button"]', 'keydown', (event, element) => {
+        this.delegate("[tabindex], input, button, select, textarea, [role=\"button\"]", "keydown", (event, element) => {
             this.handleKeyboardNavigation(event, element);
         });
         
         // Focus management
-        this.delegate('input, textarea, select', 'focus', (event, element) => {
-            element.closest('.form-group')?.classList.add('focused');
+        this.delegate("input, textarea, select", "focus", (event, element) => {
+            element.closest(".form-group")?.classList.add("focused");
         });
         
-        this.delegate('input, textarea, select', 'blur', (event, element) => {
-            element.closest('.form-group')?.classList.remove('focused');
+        this.delegate("input, textarea, select", "blur", (event, element) => {
+            element.closest(".form-group")?.classList.remove("focused");
         });
         
         // Drag and drop support
-        this.delegate('[draggable="true"]', 'dragstart', (event, element) => {
-            element.classList.add('dragging');
-            event.dataTransfer.effectAllowed = 'move';
+        this.delegate("[draggable=\"true\"]", "dragstart", (event, element) => {
+            element.classList.add("dragging");
+            event.dataTransfer.effectAllowed = "move";
         });
         
-        this.delegate('[draggable="true"]', 'dragend', (event, element) => {
-            element.classList.remove('dragging');
+        this.delegate("[draggable=\"true\"]", "dragend", (event, element) => {
+            element.classList.remove("dragging");
         });
     }
     
@@ -101,7 +101,7 @@ export class UIEventDelegator {
      */
     delegate(selector, eventType, handler, options = {}) {
         if (this.isDestroyed) {
-            console.warn('UIEventDelegator destroyed, ignoring delegate');
+            console.warn("UIEventDelegator destroyed, ignoring delegate");
             return false;
         }
         
@@ -169,42 +169,43 @@ export class UIEventDelegator {
      * Handle keyboard navigation
      */
     handleKeyboardNavigation(event, element) {
-        const { key, ctrlKey, altKey, shiftKey } = event;
+        const { key, shiftKey } = event;
         
         switch (key) {
-            case 'Enter':
-            case ' ': // Space
-                if (element.matches('button, [role="button"], .btn')) {
-                    event.preventDefault();
-                    element.click();
-                }
-                break;
+        case "Enter":
+        case " ": // Space
+            if (element.matches("button, [role=\"button\"], .btn")) {
+                event.preventDefault();
+                element.click();
+            }
+            break;
                 
-            case 'Tab':
-                // Let browser handle tab navigation but emit custom event
-                this.emit('navigation', {
-                    type: 'tab',
-                    element,
-                    direction: shiftKey ? 'backward' : 'forward'
-                });
-                break;
+        case "Tab":
+            // Let browser handle tab navigation but emit custom event
+            this.emit("navigation", {
+                type: "tab",
+                element,
+                direction: shiftKey ? "backward" : "forward"
+            });
+            break;
                 
-            case 'Escape':
-                // Close modals, dropdowns, etc.
-                const modal = element.closest('.modal');
-                if (modal) {
-                    this.closeModal(modal);
-                }
-                break;
+        case "Escape": {
+            // Close modals, dropdowns, etc.
+            const modal = element.closest(".modal");
+            if (modal) {
+                this.closeModal(modal);
+            }
+            break;
+        }
                 
-            case 'ArrowUp':
-            case 'ArrowDown':
-                if (element.matches('select, [role="listbox"], [role="menu"]')) {
-                    // Handle arrow navigation for custom controls
-                    event.preventDefault();
-                    this.navigateList(element, key === 'ArrowDown' ? 1 : -1);
-                }
-                break;
+        case "ArrowUp":
+        case "ArrowDown":
+            if (element.matches("select, [role=\"listbox\"], [role=\"menu\"]")) {
+                // Handle arrow navigation for custom controls
+                event.preventDefault();
+                this.navigateList(element, key === "ArrowDown" ? 1 : -1);
+            }
+            break;
         }
     }
     
@@ -212,28 +213,28 @@ export class UIEventDelegator {
      * Show tooltip
      */
     showTooltip(element, text) {
-        let tooltip = document.getElementById('global-tooltip');
+        let tooltip = document.getElementById("global-tooltip");
         if (!tooltip) {
-            tooltip = document.createElement('div');
-            tooltip.id = 'global-tooltip';
-            tooltip.className = 'tooltip';
+            tooltip = document.createElement("div");
+            tooltip.id = "global-tooltip";
+            tooltip.className = "tooltip";
             document.body.appendChild(tooltip);
         }
         
         tooltip.textContent = text;
-        tooltip.style.display = 'block';
+        tooltip.style.display = "block";
         
         // Position tooltip
         const rect = element.getBoundingClientRect();
-        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
-        tooltip.style.top = rect.top - tooltip.offsetHeight - 8 + 'px';
+        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + "px";
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 8 + "px";
         
         // Handle edge cases
         const tooltipRect = tooltip.getBoundingClientRect();
         if (tooltipRect.left < 0) {
-            tooltip.style.left = '8px';
+            tooltip.style.left = "8px";
         } else if (tooltipRect.right > window.innerWidth) {
-            tooltip.style.left = window.innerWidth - tooltipRect.width - 8 + 'px';
+            tooltip.style.left = window.innerWidth - tooltipRect.width - 8 + "px";
         }
     }
     
@@ -241,9 +242,9 @@ export class UIEventDelegator {
      * Hide tooltip
      */
     hideTooltip() {
-        const tooltip = document.getElementById('global-tooltip');
+        const tooltip = document.getElementById("global-tooltip");
         if (tooltip) {
-            tooltip.style.display = 'none';
+            tooltip.style.display = "none";
         }
     }
     
@@ -254,16 +255,16 @@ export class UIEventDelegator {
         const modal = document.getElementById(modalId);
         if (!modal) return;
         
-        modal.classList.add('open');
-        modal.style.display = 'block';
+        modal.classList.add("open");
+        modal.style.display = "block";
         
         // Focus first focusable element
-        const firstFocusable = modal.querySelector('input, button, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const firstFocusable = modal.querySelector("input, button, select, textarea, [tabindex]:not([tabindex=\"-1\"])");
         if (firstFocusable) {
             firstFocusable.focus();
         }
         
-        this.emit('modal-opened', { modalId, modal });
+        this.emit("modal-opened", { modalId, modal });
     }
     
     /**
@@ -272,29 +273,29 @@ export class UIEventDelegator {
     closeModal(modal) {
         if (!modal) return;
         
-        modal.classList.remove('open');
-        modal.style.display = 'none';
+        modal.classList.remove("open");
+        modal.style.display = "none";
         
-        this.emit('modal-closed', { modal });
+        this.emit("modal-closed", { modal });
     }
     
     /**
      * Navigate list items
      */
     navigateList(container, direction) {
-        const items = container.querySelectorAll('[role="option"], li, .list-item');
-        const currentIndex = Array.from(items).findIndex(item => item.classList.contains('selected') || item === document.activeElement);
+        const items = container.querySelectorAll("[role=\"option\"], li, .list-item");
+        const currentIndex = Array.from(items).findIndex(item => item.classList.contains("selected") || item === document.activeElement);
 
         let newIndex = currentIndex + direction;
         if (newIndex < 0) newIndex = items.length - 1;
         if (newIndex >= items.length) newIndex = 0;
 
         // Remove previous selection
-        items[currentIndex]?.classList.remove('selected');
+        items[currentIndex]?.classList.remove("selected");
 
         // Set new selection
         if (items[newIndex]) {
-            items[newIndex].classList.add('selected');
+            items[newIndex].classList.add("selected");
             items[newIndex].focus();
         }
     }
@@ -336,11 +337,11 @@ export class UIEventDelegator {
      */
     destroy() {
         if (this.isDestroyed) {
-            console.warn('UIEventDelegator already destroyed');
+            console.warn("UIEventDelegator already destroyed");
             return;
         }
 
-        console.log('🗑️ Destroying UIEventDelegator...');
+        console.log("🗑️ Destroying UIEventDelegator...");
 
         this.isDestroyed = true;
 
@@ -348,7 +349,7 @@ export class UIEventDelegator {
         this.hideTooltip();
 
         // Remove tooltip element
-        const tooltip = document.getElementById('global-tooltip');
+        const tooltip = document.getElementById("global-tooltip");
         if (tooltip) {
             tooltip.remove();
         }
@@ -363,7 +364,7 @@ export class UIEventDelegator {
         this.handlers.clear();
         this.container = null;
 
-        console.log('✅ UIEventDelegator destroyed successfully');
+        console.log("✅ UIEventDelegator destroyed successfully");
     }
 }
 
@@ -382,14 +383,14 @@ export function createUIEventDelegator(container) {
 /**
  * Utility functions for common UI patterns
  */
-export function delegateClick(selector, handler, container = document.body) {
-    return globalUIEventDelegator.delegate(selector, 'click', handler);
+export function delegateClick(selector, handler) {
+    return globalUIEventDelegator.delegate(selector, "click", handler);
 }
 
-export function delegateInput(selector, handler, container = document.body) {
-    return globalUIEventDelegator.delegate(selector, 'input', handler);
+export function delegateInput(selector, handler) {
+    return globalUIEventDelegator.delegate(selector, "input", handler);
 }
 
-export function delegateChange(selector, handler, container = document.body) {
-    return globalUIEventDelegator.delegate(selector, 'change', handler);
+export function delegateChange(selector, handler) {
+    return globalUIEventDelegator.delegate(selector, "change", handler);
 }

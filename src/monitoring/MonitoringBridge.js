@@ -4,15 +4,15 @@
  * for Command & Independent Thought performance monitoring
  */
 
-import { rtsProfiler } from './RTSProfiler.js';
-import { rtsDiagnostics } from './RTSDiagnostics.js';
-import { rtsHealthMonitor } from './RTSHealthMonitor.js';
+import { rtsProfiler } from "./RTSProfiler.js";
+import { rtsDiagnostics } from "./RTSDiagnostics.js";
+import { rtsHealthMonitor } from "./RTSHealthMonitor.js";
 
 class MonitoringBridge {
     constructor() {
         this.enabled = true;
         this.wsConnection = null;
-        this.monitoringEndpoint = 'ws://localhost:8082/ws';
+        this.monitoringEndpoint = "ws://localhost:8082/ws";
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 10;
         this.reconnectDelay = 5000;
@@ -34,7 +34,7 @@ class MonitoringBridge {
     initialize() {
         if (!this.enabled) return;
         
-        console.log('🌉 Initializing RTS Monitoring Bridge');
+        console.log("🌉 Initializing RTS Monitoring Bridge");
         
         // Setup global monitoring interface
         this.setupGlobalInterface();
@@ -48,14 +48,14 @@ class MonitoringBridge {
         // Setup periodic sync
         this.startPeriodicSync();
         
-        console.log('🌉 RTS Monitoring Bridge initialized');
+        console.log("🌉 RTS Monitoring Bridge initialized");
     }
     
     /**
      * Setup global monitoring interface
      */
     setupGlobalInterface() {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
             window.RTSMonitoringBridge = {
                 // Performance metrics
                 updateMetrics: (type, data) => this.updateMetrics(type, data),
@@ -92,23 +92,23 @@ class MonitoringBridge {
                     this.connectToExternalMonitoring();
                 };
                 this.integrationState.profilerConnected = true;
-                rtsDiagnostics.info('Profiler connected to monitoring bridge');
+                rtsDiagnostics.info("Profiler connected to monitoring bridge");
             }
 
             // Connect diagnostics
             if (rtsDiagnostics) {
                 this.integrationState.diagnosticsConnected = true;
-                rtsDiagnostics.info('Diagnostics connected to monitoring bridge');
+                rtsDiagnostics.info("Diagnostics connected to monitoring bridge");
             }
 
             // Connect health monitor
             if (rtsHealthMonitor) {
                 this.integrationState.healthMonitorConnected = true;
-                rtsDiagnostics.info('Health monitor connected to monitoring bridge');
+                rtsDiagnostics.info("Health monitor connected to monitoring bridge");
             }
 
         } catch (error) {
-            console.error('Failed to connect to monitoring systems:', error);
+            console.error("Failed to connect to monitoring systems:", error);
         }
     }
 
@@ -129,7 +129,7 @@ class MonitoringBridge {
             this.wsConnection = new WebSocket(this.monitoringEndpoint);
 
             this.wsConnection.onopen = () => {
-                console.log('✅ Connected to external monitoring');
+                console.log("✅ Connected to external monitoring");
                 this.integrationState.externalMonitoringConnected = true;
                 this.reconnectAttempts = 0;
 
@@ -138,7 +138,7 @@ class MonitoringBridge {
             };
 
             this.wsConnection.onclose = (event) => {
-                console.log('🔌 Disconnected from external monitoring');
+                console.log("🔌 Disconnected from external monitoring");
                 this.integrationState.externalMonitoringConnected = false;
 
                 // Attempt reconnection
@@ -150,12 +150,12 @@ class MonitoringBridge {
                         this.connectToExternalMonitoring();
                     }, this.reconnectDelay * this.reconnectAttempts);
                 } else {
-                    console.error('❌ Maximum reconnection attempts reached');
+                    console.error("❌ Maximum reconnection attempts reached");
                 }
             };
 
             this.wsConnection.onerror = (error) => {
-                console.error('WebSocket connection error:', error);
+                console.error("WebSocket connection error:", error);
             };
 
             this.wsConnection.onmessage = (event) => {
@@ -163,12 +163,12 @@ class MonitoringBridge {
                     const message = JSON.parse(event.data);
                     this.handleExternalMessage(message);
                 } catch (error) {
-                    console.error('Failed to parse monitoring message:', error);
+                    console.error("Failed to parse monitoring message:", error);
                 }
             };
 
         } catch (error) {
-            console.error('Failed to connect to external monitoring:', error);
+            console.error("Failed to connect to external monitoring:", error);
         }
     }
 
@@ -177,7 +177,7 @@ class MonitoringBridge {
      */
     sendInitialState() {
         this.sendToExternalMonitoring({
-            type: 'monitoring_bridge_connected',
+            type: "monitoring_bridge_connected",
             data: {
                 integrationState: this.integrationState,
                 initialMetrics: this.getPerformanceStats(),
@@ -192,32 +192,32 @@ class MonitoringBridge {
      */
     handleExternalMessage(message) {
         switch (message.type) {
-            case 'request_metrics':
-                this.sendToExternalMonitoring({
-                    type: 'metrics_response',
-                    data: this.getPerformanceStats(),
-                    timestamp: Date.now()
-                });
-                break;
+        case "request_metrics":
+            this.sendToExternalMonitoring({
+                type: "metrics_response",
+                data: this.getPerformanceStats(),
+                timestamp: Date.now()
+            });
+            break;
 
-            case 'request_health':
-                this.sendToExternalMonitoring({
-                    type: 'health_response',
-                    data: this.getHealthStatus(),
-                    timestamp: Date.now()
-                });
-                break;
+        case "request_health":
+            this.sendToExternalMonitoring({
+                type: "health_response",
+                data: this.getHealthStatus(),
+                timestamp: Date.now()
+            });
+            break;
 
-            case 'force_health_check':
-                this.forceHealthCheck();
-                break;
+        case "force_health_check":
+            this.forceHealthCheck();
+            break;
 
-            case 'set_monitoring_config':
-                this.updateMonitoringConfig(message.data);
-                break;
+        case "set_monitoring_config":
+            this.updateMonitoringConfig(message.data);
+            break;
 
-            default:
-                console.debug('Unknown monitoring message type:', message.type);
+        default:
+            console.debug("Unknown monitoring message type:", message.type);
         }
     }
 
@@ -250,7 +250,7 @@ class MonitoringBridge {
                 stats.profiler = rtsProfiler.getStats();
             }
         } catch (error) {
-            console.error('Failed to get profiler stats:', error);
+            console.error("Failed to get profiler stats:", error);
         }
 
         try {
@@ -258,7 +258,7 @@ class MonitoringBridge {
                 stats.diagnostics = rtsDiagnostics.getStats();
             }
         } catch (error) {
-            console.error('Failed to get diagnostics stats:', error);
+            console.error("Failed to get diagnostics stats:", error);
         }
 
         try {
@@ -266,7 +266,7 @@ class MonitoringBridge {
                 stats.health = rtsHealthMonitor.getHealthMetrics();
             }
         } catch (error) {
-            console.error('Failed to get health metrics:', error);
+            console.error("Failed to get health metrics:", error);
         }
 
         return stats;
@@ -277,7 +277,7 @@ class MonitoringBridge {
      */
     sendLog(logEntry) {
         const message = {
-            type: 'log_entry',
+            type: "log_entry",
             data: logEntry,
             timestamp: Date.now()
         };
@@ -290,16 +290,16 @@ class MonitoringBridge {
      */
     sendAlert(alert) {
         const message = {
-            type: 'alert',
+            type: "alert",
             data: alert,
             timestamp: Date.now(),
-            priority: alert.severity === 'critical' ? 'high' : 'normal'
+            priority: alert.severity === "critical" ? "high" : "normal"
         };
 
         this.sendToExternalMonitoring(message);
 
         // Also log locally
-        console.warn('🚨 Alert forwarded to external monitoring:', alert);
+        console.warn("🚨 Alert forwarded to external monitoring:", alert);
     }
 
     /**
@@ -311,15 +311,15 @@ class MonitoringBridge {
                 return rtsHealthMonitor.getDetailedHealthStatus();
             } else {
                 return {
-                    status: 'unknown',
-                    message: 'Health monitor not connected'
+                    status: "unknown",
+                    message: "Health monitor not connected"
                 };
             }
         } catch (error) {
-            console.error('Failed to get health status:', error);
+            console.error("Failed to get health status:", error);
             return {
-                status: 'error',
-                message: 'Failed to retrieve health status'
+                status: "error",
+                message: "Failed to retrieve health status"
             };
         }
     }
@@ -333,7 +333,7 @@ class MonitoringBridge {
                 return rtsHealthMonitor.forceHealthCheck();
             }
         } catch (error) {
-            console.error('Failed to force health check:', error);
+            console.error("Failed to force health check:", error);
         }
     }
 
@@ -366,10 +366,10 @@ class MonitoringBridge {
                 }
             }
 
-            console.log('📝 Monitoring configuration updated:', config);
+            console.log("📝 Monitoring configuration updated:", config);
 
         } catch (error) {
-            console.error('Failed to update monitoring configuration:', error);
+            console.error("Failed to update monitoring configuration:", error);
         }
     }
 
@@ -381,7 +381,7 @@ class MonitoringBridge {
             try {
                 this.wsConnection.send(JSON.stringify(message));
             } catch (error) {
-                console.error('Failed to send message to external monitoring:', error);
+                console.error("Failed to send message to external monitoring:", error);
             }
         }
     }
@@ -394,7 +394,7 @@ class MonitoringBridge {
             if (this.integrationState.externalMonitoringConnected) {
                 // Send periodic metrics update
                 this.sendToExternalMonitoring({
-                    type: 'periodic_sync',
+                    type: "periodic_sync",
                     data: {
                         metrics: this.getPerformanceStats(),
                         health: this.getHealthStatus(),
@@ -413,7 +413,7 @@ class MonitoringBridge {
         const exportData = {
             metadata: {
                 exportTime: new Date().toISOString(),
-                monitoringBridge: '1.0.0'
+                monitoringBridge: "1.0.0"
             },
             integrationState: this.integrationState,
             performanceStats: this.getPerformanceStats(),
@@ -438,10 +438,10 @@ class MonitoringBridge {
         }
 
         // Create downloadable file
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
 
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `rts-monitoring-export-${Date.now()}.json`;
         document.body.appendChild(a);
@@ -449,7 +449,7 @@ class MonitoringBridge {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        console.log('📊 Complete monitoring data exported');
+        console.log("📊 Complete monitoring data exported");
 
         return exportData;
     }
@@ -484,7 +484,7 @@ class MonitoringBridge {
             }
         }
 
-        console.log(`🌉 Monitoring Bridge ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`🌉 Monitoring Bridge ${enabled ? "enabled" : "disabled"}`);
     }
 
     /**
@@ -494,11 +494,11 @@ class MonitoringBridge {
         this.setEnabled(false);
 
         // Cleanup global interface
-        if (typeof window !== 'undefined' && window.RTSMonitoringBridge) {
+        if (typeof window !== "undefined" && window.RTSMonitoringBridge) {
             delete window.RTSMonitoringBridge;
         }
 
-        console.log('🌉 Monitoring Bridge disconnected');
+        console.log("🌉 Monitoring Bridge disconnected");
     }
 }
 

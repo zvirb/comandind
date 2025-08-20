@@ -3,26 +3,26 @@
  * Verifies network initialization, prediction, and basic performance
  */
 
-import * as tf from '@tensorflow/tfjs';
-import { QNetwork } from './QNetwork.js';
-import { NetworkConfig } from './NetworkConfig.js';
+import * as tf from "@tensorflow/tfjs";
+import { QNetwork } from "./QNetwork.js";
+import { NetworkConfig } from "./NetworkConfig.js";
 
 // Configure TensorFlow.js for testing
-tf.setBackend('cpu'); // Use CPU for consistent testing
+tf.setBackend("cpu"); // Use CPU for consistent testing
 
 /**
  * Test basic network functionality
  */
 async function testQNetwork() {
-    console.log('🧪 Testing QNetwork functionality...\n');
+    console.log("🧪 Testing QNetwork functionality...\n");
     
     try {
         // 1. Test network initialization
-        console.log('1️⃣ Testing network initialization...');
+        console.log("1️⃣ Testing network initialization...");
         const network = new QNetwork(NetworkConfig);
         const modelInfo = network.getModelInfo();
         
-        console.log('✅ Network initialized successfully');
+        console.log("✅ Network initialized successfully");
         console.log(`   Input size: ${modelInfo.architecture.inputSize}`);
         console.log(`   Hidden size: ${modelInfo.architecture.hiddenSize}`);
         console.log(`   Output size: ${modelInfo.architecture.outputSize}`);
@@ -30,7 +30,7 @@ async function testQNetwork() {
         console.log(`   Memory usage: ${modelInfo.performance.memoryUsage.toFixed(2)} MB\n`);
         
         // 2. Test prediction
-        console.log('2️⃣ Testing Q-value prediction...');
+        console.log("2️⃣ Testing Q-value prediction...");
         
         // Create sample state (36 dimensions as specified)
         const sampleState = Array.from({ length: 36 }, (_, i) => Math.random() * 2 - 1);
@@ -40,26 +40,26 @@ async function testQNetwork() {
         const qValues = network.predict(batchedStates);
         const endTime = performance.now();
         
-        console.log('✅ Prediction successful');
+        console.log("✅ Prediction successful");
         console.log(`   Input shape: [${batchedStates.length}, ${batchedStates[0].length}]`);
         console.log(`   Output shape: [${qValues.shape}]`);
         console.log(`   Inference time: ${(endTime - startTime).toFixed(2)} ms`);
         
         // Print sample Q-values
         const qValuesData = await qValues.data();
-        console.log(`   Sample Q-values: [${Array.from(qValuesData.slice(0, 8)).map(x => x.toFixed(3)).join(', ')}...]\n`);
+        console.log(`   Sample Q-values: [${Array.from(qValuesData.slice(0, 8)).map(x => x.toFixed(3)).join(", ")}...]\n`);
         
         qValues.dispose();
         
         // 3. Test target network prediction
-        console.log('3️⃣ Testing target network prediction...');
+        console.log("3️⃣ Testing target network prediction...");
         const targetQValues = network.predictTarget(batchedStates);
-        console.log('✅ Target prediction successful');
+        console.log("✅ Target prediction successful");
         console.log(`   Target output shape: [${targetQValues.shape}]\n`);
         targetQValues.dispose();
         
         // 4. Test training update (with mock data)
-        console.log('4️⃣ Testing training update...');
+        console.log("4️⃣ Testing training update...");
         
         const mockBatch = {
             states: [
@@ -76,16 +76,16 @@ async function testQNetwork() {
         };
         
         const trainingResult = await network.update(mockBatch);
-        console.log('✅ Training update successful');
+        console.log("✅ Training update successful");
         console.log(`   Loss: ${trainingResult.loss.toFixed(4)}`);
         console.log(`   Training step: ${trainingResult.step}`);
         console.log(`   Update time: ${trainingResult.inferenceTime.toFixed(2)} ms\n`);
         
         // 5. Test performance validation
-        console.log('5️⃣ Testing performance validation...');
+        console.log("5️⃣ Testing performance validation...");
         const validation = network.validatePerformance();
         
-        console.log('✅ Performance validation completed');
+        console.log("✅ Performance validation completed");
         console.log(`   Overall passed: ${validation.passed}`);
         console.log(`   Memory budget met: ${validation.details.memoryBudget} (${validation.metrics.memoryUsage.toFixed(2)}/${NetworkConfig.MAX_MEMORY_MB} MB)`);
         console.log(`   Inference speed met: ${validation.details.inferenceSpeed} (${network.inferenceTime.toFixed(2)}/${NetworkConfig.TARGET_INFERENCE_MS} ms)`);
@@ -93,28 +93,28 @@ async function testQNetwork() {
         console.log(`   Compilation valid: ${validation.details.compilation}\n`);
         
         // 6. Test model save/load (simulated)
-        console.log('6️⃣ Testing model persistence...');
+        console.log("6️⃣ Testing model persistence...");
         try {
             // Note: In Node.js environment, localStorage save might not work
             // This is primarily for browser environments
-            console.log('⚠️  Model save/load testing skipped (requires browser localStorage)');
-            console.log('   Save/load functionality available for browser environments\n');
+            console.log("⚠️  Model save/load testing skipped (requires browser localStorage)");
+            console.log("   Save/load functionality available for browser environments\n");
         } catch (error) {
-            console.log('⚠️  Model persistence test skipped:', error.message, '\n');
+            console.log("⚠️  Model persistence test skipped:", error.message, "\n");
         }
         
         // 7. Memory cleanup test
-        console.log('7️⃣ Testing memory cleanup...');
+        console.log("7️⃣ Testing memory cleanup...");
         const memoryBefore = tf.memory();
         network.dispose();
         const memoryAfter = tf.memory();
         
-        console.log('✅ Memory cleanup completed');
+        console.log("✅ Memory cleanup completed");
         console.log(`   Tensors before: ${memoryBefore.numTensors}`);
         console.log(`   Tensors after: ${memoryAfter.numTensors}`);
         console.log(`   Memory freed: ${((memoryBefore.numBytes - memoryAfter.numBytes) / 1024 / 1024).toFixed(2)} MB\n`);
         
-        console.log('🎉 All tests completed successfully!');
+        console.log("🎉 All tests completed successfully!");
         
         return {
             success: true,
@@ -129,7 +129,7 @@ async function testQNetwork() {
         };
         
     } catch (error) {
-        console.error('❌ Test failed:', error);
+        console.error("❌ Test failed:", error);
         return {
             success: false,
             error: error.message
@@ -141,7 +141,7 @@ async function testQNetwork() {
  * Run performance benchmark
  */
 async function benchmarkPerformance() {
-    console.log('\n🏃 Running performance benchmark...\n');
+    console.log("\n🏃 Running performance benchmark...\n");
     
     const network = new QNetwork(NetworkConfig);
     const iterations = 100;
@@ -169,7 +169,7 @@ async function benchmarkPerformance() {
     console.log(`   Minimum: ${minTime.toFixed(2)} ms`);
     console.log(`   Maximum: ${maxTime.toFixed(2)} ms`);
     console.log(`   Target: ${NetworkConfig.TARGET_INFERENCE_MS} ms`);
-    console.log(`   Performance: ${avgTime <= NetworkConfig.TARGET_INFERENCE_MS ? '✅ PASS' : '❌ FAIL'}\n`);
+    console.log(`   Performance: ${avgTime <= NetworkConfig.TARGET_INFERENCE_MS ? "✅ PASS" : "❌ FAIL"}\n`);
     
     network.dispose();
     
@@ -180,22 +180,22 @@ async function benchmarkPerformance() {
 }
 
 // Run tests if this file is executed directly
-if (typeof window === 'undefined' && import.meta.url === `file://${process.argv[1]}`) {
+if (typeof window === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
     testQNetwork()
         .then(result => {
             if (result.success) {
                 return benchmarkPerformance();
             } else {
-                console.error('Basic tests failed, skipping benchmark');
+                console.error("Basic tests failed, skipping benchmark");
                 process.exit(1);
             }
         })
         .then(benchmark => {
-            console.log('🏁 All tests and benchmarks completed!');
+            console.log("🏁 All tests and benchmarks completed!");
             process.exit(benchmark.targetMet ? 0 : 1);
         })
         .catch(error => {
-            console.error('Test execution failed:', error);
+            console.error("Test execution failed:", error);
             process.exit(1);
         });
 }

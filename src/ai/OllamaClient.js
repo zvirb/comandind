@@ -3,7 +3,7 @@
  * Minimal implementation focused on connection validation and circuit breaker pattern
  */
 
-import { OllamaConfig } from './OllamaConfig.js';
+import { OllamaConfig } from "./OllamaConfig.js";
 
 export class OllamaClient {
     constructor(config = {}) {
@@ -16,7 +16,7 @@ export class OllamaClient {
         
         // Circuit breaker state
         this.circuitBreaker = {
-            state: 'closed', // closed, open, half-open
+            state: "closed", // closed, open, half-open
             failures: 0,
             lastFailureTime: 0
         };
@@ -40,15 +40,15 @@ export class OllamaClient {
         
         try {
             // Check circuit breaker
-            if (this.circuitBreaker.state === 'open') {
+            if (this.circuitBreaker.state === "open") {
                 const timeSinceLastFailure = Date.now() - this.circuitBreaker.lastFailureTime;
                 if (timeSinceLastFailure < this.config.resetTimeout) {
-                    console.log('🚫 Circuit breaker is open, skipping connection test');
+                    console.log("🚫 Circuit breaker is open, skipping connection test");
                     return false;
                 }
                 // Transition to half-open
-                this.circuitBreaker.state = 'half-open';
-                console.log('🔄 Circuit breaker transitioning to half-open');
+                this.circuitBreaker.state = "half-open";
+                console.log("🔄 Circuit breaker transitioning to half-open");
             }
             
             const controller = new AbortController();
@@ -57,9 +57,9 @@ export class OllamaClient {
             }, this.config.connectionTimeout);
             
             const response = await fetch(`${this.config.host}${this.config.endpoints.health}`, {
-                method: 'GET',
+                method: "GET",
                 signal: controller.signal,
-                headers: { 'Content-Type': 'application/json' }
+                headers: { "Content-Type": "application/json" }
             });
             
             clearTimeout(timeoutId);
@@ -77,7 +77,7 @@ export class OllamaClient {
             const hasFallbackModel = availableModels.some(m => m.name === this.config.fallbackModel);
             
             if (!hasPreferredModel && !hasFallbackModel) {
-                throw new Error(`No compatible models available. Found: ${availableModels.map(m => m.name).join(', ')}`);
+                throw new Error(`No compatible models available. Found: ${availableModels.map(m => m.name).join(", ")}`);
             }
             
             // Update connection state
@@ -86,10 +86,10 @@ export class OllamaClient {
             this.lastHealthCheck = Date.now();
             
             // Reset circuit breaker on success
-            if (this.circuitBreaker.state === 'half-open') {
-                this.circuitBreaker.state = 'closed';
+            if (this.circuitBreaker.state === "half-open") {
+                this.circuitBreaker.state = "closed";
                 this.circuitBreaker.failures = 0;
-                console.log('✅ Circuit breaker reset to closed');
+                console.log("✅ Circuit breaker reset to closed");
             }
             
             this.updateMetrics(true, responseTime);
@@ -122,7 +122,7 @@ export class OllamaClient {
             if (!connected) {
                 return {
                     success: false,
-                    error: 'Not connected to Ollama',
+                    error: "Not connected to Ollama",
                     fallback: true
                 };
             }
@@ -146,8 +146,8 @@ export class OllamaClient {
             };
             
             const response = await fetch(`${this.config.host}${this.config.endpoints.generate}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody),
                 signal: controller.signal
             });
@@ -163,7 +163,7 @@ export class OllamaClient {
             
             this.updateMetrics(true, responseTime);
             
-            console.log(`✅ Test prompt successful (${responseTime}ms):`, data.response?.substring(0, 100) + '...');
+            console.log(`✅ Test prompt successful (${responseTime}ms):`, data.response?.substring(0, 100) + "...");
             
             return {
                 success: true,
@@ -179,11 +179,11 @@ export class OllamaClient {
             this.updateMetrics(false, responseTime);
             
             // Handle timeout specifically
-            if (error.name === 'AbortError') {
+            if (error.name === "AbortError") {
                 console.warn(`⏰ Test prompt timed out after ${this.config.requestTimeout}ms`);
                 return {
                     success: false,
-                    error: 'Request timeout',
+                    error: "Request timeout",
                     responseTime,
                     fallback: true
                 };
@@ -226,8 +226,8 @@ export class OllamaClient {
             }, this.config.requestTimeout * 4); // Longer timeout for streaming
             
             const response = await fetch(`${this.config.host}${this.config.endpoints.generate}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody),
                 signal: controller.signal
             });
@@ -247,7 +247,7 @@ export class OllamaClient {
                     if (done) break;
                     
                     const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n').filter(line => line.trim());
+                    const lines = chunk.split("\n").filter(line => line.trim());
                     
                     for (const line of lines) {
                         try {
@@ -259,7 +259,7 @@ export class OllamaClient {
                                 return;
                             }
                         } catch (parseError) {
-                            console.warn('Failed to parse stream chunk:', parseError);
+                            console.warn("Failed to parse stream chunk:", parseError);
                         }
                     }
                 }
@@ -279,7 +279,7 @@ export class OllamaClient {
      * @returns {boolean} Availability status
      */
     isAvailable() {
-        if (this.circuitBreaker.state === 'open') {
+        if (this.circuitBreaker.state === "open") {
             return false;
         }
         
@@ -319,7 +319,7 @@ export class OllamaClient {
         
         if (this.circuitBreaker.failures >= this.config.maxFailures) {
             console.warn(`⚡ Circuit breaker opened after ${this.circuitBreaker.failures} failures`);
-            this.circuitBreaker.state = 'open';
+            this.circuitBreaker.state = "open";
         }
     }
     
@@ -344,10 +344,10 @@ export class OllamaClient {
      * Reset circuit breaker manually (for testing)
      */
     resetCircuitBreaker() {
-        this.circuitBreaker.state = 'closed';
+        this.circuitBreaker.state = "closed";
         this.circuitBreaker.failures = 0;
         this.circuitBreaker.lastFailureTime = 0;
-        console.log('🔄 Circuit breaker manually reset');
+        console.log("🔄 Circuit breaker manually reset");
     }
     
     /**
@@ -355,7 +355,7 @@ export class OllamaClient {
      * @returns {Promise<boolean>} Health status
      */
     async checkHealth() {
-        console.log('🔍 Performing manual health check...');
+        console.log("🔍 Performing manual health check...");
         return await this.testConnection();
     }
 }
