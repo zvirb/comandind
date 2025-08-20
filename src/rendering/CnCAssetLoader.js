@@ -75,8 +75,8 @@ export class CnCAssetLoader {
             console.log(`   - ${Object.keys(this.unitData).length} unit types`);
             console.log(`   - ${Object.keys(this.buildingData).length} building types`);
             
-            // Generate placeholder textures
-            this.generatePlaceholderTextures();
+            // NOTE: Placeholder textures are now deprecated.
+            // Sprites are loaded via TextureAtlasManager.
             
             return true;
         } catch (error) {
