@@ -28,9 +28,9 @@ langgraph = "^0.2.55"
 # Modern authentication dependencies - Argon2 only
 pwdlib = {extras = ["argon2"], version = "^0.2.1"}
 pyjwt = "^2.10.1"
-cryptography = "^42.0.0"  # For enhanced JWT service encryption
+cryptography = "^45.0.6"  # For enhanced JWT service encryption
 
-python-multipart = "^0.0.9"
+python-multipart = "^0.0.20"
 qdrant-client = "^1.9.2" # Updated
 ollama = "^0.3.0"
 pydantic-settings = "^2.3.4" # Updated

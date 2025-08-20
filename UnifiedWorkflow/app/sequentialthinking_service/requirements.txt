@@ -7,28 +7,28 @@ pydantic-settings==2.1.0
 
 # LangGraph and state management
 langgraph==0.0.69
-langchain==0.1.0
-langchain-core==0.1.0
-langchain-community==0.0.10
+langchain==0.3.0.dev1
+langchain-core==0.1.53
+langchain-community==0.2.9
 
 # Redis for checkpointing
 redis==5.0.1
 redis[hiredis]==5.0.1
 
 # HTTP client and async support
-aiohttp==3.9.1
+aiohttp==3.12.14
 httpx==0.25.2
 
 # Authentication
 pyjwt==2.8.0
-cryptography==41.0.8
+cryptography==44.0.1
 
 # Data processing and validation
 numpy==1.24.4
 pandas==2.0.3
 
 # Utilities
-python-multipart==0.0.6
+python-multipart==0.0.18
 python-jose[cryptography]==3.3.0
 
 # Logging and monitoring
