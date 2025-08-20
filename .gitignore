@@ -1,33 +1,26 @@
-# Claude and UnifiedWorkflow related files - EXCLUDED FROM REPO
-UnifiedWorkflow/
+# Claude-specific files within UnifiedWorkflow
+UnifiedWorkflow/.claude/
+UnifiedWorkflow/CLAUDE.md
+UnifiedWorkflow/claude.json
+UnifiedWorkflow/*.claude
+UnifiedWorkflow/**/.claude/
+UnifiedWorkflow/**/CLAUDE.md
+UnifiedWorkflow/**/claude.json
+
+# Claude configuration files
 .claude/
 *.claude
 CLAUDE.md
 claude.json
 .claude.*
 
-# Claude specific patterns
-**/UnifiedWorkflow/**
-**/.claude/**
-**/CLAUDE.md
-**/claude.json
+# Claude-related backup directories
+.claude-backup-*
 
-# Additional Claude-related patterns
-claude-*
-*-claude.*
-*.claude.*
-claude_*
-*_claude.*
-
-# Workflow and orchestration patterns
-*workflow*
-*orchestration*
-*agentic*
-*nexus*
-*synthesis*
-
-# Test files that might be related to Claude workflow
-src/test/FunctionalValidationFramework.js
+# Specific Claude workflow files (but not all workflow files)
+**/unified-orchestration-config*.yaml
+**/orchestration_todos.json
+**/orchestration_config*.yaml
 
 # Dependencies
 node_modules/
