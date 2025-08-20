@@ -1,26 +1,12 @@
-# Claude-specific files within UnifiedWorkflow
-UnifiedWorkflow/.claude/
-UnifiedWorkflow/CLAUDE.md
-UnifiedWorkflow/claude.json
-UnifiedWorkflow/*.claude
-UnifiedWorkflow/**/.claude/
-UnifiedWorkflow/**/CLAUDE.md
-UnifiedWorkflow/**/claude.json
+# Claude configuration files (only in comandind root, not UnifiedWorkflow)
+/.claude/
+/*.claude
+/CLAUDE.md
+/claude.json
+/.claude.*
 
-# Claude configuration files
-.claude/
-*.claude
-CLAUDE.md
-claude.json
-.claude.*
-
-# Claude-related backup directories
-.claude-backup-*
-
-# Specific Claude workflow files (but not all workflow files)
-**/unified-orchestration-config*.yaml
-**/orchestration_todos.json
-**/orchestration_config*.yaml
+# Claude-related backup directories in comandind
+/.claude-backup-*
 
 # Dependencies
 node_modules/
