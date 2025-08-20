@@ -248,4 +248,150 @@ export class GPUMemoryMonitor {
             },
             thresholds: this.memoryPressureThresholds,
             history: this.performanceHistory.slice(-20) // Last 20 entries
-        };\n    }\n    \n    /**\n     * Get performance trends\n     */\n    getPerformanceTrends() {\n        if (this.performanceHistory.length < 2) {\n            return { trend: 'insufficient_data' };\n        }\n        \n        const recent = this.performanceHistory.slice(-10);\n        const memoryTrend = this.calculateTrend(recent.map(p => p.textureMemoryMB));\n        const textureTrend = this.calculateTrend(recent.map(p => p.activeTextures));\n        const pressureTrend = this.calculateTrend(recent.map(p => p.memoryPressure));\n        \n        return {\n            memory: memoryTrend,\n            textures: textureTrend,\n            pressure: pressureTrend,\n            recommendation: this.getOptimizationRecommendation(memoryTrend, pressureTrend)\n        };\n    }\n    \n    /**\n     * Calculate trend direction for a data series\n     */\n    calculateTrend(data) {\n        if (data.length < 2) return 'stable';\n        \n        const first = data[0];\n        const last = data[data.length - 1];\n        const change = (last - first) / Math.max(first, 1);\n        \n        if (change > 0.1) return 'increasing';\n        if (change < -0.1) return 'decreasing';\n        return 'stable';\n    }\n    \n    /**\n     * Get optimization recommendations\n     */\n    getOptimizationRecommendation(memoryTrend, pressureTrend) {\n        if (pressureTrend === 'increasing') {\n            return 'Consider reducing texture quality or implementing more aggressive cleanup';\n        }\n        \n        if (memoryTrend === 'increasing') {\n            return 'Monitor texture usage and consider implementing texture atlasing';\n        }\n        \n        return 'Memory usage is stable - no immediate action required';\n    }\n    \n    /**\n     * Check if WebGL context is lost\n     */\n    isContextLost() {\n        return this.gl && this.gl.isContextLost();\n    }\n    \n    /**\n     * Handle WebGL context loss\n     */\n    handleContextLoss() {\n        console.error('🚨 WebGL context lost!');\n        \n        // Clear all memory tracking\n        this.memoryStats.textureMemory = 0;\n        this.memoryStats.activeTextures = 0;\n        this.memoryStats.totalDrawCalls = 0;\n        \n        // Notify all callbacks about context loss\n        for (const callbacks of this.memoryPressureCallbacks.values()) {\n            callbacks.forEach(callback => {\n                try {\n                    callback(1.0, 'context_lost');\n                } catch (error) {\n                    console.error('Context loss callback error:', error);\n                }\n            });\n        }\n    }\n    \n    /**\n     * Start continuous monitoring\n     */\n    startMonitoring(interval = 5000) {\n        if (this.monitoringInterval) {\n            clearInterval(this.monitoringInterval);\n        }\n        \n        this.monitoringInterval = setInterval(() => {\n            if (!this.isContextLost()) {\n                this.updateMemoryStats();\n            } else {\n                this.handleContextLoss();\n            }\n        }, interval);\n        \n        console.log(`📊 Started GPU memory monitoring (${interval}ms interval)`);\n    }\n    \n    /**\n     * Stop monitoring\n     */\n    stopMonitoring() {\n        if (this.monitoringInterval) {\n            clearInterval(this.monitoringInterval);\n            this.monitoringInterval = null;\n        }\n        \n        console.log('⏹️ Stopped GPU memory monitoring');\n    }\n    \n    /**\n     * Destroy monitor and clean up\n     */\n    destroy() {\n        this.stopMonitoring();\n        \n        // Clear all callbacks\n        this.memoryPressureCallbacks.clear();\n        \n        // Clear history\n        this.performanceHistory = [];\n        \n        console.log('🔚 GPU Memory Monitor destroyed');\n    }\n}\n\n// Global GPU monitor instance\nexport let globalGPUMonitor = null;\n\n/**\n * Initialize global GPU monitor\n */\nexport function initializeGPUMonitor(renderer) {\n    if (globalGPUMonitor) {\n        globalGPUMonitor.destroy();\n    }\n    \n    globalGPUMonitor = new GPUMemoryMonitor(renderer);\n    globalGPUMonitor.startMonitoring();\n    \n    return globalGPUMonitor;\n}
+        };
+    }
+
+    /**
+     * Get performance trends
+     */
+    getPerformanceTrends() {
+        if (this.performanceHistory.length < 2) {
+            return { trend: 'insufficient_data' };
+        }
+
+        const recent = this.performanceHistory.slice(-10);
+        const memoryTrend = this.calculateTrend(recent.map(p => p.textureMemoryMB));
+        const textureTrend = this.calculateTrend(recent.map(p => p.activeTextures));
+        const pressureTrend = this.calculateTrend(recent.map(p => p.memoryPressure));
+
+        return {
+            memory: memoryTrend,
+            textures: textureTrend,
+            pressure: pressureTrend,
+            recommendation: this.getOptimizationRecommendation(memoryTrend, pressureTrend)
+        };
+    }
+
+    /**
+     * Calculate trend direction for a data series
+     */
+    calculateTrend(data) {
+        if (data.length < 2) return 'stable';
+
+        const first = data[0];
+        const last = data[data.length - 1];
+        const change = (last - first) / Math.max(first, 1);
+
+        if (change > 0.1) return 'increasing';
+        if (change < -0.1) return 'decreasing';
+        return 'stable';
+    }
+
+    /**
+     * Get optimization recommendations
+     */
+    getOptimizationRecommendation(memoryTrend, pressureTrend) {
+        if (pressureTrend === 'increasing') {
+            return 'Consider reducing texture quality or implementing more aggressive cleanup';
+        }
+
+        if (memoryTrend === 'increasing') {
+            return 'Monitor texture usage and consider implementing texture atlasing';
+        }
+
+        return 'Memory usage is stable - no immediate action required';
+    }
+
+    /**
+     * Check if WebGL context is lost
+     */
+    isContextLost() {
+        return this.gl && this.gl.isContextLost();
+    }
+
+    /**
+     * Handle WebGL context loss
+     */
+    handleContextLoss() {
+        console.error('🚨 WebGL context lost!');
+
+        // Clear all memory tracking
+        this.memoryStats.textureMemory = 0;
+        this.memoryStats.activeTextures = 0;
+        this.memoryStats.totalDrawCalls = 0;
+
+        // Notify all callbacks about context loss
+        for (const callbacks of this.memoryPressureCallbacks.values()) {
+            callbacks.forEach(callback => {
+                try {
+                    callback(1.0, 'context_lost');
+                } catch (error) {
+                    console.error('Context loss callback error:', error);
+                }
+            });
+        }
+    }
+
+    /**
+     * Start continuous monitoring
+     */
+    startMonitoring(interval = 5000) {
+        if (this.monitoringInterval) {
+            clearInterval(this.monitoringInterval);
+        }
+
+        this.monitoringInterval = setInterval(() => {
+            if (!this.isContextLost()) {
+                this.updateMemoryStats();
+            } else {
+                this.handleContextLoss();
+            }
+        }, interval);
+
+        console.log(`📊 Started GPU memory monitoring (${interval}ms interval)`);
+    }
+
+    /**
+     * Stop monitoring
+     */
+    stopMonitoring() {
+        if (this.monitoringInterval) {
+            clearInterval(this.monitoringInterval);
+            this.monitoringInterval = null;
+        }
+
+        console.log('⏹️ Stopped GPU memory monitoring');
+    }
+
+    /**
+     * Destroy monitor and clean up
+     */
+    destroy() {
+        this.stopMonitoring();
+
+        // Clear all callbacks
+        this.memoryPressureCallbacks.clear();
+
+        // Clear history
+        this.performanceHistory = [];
+
+        console.log('🔚 GPU Memory Monitor destroyed');
+    }
+}
+
+// Global GPU monitor instance
+export let globalGPUMonitor = null;
+
+/**
+ * Initialize global GPU monitor
+ */
+export function initializeGPUMonitor(renderer) {
+    if (globalGPUMonitor) {
+        globalGPUMonitor.destroy();
+    }
+
+    globalGPUMonitor = new GPUMemoryMonitor(renderer);
+    globalGPUMonitor.startMonitoring();
+
+    return globalGPUMonitor;
+}

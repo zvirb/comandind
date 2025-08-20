@@ -84,4 +84,423 @@ class MonitoringBridge {
      * Connect to internal monitoring systems
      */
     connectToMonitoringSystems() {
-        try {\n            // Connect profiler\n            if (rtsProfiler) {\n                rtsProfiler.connectToMonitoring = (wsUrl) => {\n                    this.monitoringEndpoint = wsUrl;\n                    this.connectToExternalMonitoring();\n                };\n                this.integrationState.profilerConnected = true;\n                rtsDiagnostics.info('Profiler connected to monitoring bridge');\n            }\n            \n            // Connect diagnostics\n            if (rtsDiagnostics) {\n                this.integrationState.diagnosticsConnected = true;\n                rtsDiagnostics.info('Diagnostics connected to monitoring bridge');\n            }\n            \n            // Connect health monitor\n            if (rtsHealthMonitor) {\n                this.integrationState.healthMonitorConnected = true;\n                rtsDiagnostics.info('Health monitor connected to monitoring bridge');\n            }\n            \n        } catch (error) {\n            console.error('Failed to connect to monitoring systems:', error);\n        }\n    }\n    \n    /**\n     * Connect to external monitoring WebSocket\n     */\n    connectToExternalMonitoring() {\n        if (!this.enabled) return;\n        \n        try {\n            // Close existing connection\n            if (this.wsConnection) {\n                this.wsConnection.close();\n            }\n            \n            console.log(`🔌 Connecting to external monitoring: ${this.monitoringEndpoint}`);\n            \n            this.wsConnection = new WebSocket(this.monitoringEndpoint);\n            \n            this.wsConnection.onopen = () => {\n                console.log('✅ Connected to external monitoring');\n                this.integrationState.externalMonitoringConnected = true;\n                this.reconnectAttempts = 0;\n                \n                // Send initial state\n                this.sendInitialState();\n            };\n            \n            this.wsConnection.onclose = (event) => {\n                console.log('🔌 Disconnected from external monitoring');\n                this.integrationState.externalMonitoringConnected = false;\n                \n                // Attempt reconnection\n                if (this.reconnectAttempts < this.maxReconnectAttempts) {\n                    this.reconnectAttempts++;\n                    console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);\n                    \n                    setTimeout(() => {\n                        this.connectToExternalMonitoring();\n                    }, this.reconnectDelay * this.reconnectAttempts);\n                } else {\n                    console.error('❌ Maximum reconnection attempts reached');\n                }\n            };\n            \n            this.wsConnection.onerror = (error) => {\n                console.error('WebSocket connection error:', error);\n            };\n            \n            this.wsConnection.onmessage = (event) => {\n                try {\n                    const message = JSON.parse(event.data);\n                    this.handleExternalMessage(message);\n                } catch (error) {\n                    console.error('Failed to parse monitoring message:', error);\n                }\n            };\n            \n        } catch (error) {\n            console.error('Failed to connect to external monitoring:', error);\n        }\n    }\n    \n    /**\n     * Send initial state to external monitoring\n     */\n    sendInitialState() {\n        this.sendToExternalMonitoring({\n            type: 'monitoring_bridge_connected',\n            data: {\n                integrationState: this.integrationState,\n                initialMetrics: this.getPerformanceStats(),\n                initialHealth: this.getHealthStatus(),\n                timestamp: Date.now()\n            }\n        });\n    }\n    \n    /**\n     * Handle messages from external monitoring\n     */\n    handleExternalMessage(message) {\n        switch (message.type) {\n            case 'request_metrics':\n                this.sendToExternalMonitoring({\n                    type: 'metrics_response',\n                    data: this.getPerformanceStats(),\n                    timestamp: Date.now()\n                });\n                break;\n                \n            case 'request_health':\n                this.sendToExternalMonitoring({\n                    type: 'health_response',\n                    data: this.getHealthStatus(),\n                    timestamp: Date.now()\n                });\n                break;\n                \n            case 'force_health_check':\n                this.forceHealthCheck();\n                break;\n                \n            case 'set_monitoring_config':\n                this.updateMonitoringConfig(message.data);\n                break;\n                \n            default:\n                console.debug('Unknown monitoring message type:', message.type);\n        }\n    }\n    \n    /**\n     * Update metrics from monitoring systems\n     */\n    updateMetrics(type, data) {\n        const message = {\n            type: `${type}_metrics_update`,\n            data,\n            timestamp: Date.now()\n        };\n        \n        this.sendToExternalMonitoring(message);\n    }\n    \n    /**\n     * Get comprehensive performance statistics\n     */\n    getPerformanceStats() {\n        const stats = {\n            timestamp: Date.now(),\n            profiler: null,\n            diagnostics: null,\n            health: null\n        };\n        \n        try {\n            if (rtsProfiler && this.integrationState.profilerConnected) {\n                stats.profiler = rtsProfiler.getStats();\n            }\n        } catch (error) {\n            console.error('Failed to get profiler stats:', error);\n        }\n        \n        try {\n            if (rtsDiagnostics && this.integrationState.diagnosticsConnected) {\n                stats.diagnostics = rtsDiagnostics.getStats();\n            }\n        } catch (error) {\n            console.error('Failed to get diagnostics stats:', error);\n        }\n        \n        try {\n            if (rtsHealthMonitor && this.integrationState.healthMonitorConnected) {\n                stats.health = rtsHealthMonitor.getHealthMetrics();\n            }\n        } catch (error) {\n            console.error('Failed to get health metrics:', error);\n        }\n        \n        return stats;\n    }\n    \n    /**\n     * Send log entry to external monitoring\n     */\n    sendLog(logEntry) {\n        const message = {\n            type: 'log_entry',\n            data: logEntry,\n            timestamp: Date.now()\n        };\n        \n        this.sendToExternalMonitoring(message);\n    }\n    \n    /**\n     * Send alert to external monitoring\n     */\n    sendAlert(alert) {\n        const message = {\n            type: 'alert',\n            data: alert,\n            timestamp: Date.now(),\n            priority: alert.severity === 'critical' ? 'high' : 'normal'\n        };\n        \n        this.sendToExternalMonitoring(message);\n        \n        // Also log locally\n        console.warn('🚨 Alert forwarded to external monitoring:', alert);\n    }\n    \n    /**\n     * Get current health status\n     */\n    getHealthStatus() {\n        try {\n            if (rtsHealthMonitor && this.integrationState.healthMonitorConnected) {\n                return rtsHealthMonitor.getDetailedHealthStatus();\n            } else {\n                return {\n                    status: 'unknown',\n                    message: 'Health monitor not connected'\n                };\n            }\n        } catch (error) {\n            console.error('Failed to get health status:', error);\n            return {\n                status: 'error',\n                message: 'Failed to retrieve health status'\n            };\n        }\n    }\n    \n    /**\n     * Force health check\n     */\n    forceHealthCheck() {\n        try {\n            if (rtsHealthMonitor && this.integrationState.healthMonitorConnected) {\n                return rtsHealthMonitor.forceHealthCheck();\n            }\n        } catch (error) {\n            console.error('Failed to force health check:', error);\n        }\n    }\n    \n    /**\n     * Update monitoring configuration\n     */\n    updateMonitoringConfig(config) {\n        try {\n            if (config.profiler && rtsProfiler) {\n                if (config.profiler.enabled !== undefined) {\n                    rtsProfiler.setEnabled(config.profiler.enabled);\n                }\n            }\n            \n            if (config.diagnostics && rtsDiagnostics) {\n                if (config.diagnostics.logLevel) {\n                    rtsDiagnostics.setLogLevel(config.diagnostics.logLevel);\n                }\n                if (config.diagnostics.enabled !== undefined) {\n                    rtsDiagnostics.setEnabled(config.diagnostics.enabled);\n                }\n            }\n            \n            if (config.healthMonitor && rtsHealthMonitor) {\n                if (config.healthMonitor.checkInterval) {\n                    rtsHealthMonitor.setCheckInterval(config.healthMonitor.checkInterval);\n                }\n                if (config.healthMonitor.enabled !== undefined) {\n                    rtsHealthMonitor.setEnabled(config.healthMonitor.enabled);\n                }\n            }\n            \n            console.log('📝 Monitoring configuration updated:', config);\n            \n        } catch (error) {\n            console.error('Failed to update monitoring configuration:', error);\n        }\n    }\n    \n    /**\n     * Send message to external monitoring\n     */\n    sendToExternalMonitoring(message) {\n        if (this.wsConnection && this.wsConnection.readyState === WebSocket.OPEN) {\n            try {\n                this.wsConnection.send(JSON.stringify(message));\n            } catch (error) {\n                console.error('Failed to send message to external monitoring:', error);\n            }\n        }\n    }\n    \n    /**\n     * Start periodic sync with external monitoring\n     */\n    startPeriodicSync() {\n        setInterval(() => {\n            if (this.integrationState.externalMonitoringConnected) {\n                // Send periodic metrics update\n                this.sendToExternalMonitoring({\n                    type: 'periodic_sync',\n                    data: {\n                        metrics: this.getPerformanceStats(),\n                        health: this.getHealthStatus(),\n                        integrationState: this.integrationState\n                    },\n                    timestamp: Date.now()\n                });\n            }\n        }, 60000); // Every minute\n    }\n    \n    /**\n     * Export all monitoring data\n     */\n    exportAllData() {\n        const exportData = {\n            metadata: {\n                exportTime: new Date().toISOString(),\n                monitoringBridge: '1.0.0'\n            },\n            integrationState: this.integrationState,\n            performanceStats: this.getPerformanceStats(),\n            healthStatus: this.getHealthStatus()\n        };\n        \n        // Add individual system reports if available\n        try {\n            if (rtsProfiler && this.integrationState.profilerConnected) {\n                exportData.profilerReport = rtsProfiler.generateReport();\n            }\n        } catch (error) {\n            exportData.profilerError = error.message;\n        }\n        \n        try {\n            if (rtsDiagnostics && this.integrationState.diagnosticsConnected) {\n                exportData.diagnosticsReport = rtsDiagnostics.generateDiagnosticReport();\n            }\n        } catch (error) {\n            exportData.diagnosticsError = error.message;\n        }\n        \n        // Create downloadable file\n        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });\n        const url = URL.createObjectURL(blob);\n        \n        const a = document.createElement('a');\n        a.href = url;\n        a.download = `rts-monitoring-export-${Date.now()}.json`;\n        document.body.appendChild(a);\n        a.click();\n        document.body.removeChild(a);\n        URL.revokeObjectURL(url);\n        \n        console.log('📊 Complete monitoring data exported');\n        \n        return exportData;\n    }\n    \n    /**\n     * Get connection status\n     */\n    getConnectionStatus() {\n        return {\n            bridge: this.enabled,\n            integrationState: this.integrationState,\n            externalMonitoring: {\n                connected: this.integrationState.externalMonitoringConnected,\n                endpoint: this.monitoringEndpoint,\n                reconnectAttempts: this.reconnectAttempts,\n                wsReadyState: this.wsConnection ? this.wsConnection.readyState : null\n            }\n        };\n    }\n    \n    /**\n     * Enable or disable monitoring bridge\n     */\n    setEnabled(enabled) {\n        this.enabled = enabled;\n        \n        if (enabled) {\n            this.connectToExternalMonitoring();\n        } else {\n            if (this.wsConnection) {\n                this.wsConnection.close();\n            }\n        }\n        \n        console.log(`🌉 Monitoring Bridge ${enabled ? 'enabled' : 'disabled'}`);\n    }\n    \n    /**\n     * Cleanup and disconnect\n     */\n    disconnect() {\n        this.setEnabled(false);\n        \n        // Cleanup global interface\n        if (typeof window !== 'undefined' && window.RTSMonitoringBridge) {\n            delete window.RTSMonitoringBridge;\n        }\n        \n        console.log('🌉 Monitoring Bridge disconnected');\n    }\n}\n\n// Global monitoring bridge instance\nexport const monitoringBridge = new MonitoringBridge();
+        try {
+            // Connect profiler
+            if (rtsProfiler) {
+                rtsProfiler.connectToMonitoring = (wsUrl) => {
+                    this.monitoringEndpoint = wsUrl;
+                    this.connectToExternalMonitoring();
+                };
+                this.integrationState.profilerConnected = true;
+                rtsDiagnostics.info('Profiler connected to monitoring bridge');
+            }
+
+            // Connect diagnostics
+            if (rtsDiagnostics) {
+                this.integrationState.diagnosticsConnected = true;
+                rtsDiagnostics.info('Diagnostics connected to monitoring bridge');
+            }
+
+            // Connect health monitor
+            if (rtsHealthMonitor) {
+                this.integrationState.healthMonitorConnected = true;
+                rtsDiagnostics.info('Health monitor connected to monitoring bridge');
+            }
+
+        } catch (error) {
+            console.error('Failed to connect to monitoring systems:', error);
+        }
+    }
+
+    /**
+     * Connect to external monitoring WebSocket
+     */
+    connectToExternalMonitoring() {
+        if (!this.enabled) return;
+
+        try {
+            // Close existing connection
+            if (this.wsConnection) {
+                this.wsConnection.close();
+            }
+
+            console.log(`🔌 Connecting to external monitoring: ${this.monitoringEndpoint}`);
+
+            this.wsConnection = new WebSocket(this.monitoringEndpoint);
+
+            this.wsConnection.onopen = () => {
+                console.log('✅ Connected to external monitoring');
+                this.integrationState.externalMonitoringConnected = true;
+                this.reconnectAttempts = 0;
+
+                // Send initial state
+                this.sendInitialState();
+            };
+
+            this.wsConnection.onclose = (event) => {
+                console.log('🔌 Disconnected from external monitoring');
+                this.integrationState.externalMonitoringConnected = false;
+
+                // Attempt reconnection
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                    this.reconnectAttempts++;
+                    console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+
+                    setTimeout(() => {
+                        this.connectToExternalMonitoring();
+                    }, this.reconnectDelay * this.reconnectAttempts);
+                } else {
+                    console.error('❌ Maximum reconnection attempts reached');
+                }
+            };
+
+            this.wsConnection.onerror = (error) => {
+                console.error('WebSocket connection error:', error);
+            };
+
+            this.wsConnection.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    this.handleExternalMessage(message);
+                } catch (error) {
+                    console.error('Failed to parse monitoring message:', error);
+                }
+            };
+
+        } catch (error) {
+            console.error('Failed to connect to external monitoring:', error);
+        }
+    }
+
+    /**
+     * Send initial state to external monitoring
+     */
+    sendInitialState() {
+        this.sendToExternalMonitoring({
+            type: 'monitoring_bridge_connected',
+            data: {
+                integrationState: this.integrationState,
+                initialMetrics: this.getPerformanceStats(),
+                initialHealth: this.getHealthStatus(),
+                timestamp: Date.now()
+            }
+        });
+    }
+
+    /**
+     * Handle messages from external monitoring
+     */
+    handleExternalMessage(message) {
+        switch (message.type) {
+            case 'request_metrics':
+                this.sendToExternalMonitoring({
+                    type: 'metrics_response',
+                    data: this.getPerformanceStats(),
+                    timestamp: Date.now()
+                });
+                break;
+
+            case 'request_health':
+                this.sendToExternalMonitoring({
+                    type: 'health_response',
+                    data: this.getHealthStatus(),
+                    timestamp: Date.now()
+                });
+                break;
+
+            case 'force_health_check':
+                this.forceHealthCheck();
+                break;
+
+            case 'set_monitoring_config':
+                this.updateMonitoringConfig(message.data);
+                break;
+
+            default:
+                console.debug('Unknown monitoring message type:', message.type);
+        }
+    }
+
+    /**
+     * Update metrics from monitoring systems
+     */
+    updateMetrics(type, data) {
+        const message = {
+            type: `${type}_metrics_update`,
+            data,
+            timestamp: Date.now()
+        };
+
+        this.sendToExternalMonitoring(message);
+    }
+
+    /**
+     * Get comprehensive performance statistics
+     */
+    getPerformanceStats() {
+        const stats = {
+            timestamp: Date.now(),
+            profiler: null,
+            diagnostics: null,
+            health: null
+        };
+
+        try {
+            if (rtsProfiler && this.integrationState.profilerConnected) {
+                stats.profiler = rtsProfiler.getStats();
+            }
+        } catch (error) {
+            console.error('Failed to get profiler stats:', error);
+        }
+
+        try {
+            if (rtsDiagnostics && this.integrationState.diagnosticsConnected) {
+                stats.diagnostics = rtsDiagnostics.getStats();
+            }
+        } catch (error) {
+            console.error('Failed to get diagnostics stats:', error);
+        }
+
+        try {
+            if (rtsHealthMonitor && this.integrationState.healthMonitorConnected) {
+                stats.health = rtsHealthMonitor.getHealthMetrics();
+            }
+        } catch (error) {
+            console.error('Failed to get health metrics:', error);
+        }
+
+        return stats;
+    }
+
+    /**
+     * Send log entry to external monitoring
+     */
+    sendLog(logEntry) {
+        const message = {
+            type: 'log_entry',
+            data: logEntry,
+            timestamp: Date.now()
+        };
+
+        this.sendToExternalMonitoring(message);
+    }
+
+    /**
+     * Send alert to external monitoring
+     */
+    sendAlert(alert) {
+        const message = {
+            type: 'alert',
+            data: alert,
+            timestamp: Date.now(),
+            priority: alert.severity === 'critical' ? 'high' : 'normal'
+        };
+
+        this.sendToExternalMonitoring(message);
+
+        // Also log locally
+        console.warn('🚨 Alert forwarded to external monitoring:', alert);
+    }
+
+    /**
+     * Get current health status
+     */
+    getHealthStatus() {
+        try {
+            if (rtsHealthMonitor && this.integrationState.healthMonitorConnected) {
+                return rtsHealthMonitor.getDetailedHealthStatus();
+            } else {
+                return {
+                    status: 'unknown',
+                    message: 'Health monitor not connected'
+                };
+            }
+        } catch (error) {
+            console.error('Failed to get health status:', error);
+            return {
+                status: 'error',
+                message: 'Failed to retrieve health status'
+            };
+        }
+    }
+
+    /**
+     * Force health check
+     */
+    forceHealthCheck() {
+        try {
+            if (rtsHealthMonitor && this.integrationState.healthMonitorConnected) {
+                return rtsHealthMonitor.forceHealthCheck();
+            }
+        } catch (error) {
+            console.error('Failed to force health check:', error);
+        }
+    }
+
+    /**
+     * Update monitoring configuration
+     */
+    updateMonitoringConfig(config) {
+        try {
+            if (config.profiler && rtsProfiler) {
+                if (config.profiler.enabled !== undefined) {
+                    rtsProfiler.setEnabled(config.profiler.enabled);
+                }
+            }
+
+            if (config.diagnostics && rtsDiagnostics) {
+                if (config.diagnostics.logLevel) {
+                    rtsDiagnostics.setLogLevel(config.diagnostics.logLevel);
+                }
+                if (config.diagnostics.enabled !== undefined) {
+                    rtsDiagnostics.setEnabled(config.diagnostics.enabled);
+                }
+            }
+
+            if (config.healthMonitor && rtsHealthMonitor) {
+                if (config.healthMonitor.checkInterval) {
+                    rtsHealthMonitor.setCheckInterval(config.healthMonitor.checkInterval);
+                }
+                if (config.healthMonitor.enabled !== undefined) {
+                    rtsHealthMonitor.setEnabled(config.healthMonitor.enabled);
+                }
+            }
+
+            console.log('📝 Monitoring configuration updated:', config);
+
+        } catch (error) {
+            console.error('Failed to update monitoring configuration:', error);
+        }
+    }
+
+    /**
+     * Send message to external monitoring
+     */
+    sendToExternalMonitoring(message) {
+        if (this.wsConnection && this.wsConnection.readyState === WebSocket.OPEN) {
+            try {
+                this.wsConnection.send(JSON.stringify(message));
+            } catch (error) {
+                console.error('Failed to send message to external monitoring:', error);
+            }
+        }
+    }
+
+    /**
+     * Start periodic sync with external monitoring
+     */
+    startPeriodicSync() {
+        setInterval(() => {
+            if (this.integrationState.externalMonitoringConnected) {
+                // Send periodic metrics update
+                this.sendToExternalMonitoring({
+                    type: 'periodic_sync',
+                    data: {
+                        metrics: this.getPerformanceStats(),
+                        health: this.getHealthStatus(),
+                        integrationState: this.integrationState
+                    },
+                    timestamp: Date.now()
+                });
+            }
+        }, 60000); // Every minute
+    }
+
+    /**
+     * Export all monitoring data
+     */
+    exportAllData() {
+        const exportData = {
+            metadata: {
+                exportTime: new Date().toISOString(),
+                monitoringBridge: '1.0.0'
+            },
+            integrationState: this.integrationState,
+            performanceStats: this.getPerformanceStats(),
+            healthStatus: this.getHealthStatus()
+        };
+
+        // Add individual system reports if available
+        try {
+            if (rtsProfiler && this.integrationState.profilerConnected) {
+                exportData.profilerReport = rtsProfiler.generateReport();
+            }
+        } catch (error) {
+            exportData.profilerError = error.message;
+        }
+
+        try {
+            if (rtsDiagnostics && this.integrationState.diagnosticsConnected) {
+                exportData.diagnosticsReport = rtsDiagnostics.generateDiagnosticReport();
+            }
+        } catch (error) {
+            exportData.diagnosticsError = error.message;
+        }
+
+        // Create downloadable file
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `rts-monitoring-export-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        console.log('📊 Complete monitoring data exported');
+
+        return exportData;
+    }
+
+    /**
+     * Get connection status
+     */
+    getConnectionStatus() {
+        return {
+            bridge: this.enabled,
+            integrationState: this.integrationState,
+            externalMonitoring: {
+                connected: this.integrationState.externalMonitoringConnected,
+                endpoint: this.monitoringEndpoint,
+                reconnectAttempts: this.reconnectAttempts,
+                wsReadyState: this.wsConnection ? this.wsConnection.readyState : null
+            }
+        };
+    }
+
+    /**
+     * Enable or disable monitoring bridge
+     */
+    setEnabled(enabled) {
+        this.enabled = enabled;
+
+        if (enabled) {
+            this.connectToExternalMonitoring();
+        } else {
+            if (this.wsConnection) {
+                this.wsConnection.close();
+            }
+        }
+
+        console.log(`🌉 Monitoring Bridge ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    /**
+     * Cleanup and disconnect
+     */
+    disconnect() {
+        this.setEnabled(false);
+
+        // Cleanup global interface
+        if (typeof window !== 'undefined' && window.RTSMonitoringBridge) {
+            delete window.RTSMonitoringBridge;
+        }
+
+        console.log('🌉 Monitoring Bridge disconnected');
+    }
+}
+
+// Global monitoring bridge instance
+export const monitoringBridge = new MonitoringBridge();

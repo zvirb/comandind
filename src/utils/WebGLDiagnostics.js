@@ -61,4 +61,984 @@ export class WebGLDiagnostics {
     
     /**
      * Test browser compatibility
-     */\n    async testBrowserCompatibility() {\n        console.log('🧪 Testing Browser Compatibility...');\n        \n        const compatChecker = new BrowserCompatibilityChecker();\n        const report = compatChecker.getReport();\n        \n        this.results.browser = report;\n        \n        if (!report.compatible) {\n            this.errors.push('Browser is not compatible with WebGL');\n            return;\n        }\n        \n        this.addTest('Browser Compatibility', 'PASS', 'Browser supports required WebGL features');\n        \n        // Add specific warnings from compatibility check\n        report.warnings.forEach(warning => this.warnings.push(warning));\n        report.errors.forEach(error => this.errors.push(error));\n    }\n    \n    /**\n     * Test WebGL context creation and stability\n     */\n    async testWebGLContext() {\n        console.log('🧪 Testing WebGL Context...');\n        \n        const canvas = document.createElement('canvas');\n        canvas.width = 512;\n        canvas.height = 512;\n        \n        // Test WebGL2 context\n        let gl2 = null;\n        try {\n            gl2 = canvas.getContext('webgl2');\n            if (gl2) {\n                this.addTest('WebGL2 Context', 'PASS', 'WebGL2 context created successfully');\n                await this.testContextStability(gl2, 'WebGL2');\n            } else {\n                this.addTest('WebGL2 Context', 'FAIL', 'WebGL2 context creation failed');\n            }\n        } catch (error) {\n            this.addTest('WebGL2 Context', 'ERROR', `WebGL2 error: ${error.message}`);\n        }\n        \n        // Test WebGL1 context\n        let gl1 = null;\n        try {\n            gl1 = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');\n            if (gl1) {\n                this.addTest('WebGL1 Context', 'PASS', 'WebGL1 context created successfully');\n                await this.testContextStability(gl1, 'WebGL1');\n                \n                // Use WebGL1 for remaining tests if WebGL2 failed\n                if (!gl2) {\n                    await this.testWebGLCapabilities(gl1);\n                }\n            } else {\n                this.addTest('WebGL1 Context', 'FAIL', 'WebGL1 context creation failed');\n                this.errors.push('No WebGL context available');\n            }\n        } catch (error) {\n            this.addTest('WebGL1 Context', 'ERROR', `WebGL1 error: ${error.message}`);\n        }\n        \n        // Test with the best available context\n        const gl = gl2 || gl1;\n        if (gl) {\n            await this.testWebGLCapabilities(gl);\n            await this.testShaderCompilation(gl);\n            await this.testBufferOperations(gl);\n            await this.testFramebufferOperations(gl);\n        }\n        \n        this.results.context = {\n            webgl2Available: !!gl2,\n            webgl1Available: !!gl1,\n            preferredContext: gl2 ? 'webgl2' : gl1 ? 'webgl' : 'none'\n        };\n    }\n    \n    /**\n     * Test context stability and loss/restore\n     */\n    async testContextStability(gl, contextType) {\n        try {\n            // Test context loss extension\n            const loseExt = gl.getExtension('WEBGL_lose_context');\n            if (loseExt) {\n                this.addTest(`${contextType} Context Loss Extension`, 'PASS', 'Context loss extension available');\n                \n                // Test context loss/restore (be careful with this)\n                // We'll just verify the extension exists rather than actually losing context\n                if (typeof loseExt.loseContext === 'function' && typeof loseExt.restoreContext === 'function') {\n                    this.addTest(`${contextType} Context Loss/Restore`, 'PASS', 'Context loss/restore methods available');\n                } else {\n                    this.addTest(`${contextType} Context Loss/Restore`, 'FAIL', 'Context loss/restore methods missing');\n                }\n            } else {\n                this.addTest(`${contextType} Context Loss Extension`, 'FAIL', 'Context loss extension not available');\n                this.warnings.push('Context loss extension not available - context recovery not possible');\n            }\n            \n            // Test context stability indicators\n            if (gl.isContextLost()) {\n                this.addTest(`${contextType} Context Status`, 'FAIL', 'Context is already lost');\n                this.errors.push(`${contextType} context is lost`);\n            } else {\n                this.addTest(`${contextType} Context Status`, 'PASS', 'Context is active and stable');\n            }\n            \n        } catch (error) {\n            this.addTest(`${contextType} Context Stability`, 'ERROR', `Stability test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Test WebGL capabilities and limits\n     */\n    async testWebGLCapabilities(gl) {\n        console.log('🧪 Testing WebGL Capabilities...');\n        \n        const capabilities = {};\n        \n        try {\n            // Basic parameters\n            const params = {\n                'MAX_TEXTURE_SIZE': gl.MAX_TEXTURE_SIZE,\n                'MAX_TEXTURE_IMAGE_UNITS': gl.MAX_TEXTURE_IMAGE_UNITS,\n                'MAX_VERTEX_ATTRIBS': gl.MAX_VERTEX_ATTRIBS,\n                'MAX_VERTEX_UNIFORM_VECTORS': gl.MAX_VERTEX_UNIFORM_VECTORS,\n                'MAX_FRAGMENT_UNIFORM_VECTORS': gl.MAX_FRAGMENT_UNIFORM_VECTORS,\n                'MAX_VARYING_VECTORS': gl.MAX_VARYING_VECTORS,\n                'MAX_VIEWPORT_DIMS': gl.MAX_VIEWPORT_DIMS,\n                'MAX_RENDERBUFFER_SIZE': gl.MAX_RENDERBUFFER_SIZE\n            };\n            \n            Object.entries(params).forEach(([name, param]) => {\n                try {\n                    const value = gl.getParameter(param);\n                    capabilities[name] = value;\n                    \n                    // Check against minimum requirements\n                    const result = this.validateParameter(name, value);\n                    this.addTest(`WebGL ${name}`, result.status, result.message);\n                    \n                } catch (error) {\n                    this.addTest(`WebGL ${name}`, 'ERROR', `Failed to query: ${error.message}`);\n                }\n            });\n            \n            // Test extensions\n            const extensions = this.testWebGLExtensions(gl);\n            capabilities.extensions = extensions;\n            \n            this.results.webgl = capabilities;\n            \n        } catch (error) {\n            this.addTest('WebGL Capabilities', 'ERROR', `Capabilities test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Validate WebGL parameters against requirements\n     */\n    validateParameter(name, value) {\n        const requirements = {\n            'MAX_TEXTURE_SIZE': { min: 2048, recommended: 4096 },\n            'MAX_TEXTURE_IMAGE_UNITS': { min: 8, recommended: 16 },\n            'MAX_VERTEX_ATTRIBS': { min: 8, recommended: 16 },\n            'MAX_VERTEX_UNIFORM_VECTORS': { min: 128, recommended: 256 },\n            'MAX_FRAGMENT_UNIFORM_VECTORS': { min: 16, recommended: 32 },\n            'MAX_VARYING_VECTORS': { min: 8, recommended: 16 }\n        };\n        \n        const req = requirements[name];\n        if (!req) {\n            return { status: 'INFO', message: `${name}: ${Array.isArray(value) ? value.join('x') : value}` };\n        }\n        \n        const val = Array.isArray(value) ? Math.min(...value) : value;\n        \n        if (val < req.min) {\n            return { status: 'FAIL', message: `${name}: ${val} (below minimum ${req.min})` };\n        } else if (val < req.recommended) {\n            return { status: 'WARN', message: `${name}: ${val} (below recommended ${req.recommended})` };\n        } else {\n            return { status: 'PASS', message: `${name}: ${val} (meets requirements)` };\n        }\n    }\n    \n    /**\n     * Test WebGL extensions\n     */\n    testWebGLExtensions(gl) {\n        const criticalExtensions = [\n            'ANGLE_instanced_arrays',\n            'EXT_texture_filter_anisotropic',\n            'WEBGL_lose_context',\n            'OES_vertex_array_object'\n        ];\n        \n        const usefulExtensions = [\n            'WEBGL_compressed_texture_s3tc',\n            'WEBGL_compressed_texture_pvrtc',\n            'WEBGL_compressed_texture_etc1',\n            'OES_texture_float',\n            'OES_texture_half_float',\n            'WEBGL_depth_texture'\n        ];\n        \n        const extensions = {};\n        \n        [...criticalExtensions, ...usefulExtensions].forEach(ext => {\n            const supported = gl.getExtension(ext) !== null;\n            extensions[ext] = supported;\n            \n            const isCritical = criticalExtensions.includes(ext);\n            const status = supported ? 'PASS' : (isCritical ? 'WARN' : 'INFO');\n            const message = `${ext}: ${supported ? 'Available' : 'Not available'}${isCritical && !supported ? ' (may impact performance)' : ''}`;\n            \n            this.addTest(`Extension ${ext}`, status, message);\n        });\n        \n        return extensions;\n    }\n    \n    /**\n     * Test shader compilation\n     */\n    async testShaderCompilation(gl) {\n        console.log('🧪 Testing Shader Compilation...');\n        \n        const vertexShaderSource = `\n            attribute vec2 aPosition;\n            attribute vec2 aTexCoord;\n            varying vec2 vTexCoord;\n            void main() {\n                gl_Position = vec4(aPosition, 0.0, 1.0);\n                vTexCoord = aTexCoord;\n            }\n        `;\n        \n        const fragmentShaderSource = `\n            precision mediump float;\n            varying vec2 vTexCoord;\n            uniform sampler2D uTexture;\n            void main() {\n                gl_FragColor = texture2D(uTexture, vTexCoord);\n            }\n        `;\n        \n        try {\n            // Test vertex shader\n            const vertexShader = this.compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);\n            if (vertexShader) {\n                this.addTest('Vertex Shader Compilation', 'PASS', 'Vertex shader compiled successfully');\n            } else {\n                this.addTest('Vertex Shader Compilation', 'FAIL', 'Vertex shader compilation failed');\n                return;\n            }\n            \n            // Test fragment shader\n            const fragmentShader = this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);\n            if (fragmentShader) {\n                this.addTest('Fragment Shader Compilation', 'PASS', 'Fragment shader compiled successfully');\n            } else {\n                this.addTest('Fragment Shader Compilation', 'FAIL', 'Fragment shader compilation failed');\n                return;\n            }\n            \n            // Test program linking\n            const program = gl.createProgram();\n            gl.attachShader(program, vertexShader);\n            gl.attachShader(program, fragmentShader);\n            gl.linkProgram(program);\n            \n            if (gl.getProgramParameter(program, gl.LINK_STATUS)) {\n                this.addTest('Shader Program Linking', 'PASS', 'Shader program linked successfully');\n            } else {\n                const linkLog = gl.getProgramInfoLog(program);\n                this.addTest('Shader Program Linking', 'FAIL', `Program linking failed: ${linkLog}`);\n            }\n            \n            // Cleanup\n            gl.deleteShader(vertexShader);\n            gl.deleteShader(fragmentShader);\n            gl.deleteProgram(program);\n            \n        } catch (error) {\n            this.addTest('Shader System', 'ERROR', `Shader test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Compile a shader\n     */\n    compileShader(gl, type, source) {\n        const shader = gl.createShader(type);\n        gl.shaderSource(shader, source);\n        gl.compileShader(shader);\n        \n        if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {\n            return shader;\n        } else {\n            const compileLog = gl.getShaderInfoLog(shader);\n            console.error('Shader compilation error:', compileLog);\n            gl.deleteShader(shader);\n            return null;\n        }\n    }\n    \n    /**\n     * Test buffer operations\n     */\n    async testBufferOperations(gl) {\n        console.log('🧪 Testing Buffer Operations...');\n        \n        try {\n            // Test vertex buffer creation\n            const vertexBuffer = gl.createBuffer();\n            if (vertexBuffer) {\n                this.addTest('Vertex Buffer Creation', 'PASS', 'Vertex buffer created successfully');\n                \n                // Test buffer data\n                const vertices = new Float32Array([-1, -1, 1, -1, 0, 1]);\n                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);\n                gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);\n                \n                this.addTest('Buffer Data Upload', 'PASS', 'Buffer data uploaded successfully');\n                \n                gl.deleteBuffer(vertexBuffer);\n            } else {\n                this.addTest('Vertex Buffer Creation', 'FAIL', 'Failed to create vertex buffer');\n            }\n            \n            // Test index buffer\n            const indexBuffer = gl.createBuffer();\n            if (indexBuffer) {\n                const indices = new Uint16Array([0, 1, 2]);\n                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);\n                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);\n                \n                this.addTest('Index Buffer Operations', 'PASS', 'Index buffer operations successful');\n                \n                gl.deleteBuffer(indexBuffer);\n            } else {\n                this.addTest('Index Buffer Creation', 'FAIL', 'Failed to create index buffer');\n            }\n            \n        } catch (error) {\n            this.addTest('Buffer Operations', 'ERROR', `Buffer test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Test framebuffer operations\n     */\n    async testFramebufferOperations(gl) {\n        console.log('🧪 Testing Framebuffer Operations...');\n        \n        try {\n            // Create framebuffer\n            const framebuffer = gl.createFramebuffer();\n            if (!framebuffer) {\n                this.addTest('Framebuffer Creation', 'FAIL', 'Failed to create framebuffer');\n                return;\n            }\n            \n            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);\n            \n            // Create texture for framebuffer\n            const texture = gl.createTexture();\n            gl.bindTexture(gl.TEXTURE_2D, texture);\n            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);\n            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);\n            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);\n            \n            // Attach texture to framebuffer\n            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);\n            \n            // Check framebuffer status\n            const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);\n            if (status === gl.FRAMEBUFFER_COMPLETE) {\n                this.addTest('Framebuffer Operations', 'PASS', 'Framebuffer operations successful');\n            } else {\n                this.addTest('Framebuffer Operations', 'FAIL', `Framebuffer incomplete: ${status}`);\n            }\n            \n            // Cleanup\n            gl.bindFramebuffer(gl.FRAMEBUFFER, null);\n            gl.deleteFramebuffer(framebuffer);\n            gl.deleteTexture(texture);\n            \n        } catch (error) {\n            this.addTest('Framebuffer Operations', 'ERROR', `Framebuffer test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Test texture system\n     */\n    async testTextureSystem() {\n        console.log('🧪 Testing Texture System...');\n        \n        const canvas = document.createElement('canvas');\n        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');\n        \n        if (!gl) {\n            this.addTest('Texture System', 'FAIL', 'No WebGL context for texture testing');\n            return;\n        }\n        \n        const textureResults = {\n            maxSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),\n            maxUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),\n            formats: {},\n            compression: {},\n            operations: {}\n        };\n        \n        try {\n            // Test basic texture creation\n            const texture = gl.createTexture();\n            if (texture) {\n                gl.bindTexture(gl.TEXTURE_2D, texture);\n                \n                // Test basic texture upload\n                const data = new Uint8Array([255, 0, 0, 255]); // Red pixel\n                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);\n                \n                this.addTest('Basic Texture Creation', 'PASS', 'Basic texture operations successful');\n                textureResults.operations.basic = true;\n                \n                gl.deleteTexture(texture);\n            } else {\n                this.addTest('Basic Texture Creation', 'FAIL', 'Failed to create texture');\n                textureResults.operations.basic = false;\n            }\n            \n            // Test large texture creation\n            await this.testLargeTexture(gl, textureResults);\n            \n            // Test texture formats\n            await this.testTextureFormats(gl, textureResults);\n            \n            // Test texture compression\n            await this.testTextureCompression(gl, textureResults);\n            \n        } catch (error) {\n            this.addTest('Texture System', 'ERROR', `Texture system test failed: ${error.message}`);\n        }\n        \n        this.results.textures = textureResults;\n    }\n    \n    /**\n     * Test large texture handling\n     */\n    async testLargeTexture(gl, results) {\n        try {\n            const maxSize = results.maxSize;\n            const testSizes = [512, 1024, 2048, Math.min(4096, maxSize)];\n            \n            for (const size of testSizes) {\n                const texture = gl.createTexture();\n                gl.bindTexture(gl.TEXTURE_2D, texture);\n                \n                try {\n                    // Try to allocate texture of this size\n                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);\n                    \n                    const error = gl.getError();\n                    if (error === gl.NO_ERROR) {\n                        this.addTest(`Texture Size ${size}x${size}`, 'PASS', `Successfully allocated ${size}x${size} texture`);\n                        results.operations[`size_${size}`] = true;\n                    } else {\n                        this.addTest(`Texture Size ${size}x${size}`, 'FAIL', `Failed to allocate ${size}x${size} texture (GL error: ${error})`);\n                        results.operations[`size_${size}`] = false;\n                    }\n                } catch (error) {\n                    this.addTest(`Texture Size ${size}x${size}`, 'ERROR', `Exception allocating ${size}x${size}: ${error.message}`);\n                    results.operations[`size_${size}`] = false;\n                }\n                \n                gl.deleteTexture(texture);\n            }\n        } catch (error) {\n            this.addTest('Large Texture Test', 'ERROR', `Large texture test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Test texture formats\n     */\n    async testTextureFormats(gl, results) {\n        const formats = [\n            { name: 'RGBA', format: gl.RGBA, type: gl.UNSIGNED_BYTE },\n            { name: 'RGB', format: gl.RGB, type: gl.UNSIGNED_BYTE },\n            { name: 'LUMINANCE_ALPHA', format: gl.LUMINANCE_ALPHA, type: gl.UNSIGNED_BYTE },\n            { name: 'LUMINANCE', format: gl.LUMINANCE, type: gl.UNSIGNED_BYTE },\n            { name: 'ALPHA', format: gl.ALPHA, type: gl.UNSIGNED_BYTE }\n        ];\n        \n        for (const fmt of formats) {\n            try {\n                const texture = gl.createTexture();\n                gl.bindTexture(gl.TEXTURE_2D, texture);\n                \n                const size = fmt.format === gl.RGBA ? 4 : fmt.format === gl.RGB ? 3 : fmt.format === gl.LUMINANCE_ALPHA ? 2 : 1;\n                const data = new Uint8Array(size).fill(255);\n                \n                gl.texImage2D(gl.TEXTURE_2D, 0, fmt.format, 1, 1, 0, fmt.format, fmt.type, data);\n                \n                const error = gl.getError();\n                if (error === gl.NO_ERROR) {\n                    this.addTest(`Texture Format ${fmt.name}`, 'PASS', `${fmt.name} format supported`);\n                    results.formats[fmt.name] = true;\n                } else {\n                    this.addTest(`Texture Format ${fmt.name}`, 'FAIL', `${fmt.name} format failed (GL error: ${error})`);\n                    results.formats[fmt.name] = false;\n                }\n                \n                gl.deleteTexture(texture);\n                \n            } catch (error) {\n                this.addTest(`Texture Format ${fmt.name}`, 'ERROR', `${fmt.name} test failed: ${error.message}`);\n                results.formats[fmt.name] = false;\n            }\n        }\n    }\n    \n    /**\n     * Test texture compression support\n     */\n    async testTextureCompression(gl, results) {\n        const compressionExtensions = [\n            'WEBGL_compressed_texture_s3tc',\n            'WEBGL_compressed_texture_pvrtc',\n            'WEBGL_compressed_texture_etc1',\n            'WEBGL_compressed_texture_astc'\n        ];\n        \n        for (const ext of compressionExtensions) {\n            const extension = gl.getExtension(ext);\n            const supported = extension !== null;\n            \n            results.compression[ext] = supported;\n            this.addTest(`Compression ${ext}`, supported ? 'PASS' : 'INFO', `${ext}: ${supported ? 'Available' : 'Not available'}`);\n        }\n    }\n    \n    /**\n     * Test performance characteristics\n     */\n    async testPerformance() {\n        console.log('🧪 Testing Performance...');\n        \n        const canvas = document.createElement('canvas');\n        canvas.width = 512;\n        canvas.height = 512;\n        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');\n        \n        if (!gl) {\n            this.addTest('Performance Test', 'FAIL', 'No WebGL context for performance testing');\n            return;\n        }\n        \n        const performanceResults = {};\n        \n        try {\n            // Test draw call performance\n            const drawCallPerf = await this.measureDrawCallPerformance(gl);\n            performanceResults.drawCalls = drawCallPerf;\n            \n            // Test texture bind performance\n            const textureBindPerf = await this.measureTextureBindPerformance(gl);\n            performanceResults.textureBinds = textureBindPerf;\n            \n            // Test memory allocation performance\n            const memoryPerf = await this.measureMemoryPerformance(gl);\n            performanceResults.memory = memoryPerf;\n            \n        } catch (error) {\n            this.addTest('Performance Test', 'ERROR', `Performance test failed: ${error.message}`);\n        }\n        \n        this.results.performance = performanceResults;\n    }\n    \n    /**\n     * Measure draw call performance\n     */\n    async measureDrawCallPerformance(gl) {\n        const iterations = 1000;\n        const startTime = performance.now();\n        \n        // Create simple test setup\n        const buffer = gl.createBuffer();\n        const vertices = new Float32Array([-1, -1, 1, -1, 0, 1]);\n        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);\n        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);\n        \n        // Measure draw calls\n        for (let i = 0; i < iterations; i++) {\n            gl.drawArrays(gl.TRIANGLES, 0, 3);\n        }\n        \n        const endTime = performance.now();\n        const duration = endTime - startTime;\n        const callsPerSecond = (iterations / duration) * 1000;\n        \n        gl.deleteBuffer(buffer);\n        \n        const rating = callsPerSecond > 10000 ? 'EXCELLENT' : callsPerSecond > 5000 ? 'GOOD' : callsPerSecond > 1000 ? 'FAIR' : 'POOR';\n        this.addTest('Draw Call Performance', 'INFO', `${callsPerSecond.toFixed(0)} calls/sec (${rating})`);\n        \n        return { callsPerSecond, rating, duration, iterations };\n    }\n    \n    /**\n     * Measure texture binding performance\n     */\n    async measureTextureBindPerformance(gl) {\n        const textureCount = 16;\n        const bindIterations = 1000;\n        \n        // Create test textures\n        const textures = [];\n        for (let i = 0; i < textureCount; i++) {\n            const texture = gl.createTexture();\n            gl.bindTexture(gl.TEXTURE_2D, texture);\n            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);\n            textures.push(texture);\n        }\n        \n        // Measure binding performance\n        const startTime = performance.now();\n        \n        for (let i = 0; i < bindIterations; i++) {\n            const texture = textures[i % textureCount];\n            gl.activeTexture(gl.TEXTURE0 + (i % 8));\n            gl.bindTexture(gl.TEXTURE_2D, texture);\n        }\n        \n        const endTime = performance.now();\n        const duration = endTime - startTime;\n        const bindsPerSecond = (bindIterations / duration) * 1000;\n        \n        // Cleanup\n        textures.forEach(tex => gl.deleteTexture(tex));\n        \n        const rating = bindsPerSecond > 50000 ? 'EXCELLENT' : bindsPerSecond > 20000 ? 'GOOD' : bindsPerSecond > 10000 ? 'FAIR' : 'POOR';\n        this.addTest('Texture Bind Performance', 'INFO', `${bindsPerSecond.toFixed(0)} binds/sec (${rating})`);\n        \n        return { bindsPerSecond, rating, duration, iterations: bindIterations };\n    }\n    \n    /**\n     * Measure memory allocation performance\n     */\n    async measureMemoryPerformance(gl) {\n        const allocationCount = 100;\n        const textureSize = 256;\n        \n        const startTime = performance.now();\n        const textures = [];\n        \n        // Allocate textures\n        for (let i = 0; i < allocationCount; i++) {\n            const texture = gl.createTexture();\n            gl.bindTexture(gl.TEXTURE_2D, texture);\n            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);\n            textures.push(texture);\n        }\n        \n        const allocEndTime = performance.now();\n        \n        // Deallocate textures\n        textures.forEach(tex => gl.deleteTexture(tex));\n        \n        const deallocEndTime = performance.now();\n        \n        const allocDuration = allocEndTime - startTime;\n        const deallocDuration = deallocEndTime - allocEndTime;\n        const totalMemoryMB = (allocationCount * textureSize * textureSize * 4) / (1024 * 1024);\n        \n        const allocMBPerSec = totalMemoryMB / (allocDuration / 1000);\n        const deallocMBPerSec = totalMemoryMB / (deallocDuration / 1000);\n        \n        this.addTest('Memory Allocation Performance', 'INFO', `Alloc: ${allocMBPerSec.toFixed(1)} MB/sec, Dealloc: ${deallocMBPerSec.toFixed(1)} MB/sec`);\n        \n        return {\n            allocMBPerSec,\n            deallocMBPerSec,\n            totalMemoryMB,\n            allocDuration,\n            deallocDuration\n        };\n    }\n    \n    /**\n     * Run stress tests\n     */\n    async runStressTests() {\n        console.log('🧪 Running Stress Tests...');\n        \n        try {\n            await this.testMaxTextures();\n            await this.testMaxDrawCalls();\n            await this.testMemoryPressure();\n        } catch (error) {\n            this.addTest('Stress Tests', 'ERROR', `Stress test failed: ${error.message}`);\n        }\n    }\n    \n    /**\n     * Test maximum texture allocation\n     */\n    async testMaxTextures() {\n        const canvas = document.createElement('canvas');\n        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');\n        \n        if (!gl) return;\n        \n        const textures = [];\n        let allocatedCount = 0;\n        \n        try {\n            // Try to allocate textures until we hit limits\n            for (let i = 0; i < 1000; i++) {\n                const texture = gl.createTexture();\n                gl.bindTexture(gl.TEXTURE_2D, texture);\n                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);\n                \n                const error = gl.getError();\n                if (error !== gl.NO_ERROR) {\n                    gl.deleteTexture(texture);\n                    break;\n                }\n                \n                textures.push(texture);\n                allocatedCount++;\n                \n                // Check every 100 textures\n                if (allocatedCount % 100 === 0) {\n                    await new Promise(resolve => setTimeout(resolve, 0)); // Yield\n                }\n            }\n            \n        } catch (error) {\n            console.warn('Texture allocation stopped due to error:', error);\n        }\n        \n        // Cleanup\n        textures.forEach(tex => gl.deleteTexture(tex));\n        \n        const memoryMB = (allocatedCount * 256 * 256 * 4) / (1024 * 1024);\n        \n        if (allocatedCount > 200) {\n            this.addTest('Max Texture Allocation', 'PASS', `Allocated ${allocatedCount} textures (${memoryMB.toFixed(1)}MB)`);\n        } else if (allocatedCount > 50) {\n            this.addTest('Max Texture Allocation', 'WARN', `Limited to ${allocatedCount} textures (${memoryMB.toFixed(1)}MB)`);\n        } else {\n            this.addTest('Max Texture Allocation', 'FAIL', `Only ${allocatedCount} textures allocated (${memoryMB.toFixed(1)}MB)`);\n        }\n    }\n    \n    /**\n     * Test maximum draw calls per frame\n     */\n    async testMaxDrawCalls() {\n        const canvas = document.createElement('canvas');\n        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');\n        \n        if (!gl) return;\n        \n        const buffer = gl.createBuffer();\n        const vertices = new Float32Array([-1, -1, 1, -1, 0, 1]);\n        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);\n        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);\n        \n        const maxDrawCalls = 10000;\n        const startTime = performance.now();\n        \n        for (let i = 0; i < maxDrawCalls; i++) {\n            gl.drawArrays(gl.TRIANGLES, 0, 3);\n        }\n        \n        const endTime = performance.now();\n        const duration = endTime - startTime;\n        const callsPerFrame = Math.floor(maxDrawCalls / (duration / 16.67)); // Assuming 60fps target\n        \n        gl.deleteBuffer(buffer);\n        \n        if (callsPerFrame > 1000) {\n            this.addTest('Max Draw Calls', 'PASS', `Can handle ${callsPerFrame} draw calls per frame (60fps)`);\n        } else if (callsPerFrame > 500) {\n            this.addTest('Max Draw Calls', 'WARN', `Limited to ${callsPerFrame} draw calls per frame`);\n        } else {\n            this.addTest('Max Draw Calls', 'FAIL', `Only ${callsPerFrame} draw calls per frame`);\n        }\n    }\n    \n    /**\n     * Test memory pressure handling\n     */\n    async testMemoryPressure() {\n        // This test is more observational - we check if the browser/GPU\n        // handles memory pressure gracefully\n        \n        const canvas = document.createElement('canvas');\n        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');\n        \n        if (!gl) return;\n        \n        let successfulAllocations = 0;\n        let failedAllocations = 0;\n        \n        try {\n            // Try to allocate increasingly large textures\n            const sizes = [512, 1024, 2048, 4096, 8192];\n            \n            for (const size of sizes) {\n                const textures = [];\n                \n                try {\n                    // Allocate multiple textures of this size\n                    for (let i = 0; i < 20; i++) {\n                        const texture = gl.createTexture();\n                        gl.bindTexture(gl.TEXTURE_2D, texture);\n                        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);\n                        \n                        const error = gl.getError();\n                        if (error === gl.NO_ERROR) {\n                            textures.push(texture);\n                            successfulAllocations++;\n                        } else {\n                            gl.deleteTexture(texture);\n                            failedAllocations++;\n                            break;\n                        }\n                    }\n                } finally {\n                    // Cleanup textures\n                    textures.forEach(tex => gl.deleteTexture(tex));\n                }\n                \n                // Force garbage collection if available\n                if (window.gc && typeof window.gc === 'function') {\n                    window.gc();\n                }\n            }\n            \n        } catch (error) {\n            this.addTest('Memory Pressure Test', 'ERROR', `Memory pressure test failed: ${error.message}`);\n            return;\n        }\n        \n        const totalAttempts = successfulAllocations + failedAllocations;\n        const successRate = (successfulAllocations / totalAttempts) * 100;\n        \n        if (successRate > 80) {\n            this.addTest('Memory Pressure Handling', 'PASS', `${successRate.toFixed(1)}% allocation success rate`);\n        } else if (successRate > 50) {\n            this.addTest('Memory Pressure Handling', 'WARN', `${successRate.toFixed(1)}% allocation success rate`);\n        } else {\n            this.addTest('Memory Pressure Handling', 'FAIL', `${successRate.toFixed(1)}% allocation success rate`);\n        }\n    }\n    \n    /**\n     * Add test result\n     */\n    addTest(name, status, message) {\n        const test = {\n            name,\n            status,\n            message,\n            timestamp: Date.now()\n        };\n        \n        this.tests.push(test);\n        \n        const icon = {\n            'PASS': '✅',\n            'FAIL': '❌',\n            'WARN': '⚠️',\n            'ERROR': '💥',\n            'INFO': '📊'\n        }[status] || '❓';\n        \n        console.log(`${icon} ${name}: ${message}`);\n    }\n    \n    /**\n     * Generate final diagnostic report\n     */\n    generateReport() {\n        const passCount = this.tests.filter(t => t.status === 'PASS').length;\n        const failCount = this.tests.filter(t => t.status === 'FAIL').length;\n        const warnCount = this.tests.filter(t => t.status === 'WARN').length;\n        const errorCount = this.tests.filter(t => t.status === 'ERROR').length;\n        \n        console.log('\\n📋 WebGL Diagnostic Report:');\n        console.log('============================');\n        console.log(`✅ Passed: ${passCount}`);\n        console.log(`❌ Failed: ${failCount}`);\n        console.log(`⚠️ Warnings: ${warnCount}`);\n        console.log(`💥 Errors: ${errorCount}`);\n        console.log(`📊 Total Tests: ${this.tests.length}`);\n        \n        // Generate recommendations based on test results\n        this.generateDiagnosticRecommendations();\n        \n        if (this.recommendations.length > 0) {\n            console.log('\\n💡 Recommendations:');\n            this.recommendations.forEach(rec => console.log(`   - ${rec}`));\n        }\n    }\n    \n    /**\n     * Generate recommendations based on diagnostic results\n     */\n    generateDiagnosticRecommendations() {\n        const failedTests = this.tests.filter(t => t.status === 'FAIL' || t.status === 'ERROR');\n        \n        if (failedTests.some(t => t.name.includes('WebGL'))) {\n            this.recommendations.push('Consider using Canvas fallback mode for better compatibility');\n        }\n        \n        if (failedTests.some(t => t.name.includes('Texture'))) {\n            this.recommendations.push('Reduce texture sizes and use texture atlasing');\n            this.recommendations.push('Enable texture compression if available');\n        }\n        \n        if (failedTests.some(t => t.name.includes('Performance'))) {\n            this.recommendations.push('Implement sprite batching to reduce draw calls');\n            this.recommendations.push('Use level-of-detail (LOD) system for distant objects');\n        }\n        \n        if (this.results.browser?.capabilities?.device?.mobile) {\n            this.recommendations.push('Use mobile-optimized settings (smaller textures, fewer sprites)');\n            this.recommendations.push('Implement aggressive texture garbage collection');\n        }\n        \n        const warnTests = this.tests.filter(t => t.status === 'WARN');\n        if (warnTests.length > 5) {\n            this.recommendations.push('Device has limited capabilities - consider reduced quality mode');\n        }\n    }\n    \n    /**\n     * Get complete diagnostic report\n     */\n    getReport() {\n        return {\n            ...this.results,\n            tests: this.tests,\n            warnings: this.warnings,\n            errors: this.errors,\n            recommendations: this.recommendations,\n            summary: {\n                totalTests: this.tests.length,\n                passed: this.tests.filter(t => t.status === 'PASS').length,\n                failed: this.tests.filter(t => t.status === 'FAIL').length,\n                warnings: this.tests.filter(t => t.status === 'WARN').length,\n                errors: this.tests.filter(t => t.status === 'ERROR').length,\n                overall: this.tests.filter(t => t.status === 'FAIL' || t.status === 'ERROR').length === 0 ? 'HEALTHY' : 'ISSUES_DETECTED'\n            }\n        };\n    }\n}\n\n// Utility function for easy diagnostic testing\nexport async function runWebGLDiagnostics() {\n    const diagnostics = new WebGLDiagnostics();\n    return await diagnostics.runDiagnostics();\n}
+     */
+    async testBrowserCompatibility() {
+        console.log('🧪 Testing Browser Compatibility...');
+
+        const compatChecker = new BrowserCompatibilityChecker();
+        const report = compatChecker.getReport();
+
+        this.results.browser = report;
+
+        if (!report.compatible) {
+            this.errors.push('Browser is not compatible with WebGL');
+            return;
+        }
+
+        this.addTest('Browser Compatibility', 'PASS', 'Browser supports required WebGL features');
+
+        // Add specific warnings from compatibility check
+        report.warnings.forEach(warning => this.warnings.push(warning));
+        report.errors.forEach(error => this.errors.push(error));
+    }
+
+    /**
+     * Test WebGL context creation and stability
+     */
+    async testWebGLContext() {
+        console.log('🧪 Testing WebGL Context...');
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+
+        // Test WebGL2 context
+        let gl2 = null;
+        try {
+            gl2 = canvas.getContext('webgl2');
+            if (gl2) {
+                this.addTest('WebGL2 Context', 'PASS', 'WebGL2 context created successfully');
+                await this.testContextStability(gl2, 'WebGL2');
+            } else {
+                this.addTest('WebGL2 Context', 'FAIL', 'WebGL2 context creation failed');
+            }
+        } catch (error) {
+            this.addTest('WebGL2 Context', 'ERROR', `WebGL2 error: ${error.message}`);
+        }
+
+        // Test WebGL1 context
+        let gl1 = null;
+        try {
+            gl1 = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl1) {
+                this.addTest('WebGL1 Context', 'PASS', 'WebGL1 context created successfully');
+                await this.testContextStability(gl1, 'WebGL1');
+
+                // Use WebGL1 for remaining tests if WebGL2 failed
+                if (!gl2) {
+                    await this.testWebGLCapabilities(gl1);
+                }
+            } else {
+                this.addTest('WebGL1 Context', 'FAIL', 'WebGL1 context creation failed');
+                this.errors.push('No WebGL context available');
+            }
+        } catch (error) {
+            this.addTest('WebGL1 Context', 'ERROR', `WebGL1 error: ${error.message}`);
+        }
+
+        // Test with the best available context
+        const gl = gl2 || gl1;
+        if (gl) {
+            await this.testWebGLCapabilities(gl);
+            await this.testShaderCompilation(gl);
+            await this.testBufferOperations(gl);
+            await this.testFramebufferOperations(gl);
+        }
+
+        this.results.context = {
+            webgl2Available: !!gl2,
+            webgl1Available: !!gl1,
+            preferredContext: gl2 ? 'webgl2' : gl1 ? 'webgl' : 'none'
+        };
+    }
+
+    /**
+     * Test context stability and loss/restore
+     */
+    async testContextStability(gl, contextType) {
+        try {
+            // Test context loss extension
+            const loseExt = gl.getExtension('WEBGL_lose_context');
+            if (loseExt) {
+                this.addTest(`${contextType} Context Loss Extension`, 'PASS', 'Context loss extension available');
+
+                // Test context loss/restore (be careful with this)
+                // We'll just verify the extension exists rather than actually losing context
+                if (typeof loseExt.loseContext === 'function' && typeof loseExt.restoreContext === 'function') {
+                    this.addTest(`${contextType} Context Loss/Restore`, 'PASS', 'Context loss/restore methods available');
+                } else {
+                    this.addTest(`${contextType} Context Loss/Restore`, 'FAIL', 'Context loss/restore methods missing');
+                }
+            } else {
+                this.addTest(`${contextType} Context Loss Extension`, 'FAIL', 'Context loss extension not available');
+                this.warnings.push('Context loss extension not available - context recovery not possible');
+            }
+
+            // Test context stability indicators
+            if (gl.isContextLost()) {
+                this.addTest(`${contextType} Context Status`, 'FAIL', 'Context is already lost');
+                this.errors.push(`${contextType} context is lost`);
+            } else {
+                this.addTest(`${contextType} Context Status`, 'PASS', 'Context is active and stable');
+            }
+
+        } catch (error) {
+            this.addTest(`${contextType} Context Stability`, 'ERROR', `Stability test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Test WebGL capabilities and limits
+     */
+    async testWebGLCapabilities(gl) {
+        console.log('🧪 Testing WebGL Capabilities...');
+
+        const capabilities = {};
+
+        try {
+            // Basic parameters
+            const params = {
+                'MAX_TEXTURE_SIZE': gl.MAX_TEXTURE_SIZE,
+                'MAX_TEXTURE_IMAGE_UNITS': gl.MAX_TEXTURE_IMAGE_UNITS,
+                'MAX_VERTEX_ATTRIBS': gl.MAX_VERTEX_ATTRIBS,
+                'MAX_VERTEX_UNIFORM_VECTORS': gl.MAX_VERTEX_UNIFORM_VECTORS,
+                'MAX_FRAGMENT_UNIFORM_VECTORS': gl.MAX_FRAGMENT_UNIFORM_VECTORS,
+                'MAX_VARYING_VECTORS': gl.MAX_VARYING_VECTORS,
+                'MAX_VIEWPORT_DIMS': gl.MAX_VIEWPORT_DIMS,
+                'MAX_RENDERBUFFER_SIZE': gl.MAX_RENDERBUFFER_SIZE
+            };
+
+            Object.entries(params).forEach(([name, param]) => {
+                try {
+                    const value = gl.getParameter(param);
+                    capabilities[name] = value;
+
+                    // Check against minimum requirements
+                    const result = this.validateParameter(name, value);
+                    this.addTest(`WebGL ${name}`, result.status, result.message);
+
+                } catch (error) {
+                    this.addTest(`WebGL ${name}`, 'ERROR', `Failed to query: ${error.message}`);
+                }
+            });
+
+            // Test extensions
+            const extensions = this.testWebGLExtensions(gl);
+            capabilities.extensions = extensions;
+
+            this.results.webgl = capabilities;
+
+        } catch (error) {
+            this.addTest('WebGL Capabilities', 'ERROR', `Capabilities test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Validate WebGL parameters against requirements
+     */
+    validateParameter(name, value) {
+        const requirements = {
+            'MAX_TEXTURE_SIZE': { min: 2048, recommended: 4096 },
+            'MAX_TEXTURE_IMAGE_UNITS': { min: 8, recommended: 16 },
+            'MAX_VERTEX_ATTRIBS': { min: 8, recommended: 16 },
+            'MAX_VERTEX_UNIFORM_VECTORS': { min: 128, recommended: 256 },
+            'MAX_FRAGMENT_UNIFORM_VECTORS': { min: 16, recommended: 32 },
+            'MAX_VARYING_VECTORS': { min: 8, recommended: 16 }
+        };
+
+        const req = requirements[name];
+        if (!req) {
+            return { status: 'INFO', message: `${name}: ${Array.isArray(value) ? value.join('x') : value}` };
+        }
+
+        const val = Array.isArray(value) ? Math.min(...value) : value;
+
+        if (val < req.min) {
+            return { status: 'FAIL', message: `${name}: ${val} (below minimum ${req.min})` };
+        } else if (val < req.recommended) {
+            return { status: 'WARN', message: `${name}: ${val} (below recommended ${req.recommended})` };
+        } else {
+            return { status: 'PASS', message: `${name}: ${val} (meets requirements)` };
+        }
+    }
+
+    /**
+     * Test WebGL extensions
+     */
+    testWebGLExtensions(gl) {
+        const criticalExtensions = [
+            'ANGLE_instanced_arrays',
+            'EXT_texture_filter_anisotropic',
+            'WEBGL_lose_context',
+            'OES_vertex_array_object'
+        ];
+
+        const usefulExtensions = [
+            'WEBGL_compressed_texture_s3tc',
+            'WEBGL_compressed_texture_pvrtc',
+            'WEBGL_compressed_texture_etc1',
+            'OES_texture_float',
+            'OES_texture_half_float',
+            'WEBGL_depth_texture'
+        ];
+
+        const extensions = {};
+
+        [...criticalExtensions, ...usefulExtensions].forEach(ext => {
+            const supported = gl.getExtension(ext) !== null;
+            extensions[ext] = supported;
+
+            const isCritical = criticalExtensions.includes(ext);
+            const status = supported ? 'PASS' : (isCritical ? 'WARN' : 'INFO');
+            const message = `${ext}: ${supported ? 'Available' : 'Not available'}${isCritical && !supported ? ' (may impact performance)' : ''}`;
+
+            this.addTest(`Extension ${ext}`, status, message);
+        });
+
+        return extensions;
+    }
+
+    /**
+     * Test shader compilation
+     */
+    async testShaderCompilation(gl) {
+        console.log('🧪 Testing Shader Compilation...');
+
+        const vertexShaderSource = `
+            attribute vec2 aPosition;
+            attribute vec2 aTexCoord;
+            varying vec2 vTexCoord;
+            void main() {
+                gl_Position = vec4(aPosition, 0.0, 1.0);
+                vTexCoord = aTexCoord;
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision mediump float;
+            varying vec2 vTexCoord;
+            uniform sampler2D uTexture;
+            void main() {
+                gl_FragColor = texture2D(uTexture, vTexCoord);
+            }
+        `;
+
+        try {
+            // Test vertex shader
+            const vertexShader = this.compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+            if (vertexShader) {
+                this.addTest('Vertex Shader Compilation', 'PASS', 'Vertex shader compiled successfully');
+            } else {
+                this.addTest('Vertex Shader Compilation', 'FAIL', 'Vertex shader compilation failed');
+                return;
+            }
+
+            // Test fragment shader
+            const fragmentShader = this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+            if (fragmentShader) {
+                this.addTest('Fragment Shader Compilation', 'PASS', 'Fragment shader compiled successfully');
+            } else {
+                this.addTest('Fragment Shader Compilation', 'FAIL', 'Fragment shader compilation failed');
+                return;
+            }
+
+            // Test program linking
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+
+            if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                this.addTest('Shader Program Linking', 'PASS', 'Shader program linked successfully');
+            } else {
+                const linkLog = gl.getProgramInfoLog(program);
+                this.addTest('Shader Program Linking', 'FAIL', `Program linking failed: ${linkLog}`);
+            }
+
+            // Cleanup
+            gl.deleteShader(vertexShader);
+            gl.deleteShader(fragmentShader);
+            gl.deleteProgram(program);
+
+        } catch (error) {
+            this.addTest('Shader System', 'ERROR', `Shader test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Compile a shader
+     */
+    compileShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+
+        if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            return shader;
+        } else {
+            const compileLog = gl.getShaderInfoLog(shader);
+            console.error('Shader compilation error:', compileLog);
+            gl.deleteShader(shader);
+            return null;
+        }
+    }
+
+    /**
+     * Test buffer operations
+     */
+    async testBufferOperations(gl) {
+        console.log('🧪 Testing Buffer Operations...');
+
+        try {
+            // Test vertex buffer creation
+            const vertexBuffer = gl.createBuffer();
+            if (vertexBuffer) {
+                this.addTest('Vertex Buffer Creation', 'PASS', 'Vertex buffer created successfully');
+
+                // Test buffer data
+                const vertices = new Float32Array([-1, -1, 1, -1, 0, 1]);
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+                this.addTest('Buffer Data Upload', 'PASS', 'Buffer data uploaded successfully');
+
+                gl.deleteBuffer(vertexBuffer);
+            } else {
+                this.addTest('Vertex Buffer Creation', 'FAIL', 'Failed to create vertex buffer');
+            }
+
+            // Test index buffer
+            const indexBuffer = gl.createBuffer();
+            if (indexBuffer) {
+                const indices = new Uint16Array([0, 1, 2]);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+                this.addTest('Index Buffer Operations', 'PASS', 'Index buffer operations successful');
+
+                gl.deleteBuffer(indexBuffer);
+            } else {
+                this.addTest('Index Buffer Creation', 'FAIL', 'Failed to create index buffer');
+            }
+
+        } catch (error) {
+            this.addTest('Buffer Operations', 'ERROR', `Buffer test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Test framebuffer operations
+     */
+    async testFramebufferOperations(gl) {
+        console.log('🧪 Testing Framebuffer Operations...');
+
+        try {
+            // Create framebuffer
+            const framebuffer = gl.createFramebuffer();
+            if (!framebuffer) {
+                this.addTest('Framebuffer Creation', 'FAIL', 'Failed to create framebuffer');
+                return;
+            }
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+            // Create texture for framebuffer
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+            // Attach texture to framebuffer
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+            // Check framebuffer status
+            const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+            if (status === gl.FRAMEBUFFER_COMPLETE) {
+                this.addTest('Framebuffer Operations', 'PASS', 'Framebuffer operations successful');
+            } else {
+                this.addTest('Framebuffer Operations', 'FAIL', `Framebuffer incomplete: ${status}`);
+            }
+
+            // Cleanup
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.deleteFramebuffer(framebuffer);
+            gl.deleteTexture(texture);
+
+        } catch (error) {
+            this.addTest('Framebuffer Operations', 'ERROR', `Framebuffer test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Test texture system
+     */
+    async testTextureSystem() {
+        console.log('🧪 Testing Texture System...');
+
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+
+        if (!gl) {
+            this.addTest('Texture System', 'FAIL', 'No WebGL context for texture testing');
+            return;
+        }
+
+        const textureResults = {
+            maxSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+            maxUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
+            formats: {},
+            compression: {},
+            operations: {}
+        };
+
+        try {
+            // Test basic texture creation
+            const texture = gl.createTexture();
+            if (texture) {
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+
+                // Test basic texture upload
+                const data = new Uint8Array([255, 0, 0, 255]); // Red pixel
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+
+                this.addTest('Basic Texture Creation', 'PASS', 'Basic texture operations successful');
+                textureResults.operations.basic = true;
+
+                gl.deleteTexture(texture);
+            } else {
+                this.addTest('Basic Texture Creation', 'FAIL', 'Failed to create texture');
+                textureResults.operations.basic = false;
+            }
+
+            // Test large texture creation
+            await this.testLargeTexture(gl, textureResults);
+
+            // Test texture formats
+            await this.testTextureFormats(gl, textureResults);
+
+            // Test texture compression
+            await this.testTextureCompression(gl, textureResults);
+
+        } catch (error) {
+            this.addTest('Texture System', 'ERROR', `Texture system test failed: ${error.message}`);
+        }
+
+        this.results.textures = textureResults;
+    }
+
+    /**
+     * Test large texture handling
+     */
+    async testLargeTexture(gl, results) {
+        try {
+            const maxSize = results.maxSize;
+            const testSizes = [512, 1024, 2048, Math.min(4096, maxSize)];
+
+            for (const size of testSizes) {
+                const texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+
+                try {
+                    // Try to allocate texture of this size
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+                    const error = gl.getError();
+                    if (error === gl.NO_ERROR) {
+                        this.addTest(`Texture Size ${size}x${size}`, 'PASS', `Successfully allocated ${size}x${size} texture`);
+                        results.operations[`size_${size}`] = true;
+                    } else {
+                        this.addTest(`Texture Size ${size}x${size}`, 'FAIL', `Failed to allocate ${size}x${size} texture (GL error: ${error})`);
+                        results.operations[`size_${size}`] = false;
+                    }
+                } catch (error) {
+                    this.addTest(`Texture Size ${size}x${size}`, 'ERROR', `Exception allocating ${size}x${size}: ${error.message}`);
+                    results.operations[`size_${size}`] = false;
+                }
+
+                gl.deleteTexture(texture);
+            }
+        } catch (error) {
+            this.addTest('Large Texture Test', 'ERROR', `Large texture test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Test texture formats
+     */
+    async testTextureFormats(gl, results) {
+        const formats = [
+            { name: 'RGBA', format: gl.RGBA, type: gl.UNSIGNED_BYTE },
+            { name: 'RGB', format: gl.RGB, type: gl.UNSIGNED_BYTE },
+            { name: 'LUMINANCE_ALPHA', format: gl.LUMINANCE_ALPHA, type: gl.UNSIGNED_BYTE },
+            { name: 'LUMINANCE', format: gl.LUMINANCE, type: gl.UNSIGNED_BYTE },
+            { name: 'ALPHA', format: gl.ALPHA, type: gl.UNSIGNED_BYTE }
+        ];
+
+        for (const fmt of formats) {
+            try {
+                const texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+
+                const size = fmt.format === gl.RGBA ? 4 : fmt.format === gl.RGB ? 3 : fmt.format === gl.LUMINANCE_ALPHA ? 2 : 1;
+                const data = new Uint8Array(size).fill(255);
+
+                gl.texImage2D(gl.TEXTURE_2D, 0, fmt.format, 1, 1, 0, fmt.format, fmt.type, data);
+
+                const error = gl.getError();
+                if (error === gl.NO_ERROR) {
+                    this.addTest(`Texture Format ${fmt.name}`, 'PASS', `${fmt.name} format supported`);
+                    results.formats[fmt.name] = true;
+                } else {
+                    this.addTest(`Texture Format ${fmt.name}`, 'FAIL', `${fmt.name} format failed (GL error: ${error})`);
+                    results.formats[fmt.name] = false;
+                }
+
+                gl.deleteTexture(texture);
+
+            } catch (error) {
+                this.addTest(`Texture Format ${fmt.name}`, 'ERROR', `${fmt.name} test failed: ${error.message}`);
+                results.formats[fmt.name] = false;
+            }
+        }
+    }
+
+    /**
+     * Test texture compression support
+     */
+    async testTextureCompression(gl, results) {
+        const compressionExtensions = [
+            'WEBGL_compressed_texture_s3tc',
+            'WEBGL_compressed_texture_pvrtc',
+            'WEBGL_compressed_texture_etc1',
+            'WEBGL_compressed_texture_astc'
+        ];
+
+        for (const ext of compressionExtensions) {
+            const extension = gl.getExtension(ext);
+            const supported = extension !== null;
+
+            results.compression[ext] = supported;
+            this.addTest(`Compression ${ext}`, supported ? 'PASS' : 'INFO', `${ext}: ${supported ? 'Available' : 'Not available'}`);
+        }
+    }
+
+    /**
+     * Test performance characteristics
+     */
+    async testPerformance() {
+        console.log('🧪 Testing Performance...');
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+
+        if (!gl) {
+            this.addTest('Performance Test', 'FAIL', 'No WebGL context for performance testing');
+            return;
+        }
+
+        const performanceResults = {};
+
+        try {
+            // Test draw call performance
+            const drawCallPerf = await this.measureDrawCallPerformance(gl);
+            performanceResults.drawCalls = drawCallPerf;
+
+            // Test texture bind performance
+            const textureBindPerf = await this.measureTextureBindPerformance(gl);
+            performanceResults.textureBinds = textureBindPerf;
+
+            // Test memory allocation performance
+            const memoryPerf = await this.measureMemoryPerformance(gl);
+            performanceResults.memory = memoryPerf;
+
+        } catch (error) {
+            this.addTest('Performance Test', 'ERROR', `Performance test failed: ${error.message}`);
+        }
+
+        this.results.performance = performanceResults;
+    }
+
+    /**
+     * Measure draw call performance
+     */
+    async measureDrawCallPerformance(gl) {
+        const iterations = 1000;
+        const startTime = performance.now();
+
+        // Create simple test setup
+        const buffer = gl.createBuffer();
+        const vertices = new Float32Array([-1, -1, 1, -1, 0, 1]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        // Measure draw calls
+        for (let i = 0; i < iterations; i++) {
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+        }
+
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        const callsPerSecond = (iterations / duration) * 1000;
+
+        gl.deleteBuffer(buffer);
+
+        const rating = callsPerSecond > 10000 ? 'EXCELLENT' : callsPerSecond > 5000 ? 'GOOD' : callsPerSecond > 1000 ? 'FAIR' : 'POOR';
+        this.addTest('Draw Call Performance', 'INFO', `${callsPerSecond.toFixed(0)} calls/sec (${rating})`);
+
+        return { callsPerSecond, rating, duration, iterations };
+    }
+
+    /**
+     * Measure texture binding performance
+     */
+    async measureTextureBindPerformance(gl) {
+        const textureCount = 16;
+        const bindIterations = 1000;
+
+        // Create test textures
+        const textures = [];
+        for (let i = 0; i < textureCount; i++) {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            textures.push(texture);
+        }
+
+        // Measure binding performance
+        const startTime = performance.now();
+
+        for (let i = 0; i < bindIterations; i++) {
+            const texture = textures[i % textureCount];
+            gl.activeTexture(gl.TEXTURE0 + (i % 8));
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+        }
+
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        const bindsPerSecond = (bindIterations / duration) * 1000;
+
+        // Cleanup
+        textures.forEach(tex => gl.deleteTexture(tex));
+
+        const rating = bindsPerSecond > 50000 ? 'EXCELLENT' : bindsPerSecond > 20000 ? 'GOOD' : bindsPerSecond > 10000 ? 'FAIR' : 'POOR';
+        this.addTest('Texture Bind Performance', 'INFO', `${bindsPerSecond.toFixed(0)} binds/sec (${rating})`);
+
+        return { bindsPerSecond, rating, duration, iterations: bindIterations };
+    }
+
+    /**
+     * Measure memory allocation performance
+     */
+    async measureMemoryPerformance(gl) {
+        const allocationCount = 100;
+        const textureSize = 256;
+
+        const startTime = performance.now();
+        const textures = [];
+
+        // Allocate textures
+        for (let i = 0; i < allocationCount; i++) {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            textures.push(texture);
+        }
+
+        const allocEndTime = performance.now();
+
+        // Deallocate textures
+        textures.forEach(tex => gl.deleteTexture(tex));
+
+        const deallocEndTime = performance.now();
+
+        const allocDuration = allocEndTime - startTime;
+        const deallocDuration = deallocEndTime - allocEndTime;
+        const totalMemoryMB = (allocationCount * textureSize * textureSize * 4) / (1024 * 1024);
+
+        const allocMBPerSec = totalMemoryMB / (allocDuration / 1000);
+        const deallocMBPerSec = totalMemoryMB / (deallocDuration / 1000);
+
+        this.addTest('Memory Allocation Performance', 'INFO', `Alloc: ${allocMBPerSec.toFixed(1)} MB/sec, Dealloc: ${deallocMBPerSec.toFixed(1)} MB/sec`);
+
+        return {
+            allocMBPerSec,
+            deallocMBPerSec,
+            totalMemoryMB,
+            allocDuration,
+            deallocDuration
+        };
+    }
+
+    /**
+     * Run stress tests
+     */
+    async runStressTests() {
+        console.log('🧪 Running Stress Tests...');
+
+        try {
+            await this.testMaxTextures();
+            await this.testMaxDrawCalls();
+            await this.testMemoryPressure();
+        } catch (error) {
+            this.addTest('Stress Tests', 'ERROR', `Stress test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Test maximum texture allocation
+     */
+    async testMaxTextures() {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+
+        if (!gl) return;
+
+        const textures = [];
+        let allocatedCount = 0;
+
+        try {
+            // Try to allocate textures until we hit limits
+            for (let i = 0; i < 1000; i++) {
+                const texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+                const error = gl.getError();
+                if (error !== gl.NO_ERROR) {
+                    gl.deleteTexture(texture);
+                    break;
+                }
+
+                textures.push(texture);
+                allocatedCount++;
+
+                // Check every 100 textures
+                if (allocatedCount % 100 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 0)); // Yield
+                }
+            }
+
+        } catch (error) {
+            console.warn('Texture allocation stopped due to error:', error);
+        }
+
+        // Cleanup
+        textures.forEach(tex => gl.deleteTexture(tex));
+
+        const memoryMB = (allocatedCount * 256 * 256 * 4) / (1024 * 1024);
+
+        if (allocatedCount > 200) {
+            this.addTest('Max Texture Allocation', 'PASS', `Allocated ${allocatedCount} textures (${memoryMB.toFixed(1)}MB)`);
+        } else if (allocatedCount > 50) {
+            this.addTest('Max Texture Allocation', 'WARN', `Limited to ${allocatedCount} textures (${memoryMB.toFixed(1)}MB)`);
+        } else {
+            this.addTest('Max Texture Allocation', 'FAIL', `Only ${allocatedCount} textures allocated (${memoryMB.toFixed(1)}MB)`);
+        }
+    }
+
+    /**
+     * Test maximum draw calls per frame
+     */
+    async testMaxDrawCalls() {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+
+        if (!gl) return;
+
+        const buffer = gl.createBuffer();
+        const vertices = new Float32Array([-1, -1, 1, -1, 0, 1]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const maxDrawCalls = 10000;
+        const startTime = performance.now();
+
+        for (let i = 0; i < maxDrawCalls; i++) {
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+        }
+
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        const callsPerFrame = Math.floor(maxDrawCalls / (duration / 16.67)); // Assuming 60fps target
+
+        gl.deleteBuffer(buffer);
+
+        if (callsPerFrame > 1000) {
+            this.addTest('Max Draw Calls', 'PASS', `Can handle ${callsPerFrame} draw calls per frame (60fps)`);
+        } else if (callsPerFrame > 500) {
+            this.addTest('Max Draw Calls', 'WARN', `Limited to ${callsPerFrame} draw calls per frame`);
+        } else {
+            this.addTest('Max Draw Calls', 'FAIL', `Only ${callsPerFrame} draw calls per frame`);
+        }
+    }
+
+    /**
+     * Test memory pressure handling
+     */
+    async testMemoryPressure() {
+        // This test is more observational - we check if the browser/GPU
+        // handles memory pressure gracefully
+
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+
+        if (!gl) return;
+
+        let successfulAllocations = 0;
+        let failedAllocations = 0;
+
+        try {
+            // Try to allocate increasingly large textures
+            const sizes = [512, 1024, 2048, 4096, 8192];
+
+            for (const size of sizes) {
+                const textures = [];
+
+                try {
+                    // Allocate multiple textures of this size
+                    for (let i = 0; i < 20; i++) {
+                        const texture = gl.createTexture();
+                        gl.bindTexture(gl.TEXTURE_2D, texture);
+                        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+                        const error = gl.getError();
+                        if (error === gl.NO_ERROR) {
+                            textures.push(texture);
+                            successfulAllocations++;
+                        } else {
+                            gl.deleteTexture(texture);
+                            failedAllocations++;
+                            break;
+                        }
+                    }
+                } finally {
+                    // Cleanup textures
+                    textures.forEach(tex => gl.deleteTexture(tex));
+                }
+
+                // Force garbage collection if available
+                if (window.gc && typeof window.gc === 'function') {
+                    window.gc();
+                }
+            }
+
+        } catch (error) {
+            this.addTest('Memory Pressure Test', 'ERROR', `Memory pressure test failed: ${error.message}`);
+            return;
+        }
+
+        const totalAttempts = successfulAllocations + failedAllocations;
+        const successRate = (successfulAllocations / totalAttempts) * 100;
+
+        if (successRate > 80) {
+            this.addTest('Memory Pressure Handling', 'PASS', `${successRate.toFixed(1)}% allocation success rate`);
+        } else if (successRate > 50) {
+            this.addTest('Memory Pressure Handling', 'WARN', `${successRate.toFixed(1)}% allocation success rate`);
+        } else {
+            this.addTest('Memory Pressure Handling', 'FAIL', `${successRate.toFixed(1)}% allocation success rate`);
+        }
+    }
+
+    /**
+     * Add test result
+     */
+    addTest(name, status, message) {
+        const test = {
+            name,
+            status,
+            message,
+            timestamp: Date.now()
+        };
+
+        this.tests.push(test);
+
+        const icon = {
+            'PASS': '✅',
+            'FAIL': '❌',
+            'WARN': '⚠️',
+            'ERROR': '💥',
+            'INFO': '📊'
+        }[status] || '❓';
+
+        console.log(`${icon} ${name}: ${message}`);
+    }
+
+    /**
+     * Generate final diagnostic report
+     */
+    generateReport() {
+        const passCount = this.tests.filter(t => t.status === 'PASS').length;
+        const failCount = this.tests.filter(t => t.status === 'FAIL').length;
+        const warnCount = this.tests.filter(t => t.status === 'WARN').length;
+        const errorCount = this.tests.filter(t => t.status === 'ERROR').length;
+
+        console.log('\
+📋 WebGL Diagnostic Report:');
+        console.log('============================');
+        console.log(`✅ Passed: ${passCount}`);
+        console.log(`❌ Failed: ${failCount}`);
+        console.log(`⚠️ Warnings: ${warnCount}`);
+        console.log(`💥 Errors: ${errorCount}`);
+        console.log(`📊 Total Tests: ${this.tests.length}`);
+
+        // Generate recommendations based on test results
+        this.generateDiagnosticRecommendations();
+
+        if (this.recommendations.length > 0) {
+            console.log('\
+💡 Recommendations:');
+            this.recommendations.forEach(rec => console.log(`   - ${rec}`));
+        }
+    }
+
+    /**
+     * Generate recommendations based on diagnostic results
+     */
+    generateDiagnosticRecommendations() {
+        const failedTests = this.tests.filter(t => t.status === 'FAIL' || t.status === 'ERROR');
+
+        if (failedTests.some(t => t.name.includes('WebGL'))) {
+            this.recommendations.push('Consider using Canvas fallback mode for better compatibility');
+        }
+
+        if (failedTests.some(t => t.name.includes('Texture'))) {
+            this.recommendations.push('Reduce texture sizes and use texture atlasing');
+            this.recommendations.push('Enable texture compression if available');
+        }
+
+        if (failedTests.some(t => t.name.includes('Performance'))) {
+            this.recommendations.push('Implement sprite batching to reduce draw calls');
+            this.recommendations.push('Use level-of-detail (LOD) system for distant objects');
+        }
+
+        if (this.results.browser?.capabilities?.device?.mobile) {
+            this.recommendations.push('Use mobile-optimized settings (smaller textures, fewer sprites)');
+            this.recommendations.push('Implement aggressive texture garbage collection');
+        }
+
+        const warnTests = this.tests.filter(t => t.status === 'WARN');
+        if (warnTests.length > 5) {
+            this.recommendations.push('Device has limited capabilities - consider reduced quality mode');
+        }
+    }
+
+    /**
+     * Get complete diagnostic report
+     */
+    getReport() {
+        return {
+            ...this.results,
+            tests: this.tests,
+            warnings: this.warnings,
+            errors: this.errors,
+            recommendations: this.recommendations,
+            summary: {
+                totalTests: this.tests.length,
+                passed: this.tests.filter(t => t.status === 'PASS').length,
+                failed: this.tests.filter(t => t.status === 'FAIL').length,
+                warnings: this.tests.filter(t => t.status === 'WARN').length,
+                errors: this.tests.filter(t => t.status === 'ERROR').length,
+                overall: this.tests.filter(t => t.status === 'FAIL' || t.status === 'ERROR').length === 0 ? 'HEALTHY' : 'ISSUES_DETECTED'
+            }
+        };
+    }
+}
+
+// Utility function for easy diagnostic testing
+export async function runWebGLDiagnostics() {
+    const diagnostics = new WebGLDiagnostics();
+    return await diagnostics.runDiagnostics();
+}

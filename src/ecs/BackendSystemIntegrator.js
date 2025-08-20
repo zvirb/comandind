@@ -73,4 +73,387 @@ export class BackendSystemIntegrator {
     
     /**
      * Initialize economy management system
-     */\n    async initializeEconomyManager() {\n        console.log('💰 Initializing economy manager...');\n        \n        // Create global economy entity\n        const economyEntity = this.world.createEntity();\n        this.economyManager = new EconomyComponent(2000); // Start with 2000 credits\n        economyEntity.addComponent(this.economyManager);\n        \n        // Store reference for easy access\n        this.world.economyEntity = economyEntity;\n        \n        console.log('✅ Economy manager initialized with 2000 starting credits');\n    }\n    \n    /**\n     * Initialize optimized selection system\n     */\n    async initializeOptimizedSelection() {\n        console.log('🎯 Initializing optimized selection system...');\n        \n        this.optimizedSelectionSystem = new OptimizedSelectionSystem(\n            this.world,\n            this.inputHandler,\n            this.camera,\n            this.stage\n        );\n        \n        console.log('✅ Optimized selection system initialized with QuadTree spatial partitioning');\n    }\n    \n    /**\n     * Initialize harvester AI system\n     */\n    async initializeHarvesterAI() {\n        console.log('🤖 Initializing harvester AI system...');\n        \n        this.harvesterAISystem = new HarvesterAISystem(\n            this.world,\n            this.economyManager\n        );\n        \n        console.log('✅ Harvester AI system initialized with spatial resource lookup');\n    }\n    \n    /**\n     * Register all systems with the world\n     */\n    async registerSystems() {\n        console.log('📋 Registering systems with world...');\n        \n        // Add systems to world\n        if (this.optimizedSelectionSystem) {\n            this.world.addSystem(this.optimizedSelectionSystem);\n            console.log('  ✓ Optimized selection system registered');\n        }\n        \n        if (this.harvesterAISystem) {\n            this.world.addSystem(this.harvesterAISystem);\n            console.log('  ✓ Harvester AI system registered');\n        }\n        \n        this.systemsRegistered = true;\n        console.log('✅ All systems registered with world');\n    }\n    \n    /**\n     * Initialize performance validator\n     */\n    async initializePerformanceValidator() {\n        console.log('📊 Initializing performance validator...');\n        \n        this.performanceValidator = new PerformanceValidator();\n        \n        console.log('✅ Performance validator ready for testing');\n    }\n    \n    /**\n     * Setup integration between systems\n     */\n    async setupSystemIntegration() {\n        console.log('🔗 Setting up system integration...');\n        \n        // Bind economy manager to harvester AI\n        if (this.harvesterAISystem && this.economyManager) {\n            this.harvesterAISystem.economyManager = this.economyManager;\n            console.log('  ✓ Economy manager linked to harvester AI');\n        }\n        \n        // Setup performance monitoring hooks\n        this.setupPerformanceMonitoring();\n        \n        console.log('✅ System integration complete');\n    }\n    \n    /**\n     * Setup performance monitoring\n     */\n    setupPerformanceMonitoring() {\n        // Monitor selection system performance\n        if (this.optimizedSelectionSystem) {\n            const originalGetEntityAtPosition = this.optimizedSelectionSystem.getEntityAtPosition.bind(this.optimizedSelectionSystem);\n            this.optimizedSelectionSystem.getEntityAtPosition = (x, y) => {\n                const startTime = performance.now();\n                const result = originalGetEntityAtPosition(x, y);\n                const endTime = performance.now();\n                \n                this.recordPerformanceMetric('selection', endTime - startTime);\n                return result;\n            };\n        }\n        \n        // Monitor pathfinding system performance if available\n        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === 'PathfindingSystem');\n        if (pathfindingSystem && pathfindingSystem.calculatePath) {\n            const originalCalculatePath = pathfindingSystem.calculatePath.bind(pathfindingSystem);\n            pathfindingSystem.calculatePath = (entity) => {\n                const startTime = performance.now();\n                const result = originalCalculatePath(entity);\n                const endTime = performance.now();\n                \n                this.recordPerformanceMetric('pathfinding', endTime - startTime);\n                return result;\n            };\n        }\n    }\n    \n    /**\n     * Record performance metric\n     */\n    recordPerformanceMetric(type, time) {\n        const now = Date.now();\n        this.performanceMonitor.performanceHistory.push({\n            type,\n            time,\n            timestamp: now\n        });\n        \n        // Clean old entries (keep last 100)\n        if (this.performanceMonitor.performanceHistory.length > 100) {\n            this.performanceMonitor.performanceHistory.shift();\n        }\n    }\n    \n    /**\n     * Create test scenario with entities\n     */\n    createTestScenario() {\n        console.log('🎭 Creating test scenario...');\n        \n        const entities = {\n            harvesters: [],\n            resourceNodes: [],\n            refineries: []\n        };\n        \n        try {\n            // Import required components\n            const { TransformComponent, SelectableComponent, UnitComponent, BuildingComponent, MovementComponent } = require('./Component.js');\n            \n            // Create resource nodes\n            for (let i = 0; i < 10; i++) {\n                const resourceEntity = this.world.createEntity();\n                \n                const x = 200 + (i % 5) * 300;\n                const y = 200 + Math.floor(i / 5) * 300;\n                \n                resourceEntity.addComponent(new TransformComponent(x, y));\n                resourceEntity.addComponent(new ResourceNodeComponent('tiberium', 1000, 25));\n                resourceEntity.addComponent(new SelectableComponent());\n                \n                entities.resourceNodes.push(resourceEntity);\n                console.log(`  ✓ Created resource node at (${x}, ${y})`);\n            }\n            \n            // Create refineries\n            for (let i = 0; i < 2; i++) {\n                const refineryEntity = this.world.createEntity();\n                \n                const x = 100 + i * 800;\n                const y = 600;\n                \n                refineryEntity.addComponent(new TransformComponent(x, y));\n                refineryEntity.addComponent(new BuildingComponent('refinery', 'player', 2000));\n                refineryEntity.addComponent(new SelectableComponent());\n                \n                entities.refineries.push(refineryEntity);\n                console.log(`  ✓ Created refinery at (${x}, ${y})`);\n            }\n            \n            // Create harvesters\n            for (let i = 0; i < 5; i++) {\n                const harvesterEntity = this.world.createEntity();\n                \n                const x = 150 + i * 100;\n                const y = 500;\n                \n                harvesterEntity.addComponent(new TransformComponent(x, y));\n                harvesterEntity.addComponent(new UnitComponent('harvester', 'player', 1400));\n                harvesterEntity.addComponent(new HarvesterComponent(700, 3000));\n                harvesterEntity.addComponent(new MovementComponent());\n                harvesterEntity.addComponent(new SelectableComponent());\n                \n                entities.harvesters.push(harvesterEntity);\n                console.log(`  ✓ Created harvester at (${x}, ${y})`);\n            }\n            \n            console.log(`✅ Test scenario created: ${entities.resourceNodes.length} resource nodes, ${entities.refineries.length} refineries, ${entities.harvesters.length} harvesters`);\n            \n        } catch (error) {\n            console.warn('⚠️ Could not create full test scenario (components may not be available):', error.message);\n            \n            // Create minimal test entities\n            for (let i = 0; i < 50; i++) {\n                const entity = this.world.createEntity();\n                // Add minimal components if available\n                entity.testEntity = true;\n                entities.harvesters.push(entity);\n            }\n            \n            console.log('✅ Created minimal test scenario with 50 test entities');\n        }\n        \n        return entities;\n    }\n    \n    /**\n     * Run performance validation tests\n     */\n    async runPerformanceValidation() {\n        if (!this.performanceValidator) {\n            console.error('❌ Performance validator not initialized');\n            return false;\n        }\n        \n        console.log('🧪 Running performance validation tests...');\n        \n        // Create test scenario\n        const testEntities = this.createTestScenario();\n        \n        // Start validation\n        this.performanceValidator.startValidation(\n            this.world,\n            this.optimizedSelectionSystem,\n            this.world.systems.find(s => s.constructor.name === 'PathfindingSystem')\n        );\n        \n        // Wait for validation to complete\n        return new Promise((resolve) => {\n            const checkComplete = () => {\n                this.performanceValidator.update();\n                \n                if (!this.performanceValidator.isRunning) {\n                    const results = this.performanceValidator.completeValidation();\n                    resolve(results);\n                } else {\n                    setTimeout(checkComplete, 100);\n                }\n            };\n            \n            checkComplete();\n        });\n    }\n    \n    /**\n     * Get comprehensive system statistics\n     */\n    getSystemStats() {\n        const stats = {\n            initialized: this.initialized,\n            systemsRegistered: this.systemsRegistered,\n            entityCount: this.world.entities.size,\n            systemCount: this.world.systems.length\n        };\n        \n        // Selection system stats\n        if (this.optimizedSelectionSystem) {\n            stats.selection = this.optimizedSelectionSystem.getPerformanceStats();\n        }\n        \n        // Harvester AI stats\n        if (this.harvesterAISystem) {\n            stats.harvesterAI = this.harvesterAISystem.getPerformanceStats();\n            stats.economy = this.harvesterAISystem.getEconomicStats();\n        }\n        \n        // Economy stats\n        if (this.economyManager) {\n            stats.economyManager = this.economyManager.getStats();\n        }\n        \n        // Performance monitoring stats\n        stats.performance = this.getPerformanceStats();\n        \n        return stats;\n    }\n    \n    /**\n     * Get performance monitoring statistics\n     */\n    getPerformanceStats() {\n        const recent = this.performanceMonitor.performanceHistory.slice(-50); // Last 50 entries\n        \n        const selectionTimes = recent.filter(entry => entry.type === 'selection').map(entry => entry.time);\n        const pathfindingTimes = recent.filter(entry => entry.type === 'pathfinding').map(entry => entry.time);\n        \n        return {\n            recentEntries: recent.length,\n            selection: {\n                count: selectionTimes.length,\n                average: selectionTimes.length > 0 ? selectionTimes.reduce((sum, time) => sum + time, 0) / selectionTimes.length : 0,\n                max: selectionTimes.length > 0 ? Math.max(...selectionTimes) : 0\n            },\n            pathfinding: {\n                count: pathfindingTimes.length,\n                average: pathfindingTimes.length > 0 ? pathfindingTimes.reduce((sum, time) => sum + time, 0) / pathfindingTimes.length : 0,\n                max: pathfindingTimes.length > 0 ? Math.max(...pathfindingTimes) : 0\n            }\n        };\n    }\n    \n    /**\n     * Update integrator (call every frame)\n     */\n    update(deltaTime) {\n        if (!this.initialized) return;\n        \n        this.performanceMonitor.frameCount++;\n        \n        // Update performance validator if running\n        if (this.performanceValidator && this.performanceValidator.isRunning) {\n            this.performanceValidator.update();\n        }\n        \n        // Periodic performance reporting\n        const now = Date.now();\n        if (now - this.performanceMonitor.lastPerformanceCheck > 5000) { // Every 5 seconds\n            this.reportPerformanceStatus();\n            this.performanceMonitor.lastPerformanceCheck = now;\n        }\n    }\n    \n    /**\n     * Report current performance status\n     */\n    reportPerformanceStatus() {\n        const stats = this.getSystemStats();\n        \n        console.log('📊 Performance Status Report:');\n        console.log(`  Entities: ${stats.entityCount}`);\n        \n        if (stats.selection) {\n            console.log(`  Selection: ${stats.selection.averageSelectionTime?.toFixed(2)}ms avg, ${stats.selection.spatialQueries} spatial queries`);\n        }\n        \n        if (stats.performance) {\n            const perf = stats.performance;\n            console.log(`  Recent Performance: Selection ${perf.selection.average?.toFixed(2)}ms, Pathfinding ${perf.pathfinding.average?.toFixed(2)}ms`);\n        }\n        \n        if (stats.economy) {\n            console.log(`  Economy: ${stats.economyManager?.credits || 0} credits, ${stats.economy.activeHarvesters || 0} active harvesters`);\n        }\n    }\n    \n    /**\n     * Cleanup all systems\n     */\n    destroy() {\n        console.log('🗑️ Destroying backend system integrator...');\n        \n        if (this.optimizedSelectionSystem) {\n            this.optimizedSelectionSystem.destroy();\n        }\n        \n        if (this.harvesterAISystem) {\n            this.harvesterAISystem.destroy();\n        }\n        \n        this.performanceMonitor.performanceHistory = [];\n        \n        console.log('✅ Backend system integrator destroyed');\n    }\n}
+     */
+    async initializeEconomyManager() {
+        console.log('💰 Initializing economy manager...');
+
+        // Create global economy entity
+        const economyEntity = this.world.createEntity();
+        this.economyManager = new EconomyComponent(2000); // Start with 2000 credits
+        economyEntity.addComponent(this.economyManager);
+
+        // Store reference for easy access
+        this.world.economyEntity = economyEntity;
+
+        console.log('✅ Economy manager initialized with 2000 starting credits');
+    }
+
+    /**
+     * Initialize optimized selection system
+     */
+    async initializeOptimizedSelection() {
+        console.log('🎯 Initializing optimized selection system...');
+
+        this.optimizedSelectionSystem = new OptimizedSelectionSystem(
+            this.world,
+            this.inputHandler,
+            this.camera,
+            this.stage
+        );
+
+        console.log('✅ Optimized selection system initialized with QuadTree spatial partitioning');
+    }
+
+    /**
+     * Initialize harvester AI system
+     */
+    async initializeHarvesterAI() {
+        console.log('🤖 Initializing harvester AI system...');
+
+        this.harvesterAISystem = new HarvesterAISystem(
+            this.world,
+            this.economyManager
+        );
+
+        console.log('✅ Harvester AI system initialized with spatial resource lookup');
+    }
+
+    /**
+     * Register all systems with the world
+     */
+    async registerSystems() {
+        console.log('📋 Registering systems with world...');
+
+        // Add systems to world
+        if (this.optimizedSelectionSystem) {
+            this.world.addSystem(this.optimizedSelectionSystem);
+            console.log('  ✓ Optimized selection system registered');
+        }
+
+        if (this.harvesterAISystem) {
+            this.world.addSystem(this.harvesterAISystem);
+            console.log('  ✓ Harvester AI system registered');
+        }
+
+        this.systemsRegistered = true;
+        console.log('✅ All systems registered with world');
+    }
+
+    /**
+     * Initialize performance validator
+     */
+    async initializePerformanceValidator() {
+        console.log('📊 Initializing performance validator...');
+
+        this.performanceValidator = new PerformanceValidator();
+
+        console.log('✅ Performance validator ready for testing');
+    }
+
+    /**
+     * Setup integration between systems
+     */
+    async setupSystemIntegration() {
+        console.log('🔗 Setting up system integration...');
+
+        // Bind economy manager to harvester AI
+        if (this.harvesterAISystem && this.economyManager) {
+            this.harvesterAISystem.economyManager = this.economyManager;
+            console.log('  ✓ Economy manager linked to harvester AI');
+        }
+
+        // Setup performance monitoring hooks
+        this.setupPerformanceMonitoring();
+
+        console.log('✅ System integration complete');
+    }
+
+    /**
+     * Setup performance monitoring
+     */
+    setupPerformanceMonitoring() {
+        // Monitor selection system performance
+        if (this.optimizedSelectionSystem) {
+            const originalGetEntityAtPosition = this.optimizedSelectionSystem.getEntityAtPosition.bind(this.optimizedSelectionSystem);
+            this.optimizedSelectionSystem.getEntityAtPosition = (x, y) => {
+                const startTime = performance.now();
+                const result = originalGetEntityAtPosition(x, y);
+                const endTime = performance.now();
+
+                this.recordPerformanceMetric('selection', endTime - startTime);
+                return result;
+            };
+        }
+
+        // Monitor pathfinding system performance if available
+        const pathfindingSystem = this.world.systems.find(s => s.constructor.name === 'PathfindingSystem');
+        if (pathfindingSystem && pathfindingSystem.calculatePath) {
+            const originalCalculatePath = pathfindingSystem.calculatePath.bind(pathfindingSystem);
+            pathfindingSystem.calculatePath = (entity) => {
+                const startTime = performance.now();
+                const result = originalCalculatePath(entity);
+                const endTime = performance.now();
+
+                this.recordPerformanceMetric('pathfinding', endTime - startTime);
+                return result;
+            };
+        }
+    }
+
+    /**
+     * Record performance metric
+     */
+    recordPerformanceMetric(type, time) {
+        const now = Date.now();
+        this.performanceMonitor.performanceHistory.push({
+            type,
+            time,
+            timestamp: now
+        });
+
+        // Clean old entries (keep last 100)
+        if (this.performanceMonitor.performanceHistory.length > 100) {
+            this.performanceMonitor.performanceHistory.shift();
+        }
+    }
+
+    /**
+     * Create test scenario with entities
+     */
+    createTestScenario() {
+        console.log('🎭 Creating test scenario...');
+
+        const entities = {
+            harvesters: [],
+            resourceNodes: [],
+            refineries: []
+        };
+
+        try {
+            // Import required components
+            const { TransformComponent, SelectableComponent, UnitComponent, BuildingComponent, MovementComponent } = require('./Component.js');
+
+            // Create resource nodes
+            for (let i = 0; i < 10; i++) {
+                const resourceEntity = this.world.createEntity();
+
+                const x = 200 + (i % 5) * 300;
+                const y = 200 + Math.floor(i / 5) * 300;
+
+                resourceEntity.addComponent(new TransformComponent(x, y));
+                resourceEntity.addComponent(new ResourceNodeComponent('tiberium', 1000, 25));
+                resourceEntity.addComponent(new SelectableComponent());
+
+                entities.resourceNodes.push(resourceEntity);
+                console.log(`  ✓ Created resource node at (${x}, ${y})`);
+            }
+
+            // Create refineries
+            for (let i = 0; i < 2; i++) {
+                const refineryEntity = this.world.createEntity();
+
+                const x = 100 + i * 800;
+                const y = 600;
+
+                refineryEntity.addComponent(new TransformComponent(x, y));
+                refineryEntity.addComponent(new BuildingComponent('refinery', 'player', 2000));
+                refineryEntity.addComponent(new SelectableComponent());
+
+                entities.refineries.push(refineryEntity);
+                console.log(`  ✓ Created refinery at (${x}, ${y})`);
+            }
+
+            // Create harvesters
+            for (let i = 0; i < 5; i++) {
+                const harvesterEntity = this.world.createEntity();
+
+                const x = 150 + i * 100;
+                const y = 500;
+
+                harvesterEntity.addComponent(new TransformComponent(x, y));
+                harvesterEntity.addComponent(new UnitComponent('harvester', 'player', 1400));
+                harvesterEntity.addComponent(new HarvesterComponent(700, 3000));
+                harvesterEntity.addComponent(new MovementComponent());
+                harvesterEntity.addComponent(new SelectableComponent());
+
+                entities.harvesters.push(harvesterEntity);
+                console.log(`  ✓ Created harvester at (${x}, ${y})`);
+            }
+
+            console.log(`✅ Test scenario created: ${entities.resourceNodes.length} resource nodes, ${entities.refineries.length} refineries, ${entities.harvesters.length} harvesters`);
+
+        } catch (error) {
+            console.warn('⚠️ Could not create full test scenario (components may not be available):', error.message);
+
+            // Create minimal test entities
+            for (let i = 0; i < 50; i++) {
+                const entity = this.world.createEntity();
+                // Add minimal components if available
+                entity.testEntity = true;
+                entities.harvesters.push(entity);
+            }
+
+            console.log('✅ Created minimal test scenario with 50 test entities');
+        }
+
+        return entities;
+    }
+
+    /**
+     * Run performance validation tests
+     */
+    async runPerformanceValidation() {
+        if (!this.performanceValidator) {
+            console.error('❌ Performance validator not initialized');
+            return false;
+        }
+
+        console.log('🧪 Running performance validation tests...');
+
+        // Create test scenario
+        const testEntities = this.createTestScenario();
+
+        // Start validation
+        this.performanceValidator.startValidation(
+            this.world,
+            this.optimizedSelectionSystem,
+            this.world.systems.find(s => s.constructor.name === 'PathfindingSystem')
+        );
+
+        // Wait for validation to complete
+        return new Promise((resolve) => {
+            const checkComplete = () => {
+                this.performanceValidator.update();
+
+                if (!this.performanceValidator.isRunning) {
+                    const results = this.performanceValidator.completeValidation();
+                    resolve(results);
+                } else {
+                    setTimeout(checkComplete, 100);
+                }
+            };
+
+            checkComplete();
+        });
+    }
+
+    /**
+     * Get comprehensive system statistics
+     */
+    getSystemStats() {
+        const stats = {
+            initialized: this.initialized,
+            systemsRegistered: this.systemsRegistered,
+            entityCount: this.world.entities.size,
+            systemCount: this.world.systems.length
+        };
+
+        // Selection system stats
+        if (this.optimizedSelectionSystem) {
+            stats.selection = this.optimizedSelectionSystem.getPerformanceStats();
+        }
+
+        // Harvester AI stats
+        if (this.harvesterAISystem) {
+            stats.harvesterAI = this.harvesterAISystem.getPerformanceStats();
+            stats.economy = this.harvesterAISystem.getEconomicStats();
+        }
+
+        // Economy stats
+        if (this.economyManager) {
+            stats.economyManager = this.economyManager.getStats();
+        }
+
+        // Performance monitoring stats
+        stats.performance = this.getPerformanceStats();
+
+        return stats;
+    }
+
+    /**
+     * Get performance monitoring statistics
+     */
+    getPerformanceStats() {
+        const recent = this.performanceMonitor.performanceHistory.slice(-50); // Last 50 entries
+
+        const selectionTimes = recent.filter(entry => entry.type === 'selection').map(entry => entry.time);
+        const pathfindingTimes = recent.filter(entry => entry.type === 'pathfinding').map(entry => entry.time);
+
+        return {
+            recentEntries: recent.length,
+            selection: {
+                count: selectionTimes.length,
+                average: selectionTimes.length > 0 ? selectionTimes.reduce((sum, time) => sum + time, 0) / selectionTimes.length : 0,
+                max: selectionTimes.length > 0 ? Math.max(...selectionTimes) : 0
+            },
+            pathfinding: {
+                count: pathfindingTimes.length,
+                average: pathfindingTimes.length > 0 ? pathfindingTimes.reduce((sum, time) => sum + time, 0) / pathfindingTimes.length : 0,
+                max: pathfindingTimes.length > 0 ? Math.max(...pathfindingTimes) : 0
+            }
+        };
+    }
+
+    /**
+     * Update integrator (call every frame)
+     */
+    update(deltaTime) {
+        if (!this.initialized) return;
+
+        this.performanceMonitor.frameCount++;
+
+        // Update performance validator if running
+        if (this.performanceValidator && this.performanceValidator.isRunning) {
+            this.performanceValidator.update();
+        }
+
+        // Periodic performance reporting
+        const now = Date.now();
+        if (now - this.performanceMonitor.lastPerformanceCheck > 5000) { // Every 5 seconds
+            this.reportPerformanceStatus();
+            this.performanceMonitor.lastPerformanceCheck = now;
+        }
+    }
+
+    /**
+     * Report current performance status
+     */
+    reportPerformanceStatus() {
+        const stats = this.getSystemStats();
+
+        console.log('📊 Performance Status Report:');
+        console.log(`  Entities: ${stats.entityCount}`);
+
+        if (stats.selection) {
+            console.log(`  Selection: ${stats.selection.averageSelectionTime?.toFixed(2)}ms avg, ${stats.selection.spatialQueries} spatial queries`);
+        }
+
+        if (stats.performance) {
+            const perf = stats.performance;
+            console.log(`  Recent Performance: Selection ${perf.selection.average?.toFixed(2)}ms, Pathfinding ${perf.pathfinding.average?.toFixed(2)}ms`);
+        }
+
+        if (stats.economy) {
+            console.log(`  Economy: ${stats.economyManager?.credits || 0} credits, ${stats.economy.activeHarvesters || 0} active harvesters`);
+        }
+    }
+
+    /**
+     * Cleanup all systems
+     */
+    destroy() {
+        console.log('🗑️ Destroying backend system integrator...');
+
+        if (this.optimizedSelectionSystem) {
+            this.optimizedSelectionSystem.destroy();
+        }
+
+        if (this.harvesterAISystem) {
+            this.harvesterAISystem.destroy();
+        }
+
+        this.performanceMonitor.performanceHistory = [];
+
+        console.log('✅ Backend system integrator destroyed');
+    }
+}

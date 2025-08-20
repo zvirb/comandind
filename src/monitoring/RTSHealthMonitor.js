@@ -627,4 +627,99 @@ export class RTSHealthMonitor {
                 Array.from(this.healthChecks.entries()).map(([key, config]) => [
                     key, 
                     { status: config.status, lastCheck: config.lastCheck }
-                ])\n            )\n        };\n    }\n    \n    /**\n     * Get detailed health status\n     */\n    getDetailedHealthStatus() {\n        return {\n            ...this.getHealthStatus(),\n            issues: this.overallHealth.issues,\n            recommendations: this.overallHealth.recommendations,\n            alerts: {\n                active: Array.from(this.alerts.active.values()),\n                recent: this.alerts.history.slice(0, 10)\n            },\n            history: this.healthHistory.slice(-50) // Last 50 entries\n        };\n    }\n    \n    /**\n     * Get health metrics for external monitoring\n     */\n    getHealthMetrics() {\n        const profilerStats = rtsProfiler.getStats();\n        const diagnosticStats = rtsDiagnostics.getStats();\n        \n        return {\n            timestamp: Date.now(),\n            uptime: (Date.now() - this.startTime) / 1000,\n            overallHealth: this.overallHealth,\n            performance: {\n                fps: profilerStats.fps,\n                frameTime: profilerStats.frameTime,\n                memoryUsage: profilerStats.memoryUsage,\n                entityCount: profilerStats.entityCount\n            },\n            diagnostics: {\n                errorCount: diagnosticStats.errorCount,\n                logCount: diagnosticStats.logCount\n            },\n            targets: this.targets\n        };\n    }\n    \n    /**\n     * Get active alerts\n     */\n    getActiveAlerts() {\n        return Array.from(this.alerts.active.values());\n    }\n    \n    /**\n     * Force health check\n     */\n    forceHealthCheck() {\n        return this.performHealthCheck();\n    }\n    \n    /**\n     * Set health check interval\n     */\n    setCheckInterval(interval) {\n        this.checkInterval = interval;\n        this.startHealthMonitoring(); // Restart with new interval\n        console.log(`🏥 Health check interval set to ${interval / 1000}s`);\n    }\n    \n    /**\n     * Enable or disable health monitoring\n     */\n    setEnabled(enabled) {\n        this.enabled = enabled;\n        \n        if (enabled) {\n            this.startHealthMonitoring();\n        } else if (this.healthCheckId) {\n            clearInterval(this.healthCheckId);\n            this.healthCheckId = null;\n        }\n        \n        console.log(`🏥 Health monitoring ${enabled ? 'enabled' : 'disabled'}`);\n    }\n    \n    /**\n     * Stop health monitoring\n     */\n    stop() {\n        this.setEnabled(false);\n        console.log('🏥 Health monitoring stopped');\n    }\n}\n\n// Global health monitor instance\nexport const rtsHealthMonitor = new RTSHealthMonitor();
+                ])
+            )
+        };
+    }
+
+    /**
+     * Get detailed health status
+     */
+    getDetailedHealthStatus() {
+        return {
+            ...this.getHealthStatus(),
+            issues: this.overallHealth.issues,
+            recommendations: this.overallHealth.recommendations,
+            alerts: {
+                active: Array.from(this.alerts.active.values()),
+                recent: this.alerts.history.slice(0, 10)
+            },
+            history: this.healthHistory.slice(-50) // Last 50 entries
+        };
+    }
+
+    /**
+     * Get health metrics for external monitoring
+     */
+    getHealthMetrics() {
+        const profilerStats = rtsProfiler.getStats();
+        const diagnosticStats = rtsDiagnostics.getStats();
+
+        return {
+            timestamp: Date.now(),
+            uptime: (Date.now() - this.startTime) / 1000,
+            overallHealth: this.overallHealth,
+            performance: {
+                fps: profilerStats.fps,
+                frameTime: profilerStats.frameTime,
+                memoryUsage: profilerStats.memoryUsage,
+                entityCount: profilerStats.entityCount
+            },
+            diagnostics: {
+                errorCount: diagnosticStats.errorCount,
+                logCount: diagnosticStats.logCount
+            },
+            targets: this.targets
+        };
+    }
+
+    /**
+     * Get active alerts
+     */
+    getActiveAlerts() {
+        return Array.from(this.alerts.active.values());
+    }
+
+    /**
+     * Force health check
+     */
+    forceHealthCheck() {
+        return this.performHealthCheck();
+    }
+
+    /**
+     * Set health check interval
+     */
+    setCheckInterval(interval) {
+        this.checkInterval = interval;
+        this.startHealthMonitoring(); // Restart with new interval
+        console.log(`🏥 Health check interval set to ${interval / 1000}s`);
+    }
+
+    /**
+     * Enable or disable health monitoring
+     */
+    setEnabled(enabled) {
+        this.enabled = enabled;
+
+        if (enabled) {
+            this.startHealthMonitoring();
+        } else if (this.healthCheckId) {
+            clearInterval(this.healthCheckId);
+            this.healthCheckId = null;
+        }
+
+        console.log(`🏥 Health monitoring ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    /**
+     * Stop health monitoring
+     */
+    stop() {
+        this.setEnabled(false);
+        console.log('🏥 Health monitoring stopped');
+    }
+}
+
+// Global health monitor instance
+export const rtsHealthMonitor = new RTSHealthMonitor();

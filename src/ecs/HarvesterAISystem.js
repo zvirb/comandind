@@ -247,4 +247,342 @@ export class HarvesterAISystem extends System {
         if (!transform) return null;
         
         // Use spatial grid for fast lookup
-        const nearbyRefineries = this.refinerySpatialGrid.queryRadius(\n            transform.x, \n            transform.y, \n            1000 // Large search radius for refineries\n        );\n        \n        let nearestRefinery = null;\n        let nearestDistance = Infinity;\n        \n        for (const refineryData of nearbyRefineries) {\n            const distance = Math.sqrt(\n                Math.pow(refineryData.x - transform.x, 2) + \n                Math.pow(refineryData.y - transform.y, 2)\n            );\n            \n            if (distance < nearestDistance) {\n                nearestDistance = distance;\n                nearestRefinery = refineryData;\n            }\n        }\n        \n        return nearestRefinery?.entity || null;\n    }\n    \n    /**\n     * Assign nearest refinery to harvester\n     */\n    assignNearestRefinery(entity) {\n        const harvester = entity.getComponent(HarvesterComponent);\n        const nearestRefinery = this.findNearestRefinery(entity);\n        \n        if (harvester && nearestRefinery) {\n            harvester.homeRefineryId = nearestRefinery.id;\n            console.log(`Assigned harvester ${entity.id} to refinery ${nearestRefinery.id}`);\n        }\n    }\n    \n    /**\n     * Resource seeking behavior\n     */\n    seekResourceBehavior(entity, deltaTime) {\n        const harvester = entity.getComponent(HarvesterComponent);\n        const transform = entity.getComponent(TransformComponent);\n        const movement = entity.getComponent(MovementComponent);\n        \n        // Skip if not ready to search\n        if (!harvester.canSearch()) {\n            return;\n        }\n        \n        // Find nearest available resource node\n        const resourceNode = this.findNearestResourceNode(entity);\n        \n        if (resourceNode) {\n            const resourceComponent = resourceNode.getComponent(ResourceNodeComponent) ||\n                                    resourceNode.getComponent(ExtendedResourceNodeComponent);\n            \n            // Reserve the resource node\n            if (resourceComponent.reserve(entity.id)) {\n                harvester.targetResourceNode = resourceComponent;\n                harvester.state = 'moving_to_resource';\n                \n                // Issue move command to resource node\n                const resourceTransform = resourceNode.getComponent(TransformComponent);\n                movement.setTarget(resourceTransform.x, resourceTransform.y);\n                \n                console.log(`Harvester ${entity.id} moving to resource at (${resourceTransform.x}, ${resourceTransform.y})`);\n            }\n        }\n        \n        harvester.updateSearchTime();\n    }\n    \n    /**\n     * Harvesting behavior\n     */\n    harvestBehavior(entity, deltaTime) {\n        const harvester = entity.getComponent(HarvesterComponent);\n        const transform = entity.getComponent(TransformComponent);\n        const movement = entity.getComponent(MovementComponent);\n        \n        // Check if we're at the resource location\n        if (harvester.targetResourceNode && !harvester.isAtResource) {\n            const resourceEntity = this.findEntityByResourceComponent(harvester.targetResourceNode);\n            if (resourceEntity) {\n                const resourceTransform = resourceEntity.getComponent(TransformComponent);\n                const distance = Math.sqrt(\n                    Math.pow(transform.x - resourceTransform.x, 2) + \n                    Math.pow(transform.y - resourceTransform.y, 2)\n                );\n                \n                // Check if close enough to start harvesting\n                if (distance <= harvester.targetResourceNode.harvestRadius) {\n                    movement.stop();\n                    harvester.startHarvesting(harvester.targetResourceNode);\n                }\n            }\n        }\n        \n        // Process harvesting\n        if (harvester.state === 'harvesting' && harvester.canHarvest()) {\n            const creditsHarvested = harvester.completeHarvest();\n            \n            if (creditsHarvested > 0) {\n                this.economicStats.totalCreditsHarvested += creditsHarvested;\n                this.economicStats.totalHarvestOperations++;\n                \n                console.log(`Harvester ${entity.id} harvested ${creditsHarvested} credits (${harvester.currentLoad}/${harvester.maxCapacity})`);\n            }\n            \n            // Check if harvester is full or resource is depleted\n            if (harvester.isFull() || !harvester.targetResourceNode.canHarvest()) {\n                harvester.state = 'returning';\n            }\n        }\n    }\n    \n    /**\n     * Return to refinery behavior\n     */\n    returnBehavior(entity, deltaTime) {\n        const harvester = entity.getComponent(HarvesterComponent);\n        const transform = entity.getComponent(TransformComponent);\n        const movement = entity.getComponent(MovementComponent);\n        \n        // Find home refinery or nearest refinery\n        let refinery = null;\n        if (harvester.homeRefineryId) {\n            refinery = this.world.getEntityById(harvester.homeRefineryId);\n        }\n        \n        if (!refinery) {\n            refinery = this.findNearestRefinery(entity);\n            if (refinery) {\n                harvester.homeRefineryId = refinery.id;\n            }\n        }\n        \n        if (refinery) {\n            const refineryTransform = refinery.getComponent(TransformComponent);\n            \n            // Move to refinery\n            if (!movement.isMoving || \n                movement.targetX !== refineryTransform.x || \n                movement.targetY !== refineryTransform.y) {\n                movement.setTarget(refineryTransform.x, refineryTransform.y);\n            }\n            \n            // Check if at refinery\n            const distance = Math.sqrt(\n                Math.pow(transform.x - refineryTransform.x, 2) + \n                Math.pow(transform.y - refineryTransform.y, 2)\n            );\n            \n            if (distance <= 64) { // Close enough to refinery\n                movement.stop();\n                harvester.startUnloading();\n            }\n        } else {\n            // No refinery found, go idle\n            harvester.state = 'idle';\n            console.warn(`Harvester ${entity.id} could not find refinery to return to`);\n        }\n    }\n    \n    /**\n     * Unloading behavior\n     */\n    unloadBehavior(entity, deltaTime) {\n        const harvester = entity.getComponent(HarvesterComponent);\n        \n        // Check if unloading is complete\n        const now = Date.now();\n        if (now - harvester.unloadStartTime >= harvester.unloadTime) {\n            const creditsDelivered = harvester.completeUnloading();\n            \n            if (creditsDelivered > 0 && this.economyManager) {\n                this.economyManager.addCredits(creditsDelivered);\n                console.log(`Harvester ${entity.id} delivered ${creditsDelivered} credits to refinery`);\n            }\n            \n            // Return to seeking resources\n            harvester.state = 'seeking';\n        }\n    }\n    \n    /**\n     * Find entity by resource component (helper method)\n     */\n    findEntityByResourceComponent(resourceComponent) {\n        for (const [entityId, nodeData] of this.resourceNodes) {\n            if (nodeData.resource === resourceComponent) {\n                return nodeData.entity;\n            }\n        }\n        return null;\n    }\n    \n    /**\n     * Update harvester AI with time-slicing optimization\n     */\n    update(deltaTime) {\n        const now = Date.now();\n        \n        // Skip update if not enough time has passed\n        if (now - this.lastUpdate < this.updateInterval) {\n            return;\n        }\n        \n        const startTime = performance.now();\n        \n        // Build update queue if empty\n        if (this.harvesterUpdateQueue.length === 0) {\n            this.harvesterUpdateQueue = Array.from(this.entities);\n        }\n        \n        // Process limited number of harvesters per frame\n        let processedCount = 0;\n        this.economicStats.activeHarvesters = 0;\n        this.economicStats.idleHarvesters = 0;\n        \n        while (this.harvesterUpdateQueue.length > 0 && processedCount < this.maxHarvestersPerFrame) {\n            const entity = this.harvesterUpdateQueue.shift();\n            \n            if (!entity.active) continue;\n            \n            const harvester = entity.getComponent(HarvesterComponent);\n            if (!harvester) continue;\n            \n            // Update economic statistics\n            if (harvester.state === 'idle') {\n                this.economicStats.idleHarvesters++;\n            } else {\n                this.economicStats.activeHarvesters++;\n            }\n            \n            // Execute behavior based on state\n            switch (harvester.state) {\n                case 'seeking':\n                    this.seekResourceBehavior(entity, deltaTime);\n                    break;\n                    \n                case 'moving_to_resource':\n                    // Check if arrived at resource\n                    const movement = entity.getComponent(MovementComponent);\n                    if (!movement.isMoving) {\n                        harvester.state = 'harvesting';\n                    }\n                    break;\n                    \n                case 'harvesting':\n                    this.harvestBehavior(entity, deltaTime);\n                    break;\n                    \n                case 'returning':\n                    this.returnBehavior(entity, deltaTime);\n                    break;\n                    \n                case 'unloading':\n                    this.unloadBehavior(entity, deltaTime);\n                    break;\n                    \n                case 'idle':\n                default:\n                    // Transition to seeking if idle\n                    harvester.state = 'seeking';\n                    break;\n            }\n            \n            processedCount++;\n        }\n        \n        // Update performance statistics\n        const processingTime = performance.now() - startTime;\n        this.performanceStats.harvestersProcessed = processedCount;\n        this.performanceStats.averageProcessingTime = \n            (this.performanceStats.averageProcessingTime * 0.9) + (processingTime * 0.1);\n        \n        // Calculate economic efficiency\n        if (this.economicStats.totalHarvestOperations > 0) {\n            this.performanceStats.economicEfficiency = \n                this.economicStats.totalCreditsHarvested / this.economicStats.totalHarvestOperations;\n        }\n        \n        this.lastUpdate = now;\n    }\n    \n    /**\n     * Get performance statistics\n     */\n    getPerformanceStats() {\n        return {\n            ...this.performanceStats,\n            economicStats: this.economicStats,\n            resourceNodes: this.resourceNodes.size,\n            refineries: this.refineries.size,\n            spatialGridStats: {\n                resourceGrid: this.resourceSpatialGrid.getStats(),\n                refineryGrid: this.refinerySpatialGrid.getStats()\n            }\n        };\n    }\n    \n    /**\n     * Get economic statistics\n     */\n    getEconomicStats() {\n        return {\n            ...this.economicStats,\n            averageCreditsPerHarvest: this.economicStats.totalHarvestOperations > 0 ?\n                this.economicStats.totalCreditsHarvested / this.economicStats.totalHarvestOperations : 0,\n            harvesterUtilization: this.economicStats.activeHarvesters / \n                (this.economicStats.activeHarvesters + this.economicStats.idleHarvesters)\n        };\n    }\n    \n    /**\n     * Reset performance counters\n     */\n    resetStats() {\n        this.performanceStats.resourceSearches = 0;\n        this.performanceStats.pathfindingRequests = 0;\n        this.resourceSpatialGrid.resetStats();\n        this.refinerySpatialGrid.resetStats();\n    }\n    \n    /**\n     * Clean up system resources\n     */\n    destroy() {\n        this.resourceSpatialGrid.clear();\n        this.refinerySpatialGrid.clear();\n        this.resourceNodes.clear();\n        this.refineries.clear();\n        this.harvesterUpdateQueue = [];\n        \n        console.log('🗑️ HarvesterAISystem destroyed');\n    }\n}
+        const nearbyRefineries = this.refinerySpatialGrid.queryRadius(
+            transform.x,
+            transform.y,
+            1000 // Large search radius for refineries
+        );
+
+        let nearestRefinery = null;
+        let nearestDistance = Infinity;
+
+        for (const refineryData of nearbyRefineries) {
+            const distance = Math.sqrt(
+                Math.pow(refineryData.x - transform.x, 2) +
+                Math.pow(refineryData.y - transform.y, 2)
+            );
+
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestRefinery = refineryData;
+            }
+        }
+
+        return nearestRefinery?.entity || null;
+    }
+
+    /**
+     * Assign nearest refinery to harvester
+     */
+    assignNearestRefinery(entity) {
+        const harvester = entity.getComponent(HarvesterComponent);
+        const nearestRefinery = this.findNearestRefinery(entity);
+
+        if (harvester && nearestRefinery) {
+            harvester.homeRefineryId = nearestRefinery.id;
+            console.log(`Assigned harvester ${entity.id} to refinery ${nearestRefinery.id}`);
+        }
+    }
+
+    /**
+     * Resource seeking behavior
+     */
+    seekResourceBehavior(entity, deltaTime) {
+        const harvester = entity.getComponent(HarvesterComponent);
+        const transform = entity.getComponent(TransformComponent);
+        const movement = entity.getComponent(MovementComponent);
+
+        // Skip if not ready to search
+        if (!harvester.canSearch()) {
+            return;
+        }
+
+        // Find nearest available resource node
+        const resourceNode = this.findNearestResourceNode(entity);
+
+        if (resourceNode) {
+            const resourceComponent = resourceNode.getComponent(ResourceNodeComponent) ||
+                                    resourceNode.getComponent(ExtendedResourceNodeComponent);
+
+            // Reserve the resource node
+            if (resourceComponent.reserve(entity.id)) {
+                harvester.targetResourceNode = resourceComponent;
+                harvester.state = 'moving_to_resource';
+
+                // Issue move command to resource node
+                const resourceTransform = resourceNode.getComponent(TransformComponent);
+                movement.setTarget(resourceTransform.x, resourceTransform.y);
+
+                console.log(`Harvester ${entity.id} moving to resource at (${resourceTransform.x}, ${resourceTransform.y})`);
+            }
+        }
+
+        harvester.updateSearchTime();
+    }
+
+    /**
+     * Harvesting behavior
+     */
+    harvestBehavior(entity, deltaTime) {
+        const harvester = entity.getComponent(HarvesterComponent);
+        const transform = entity.getComponent(TransformComponent);
+        const movement = entity.getComponent(MovementComponent);
+
+        // Check if we're at the resource location
+        if (harvester.targetResourceNode && !harvester.isAtResource) {
+            const resourceEntity = this.findEntityByResourceComponent(harvester.targetResourceNode);
+            if (resourceEntity) {
+                const resourceTransform = resourceEntity.getComponent(TransformComponent);
+                const distance = Math.sqrt(
+                    Math.pow(transform.x - resourceTransform.x, 2) +
+                    Math.pow(transform.y - resourceTransform.y, 2)
+                );
+
+                // Check if close enough to start harvesting
+                if (distance <= harvester.targetResourceNode.harvestRadius) {
+                    movement.stop();
+                    harvester.startHarvesting(harvester.targetResourceNode);
+                }
+            }
+        }
+
+        // Process harvesting
+        if (harvester.state === 'harvesting' && harvester.canHarvest()) {
+            const creditsHarvested = harvester.completeHarvest();
+
+            if (creditsHarvested > 0) {
+                this.economicStats.totalCreditsHarvested += creditsHarvested;
+                this.economicStats.totalHarvestOperations++;
+
+                console.log(`Harvester ${entity.id} harvested ${creditsHarvested} credits (${harvester.currentLoad}/${harvester.maxCapacity})`);
+            }
+
+            // Check if harvester is full or resource is depleted
+            if (harvester.isFull() || !harvester.targetResourceNode.canHarvest()) {
+                harvester.state = 'returning';
+            }
+        }
+    }
+
+    /**
+     * Return to refinery behavior
+     */
+    returnBehavior(entity, deltaTime) {
+        const harvester = entity.getComponent(HarvesterComponent);
+        const transform = entity.getComponent(TransformComponent);
+        const movement = entity.getComponent(MovementComponent);
+
+        // Find home refinery or nearest refinery
+        let refinery = null;
+        if (harvester.homeRefineryId) {
+            refinery = this.world.getEntityById(harvester.homeRefineryId);
+        }
+
+        if (!refinery) {
+            refinery = this.findNearestRefinery(entity);
+            if (refinery) {
+                harvester.homeRefineryId = refinery.id;
+            }
+        }
+
+        if (refinery) {
+            const refineryTransform = refinery.getComponent(TransformComponent);
+
+            // Move to refinery
+            if (!movement.isMoving ||
+                movement.targetX !== refineryTransform.x ||
+                movement.targetY !== refineryTransform.y) {
+                movement.setTarget(refineryTransform.x, refineryTransform.y);
+            }
+
+            // Check if at refinery
+            const distance = Math.sqrt(
+                Math.pow(transform.x - refineryTransform.x, 2) +
+                Math.pow(transform.y - refineryTransform.y, 2)
+            );
+
+            if (distance <= 64) { // Close enough to refinery
+                movement.stop();
+                harvester.startUnloading();
+            }
+        } else {
+            // No refinery found, go idle
+            harvester.state = 'idle';
+            console.warn(`Harvester ${entity.id} could not find refinery to return to`);
+        }
+    }
+
+    /**
+     * Unloading behavior
+     */
+    unloadBehavior(entity, deltaTime) {
+        const harvester = entity.getComponent(HarvesterComponent);
+
+        // Check if unloading is complete
+        const now = Date.now();
+        if (now - harvester.unloadStartTime >= harvester.unloadTime) {
+            const creditsDelivered = harvester.completeUnloading();
+
+            if (creditsDelivered > 0 && this.economyManager) {
+                this.economyManager.addCredits(creditsDelivered);
+                console.log(`Harvester ${entity.id} delivered ${creditsDelivered} credits to refinery`);
+            }
+
+            // Return to seeking resources
+            harvester.state = 'seeking';
+        }
+    }
+
+    /**
+     * Find entity by resource component (helper method)
+     */
+    findEntityByResourceComponent(resourceComponent) {
+        for (const [entityId, nodeData] of this.resourceNodes) {
+            if (nodeData.resource === resourceComponent) {
+                return nodeData.entity;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Update harvester AI with time-slicing optimization
+     */
+    update(deltaTime) {
+        const now = Date.now();
+
+        // Skip update if not enough time has passed
+        if (now - this.lastUpdate < this.updateInterval) {
+            return;
+        }
+
+        const startTime = performance.now();
+
+        // Build update queue if empty
+        if (this.harvesterUpdateQueue.length === 0) {
+            this.harvesterUpdateQueue = Array.from(this.entities);
+        }
+
+        // Process limited number of harvesters per frame
+        let processedCount = 0;
+        this.economicStats.activeHarvesters = 0;
+        this.economicStats.idleHarvesters = 0;
+
+        while (this.harvesterUpdateQueue.length > 0 && processedCount < this.maxHarvestersPerFrame) {
+            const entity = this.harvesterUpdateQueue.shift();
+
+            if (!entity.active) continue;
+
+            const harvester = entity.getComponent(HarvesterComponent);
+            if (!harvester) continue;
+
+            // Update economic statistics
+            if (harvester.state === 'idle') {
+                this.economicStats.idleHarvesters++;
+            } else {
+                this.economicStats.activeHarvesters++;
+            }
+
+            // Execute behavior based on state
+            switch (harvester.state) {
+                case 'seeking':
+                    this.seekResourceBehavior(entity, deltaTime);
+                    break;
+
+                case 'moving_to_resource':
+                    // Check if arrived at resource
+                    const movement = entity.getComponent(MovementComponent);
+                    if (!movement.isMoving) {
+                        harvester.state = 'harvesting';
+                    }
+                    break;
+
+                case 'harvesting':
+                    this.harvestBehavior(entity, deltaTime);
+                    break;
+
+                case 'returning':
+                    this.returnBehavior(entity, deltaTime);
+                    break;
+
+                case 'unloading':
+                    this.unloadBehavior(entity, deltaTime);
+                    break;
+
+                case 'idle':
+                default:
+                    // Transition to seeking if idle
+                    harvester.state = 'seeking';
+                    break;
+            }
+
+            processedCount++;
+        }
+
+        // Update performance statistics
+        const processingTime = performance.now() - startTime;
+        this.performanceStats.harvestersProcessed = processedCount;
+        this.performanceStats.averageProcessingTime =
+            (this.performanceStats.averageProcessingTime * 0.9) + (processingTime * 0.1);
+
+        // Calculate economic efficiency
+        if (this.economicStats.totalHarvestOperations > 0) {
+            this.performanceStats.economicEfficiency =
+                this.economicStats.totalCreditsHarvested / this.economicStats.totalHarvestOperations;
+        }
+
+        this.lastUpdate = now;
+    }
+
+    /**
+     * Get performance statistics
+     */
+    getPerformanceStats() {
+        return {
+            ...this.performanceStats,
+            economicStats: this.economicStats,
+            resourceNodes: this.resourceNodes.size,
+            refineries: this.refineries.size,
+            spatialGridStats: {
+                resourceGrid: this.resourceSpatialGrid.getStats(),
+                refineryGrid: this.refinerySpatialGrid.getStats()
+            }
+        };
+    }
+
+    /**
+     * Get economic statistics
+     */
+    getEconomicStats() {
+        return {
+            ...this.economicStats,
+            averageCreditsPerHarvest: this.economicStats.totalHarvestOperations > 0 ?
+                this.economicStats.totalCreditsHarvested / this.economicStats.totalHarvestOperations : 0,
+            harvesterUtilization: this.economicStats.activeHarvesters /
+                (this.economicStats.activeHarvesters + this.economicStats.idleHarvesters)
+        };
+    }
+
+    /**
+     * Reset performance counters
+     */
+    resetStats() {
+        this.performanceStats.resourceSearches = 0;
+        this.performanceStats.pathfindingRequests = 0;
+        this.resourceSpatialGrid.resetStats();
+        this.refinerySpatialGrid.resetStats();
+    }
+
+    /**
+     * Clean up system resources
+     */
+    destroy() {
+        this.resourceSpatialGrid.clear();
+        this.refinerySpatialGrid.clear();
+        this.resourceNodes.clear();
+        this.refineries.clear();
+        this.harvesterUpdateQueue = [];
+
+        console.log('🗑️ HarvesterAISystem destroyed');
+    }
+}

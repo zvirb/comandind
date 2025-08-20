@@ -283,4 +283,113 @@ export class UIEventDelegator {
      */
     navigateList(container, direction) {
         const items = container.querySelectorAll('[role="option"], li, .list-item');
-        const currentIndex = Array.from(items).findIndex(item => item.classList.contains('selected') || item === document.activeElement);\n        \n        let newIndex = currentIndex + direction;\n        if (newIndex < 0) newIndex = items.length - 1;\n        if (newIndex >= items.length) newIndex = 0;\n        \n        // Remove previous selection\n        items[currentIndex]?.classList.remove('selected');\n        \n        // Set new selection\n        if (items[newIndex]) {\n            items[newIndex].classList.add('selected');\n            items[newIndex].focus();\n        }\n    }\n    \n    /**\n     * Emit custom event\n     */\n    emit(eventType, data) {\n        const event = new CustomEvent(`ui-${eventType}`, {\n            detail: data,\n            bubbles: true,\n            cancelable: true\n        });\n        \n        this.container.dispatchEvent(event);\n    }\n    \n    /**\n     * Get statistics about delegated events\n     */\n    getStats() {\n        let totalHandlers = 0;\n        for (const selectorHandlers of this.handlers.values()) {\n            for (const handlers of selectorHandlers.values()) {\n                totalHandlers += handlers.length;\n            }\n        }\n        \n        return {\n            selectors: this.handlers.size,\n            totalHandlers,\n            eventManagerStats: this.eventManager.getStats(),\n            isDestroyed: this.isDestroyed\n        };\n    }\n    \n    /**\n     * Destroy and cleanup\n     */\n    destroy() {\n        if (this.isDestroyed) {\n            console.warn('UIEventDelegator already destroyed');\n            return;\n        }\n        \n        console.log('🗑️ Destroying UIEventDelegator...');\n        \n        this.isDestroyed = true;\n        \n        // Hide tooltip\n        this.hideTooltip();\n        \n        // Remove tooltip element\n        const tooltip = document.getElementById('global-tooltip');\n        if (tooltip) {\n            tooltip.remove();\n        }\n        \n        // Destroy event manager (removes all delegated listeners)\n        if (this.eventManager) {\n            this.eventManager.destroy();\n            this.eventManager = null;\n        }\n        \n        // Clear handler references\n        this.handlers.clear();\n        this.container = null;\n        \n        console.log('✅ UIEventDelegator destroyed successfully');\n    }\n}\n\n/**\n * Global UI event delegator instance\n */\nexport const globalUIEventDelegator = new UIEventDelegator(document.body);\n\n/**\n * Utility function to create a scoped UI event delegator\n */\nexport function createUIEventDelegator(container) {\n    return new UIEventDelegator(container);\n}\n\n/**\n * Utility functions for common UI patterns\n */\nexport function delegateClick(selector, handler, container = document.body) {\n    return globalUIEventDelegator.delegate(selector, 'click', handler);\n}\n\nexport function delegateInput(selector, handler, container = document.body) {\n    return globalUIEventDelegator.delegate(selector, 'input', handler);\n}\n\nexport function delegateChange(selector, handler, container = document.body) {\n    return globalUIEventDelegator.delegate(selector, 'change', handler);\n}
+        const currentIndex = Array.from(items).findIndex(item => item.classList.contains('selected') || item === document.activeElement);
+
+        let newIndex = currentIndex + direction;
+        if (newIndex < 0) newIndex = items.length - 1;
+        if (newIndex >= items.length) newIndex = 0;
+
+        // Remove previous selection
+        items[currentIndex]?.classList.remove('selected');
+
+        // Set new selection
+        if (items[newIndex]) {
+            items[newIndex].classList.add('selected');
+            items[newIndex].focus();
+        }
+    }
+
+    /**
+     * Emit custom event
+     */
+    emit(eventType, data) {
+        const event = new CustomEvent(`ui-${eventType}`, {
+            detail: data,
+            bubbles: true,
+            cancelable: true
+        });
+
+        this.container.dispatchEvent(event);
+    }
+
+    /**
+     * Get statistics about delegated events
+     */
+    getStats() {
+        let totalHandlers = 0;
+        for (const selectorHandlers of this.handlers.values()) {
+            for (const handlers of selectorHandlers.values()) {
+                totalHandlers += handlers.length;
+            }
+        }
+
+        return {
+            selectors: this.handlers.size,
+            totalHandlers,
+            eventManagerStats: this.eventManager.getStats(),
+            isDestroyed: this.isDestroyed
+        };
+    }
+
+    /**
+     * Destroy and cleanup
+     */
+    destroy() {
+        if (this.isDestroyed) {
+            console.warn('UIEventDelegator already destroyed');
+            return;
+        }
+
+        console.log('🗑️ Destroying UIEventDelegator...');
+
+        this.isDestroyed = true;
+
+        // Hide tooltip
+        this.hideTooltip();
+
+        // Remove tooltip element
+        const tooltip = document.getElementById('global-tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
+
+        // Destroy event manager (removes all delegated listeners)
+        if (this.eventManager) {
+            this.eventManager.destroy();
+            this.eventManager = null;
+        }
+
+        // Clear handler references
+        this.handlers.clear();
+        this.container = null;
+
+        console.log('✅ UIEventDelegator destroyed successfully');
+    }
+}
+
+/**
+ * Global UI event delegator instance
+ */
+export const globalUIEventDelegator = new UIEventDelegator(document.body);
+
+/**
+ * Utility function to create a scoped UI event delegator
+ */
+export function createUIEventDelegator(container) {
+    return new UIEventDelegator(container);
+}
+
+/**
+ * Utility functions for common UI patterns
+ */
+export function delegateClick(selector, handler, container = document.body) {
+    return globalUIEventDelegator.delegate(selector, 'click', handler);
+}
+
+export function delegateInput(selector, handler, container = document.body) {
+    return globalUIEventDelegator.delegate(selector, 'input', handler);
+}
+
+export function delegateChange(selector, handler, container = document.body) {
+    return globalUIEventDelegator.delegate(selector, 'change', handler);
+}
