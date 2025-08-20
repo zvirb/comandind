@@ -309,7 +309,7 @@ class SecureErrorDisplay {
     /**
      * Create individual error item element safely
      */
-    createErrorItemElement(error, index) {
+    createErrorItemElement(error, _index) {
         const errorDiv = document.createElement("div");
         errorDiv.className = "error-item";
         errorDiv.style.cssText = `

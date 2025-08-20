@@ -249,7 +249,6 @@ export class PerformanceBenchmark {
     
     setupMemoryLeakTest() {
         const entities = [];
-        let createdEntities = 0;
         const maxEntities = 25;
         
         // Create entities and periodically destroy/recreate them
@@ -283,7 +282,6 @@ export class PerformanceBenchmark {
                 });
                 
                 entities.push(entity);
-                createdEntities++;
             }
         }, 1000);
         
@@ -366,7 +364,7 @@ export class PerformanceBenchmark {
         this.checkPerformanceWarnings(memoryUsage, rendererStats);
     }
     
-    checkPerformanceWarnings(memoryUsage, rendererStats) {
+    checkPerformanceWarnings(memoryUsage, _rendererStats) {
         // Memory warnings
         if (memoryUsage > this.config.memoryErrorThreshold) {
             console.error(`🚨 CRITICAL: Memory usage exceeded ${this.config.memoryErrorThreshold}MB: ${memoryUsage.toFixed(1)}MB`);
@@ -401,7 +399,7 @@ export class PerformanceBenchmark {
         };
     }
     
-    analyzeResults(scenario, baselineData) {
+    analyzeResults(scenario, _baselineData) {
         const results = {
             scenario: scenario.name,
             success: true,
@@ -534,7 +532,7 @@ export class PerformanceBenchmark {
         
         if (results.recommendations.length > 0) {
             console.log("\n💡 Recommendations:");
-            results.recommendations.forEach((rec, index) => {
+            results.recommendations.forEach((rec, _index) => {
                 const priority = rec.priority === "critical" ? "🚨" : 
                     rec.priority === "high" ? "⚠️" : "💡";
                 console.log(`   ${priority} ${rec.suggestion}`);

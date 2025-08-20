@@ -4,9 +4,9 @@
  * Evidence-based testing with screenshots and performance metrics
  */
 
-import { chromium } from 'playwright';
-import fs from 'fs';
-import path from 'path';
+import { chromium } from "playwright";
+import fs from "fs";
+import path from "path";
 
 class UserExperienceValidator {
     constructor() {
@@ -30,13 +30,13 @@ class UserExperienceValidator {
     }
 
     async initialize() {
-        console.log('🚀 Initializing User Experience Validator...');
+        console.log("🚀 Initializing User Experience Validator...");
         
         // Launch browser with performance monitoring
         this.browser = await chromium.launch({ 
             headless: false,
             slowMo: 500,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ["--no-sandbox", "--disable-setuid-sandbox"]
         });
         
         this.page = await this.browser.newPage();
@@ -45,9 +45,9 @@ class UserExperienceValidator {
         await this.page.context().tracing.start({ screenshots: true, snapshots: true });
         
         // Setup console logging
-        this.page.on('console', msg => {
+        this.page.on("console", msg => {
             console.log(`🖥️  Console ${msg.type()}: ${msg.text()}`);
-            if (msg.type() === 'error') {
+            if (msg.type() === "error") {
                 this.evidence.errors.push({
                     timestamp: new Date().toISOString(),
                     message: msg.text()
@@ -56,67 +56,67 @@ class UserExperienceValidator {
         });
 
         // Setup network monitoring
-        this.page.on('response', response => {
+        this.page.on("response", response => {
             if (response.status() >= 400) {
                 this.evidence.errors.push({
                     timestamp: new Date().toISOString(),
-                    type: 'network_error',
+                    type: "network_error",
                     url: response.url(),
                     status: response.status()
                 });
             }
         });
 
-        console.log('✅ Browser automation initialized');
+        console.log("✅ Browser automation initialized");
     }
 
     async testMainMenuIntegration() {
-        console.log('🎮 Testing Main Menu UI Integration...');
+        console.log("🎮 Testing Main Menu UI Integration...");
         
-        const testUrl = 'http://localhost:3000';
+        const testUrl = "http://localhost:3000";
         
         try {
             // Navigate to the application
-            await this.page.goto(testUrl, { waitUntil: 'networkidle' });
+            await this.page.goto(testUrl, { waitUntil: "networkidle" });
             
             // Take initial screenshot
-            await this.captureScreenshot('01-initial-load', 'Application initial load');
+            await this.captureScreenshot("01-initial-load", "Application initial load");
             
             // Wait for loading screen and monitor progress
-            const loadingScreen = await this.page.locator('#loading-screen');
+            const loadingScreen = await this.page.locator("#loading-screen");
             const isLoadingVisible = await loadingScreen.isVisible();
             
             if (isLoadingVisible) {
-                console.log('📊 Loading screen detected, monitoring progress...');
-                await this.captureScreenshot('02-loading-screen', 'Loading screen active');
+                console.log("📊 Loading screen detected, monitoring progress...");
+                await this.captureScreenshot("02-loading-screen", "Loading screen active");
                 
                 // Monitor loading progress
                 await this.page.waitForFunction(() => {
-                    const progress = document.getElementById('loading-progress');
+                    const progress = document.getElementById("loading-progress");
                     return progress && parseInt(progress.style.width) > 50;
                 }, { timeout: 10000 });
                 
-                await this.captureScreenshot('03-loading-progress', 'Loading progress mid-way');
+                await this.captureScreenshot("03-loading-progress", "Loading progress mid-way");
                 
                 // Wait for loading to complete and main menu to appear
-                await this.page.waitForSelector('#loading-screen.hidden', { timeout: 15000 });
+                await this.page.waitForSelector("#loading-screen.hidden", { timeout: 15000 });
             }
             
-            await this.captureScreenshot('04-main-menu', 'Main menu displayed');
+            await this.captureScreenshot("04-main-menu", "Main menu displayed");
             
             // Test main menu elements
             const mainMenuElements = await this.validateMainMenuElements();
             
             // Test "New Game" button interaction
-            const newGameButton = await this.page.locator('text=New Game').first();
+            const newGameButton = await this.page.locator("text=New Game").first();
             await newGameButton.hover();
-            await this.captureScreenshot('05-new-game-hover', 'New Game button hover state');
+            await this.captureScreenshot("05-new-game-hover", "New Game button hover state");
             
             // Click "New Game" to start the game
             await newGameButton.click();
             await this.page.waitForTimeout(2000); // Wait for transition
             
-            await this.captureScreenshot('06-game-started', 'Game started after menu interaction');
+            await this.captureScreenshot("06-game-started", "Game started after menu interaction");
             
             // Validate game elements are visible
             const gameElements = await this.validateGameElements();
@@ -128,11 +128,11 @@ class UserExperienceValidator {
                 interactionTime: await this.measureInteractionTime()
             };
             
-            console.log('✅ Main Menu Integration test passed');
+            console.log("✅ Main Menu Integration test passed");
             
         } catch (error) {
-            console.error('❌ Main Menu Integration test failed:', error);
-            await this.captureScreenshot('error-main-menu', 'Main Menu test error');
+            console.error("❌ Main Menu Integration test failed:", error);
+            await this.captureScreenshot("error-main-menu", "Main Menu test error");
             this.testResults.mainMenuIntegration = { passed: false, error: error.message };
         }
     }
@@ -141,14 +141,14 @@ class UserExperienceValidator {
         const elements = {};
         
         // Check for title
-        const title = await this.page.locator('text=Command & Independent Thought').first();
+        const title = await this.page.locator("text=Command & Independent Thought").first();
         elements.titleVisible = await title.isVisible();
         
         // Check for menu buttons
-        elements.newGameButton = await this.page.locator('text=New Game').first().isVisible();
-        elements.loadGameButton = await this.page.locator('text=Load Game').first().isVisible();
-        elements.optionsButton = await this.page.locator('text=Options').first().isVisible();
-        elements.exitButton = await this.page.locator('text=Exit').first().isVisible();
+        elements.newGameButton = await this.page.locator("text=New Game").first().isVisible();
+        elements.loadGameButton = await this.page.locator("text=Load Game").first().isVisible();
+        elements.optionsButton = await this.page.locator("text=Options").first().isVisible();
+        elements.exitButton = await this.page.locator("text=Exit").first().isVisible();
         
         return elements;
     }
@@ -157,43 +157,43 @@ class UserExperienceValidator {
         const elements = {};
         
         // Check for performance monitor
-        elements.performanceMonitor = await this.page.locator('#performance-monitor').isVisible();
+        elements.performanceMonitor = await this.page.locator("#performance-monitor").isVisible();
         
         // Check for navigation controls
-        elements.navigationControls = await this.page.locator('#navigation-controls').isVisible();
+        elements.navigationControls = await this.page.locator("#navigation-controls").isVisible();
         
         // Check for security notice
-        elements.securityNotice = await this.page.locator('.security-notice').isVisible();
+        elements.securityNotice = await this.page.locator(".security-notice").isVisible();
         
         return elements;
     }
 
     async testPixiImprovements() {
-        console.log('🎨 Testing PIXI Initialization Improvements...');
+        console.log("🎨 Testing PIXI Initialization Improvements...");
         
         try {
             // Monitor texture loading and atlas management
             const performanceBefore = await this.page.evaluate(() => performance.now());
             
             // Test sprite rendering
-            await this.page.keyboard.press('1'); // Add sprites test
+            await this.page.keyboard.press("1"); // Add sprites test
             await this.page.waitForTimeout(1000);
-            await this.captureScreenshot('07-sprites-added', 'Sprites added to test rendering');
+            await this.captureScreenshot("07-sprites-added", "Sprites added to test rendering");
             
             // Test performance under load
-            await this.page.keyboard.press('2'); // Stress test
+            await this.page.keyboard.press("2"); // Stress test
             await this.page.waitForTimeout(2000);
-            await this.captureScreenshot('08-stress-test', 'Stress test with multiple sprites');
+            await this.captureScreenshot("08-stress-test", "Stress test with multiple sprites");
             
             const performanceAfter = await this.page.evaluate(() => performance.now());
             
             // Get performance metrics
             const performanceMetrics = await this.page.evaluate(() => {
                 return {
-                    fps: document.getElementById('fps')?.textContent || 0,
-                    drawCalls: document.getElementById('draw-calls')?.textContent || 0,
-                    sprites: document.getElementById('sprite-count')?.textContent || 0,
-                    memory: document.getElementById('memory')?.textContent || 0
+                    fps: document.getElementById("fps")?.textContent || 0,
+                    drawCalls: document.getElementById("draw-calls")?.textContent || 0,
+                    sprites: document.getElementById("sprite-count")?.textContent || 0,
+                    memory: document.getElementById("memory")?.textContent || 0
                 };
             });
             
@@ -204,45 +204,45 @@ class UserExperienceValidator {
                 stressTestCompleted: true
             };
             
-            console.log('✅ PIXI Improvements test passed');
-            console.log('📊 Performance Metrics:', performanceMetrics);
+            console.log("✅ PIXI Improvements test passed");
+            console.log("📊 Performance Metrics:", performanceMetrics);
             
         } catch (error) {
-            console.error('❌ PIXI Improvements test failed:', error);
-            await this.captureScreenshot('error-pixi', 'PIXI test error');
+            console.error("❌ PIXI Improvements test failed:", error);
+            await this.captureScreenshot("error-pixi", "PIXI test error");
             this.testResults.pixiImprovements = { passed: false, error: error.message };
         }
     }
 
     async testApplicationFlow() {
-        console.log('🔄 Testing Application Flow and Performance...');
+        console.log("🔄 Testing Application Flow and Performance...");
         
         try {
             // Test camera controls
-            await this.page.keyboard.press('w');
+            await this.page.keyboard.press("w");
             await this.page.waitForTimeout(500);
-            await this.page.keyboard.press('a');
+            await this.page.keyboard.press("a");
             await this.page.waitForTimeout(500);
-            await this.page.keyboard.press('s');
+            await this.page.keyboard.press("s");
             await this.page.waitForTimeout(500);
-            await this.page.keyboard.press('d');
+            await this.page.keyboard.press("d");
             await this.page.waitForTimeout(500);
             
-            await this.captureScreenshot('09-camera-controls', 'Camera movement controls tested');
+            await this.captureScreenshot("09-camera-controls", "Camera movement controls tested");
             
             // Test zoom functionality
             await this.page.mouse.wheel(0, -100); // Zoom in
             await this.page.waitForTimeout(500);
-            await this.captureScreenshot('10-zoom-in', 'Zoom in functionality');
+            await this.captureScreenshot("10-zoom-in", "Zoom in functionality");
             
             await this.page.mouse.wheel(0, 100); // Zoom out
             await this.page.waitForTimeout(500);
-            await this.captureScreenshot('11-zoom-out', 'Zoom out functionality');
+            await this.captureScreenshot("11-zoom-out", "Zoom out functionality");
             
             // Test pathfinding debug mode
-            await this.page.keyboard.press('p');
+            await this.page.keyboard.press("p");
             await this.page.waitForTimeout(1000);
-            await this.captureScreenshot('12-pathfinding-debug', 'Pathfinding debug mode');
+            await this.captureScreenshot("12-pathfinding-debug", "Pathfinding debug mode");
             
             this.testResults.applicationFlow = {
                 passed: true,
@@ -251,54 +251,54 @@ class UserExperienceValidator {
                 debugModeWorking: true
             };
             
-            console.log('✅ Application Flow test passed');
+            console.log("✅ Application Flow test passed");
             
         } catch (error) {
-            console.error('❌ Application Flow test failed:', error);
-            await this.captureScreenshot('error-app-flow', 'Application Flow test error');
+            console.error("❌ Application Flow test failed:", error);
+            await this.captureScreenshot("error-app-flow", "Application Flow test error");
             this.testResults.applicationFlow = { passed: false, error: error.message };
         }
     }
 
     async testMultiplayerBackbone() {
-        console.log('🌐 Testing Multiplayer Backbone...');
+        console.log("🌐 Testing Multiplayer Backbone...");
         
         try {
             // Check if game server is accessible
-            const gameServerResponse = await this.page.request.get('http://localhost:3001').catch(() => null);
+            const gameServerResponse = await this.page.request.get("http://localhost:3001").catch(() => null);
             
             // For now, this is a structural test since multiplayer isn't fully integrated into UI
             this.testResults.multiplayerBackbone = {
                 passed: true,
                 serverAccessible: !!gameServerResponse,
-                note: 'Multiplayer backend infrastructure detected but not yet integrated into UI flow'
+                note: "Multiplayer backend infrastructure detected but not yet integrated into UI flow"
             };
             
-            console.log('✅ Multiplayer Backbone structure verified');
+            console.log("✅ Multiplayer Backbone structure verified");
             
         } catch (error) {
-            console.error('❌ Multiplayer Backbone test failed:', error);
+            console.error("❌ Multiplayer Backbone test failed:", error);
             this.testResults.multiplayerBackbone = { passed: false, error: error.message };
         }
     }
 
     async measurePerformanceMetrics() {
-        console.log('📊 Measuring Performance Metrics...');
+        console.log("📊 Measuring Performance Metrics...");
         
         try {
             // Start performance measurement
-            await this.page.evaluate(() => performance.mark('ux-test-start'));
+            await this.page.evaluate(() => performance.mark("ux-test-start"));
             
             // Run through a typical user workflow
             await this.simulateUserWorkflow();
             
             // End performance measurement
-            await this.page.evaluate(() => performance.mark('ux-test-end'));
+            await this.page.evaluate(() => performance.mark("ux-test-end"));
             
             // Get performance metrics
             const metrics = await this.page.evaluate(() => {
-                performance.measure('ux-test-duration', 'ux-test-start', 'ux-test-end');
-                const measure = performance.getEntriesByName('ux-test-duration')[0];
+                performance.measure("ux-test-duration", "ux-test-start", "ux-test-end");
+                const measure = performance.getEntriesByName("ux-test-duration")[0];
                 
                 return {
                     totalDuration: measure.duration,
@@ -307,9 +307,9 @@ class UserExperienceValidator {
                         total: performance.memory.totalJSHeapSize,
                         limit: performance.memory.jsHeapSizeLimit
                     } : null,
-                    fps: document.getElementById('fps')?.textContent || 0,
-                    drawCalls: document.getElementById('draw-calls')?.textContent || 0,
-                    sprites: document.getElementById('sprite-count')?.textContent || 0
+                    fps: document.getElementById("fps")?.textContent || 0,
+                    drawCalls: document.getElementById("draw-calls")?.textContent || 0,
+                    sprites: document.getElementById("sprite-count")?.textContent || 0
                 };
             });
             
@@ -324,10 +324,10 @@ class UserExperienceValidator {
                 performanceAcceptable: metrics.totalDuration < 5000 // 5 second threshold
             };
             
-            console.log('✅ Performance Metrics collected:', metrics);
+            console.log("✅ Performance Metrics collected:", metrics);
             
         } catch (error) {
-            console.error('❌ Performance Metrics test failed:', error);
+            console.error("❌ Performance Metrics test failed:", error);
             this.testResults.performanceMetrics = { passed: false, error: error.message };
         }
     }
@@ -336,13 +336,13 @@ class UserExperienceValidator {
         // Simulate a typical user interaction pattern
         
         // Move camera around
-        await this.page.keyboard.press('w');
+        await this.page.keyboard.press("w");
         await this.page.waitForTimeout(1000);
-        await this.page.keyboard.press('d');
+        await this.page.keyboard.press("d");
         await this.page.waitForTimeout(1000);
         
         // Add some sprites
-        await this.page.keyboard.press('1');
+        await this.page.keyboard.press("1");
         await this.page.waitForTimeout(1000);
         
         // Zoom in/out
@@ -352,9 +352,9 @@ class UserExperienceValidator {
         await this.page.waitForTimeout(500);
         
         // Toggle debug mode
-        await this.page.keyboard.press('p');
+        await this.page.keyboard.press("p");
         await this.page.waitForTimeout(500);
-        await this.page.keyboard.press('p');
+        await this.page.keyboard.press("p");
     }
 
     async measureInteractionTime() {
@@ -364,7 +364,7 @@ class UserExperienceValidator {
     }
 
     async captureScreenshot(filename, description) {
-        const screenshotPath = path.join(process.cwd(), 'evidence-collection', 'screenshots', `${filename}.png`);
+        const screenshotPath = path.join(process.cwd(), "evidence-collection", "screenshots", `${filename}.png`);
         
         // Ensure directory exists
         const dir = path.dirname(screenshotPath);
@@ -385,7 +385,7 @@ class UserExperienceValidator {
     }
 
     async runComprehensiveUXAudit() {
-        console.log('🔍 Starting Comprehensive UX Audit...');
+        console.log("🔍 Starting Comprehensive UX Audit...");
         
         try {
             await this.initialize();
@@ -403,18 +403,18 @@ class UserExperienceValidator {
             // Generate final report
             await this.generateEvidenceReport();
             
-            console.log('✅ Comprehensive UX Audit completed');
-            console.log('📊 Overall Score:', this.testResults.overallScore);
+            console.log("✅ Comprehensive UX Audit completed");
+            console.log("📊 Overall Score:", this.testResults.overallScore);
             
         } catch (error) {
-            console.error('❌ UX Audit failed:', error);
+            console.error("❌ UX Audit failed:", error);
         } finally {
             await this.cleanup();
         }
     }
 
     calculateOverallScore() {
-        const tests = Object.values(this.testResults).filter(result => result !== null && typeof result.passed === 'boolean');
+        const tests = Object.values(this.testResults).filter(result => result !== null && typeof result.passed === "boolean");
         const passedTests = tests.filter(result => result.passed).length;
         this.testResults.overallScore = Math.round((passedTests / tests.length) * 100);
     }
@@ -432,10 +432,10 @@ class UserExperienceValidator {
             }
         };
         
-        const reportPath = path.join(process.cwd(), 'evidence-collection', 'ux-audit-report.json');
+        const reportPath = path.join(process.cwd(), "evidence-collection", "ux-audit-report.json");
         fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
         
-        console.log('📄 Evidence report generated:', reportPath);
+        console.log("📄 Evidence report generated:", reportPath);
         
         return report;
     }
@@ -444,33 +444,33 @@ class UserExperienceValidator {
         const recommendations = [];
         
         if (!this.testResults.mainMenuIntegration?.passed) {
-            recommendations.push('Fix main menu integration issues');
+            recommendations.push("Fix main menu integration issues");
         }
         
         if (!this.testResults.pixiImprovements?.passed) {
-            recommendations.push('Address PIXI rendering performance issues');
+            recommendations.push("Address PIXI rendering performance issues");
         }
         
         if (!this.testResults.applicationFlow?.passed) {
-            recommendations.push('Improve application flow and user interactions');
+            recommendations.push("Improve application flow and user interactions");
         }
         
         if (this.evidence.errors.length > 0) {
-            recommendations.push('Address console errors and network issues');
+            recommendations.push("Address console errors and network issues");
         }
         
         if (this.testResults.overallScore < 80) {
-            recommendations.push('Overall user experience needs improvement');
+            recommendations.push("Overall user experience needs improvement");
         }
         
         return recommendations;
     }
 
     async cleanup() {
-        console.log('🧹 Cleaning up browser resources...');
+        console.log("🧹 Cleaning up browser resources...");
         
         if (this.page) {
-            await this.page.context().tracing.stop({ path: 'evidence-collection/trace.zip' });
+            await this.page.context().tracing.stop({ path: "evidence-collection/trace.zip" });
             await this.page.close();
         }
         
@@ -478,7 +478,7 @@ class UserExperienceValidator {
             await this.browser.close();
         }
         
-        console.log('✅ Cleanup completed');
+        console.log("✅ Cleanup completed");
     }
 }
 

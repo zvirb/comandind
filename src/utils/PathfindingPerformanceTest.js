@@ -3,10 +3,11 @@
  * Tests the optimized pathfinding system to validate 60 FPS performance goals
  */
 
-import { PathfindingSystem } from "../ecs/PathfindingSystem.js";
-import { NavigationGrid } from "../pathfinding/NavigationGrid.js";
-import { AStar } from "../pathfinding/AStar.js";
-import { PerformanceBenchmark } from "./PerformanceBenchmark.js";
+// These imports are for future use when the test is fully implemented
+// import { PathfindingSystem } from "../ecs/PathfindingSystem.js";
+// import { NavigationGrid } from "../pathfinding/NavigationGrid.js";
+// import { AStar } from "../pathfinding/AStar.js";
+// import { PerformanceBenchmark } from "./PerformanceBenchmark.js";
 
 export class PathfindingPerformanceTest {
     constructor() {

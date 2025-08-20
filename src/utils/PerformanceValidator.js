@@ -305,7 +305,7 @@ export class PerformanceValidator {
     /**
      * Get component class by name (helper method)
      */
-    getComponentClass(name) {
+    getComponentClass(_name) {
         // This would need to be implemented based on your component system
         // For now, return null to avoid errors
         return null;
