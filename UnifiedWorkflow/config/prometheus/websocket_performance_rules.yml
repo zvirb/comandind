@@ -1,0 +1,289 @@
+groups:
+  # ==============================================================================
+  # WEBSOCKET PERFORMANCE MONITORING RULES
+  # ==============================================================================
+  
+  - name: websocket.performance.monitoring
+    interval: 30s
+    rules:
+      # WebSocket Connection Establishment Time
+      - alert: WebSocketSlowConnection
+        expr: probe_duration_seconds{job="websocket-performance"} > 10
+        for: 2m
+        labels:
+          severity: medium
+          category: performance
+          protocol: "websocket"
+        annotations:
+          summary: "Slow WebSocket connection establishment"
+          description: "WebSocket connection to {{ $labels.instance }} taking {{ $value }}s"
+          impact: "Slow real-time features, degraded user experience"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/slow-connection"
+
+      # WebSocket Connection Critical Timeout (Target: <30s)
+      - alert: WebSocketTimeoutCritical
+        expr: probe_duration_seconds{job="websocket-performance"} > 30
+        for: 1m
+        labels:
+          severity: critical
+          category: performance
+          protocol: "websocket"
+        annotations:
+          summary: "WebSocket connection exceeding 30s target"
+          description: "WebSocket connection to {{ $labels.instance }} taking {{ $value }}s (exceeds 30s target)"
+          impact: "CRITICAL: WebSocket performance target exceeded, real-time features severely degraded"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/timeout-critical"
+
+      # WebSocket Connection Failure
+      - alert: WebSocketConnectionFailure
+        expr: probe_success{job="websocket-performance"} == 0
+        for: 1m
+        labels:
+          severity: high
+          category: availability
+          protocol: "websocket"
+        annotations:
+          summary: "WebSocket connection failed"
+          description: "Cannot establish WebSocket connection to {{ $labels.instance }}"
+          impact: "Real-time features unavailable, WebSocket functionality down"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/connection-failure"
+
+  # ==============================================================================
+  # WEBSOCKET TRAFFIC AND USAGE MONITORING
+  # ==============================================================================
+
+  - name: websocket.traffic.monitoring
+    interval: 60s
+    rules:
+      # WebSocket Connection Count (if metric available)
+      - alert: HighWebSocketConnectionCount
+        expr: websocket_connections_active > 1000
+        for: 5m
+        labels:
+          severity: medium
+          category: resource-utilization
+          protocol: "websocket"
+        annotations:
+          summary: "High number of active WebSocket connections"
+          description: "{{ $value }} active WebSocket connections"
+          impact: "High resource usage, potential performance degradation"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/high-connection-count"
+
+      # WebSocket Message Rate (if metric available)
+      - alert: HighWebSocketMessageRate
+        expr: rate(websocket_messages_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: medium
+          category: traffic
+          protocol: "websocket"
+        annotations:
+          summary: "High WebSocket message rate"
+          description: "{{ $value }} messages/sec through WebSocket"
+          impact: "High message volume, potential bottleneck"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/high-message-rate"
+
+      # WebSocket Error Rate
+      - alert: HighWebSocketErrorRate
+        expr: |
+          (
+            rate(websocket_errors_total[5m]) /
+            rate(websocket_messages_total[5m])
+          ) * 100 > 5
+        for: 3m
+        labels:
+          severity: high
+          category: reliability
+          protocol: "websocket"
+        annotations:
+          summary: "High WebSocket error rate"
+          description: "{{ $value }}% of WebSocket messages are failing"
+          impact: "Real-time feature reliability issues"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/high-error-rate"
+
+  # ==============================================================================
+  # WEBSOCKET PERFORMANCE OPTIMIZATION RECORDING RULES
+  # ==============================================================================
+
+  - name: websocket.performance.recording
+    interval: 60s
+    rules:
+      # WebSocket Connection Success Rate
+      - record: websocket:connection_success_rate_5m
+        expr: |
+          (
+            sum(probe_success{job="websocket-performance"}) /
+            count(probe_success{job="websocket-performance"})
+          ) * 100
+
+      # WebSocket Average Connection Time
+      - record: websocket:avg_connection_time_5m
+        expr: |
+          avg(probe_duration_seconds{job="websocket-performance"})
+
+      # WebSocket 95th Percentile Connection Time
+      - record: websocket:p95_connection_time_5m
+        expr: |
+          histogram_quantile(0.95, 
+            rate(probe_duration_seconds_bucket{job="websocket-performance"}[5m])
+          )
+
+      # WebSocket Performance Target Compliance (30s target)
+      - record: websocket:target_compliance_rate
+        expr: |
+          (
+            sum(probe_duration_seconds{job="websocket-performance"} <= 30) /
+            count(probe_duration_seconds{job="websocket-performance"})
+          ) * 100
+
+  # ==============================================================================
+  # WEBSOCKET HEALTH SCORING
+  # ==============================================================================
+
+  - name: websocket.health.scoring
+    interval: 120s
+    rules:
+      # WebSocket Health Score (0-100)
+      - record: websocket:health_score
+        expr: |
+          (
+            # Base score for successful connections (40 points)
+            websocket:connection_success_rate_5m * 0.4 +
+            # Performance score based on 30s target (40 points)
+            clamp_max(
+              (30 - websocket:avg_connection_time_5m) / 30 * 40,
+              40
+            ) +
+            # Reliability score based on error rate (20 points)
+            clamp_max(
+              (100 - (rate(websocket_errors_total[5m]) / rate(websocket_messages_total[5m]) * 100)) / 100 * 20,
+              20
+            )
+          )
+
+      # WebSocket Health Alert
+      - alert: WebSocketHealthDegraded
+        expr: websocket:health_score < 70
+        for: 5m
+        labels:
+          severity: medium
+          category: health
+          protocol: "websocket"
+        annotations:
+          summary: "WebSocket health score degraded"
+          description: "WebSocket health score is {{ $value }}% (target: >80%)"
+          impact: "Real-time features performance and reliability issues"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/health-degraded"
+
+      - alert: WebSocketHealthCritical
+        expr: websocket:health_score < 50
+        for: 3m
+        labels:
+          severity: high
+          category: health
+          protocol: "websocket"
+        annotations:
+          summary: "WebSocket health critically degraded"
+          description: "WebSocket health score is {{ $value }}% (critical threshold: <50%)"
+          impact: "CRITICAL: Real-time features severely compromised"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/health-critical"
+
+  # ==============================================================================
+  # WEBSOCKET PERFORMANCE TARGET MONITORING
+  # ==============================================================================
+
+  - name: websocket.performance.targets
+    interval: 300s  # Check every 5 minutes
+    rules:
+      # 30-Second Target Achievement
+      - alert: WebSocketPerformanceTargetMissed
+        expr: websocket:target_compliance_rate < 95
+        for: 10m
+        labels:
+          severity: medium
+          category: performance-target
+          protocol: "websocket"
+          target: "30s"
+        annotations:
+          summary: "WebSocket 30s performance target not being met"
+          description: "Only {{ $value }}% of WebSocket connections meet the 30s target"
+          impact: "Performance SLA not being met, user experience degraded"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/performance-target-missed"
+
+      # Consistent Target Achievement (Success)
+      - alert: WebSocketPerformanceTargetAchieved
+        expr: websocket:target_compliance_rate >= 98 and websocket:avg_connection_time_5m < 20
+        for: 30m
+        labels:
+          severity: info
+          category: performance-success
+          protocol: "websocket"
+          target: "30s"
+        annotations:
+          summary: "WebSocket performance targets consistently achieved"
+          description: "{{ $value }}% compliance with 30s target, avg connection time {{ $labels.avg_time }}s"
+          impact: "Excellent WebSocket performance, targets exceeded"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/performance-excellent"
+
+  # ==============================================================================
+  # WEBSOCKET REGIONAL AND EDGE PERFORMANCE
+  # ==============================================================================
+
+  - name: websocket.regional.performance
+    interval: 300s
+    rules:
+      # Regional Performance Variance (if multiple endpoints monitored)
+      - alert: WebSocketRegionalPerformanceVariance
+        expr: |
+          (
+            max(websocket:avg_connection_time_5m) by (region) -
+            min(websocket:avg_connection_time_5m) by (region)
+          ) > 15
+        for: 10m
+        labels:
+          severity: medium
+          category: regional-performance
+          protocol: "websocket"
+        annotations:
+          summary: "High WebSocket performance variance across regions"
+          description: "{{ $value }}s difference between best and worst performing regions"
+          impact: "Inconsistent user experience across geographic regions"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/regional-variance"
+
+  # ==============================================================================
+  # WEBSOCKET MONITORING SERVICE HEALTH
+  # ==============================================================================
+
+  - name: websocket.monitoring.health
+    interval: 120s
+    rules:
+      # WebSocket Monitoring Service Availability
+      - alert: WebSocketMonitoringDown
+        expr: up{job="websocket-performance"} == 0
+        for: 5m
+        labels:
+          severity: high
+          category: monitoring
+          protocol: "websocket"
+        annotations:
+          summary: "WebSocket performance monitoring is down"
+          description: "Cannot monitor WebSocket performance metrics"
+          impact: "No visibility into WebSocket performance and availability"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/monitoring-down"
+
+      # WebSocket Monitoring Service Reliability
+      - alert: WebSocketMonitoringUnreliable
+        expr: |
+          (
+            rate(probe_success{job="websocket-performance"}[30m]) < 0.9
+          )
+        for: 15m
+        labels:
+          severity: medium
+          category: monitoring
+          protocol: "websocket"
+        annotations:
+          summary: "WebSocket monitoring reliability issues"
+          description: "WebSocket monitoring success rate is {{ $value * 100 }}%"
+          impact: "Unreliable WebSocket performance monitoring data"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/websocket/monitoring-unreliable"

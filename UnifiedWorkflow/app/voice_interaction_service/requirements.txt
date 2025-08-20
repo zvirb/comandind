@@ -1,0 +1,39 @@
+# Voice Interaction Service Dependencies
+
+# Core framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+aiofiles==23.2.1
+httpx==0.25.2
+
+# Speech processing libraries (lightweight selection)
+vosk==0.3.45
+SpeechRecognition==3.10.0
+pyaudio==0.2.11
+
+# TTS libraries (minimal for faster build)
+# Note: Full TTS capabilities can be added later with volume mount
+gTTS==2.5.0
+
+# Audio processing
+pydub==0.25.1
+librosa==0.10.1
+soundfile==0.12.1
+
+# Redis for caching
+redis[hiredis]==5.0.1
+
+# JWT authentication
+PyJWT==2.8.0
+cryptography==41.0.7
+
+# Google Cloud Speech API (optional fallback)
+google-cloud-speech==2.21.0
+google-cloud-texttospeech==2.16.3
+
+# Metrics and monitoring
+prometheus-client==0.19.0
+
+# Utilities
+python-multipart==0.0.6
+python-dotenv==1.0.0

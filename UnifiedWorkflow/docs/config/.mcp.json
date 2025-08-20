@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "redis": {
+      "type": "stdio",
+      "command": "/home/marku/ai_workflow_engine/scripts/mcp-redis-wrapper.sh"
+    }
+  }
+}

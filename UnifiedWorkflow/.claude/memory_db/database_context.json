@@ -1,0 +1,13 @@
+{
+  "package_id": "database_context",
+  "package_type": "migrated-context",
+  "content": "{\n    \"package_type\": \"Database\",\n    \"token_limit\": 4000,\n    \"key_findings\": [\n        \"PostgreSQL Performance Configuration\",\n        \"Schema Optimization Opportunities\",\n        \"Query Pattern Analysis\"\n    ],\n    \"critical_files\": [\n        \"/app/api/database/schema.py\",\n        \"/app/api/database/models.py\",\n        \"/docker-compose.yml (database service)\"\n    ],\n    \"performance_bottlenecks\": [\n        \"Identify N+1 query patterns\",\n        \"Implement database connection pooling\",\n        \"Optimize large result set handling\"\n    ],\n    \"coordination_metadata\": {\n        \"specialists\": [\"schema-database-expert\", \"performance-profiler\"],\n        \"validation_requirements\": [\n            \"Benchmark query performance\",\n            \"Test connection pooling efficiency\",\n            \"Validate schema normalization\"\n        ]\n    }\n}",
+  "tokens": 79,
+  "created_at": "2025-08-18T15:14:25.930786",
+  "last_accessed": "2025-08-18T15:14:25.930798",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

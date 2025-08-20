@@ -1,0 +1,13 @@
+{
+  "package_id": "infrastructure_package",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_id\": \"infra-phase5\",\n  \"specialist\": \"deployment-orchestrator\",\n  \"token_count\": 2156,\n  \"priority\": \"critical\",\n  \"coordination_metadata\": {\n    \"parallel_safe\": false,\n    \"dependencies\": [\"file-organization\"],\n    \"estimated_duration\": \"30 minutes\",\n    \"rollback_capable\": true\n  },\n  \"mission\": {\n    \"objective\": \"Ensure Docker infrastructure remains stable during reorganization\",\n    \"approach\": \"path-preservation\",\n    \"validation\": \"continuous health monitoring\"\n  },\n  \"docker_compose_analysis\": {\n    \"critical_paths\": [\n      \"./app/*/Dockerfile\",\n      \"./app/*/requirements.txt\",\n      \"./config/**/*.yaml\",\n      \"./shared:/app/shared\"\n    ],\n    \"services_count\": 15,\n    \"volume_mounts\": 23,\n    \"network_configs\": 3\n  },\n  \"path_dependencies\": {\n    \"must_preserve\": [\n      \"app/coordination_service/\",\n      \"app/memory_service/\",\n      \"app/reasoning_service/\",\n      \"app/learning_service/\",\n      \"app/worker/\",\n      \"app/webui-next/\",\n      \"shared/\"\n    ],\n    \"can_reorganize\": [\n      \"scripts/\",\n      \"tests/\",\n      \"docs/\",\n      \"data/\"\n    ]\n  },\n  \"monitoring_strategy\": {\n    \"health_endpoints\": [\n      \"http://localhost:8000/health\",\n      \"http://localhost:3000/api/health\",\n      \"http://localhost:6333/health\"\n    ],\n    \"validation_interval\": \"5 seconds\",\n    \"failure_threshold\": 3,\n    \"recovery_action\": \"automatic rollback\"\n  },\n  \"deployment_validation\": {\n    \"pre_deployment\": [\n      \"docker-compose config\",\n      \"docker network ls\",\n      \"docker volume ls\"\n    ],\n    \"post_deployment\": [\n      \"docker-compose ps\",\n      \"service health checks\",\n      \"integration tests\"\n    ]\n  },\n  \"rollback_procedures\": {\n    \"triggers\": [\n      \"service startup failure\",\n      \"health check failure\",\n      \"import error detection\"\n    ],\n    \"steps\": [\n      \"docker-compose down\",\n      \"git reset --hard HEAD\",\n      \"docker-compose up -d\",\n      \"verify all services healthy\"\n    ]\n  },\n  \"success_criteria\": {\n    \"all_services_running\": true,\n    \"health_checks_passing\": true,\n    \"no_path_errors\": true,\n    \"volumes_intact\": true,\n    \"networks_operational\": true\n  }\n}",
+  "tokens": 208,
+  "created_at": "2025-08-18T15:14:25.914501",
+  "last_accessed": "2025-08-18T15:14:25.914513",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "name": "mcp-playwright-server",
+  "version": "1.0.0",
+  "description": "Playwright MCP server for browser automation and UX validation",
+  "type": "browser_automation",
+  "configuration": {
+    "browser": {
+      "type": "chromium",
+      "headless": true,
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "device_scale_factor": 1,
+      "timeout": 30000,
+      "slow_mo": 0
+    },
+    "screenshot": {
+      "format": "png",
+      "quality": 90,
+      "full_page": true,
+      "storage_path": "./.playwright-mcp/"
+    },
+    "testing": {
+      "wait_for_network_idle": true,
+      "network_idle_timeout": 5000,
+      "retry_attempts": 3,
+      "assertion_timeout": 10000
+    }
+  },
+  "capabilities": {
+    "browser_navigate": {
+      "description": "Navigate to a URL",
+      "parameters": {
+        "url": "string (required)"
+      },
+      "usage": "Load web pages for testing and validation"
+    },
+    "browser_snapshot": {
+      "description": "Capture accessibility snapshot of the current page",
+      "parameters": {},
+      "usage": "Get page structure for analysis and interaction"
+    },
+    "browser_click": {
+      "description": "Perform click on a web page element",
+      "parameters": {
+        "element": "string (required)",
+        "ref": "string (required)"
+      },
+      "usage": "Interact with page elements"
+    },
+    "browser_type": {
+      "description": "Type text into editable element",
+      "parameters": {
+        "element": "string (required)",
+        "ref": "string (required)",
+        "text": "string (required)"
+      },
+      "usage": "Fill forms and input fields"
+    },
+    "browser_take_screenshot": {
+      "description": "Take a screenshot of the current page",
+      "parameters": {
+        "filename": "string (optional)",
+        "fullPage": "boolean (optional)"
+      },
+      "usage": "Capture visual evidence for validation"
+    },
+    "browser_wait_for": {
+      "description": "Wait for specific conditions on the page",
+      "parameters": {
+        "text": "string (optional)",
+        "time": "number (optional)"
+      },
+      "usage": "Wait for page changes and loading"
+    },
+    "browser_evaluate": {
+      "description": "Execute JavaScript on the page",
+      "parameters": {
+        "function": "string (required)"
+      },
+      "usage": "Custom page analysis and validation"
+    }
+  },
+  "integration": {
+    "claude_tools": [
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot", 
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_evaluate"
+    ],
+    "workflow_usage": {
+      "phase_6": "Primary UX validation and evidence collection",
+      "user_experience_auditor": "Comprehensive browser-based testing",
+      "ui_regression_debugger": "Visual regression detection and analysis"
+    }
+  },
+  "validation_patterns": {
+    "authentication_flow": {
+      "steps": [
+        "Navigate to login page",
+        "Take initial screenshot",
+        "Fill login credentials", 
+        "Submit form",
+        "Validate redirect",
+        "Capture success state"
+      ],
+      "evidence": ["screenshots", "network_requests", "console_logs"]
+    },
+    "responsive_design": {
+      "viewports": [
+        {"width": 320, "height": 568, "name": "mobile"},
+        {"width": 768, "height": 1024, "name": "tablet"},
+        {"width": 1920, "height": 1080, "name": "desktop"}
+      ],
+      "tests": ["layout", "navigation", "functionality"]
+    },
+    "performance_validation": {
+      "metrics": [
+        "first_contentful_paint",
+        "largest_contentful_paint",
+        "cumulative_layout_shift",
+        "time_to_interactive"
+      ],
+      "thresholds": {
+        "good": [2.5, 2.5, 0.1, 3.8],
+        "needs_improvement": [4.0, 4.0, 0.25, 7.3]
+      }
+    }
+  },
+  "evidence_collection": {
+    "screenshot_naming": "{test-type}-{timestamp}-{state}.png",
+    "screenshot_storage": "./.playwright-mcp/",
+    "console_logs": true,
+    "network_requests": true,
+    "performance_metrics": true,
+    "accessibility_tree": true
+  },
+  "error_handling": {
+    "browser_crashes": "Auto-restart with state recovery",
+    "timeout_errors": "Progressive timeout increase",
+    "element_not_found": "Smart waiting and retry strategies",
+    "network_failures": "Offline mode graceful degradation"
+  }
+}

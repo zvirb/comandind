@@ -1,0 +1,143 @@
+{
+  "title": "Quality Stream: User Experience Validation Package", 
+  "target_agents": ["user-experience-auditor", "fullstack-communication-auditor"],
+  "context_type": "quality_validation",
+  "token_limit": 3000,
+  "priority": "critical",
+  "generated": "2025-08-18T21:49:00Z",
+  
+  "mission_objective": "Validate WebUI flickering resolution through comprehensive user experience testing and communication flow analysis",
+  
+  "historical_validation_success": {
+    "proven_approach": "Playwright browser automation for authentication flow testing",
+    "previous_success": "Documents/Calendar navigation validation (100% success rate)",
+    "validation_methodology": "Real user interaction simulation with production environment testing"
+  },
+  
+  "user_experience_requirements": {
+    "flicker_detection": [
+      "Simulate user login followed by immediate navigation",
+      "Test rapid page transitions to trigger potential state conflicts",
+      "Monitor for visual interruptions during data loading",
+      "Validate smooth transitions without loading state flicker"
+    ],
+    "authentication_flow_validation": [
+      "Verify seamless login experience without visual disruption",
+      "Test session restoration without UI flicker",
+      "Validate protected route access with stable visual feedback", 
+      "Ensure error states display cleanly without flickering"
+    ]
+  },
+  
+  "playwright_testing_framework": {
+    "flicker_detection_script": [
+      "Navigate to protected routes after login",
+      "Capture screenshots at 100ms intervals during transitions",
+      "Compare visual states to detect flickering patterns",
+      "Measure loading state duration and stability"
+    ],
+    "user_interaction_patterns": [
+      "Login → Dashboard → Documents → Calendar navigation flow",
+      "Rapid navigation between protected routes",
+      "Browser refresh during authenticated session",
+      "Tab switching and return to application"
+    ]
+  },
+  
+  "communication_flow_analysis": {
+    "api_timing_validation": [
+      "Monitor authentication API call timing and sequencing",
+      "Validate polling interval coordination between components",
+      "Analyze request/response patterns for cascading effects",
+      "Measure time between API calls and UI state updates"
+    ],
+    "frontend_backend_coordination": [
+      "Verify authentication state synchronization",
+      "Test service health check communication patterns",
+      "Validate error handling and recovery communication",
+      "Monitor for race conditions in API communication"
+    ]
+  },
+  
+  "validation_metrics": {
+    "visual_stability": [
+      "Zero visible flickering events during normal operation",
+      "Consistent loading state presentation (no clear → show → clear cycles)",
+      "Stable visual feedback during authentication transitions",
+      "Smooth page transitions without visual interruption"
+    ],
+    "performance_validation": [
+      "Authentication flow completion time < 2 seconds",
+      "Page transition time < 500ms without flicker",
+      "API response integration without visual disruption",
+      "Error state presentation without flickering"
+    ]
+  },
+  
+  "test_scenarios": {
+    "critical_user_journeys": [
+      "New user registration and first login",
+      "Returning user login with session restoration",
+      "Navigation between all protected routes",
+      "Logout and re-login workflow"
+    ],
+    "edge_case_testing": [
+      "Network interruption during authentication",
+      "Rapid navigation during API loading states", 
+      "Browser tab switching during active sessions",
+      "Multiple concurrent API requests simulation"
+    ]
+  },
+  
+  "evidence_collection": {
+    "required_artifacts": [
+      "Before/after screenshots showing flicker elimination",
+      "Playwright test execution logs with timing data",
+      "Network request logs showing API call coordination",
+      "Performance metrics before and after optimization"
+    ],
+    "production_validation": [
+      "Test against https://aiwfe.com production environment",
+      "Validate fix effectiveness with real production data",
+      "Monitor for any regression in existing functionality",
+      "Collect user interaction timing and success rates"
+    ]
+  },
+  
+  "coordination_with_streams": {
+    "frontend_stream_integration": [
+      "Validate React component optimizations through user testing",
+      "Provide feedback on polling interval consolidation effectiveness",
+      "Test circuit breaker and operation lock implementations",
+      "Verify state management improvements through user experience"
+    ],
+    "backend_stream_coordination": [
+      "Validate API response timing improvements",
+      "Test authentication service coordination",
+      "Verify rate limiting and circuit breaker effectiveness",
+      "Monitor backend service health impact on user experience"
+    ]
+  },
+  
+  "success_validation": {
+    "user_experience_criteria": [
+      "No visible UI flickering during any user interaction",
+      "Consistent and predictable loading state behavior",
+      "Smooth authentication and navigation experience",
+      "Error states display clearly without visual disruption"
+    ],
+    "technical_validation": [
+      "All Playwright tests pass without flicker detection",
+      "API communication flows show proper coordination",
+      "Performance metrics show no regression",
+      "Cross-browser consistency validated"
+    ]
+  },
+  
+  "rollback_indicators": [
+    "Any new visual regression introduced",
+    "Authentication success rate below 95%", 
+    "User experience degradation in any tested scenario",
+    "Performance regression beyond acceptable thresholds"
+  ]
+}

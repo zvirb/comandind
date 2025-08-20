@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Playwright browsers
+RUN playwright install
+
+# Copy test script
+COPY app/test_browser_automation.py ./
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+# Default command to run the test script
+CMD ["python", "test_browser_automation.py"]

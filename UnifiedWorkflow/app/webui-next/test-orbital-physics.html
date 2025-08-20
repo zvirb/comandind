@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orbital Physics Test</title>
+    <style>
+        body { margin: 0; background: black; color: white; font-family: Arial, sans-serif; }
+        canvas { display: block; }
+        .info { position: absolute; top: 10px; left: 10px; z-index: 100; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h3>Orbital Physics Verification</h3>
+        <p>✓ Stars should orbit around center point</p>
+        <p>✓ Inner stars should move faster than outer stars</p>
+        <p>✓ Spiral galaxy structure with 4 arms</p>
+        <p>✓ Smooth 60fps animation</p>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const stars = [];
+        const starCount = 800;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        
+        // Initialize stars with orbital physics
+        for (let i = 0; i < starCount; i++) {
+            const spiralArm = Math.floor(Math.random() * 4);
+            const armAngle = (spiralArm * Math.PI * 2) / 4;
+            const distanceFromCenter = Math.pow(Math.random(), 1.5) * 300;
+            const spiralAngle = armAngle + (distanceFromCenter * 2.5) / 300;
+            const orbitalSpeed = Math.sqrt(1 / Math.max(distanceFromCenter, 10)) * 0.5;
+            
+            stars.push({
+                x: centerX + Math.cos(spiralAngle) * distanceFromCenter,
+                y: centerY + Math.sin(spiralAngle) * distanceFromCenter,
+                initialAngle: spiralAngle,
+                radius: distanceFromCenter,
+                speed: orbitalSpeed,
+                size: Math.random() * 2 + 0.5,
+                opacity: 0.5 + Math.random() * 0.5
+            });
+        }
+        
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const time = Date.now() * 0.001;
+            
+            stars.forEach(star => {
+                // Calculate orbital position
+                const angle = star.initialAngle + time * star.speed;
+                star.x = centerX + Math.cos(angle) * star.radius;
+                star.y = centerY + Math.sin(angle) * star.radius;
+                
+                // Draw star
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw center point for reference
+            ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

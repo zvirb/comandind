@@ -1,0 +1,39 @@
+{
+    "package_type": "API_DEBUGGING",
+    "priority": "HIGHEST",
+    "token_limit": 3500,
+    "core_objectives": [
+        "Enhance normalize_chat_request() with robust validation",
+        "Implement graceful error handling for 422 errors",
+        "Create comprehensive request normalization middleware"
+    ],
+    "key_implementation_strategies": [
+        {
+            "function": "normalize_chat_request()",
+            "enhancement_areas": [
+                "Complete field validation",
+                "Type coercion for ambiguous inputs", 
+                "Strict schema enforcement"
+            ],
+            "error_handling": {
+                "strategy": "Middleware-based validation",
+                "fallback_mechanisms": [
+                    "Partial request reconstruction",
+                    "Detailed error logging",
+                    "Client-friendly error responses"
+                ]
+            }
+        }
+    ],
+    "logging_requirements": {
+        "error_capture": "Comprehensive 422 error context",
+        "normalization_traces": "Full request transformation steps",
+        "performance_overhead": "Minimal processing impact"
+    },
+    "validation_checks": [
+        "Schema validation against OpenAPI specification",
+        "Type consistency verification",
+        "Input sanitization",
+        "Cross-field dependency validation"
+    ]
+}

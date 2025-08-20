@@ -1,0 +1,79 @@
+{
+  "package_id": "qa-phase5",
+  "specialist": "test-automation-engineer",
+  "token_count": 2341,
+  "priority": "high",
+  "coordination_metadata": {
+    "parallel_safe": false,
+    "dependencies": ["file-organization", "infrastructure"],
+    "estimated_duration": "20 minutes",
+    "rollback_capable": false
+  },
+  "mission": {
+    "objective": "Validate organization changes maintain system functionality",
+    "approach": "progressive-validation",
+    "validation": "multi-layer testing strategy"
+  },
+  "test_organization_plan": {
+    "current_test_files": {
+      "root_tests": 47,
+      "tests_directory": 23,
+      "app_embedded": 31,
+      "total": 101
+    },
+    "target_structure": {
+      "tests/unit/": "unit test files",
+      "tests/integration/": "integration tests",
+      "tests/validation/": "validation scripts",
+      "tests/performance/": "performance tests"
+    }
+  },
+  "validation_layers": {
+    "layer1_syntax": {
+      "tools": ["python -m py_compile", "pylint"],
+      "scope": "all Python files",
+      "timing": "during file movement"
+    },
+    "layer2_imports": {
+      "tools": ["python -c 'import module'", "pytest --collect-only"],
+      "scope": "all service modules",
+      "timing": "after file movement"
+    },
+    "layer3_services": {
+      "tools": ["docker-compose ps", "health check endpoints"],
+      "scope": "all Docker services",
+      "timing": "after infrastructure changes"
+    },
+    "layer4_integration": {
+      "tools": ["pytest integration tests", "API endpoint tests"],
+      "scope": "service communication",
+      "timing": "after all changes"
+    }
+  },
+  "critical_test_paths": [
+    "app/worker/tests/",
+    "app/memory_service/tests/",
+    "app/reasoning_service/tests/",
+    "tests/validation/evidence_based_validation.py",
+    "tests/validation/user_journey_validation.py"
+  ],
+  "rollback_triggers": {
+    "import_failures": "any Python import error",
+    "service_failures": "Docker service startup failure",
+    "test_failures": "critical test suite failure",
+    "health_failures": "health endpoint non-responsive"
+  },
+  "evidence_collection": {
+    "test_outputs": "tests/validation/test_results/",
+    "service_logs": "logs/reorganization/",
+    "health_checks": "validation_evidence/health/",
+    "screenshots": "validation_evidence/ui/"
+  },
+  "success_criteria": {
+    "syntax_valid": "100% Python files compile",
+    "imports_resolved": "0 import errors",
+    "services_healthy": "15/15 services running",
+    "tests_passing": ">95% test pass rate",
+    "endpoints_responsive": "all health checks green"
+  }
+}

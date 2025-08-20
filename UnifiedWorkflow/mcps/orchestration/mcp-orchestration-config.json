@@ -1,0 +1,126 @@
+{
+  "name": "mcp-orchestration-server",
+  "version": "1.0.0",
+  "description": "Orchestration MCP server for agent coordination and workflow management",
+  "type": "orchestration",
+  "configuration": {
+    "knowledge_graph": {
+      "backend": "embedded",
+      "storage_path": "./.mcp/orchestration.db",
+      "max_entities": 10000,
+      "relationship_types": [
+        "depends_on",
+        "coordinates_with", 
+        "validates",
+        "implements",
+        "manages",
+        "reports_to"
+      ]
+    },
+    "checkpointing": {
+      "enabled": true,
+      "auto_checkpoint": true,
+      "checkpoint_interval": "phase",
+      "storage_path": "./.mcp/checkpoints/",
+      "max_checkpoints": 10
+    },
+    "compression": {
+      "algorithm": "gzip",
+      "target_tokens": 4000,
+      "semantic_preservation": true,
+      "context_aware": true
+    }
+  },
+  "capabilities": {
+    "query_orchestration_knowledge": {
+      "description": "Query the orchestration knowledge graph for patterns and solutions",
+      "parameters": {
+        "entity": "string (required)",
+        "context": "string (optional)"
+      },
+      "usage": "Find previous solutions, patterns, and coordination strategies"
+    },
+    "create_orchestration_checkpoint": {
+      "description": "Create a recovery checkpoint for orchestration state",
+      "parameters": {
+        "phase": "integer (required)",
+        "state": "object (required)"
+      },
+      "usage": "Save workflow state for recovery and rollback"
+    },
+    "load_orchestration_checkpoint": {
+      "description": "Load a previous orchestration checkpoint",
+      "parameters": {
+        "checkpoint_id": "string (required)"
+      },
+      "usage": "Restore workflow state from checkpoint"
+    },
+    "compress_orchestration_document": {
+      "description": "Compress large documents to prevent token overflow",
+      "parameters": {
+        "content": "string (required)",
+        "target_tokens": "integer (optional, default: 4000)"
+      },
+      "usage": "Reduce context size while preserving semantic meaning"
+    },
+    "register_agent": {
+      "description": "Register an agent in the orchestration system",
+      "parameters": {
+        "agent_id": "string (required)",
+        "agent_type": "string (required)",
+        "capabilities": "array of strings (required)"
+      },
+      "usage": "Track available agents and their capabilities"
+    },
+    "get_agent_coordination_strategy": {
+      "description": "Generate optimal coordination strategy for agents",
+      "parameters": {
+        "agents_status": "object (required)",
+        "error_context": "string (optional)"
+      },
+      "usage": "Plan multi-agent coordination and failure recovery"
+    }
+  },
+  "integration": {
+    "claude_tools": [
+      "mcp__orchestration-agent__query_orchestration_knowledge",
+      "mcp__orchestration-agent__create_orchestration_checkpoint",
+      "mcp__orchestration-agent__load_orchestration_checkpoint",
+      "mcp__orchestration-agent__compress_orchestration_document",
+      "mcp__orchestration-agent__register_agent",
+      "mcp__orchestration-agent__get_agent_coordination_strategy"
+    ],
+    "workflow_phases": {
+      "phase_0": "Query historical todos and context",
+      "phase_1": "Register and validate agent ecosystem",
+      "phase_2": "Generate strategic coordination plans",
+      "phase_4": "Compress context packages for agents",
+      "phase_8": "Checkpoint before version control sync",
+      "phase_9": "Store learning outcomes in knowledge graph",
+      "phase_11": "Coordinate production validation strategy"
+    }
+  },
+  "knowledge_patterns": {
+    "problem_solution_mapping": {
+      "description": "Map common problems to proven solutions",
+      "entity_types": ["problem", "solution", "context", "outcome"],
+      "relationships": ["solves", "caused_by", "applies_in", "resulted_in"]
+    },
+    "agent_coordination_patterns": {
+      "description": "Successful agent coordination strategies",
+      "entity_types": ["coordination_strategy", "agent_group", "dependency", "outcome"],
+      "relationships": ["coordinates", "depends_on", "blocks", "enables"]
+    },
+    "workflow_optimization": {
+      "description": "Workflow optimization patterns and bottlenecks",
+      "entity_types": ["bottleneck", "optimization", "performance_metric", "improvement"],
+      "relationships": ["bottlenecks", "optimizes", "measures", "improves"]
+    }
+  },
+  "error_handling": {
+    "knowledge_graph_corruption": "Auto-repair with backup restoration",
+    "checkpoint_failures": "Fallback to previous valid checkpoint",
+    "compression_errors": "Progressive fallback with size limits",
+    "agent_coordination_failures": "Isolation and recovery strategies"
+  }
+}

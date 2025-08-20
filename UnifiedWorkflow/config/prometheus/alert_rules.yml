@@ -1,0 +1,205 @@
+groups:
+  - name: production_critical
+    interval: 30s
+    rules:
+      # Chat API Performance Alerts
+      - alert: ChatAPI422Errors
+        expr: rate(http_requests_total{status="422",endpoint="/api/v1/chat"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: high
+          component: chat_api
+        annotations:
+          summary: "High rate of 422 validation errors on Chat API"
+          description: "Chat API experiencing {{ $value | humanizePercentage }} 422 errors per second"
+          runbook_url: "https://docs.aiwfe.com/runbooks/chat-api-422"
+      
+      - alert: ChatAPIResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{endpoint="/api/v1/chat"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: chat_api
+        annotations:
+          summary: "Chat API response time degraded"
+          description: "95th percentile response time is {{ $value }}s (threshold: 2s)"
+      
+      # Galaxy Animation Performance
+      - alert: GalaxyAnimationLowFPS
+        expr: galaxy_animation_fps < 45
+        for: 1m
+        labels:
+          severity: warning
+          component: frontend
+        annotations:
+          summary: "Galaxy animation performance below target"
+          description: "Animation running at {{ $value }}fps (target: 60fps)"
+      
+      # Authentication System
+      - alert: AuthenticationFailureRate
+        expr: rate(authentication_failures_total[5m]) > 0.5
+        for: 3m
+        labels:
+          severity: high
+          component: authentication
+        annotations:
+          summary: "High authentication failure rate"
+          description: "{{ $value | humanizePercentage }} authentication failures per second"
+      
+      - alert: SessionValidationErrors
+        expr: rate(session_validation_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: medium
+          component: authentication
+        annotations:
+          summary: "Session validation errors detected"
+          description: "Session validation failing at {{ $value | humanizePercentage }} per second"
+      
+      # Infrastructure Health
+      - alert: ServiceDown
+        expr: up{job=~"api|worker|postgres|redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Critical service {{ $labels.job }} is down"
+          description: "Service {{ $labels.instance }} has been down for more than 1 minute"
+      
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+      
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanizePercentage }}"
+      
+      # Database Performance
+      - alert: DatabaseConnectionPoolExhausted
+        expr: database_connection_pool_available < 5
+        for: 2m
+        labels:
+          severity: high
+          component: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Only {{ $value }} connections available in pool"
+      
+      - alert: DatabaseSlowQueries
+        expr: rate(database_slow_queries_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High rate of slow database queries"
+          description: "{{ $value | humanizePercentage }} slow queries per second"
+      
+      # SSL Certificate Monitoring
+      - alert: SSLCertificateExpiringSoon
+        expr: ssl_certificate_days_remaining < 30
+        for: 1h
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.domain }} expires in {{ $value }} days"
+      
+      - alert: SSLCertificateExpiryCritical
+        expr: ssl_certificate_days_remaining < 7
+        for: 10m
+        labels:
+          severity: critical
+          component: security
+        annotations:
+          summary: "SSL certificate expiry critical"
+          description: "SSL certificate for {{ $labels.domain }} expires in {{ $value }} days!"
+      
+      # Network Connectivity
+      - alert: ServiceHealthFailure
+        expr: probe_success{job="service-health"} == 0
+        for: 3m
+        labels:
+          severity: high
+          component: service
+        annotations:
+          summary: "Service health check failed for {{ $labels.instance }}"
+          description: "Health check for {{ $labels.instance }} has been failing for 3 minutes"
+      
+      - alert: InfrastructureHealthFailure
+        expr: probe_success{job="infrastructure-health"} == 0
+        for: 3m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Infrastructure component failure for {{ $labels.instance }}"
+          description: "Infrastructure health check for {{ $labels.instance }} has been failing for 3 minutes"
+      
+      - alert: NetworkConnectivityIssue
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 3m
+        labels:
+          severity: high
+          component: network
+        annotations:
+          summary: "External network connectivity issue to {{ $labels.instance }}"
+          description: "Failed to reach {{ $labels.instance }} for 3 minutes"
+      
+      # User Experience Metrics
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: high
+          component: api
+        annotations:
+          summary: "High error rate on API"
+          description: "5xx error rate is {{ $value | humanizePercentage }} per second"
+      
+      - alert: PageLoadTimeSlow
+        expr: page_load_time_seconds{quantile="0.95"} > 3
+        for: 5m
+        labels:
+          severity: warning
+          component: frontend
+        annotations:
+          summary: "Page load time degraded"
+          description: "95th percentile page load time is {{ $value }}s"
+
+  - name: business_metrics
+    interval: 60s
+    rules:
+      - alert: LowUserEngagement
+        expr: rate(user_interactions_total[1h]) < 10
+        for: 30m
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "Low user engagement detected"
+          description: "User interaction rate below threshold"
+      
+      - alert: ChatVolumeAnomaly
+        expr: abs(rate(chat_messages_total[1h]) - avg_over_time(rate(chat_messages_total[1h])[7d:1h])) > 2 * stddev_over_time(rate(chat_messages_total[1h])[7d:1h])
+        for: 15m
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "Unusual chat volume detected"
+          description: "Chat volume deviates significantly from 7-day average"

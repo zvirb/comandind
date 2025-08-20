@@ -1,0 +1,213 @@
+{
+  "package_type": "quality-stream-user-experience-testing",
+  "generated_at": "2025-08-19T00:00:00Z",
+  "token_count": 3992,
+  "priority": "high",
+  "orchestration_phase": "Phase 5 Authentication Recovery",
+  "stream_focus": "End-to-End User Experience Validation",
+  
+  "strategic_intelligence": {
+    "dependency_status": "BLOCKED on backend stream authentication validation completion",
+    "testing_scope": "Complete user journey from login through authenticated features",
+    "coordination_point": "Execute after backend authentication endpoints validated",
+    "success_criteria": "Seamless user experience with no authentication friction"
+  },
+
+  "user_experience_test_framework": {
+    "primary_user_journey": {
+      "step_1": "Navigate to https://aiwfe.com",
+      "step_2": "Click login and enter dev@admin.com / devadmin123",
+      "step_3": "Verify successful authentication and token storage",
+      "step_4": "Navigate through protected routes (dashboard, chat, documents)",
+      "step_5": "Test session persistence across page refreshes",
+      "step_6": "Validate logout and re-authentication flow"
+    },
+    
+    "authentication_friction_points": {
+      "login_flickering": "WebUI flickering post-login from polling cycles",
+      "token_storage": "Bearer token storage and retrieval reliability", 
+      "session_persistence": "Maintaining authentication across browser sessions",
+      "logout_behavior": "Clean logout without immediate re-login prompts"
+    }
+  },
+
+  "playwright_testing_strategy": {
+    "browser_automation": {
+      "tool": "Playwright for user-experience-auditor agent",
+      "browsers": ["Chromium", "Firefox", "WebKit"],
+      "viewport_sizes": ["Desktop 1920x1080", "Mobile 375x667"],
+      "test_scenarios": "Cross-browser authentication consistency"
+    },
+    
+    "authentication_flow_tests": {
+      "login_success": "Automated login with valid credentials",
+      "login_failure": "Invalid credentials error handling",
+      "session_timeout": "Token expiration and re-authentication",
+      "concurrent_sessions": "Multiple tab authentication state sync"
+    },
+    
+    "visual_regression_detection": {
+      "flickering_analysis": "Record and analyze post-login rendering cycles",
+      "ui_stability": "Measure time to stable UI state after authentication",
+      "loading_states": "Validate loading state transitions don't clear content",
+      "css_conflicts": "Identify visual conflicts during state transitions"
+    }
+  },
+
+  "performance_experience_metrics": {
+    "authentication_speed": {
+      "login_response": "<3 seconds from form submit to authenticated state",
+      "token_validation": "<1 second for Bearer token API calls",
+      "initial_load": "<5 seconds for authenticated dashboard rendering"
+    },
+    
+    "user_perceived_performance": {
+      "flickering_elimination": "Zero visible content flashing post-authentication",
+      "smooth_transitions": "Seamless navigation between authenticated routes",
+      "responsive_feedback": "Immediate visual feedback for user actions"
+    }
+  },
+
+  "dependency_coordination": {
+    "backend_stream_requirements": {
+      "authentication_endpoints": "All endpoints returning 200 responses",
+      "bearer_token_validation": "Token validation working reliably",
+      "test_credentials": "dev@admin.com credentials confirmed functional"
+    },
+    
+    "infrastructure_stream_requirements": {
+      "container_stability": "API container running without restarts",
+      "service_availability": "All required services accessible",
+      "production_access": "https://aiwfe.com fully operational"
+    }
+  },
+
+  "webui_flickering_resolution": {
+    "root_cause_analysis": {
+      "polling_cycles": "Constant API polling clearing UI elements",
+      "react_state": "Loading states removing content during updates",
+      "har_log_evidence": "Rapid /api/v1/dashboard and /api/v1/session/validate calls"
+    },
+    
+    "solution_approach": {
+      "state_preservation": "Maintain UI state during data updates",
+      "polling_optimization": "Reduce polling frequency or implement intelligent caching",
+      "conditional_rendering": "Prevent clearing UI during background updates",
+      "css_stability": "Ensure stable layout during state transitions"
+    },
+    
+    "validation_criteria": {
+      "visual_stability": "No content disappearing/reappearing after authentication",
+      "smooth_updates": "Data updates without clearing existing content",
+      "user_focus": "No interruption to user interaction during background updates"
+    }
+  },
+
+  "cross_browser_compatibility": {
+    "chrome_testing": {
+      "version": "Latest stable Chrome/Chromium",
+      "focus_areas": "Primary browser for development validation",
+      "extension_impact": "Test with common extensions (ad blockers, etc.)"
+    },
+    
+    "firefox_testing": {
+      "version": "Latest stable Firefox",
+      "focus_areas": "Cookie/token storage behavior differences",
+      "privacy_settings": "Enhanced privacy mode compatibility"
+    },
+    
+    "safari_webkit": {
+      "version": "Latest WebKit engine", 
+      "focus_areas": "Safari-specific authentication token handling",
+      "mobile_safari": "Mobile authentication experience"
+    }
+  },
+
+  "authentication_edge_cases": {
+    "session_edge_cases": {
+      "token_expiration": "Graceful handling of expired authentication",
+      "network_interruption": "Authentication state during connectivity loss",
+      "concurrent_tabs": "Authentication sync across multiple tabs",
+      "browser_restart": "Session persistence across browser restarts"
+    },
+    
+    "error_scenarios": {
+      "server_unavailable": "Backend service temporary unavailability",
+      "invalid_token": "Corrupted or malformed authentication tokens",
+      "permissions_change": "User role/permission changes during session"
+    }
+  },
+
+  "evidence_collection_framework": {
+    "automated_screenshots": {
+      "login_flow": "Step-by-step screenshot sequence of authentication",
+      "post_auth_state": "Dashboard and protected route rendering",
+      "error_states": "Visual validation of error handling"
+    },
+    
+    "performance_metrics": {
+      "timing_data": "Navigation timing API data for authentication flows", 
+      "network_analysis": "HAR file analysis of authentication requests",
+      "memory_usage": "Browser memory consumption during authentication"
+    },
+    
+    "user_journey_recording": {
+      "successful_flows": "Complete successful authentication journeys",
+      "failure_recovery": "Error handling and recovery flows",
+      "edge_case_handling": "Unusual but valid user interaction patterns"
+    }
+  },
+
+  "success_validation_criteria": {
+    "user_experience": [
+      "Login completes successfully within 3 seconds",
+      "No visual flickering or content disappearing post-authentication",
+      "Smooth navigation between all protected routes",
+      "Session persists across page refreshes and browser restarts",
+      "Clean logout flow without re-authentication prompts"
+    ],
+    
+    "technical_validation": [
+      "Bearer token authentication works in all tested browsers",
+      "WebSocket connections establish successfully with authentication",
+      "API calls complete within performance thresholds", 
+      "No JavaScript console errors during authentication flows",
+      "Responsive design works properly across device sizes"
+    ]
+  },
+
+  "escalation_conditions": [
+    "Authentication success rate <95% across test scenarios",
+    "Visual flickering persists after backend stream completion", 
+    "Cross-browser compatibility issues prevent authentication",
+    "Performance metrics exceed acceptable thresholds"
+  ],
+
+  "historical_context": {
+    "previous_issues": {
+      "private_route_loops": "RESOLVED - Circuit breaker pattern eliminated infinite loops",
+      "navigation_races": "RESOLVED - Atomic authentication operations implemented",
+      "429_errors": "RESOLVED - No rate limit errors in production testing"
+    },
+    
+    "proven_solutions": {
+      "circuit_breaker": "Exponential backoff pattern successful",
+      "state_simplification": "17→8 variables reduced complexity",
+      "atomic_operations": "Eliminated race conditions in authentication"
+    }
+  },
+
+  "coordination_handoff": {
+    "to_production_validation": {
+      "deliverable": "Validated user experience with evidence",
+      "test_results": "Comprehensive cross-browser authentication validation",
+      "performance_data": "User experience metrics within acceptable ranges"
+    },
+    
+    "to_documentation": {
+      "user_guides": "Updated authentication flow documentation",
+      "troubleshooting": "Common authentication issues and resolutions",
+      "developer_notes": "Technical implementation details for future reference"
+    }
+  }
+}

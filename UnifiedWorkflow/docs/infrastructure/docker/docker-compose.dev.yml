@@ -1,0 +1,278 @@
+# ==============================================================================
+# Development Docker Compose Configuration
+# ==============================================================================
+# This configuration provides hot-reload and immediate code reflection for development
+# Use: docker-compose -f docker-compose.dev.yml up
+
+x-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-base-service-properties: &base-service-properties
+  restart: unless-stopped
+  networks:
+    - ai_workflow_engine_net
+  logging: *logging
+
+networks:
+  ai_workflow_engine_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  prometheus_data:
+  grafana_data:
+  alertmanager_data:
+  ollama_data:
+  certs:
+  jaeger_data:
+  caddy_data:
+  caddy_config:
+  loki_data:
+  elasticsearch_data:
+  kibana_data:
+
+secrets:
+  admin_email:
+    file: ./secrets/admin_email.txt
+  admin_password:
+    file: ./secrets/admin_password.txt
+  google_client_id:
+    file: ./secrets/google_client_id.txt
+  google_client_secret:
+    file: ./secrets/google_client_secret.txt
+  JWT_SECRET_KEY:
+    file: ./secrets/jwt_secret_key.txt
+  CSRF_SECRET_KEY:
+    file: ./secrets/csrf_secret_key.txt
+  POSTGRES_PASSWORD:
+    file: ./secrets/postgres_password.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_db:
+    file: ./secrets/postgres_db.txt
+  QDRANT_API_KEY:
+    file: ./secrets/qdrant_api_key.txt
+  pgbouncer_users:
+    file: ./secrets/pgbouncer_userlist.txt
+  REDIS_PASSWORD:
+    file: ./secrets/redis_password.txt
+  redis_users_acl:
+    file: ./secrets/redis_users.acl
+  API_KEY:
+    file: ./secrets/api_key.txt
+
+services:
+  # WebUI Service with Hot Reload for Development
+  webui:
+    image: node:18-alpine
+    <<: *base-service-properties
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      # Mount source code for hot-reload
+      - ./app/webui-next:/app:rw
+      # Use named volume for node_modules to avoid platform issues
+      - webui_dev_node_modules:/app/node_modules
+      # Mount certificate volume for SSL support
+      - type: volume
+        source: certs
+        target: /tmp/certs-volume
+        read_only: true
+    environment:
+      - SERVICE_NAME=webui-next-dev
+      - NODE_ENV=development
+      - PORT=3001
+      - HOSTNAME=0.0.0.0
+      - NEXT_TELEMETRY_DISABLED=1
+      - API_URL=http://api:8000
+      - WS_URL=ws://api:8000
+      # Enable hot module replacement
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    working_dir: /app
+    ports:
+      - "3001:3001"
+      # Development websocket port for HMR
+      - "3002:3002"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider --timeout=3 http://0.0.0.0:3001/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # API Service with Hot Reload for Development
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+      args:
+        # Cache busting with build time argument
+        BUILD_DATE: ${BUILD_DATE:-$(date -u +'%Y-%m-%dT%H:%M:%SZ')}
+        GIT_HASH: ${GIT_HASH:-$(git rev-parse HEAD)}
+    image: ai_workflow_engine/api:dev
+    <<: *base-service-properties
+    security_opt:
+      - apparmor:unconfined
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    # Use uvicorn with reload for development
+    command: ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /project/app"]
+    volumes:
+      - type: volume
+        source: certs
+        target: /tmp/certs-volume
+        read_only: true
+      - ./docker/api/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      # Mount the entire project for hot-reload
+      - .:/project:rw
+    secrets: [POSTGRES_PASSWORD, REDIS_PASSWORD, JWT_SECRET_KEY, CSRF_SECRET_KEY, QDRANT_API_KEY, API_KEY, admin_email, admin_password, google_client_id, google_client_secret]
+    env_file:
+      - .env
+      - local.env
+    environment:
+      - GOOGLE_CLIENT_ID_FILE=/run/secrets/google_client_id
+      - GOOGLE_CLIENT_SECRET_FILE=/run/secrets/google_client_secret
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=app_user
+      - POSTGRES_PORT=5432
+      - PYTHONPATH=/project
+      - OLLAMA_API_BASE_URL=http://ollama:11434
+      - POSTGRES_DB=ai_workflow_db
+      - OLLAMA_GENERATION_MODEL_NAME=llama3.2:3b
+      - SERVICE_NAME=api
+      # Enable Python development mode
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    working_dir: /project/app
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health --max-time 3 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    depends_on:
+      postgres: { condition: service_healthy }
+      pgbouncer: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+      ollama: { condition: service_healthy }
+
+  # Worker Service with Hot Reload for Development
+  worker:
+    build:
+      context: .
+      dockerfile: docker/worker/Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date -u +'%Y-%m-%dT%H:%M:%SZ')}
+        GIT_HASH: ${GIT_HASH:-$(git rev-parse HEAD)}
+    image: ai_workflow_engine/worker:dev
+    security_opt:
+      - apparmor:unconfined
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    # Use watchdog for auto-reload
+    command: ["sh", "-c", "watchmedo auto-restart --directory=/app --pattern='*.py' --recursive -- python -m app.celery_app.celery_app"]
+    <<: *base-service-properties
+    volumes:
+      - type: volume
+        source: certs
+        target: /tmp/certs-volume
+        read_only: true
+      - ./docker/worker/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./docker/worker/healthcheck.sh:/usr/local/bin/healthcheck.sh:ro
+      # Mount source code for hot-reload
+      - ./app:/app:rw
+    secrets: [POSTGRES_PASSWORD, JWT_SECRET_KEY, QDRANT_API_KEY, API_KEY, REDIS_PASSWORD, google_client_id, google_client_secret]
+    env_file:
+      - .env
+    environment:
+      - SERVICE_NAME=worker
+      - PYTHONPATH=/
+      - OLLAMA_API_BASE_URL=http://ollama:11434
+      - POSTGRES_HOST=pgbouncer
+      - POSTGRES_USER=app_user
+      - POSTGRES_PORT=6432
+      - POSTGRES_DB=ai_workflow_db
+      - OLLAMA_GENERATION_MODEL_NAME=llama3.2:3b
+      # Enable Python development mode
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 120s
+    depends_on:
+      pgbouncer: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      ollama: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+
+  # Include essential infrastructure services from main compose
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+
+  pgbouncer:
+    extends:
+      file: docker-compose.yml
+      service: pgbouncer
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+
+  qdrant:
+    extends:
+      file: docker-compose.yml
+      service: qdrant
+
+  ollama:
+    extends:
+      file: docker-compose.yml
+      service: ollama
+
+  ollama-pull-llama:
+    extends:
+      file: docker-compose.yml
+      service: ollama-pull-llama
+
+  api-migrate:
+    extends:
+      file: docker-compose.yml
+      service: api-migrate
+
+  api-create-admin:
+    extends:
+      file: docker-compose.yml
+      service: api-create-admin
+
+  prometheus:
+    extends:
+      file: docker-compose.yml
+      service: prometheus
+
+  grafana:
+    extends:
+      file: docker-compose.yml
+      service: grafana
+
+  caddy_reverse_proxy:
+    extends:
+      file: docker-compose.yml
+      service: caddy_reverse_proxy
+
+volumes:
+  webui_dev_node_modules:

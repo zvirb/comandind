@@ -1,0 +1,23 @@
+# config/qdrant/config.yaml
+service:
+  # API key is read from file via QDRANT__SERVICE__API_KEY_FILE environment variable
+  host: 0.0.0.0
+  http_port: 6333
+  grpc_port: 6334
+storage:
+  storage_path: /qdrant/storage
+  # Performance Optimizations
+  max_indexing_threads: 4
+  max_vector_cache_size: 4096  # Adjust based on available memory
+log_level: INFO
+tls:
+  enabled: false
+  # Disabled for internal container communication
+  # cert: /etc/certs/qdrant/unified-cert.pem
+  # key: /etc/certs/qdrant/unified-key.pem
+  # ca_cert: /etc/certs/qdrant/rootCA.pem
+
+# Vector Search Optimization
+optimize:
+  max_optimization_threads: 4
+  batch_size: 256  # Tune based on workload

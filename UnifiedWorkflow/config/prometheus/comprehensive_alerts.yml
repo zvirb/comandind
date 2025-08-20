@@ -1,0 +1,256 @@
+groups:
+  - name: infrastructure_alerts
+    interval: 30s
+    rules:
+      # Container Health Alerts
+      - alert: ContainerDown
+        expr: up{job=~"api|worker|coordination-service|hybrid-memory-service|learning-service|perception-service|reasoning-service|infrastructure-recovery-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Container {{ $labels.job }} is down"
+          description: "{{ $labels.job }} container has been down for more than 1 minute"
+          runbook_url: "https://docs.aiwfe.com/runbooks/container-down"
+
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High CPU usage for container {{ $labels.container_name }}"
+          description: "Container {{ $labels.container_name }} CPU usage is {{ $value | humanizePercentage }}"
+
+      - alert: ContainerHighMemory
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High memory usage for container {{ $labels.container_name }}"
+          description: "Container {{ $labels.container_name }} memory usage is {{ $value | humanizePercentage }}"
+
+      # Database Alerts
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL has been down for more than 1 minute"
+          runbook_url: "https://docs.aiwfe.com/runbooks/postgres-down"
+
+      - alert: PostgresConnectionPoolExhausted
+        expr: pgbouncer_pools_client_active / pgbouncer_pools_client_maxwait > 0.9
+        for: 5m
+        labels:
+          severity: high
+          component: database
+        annotations:
+          summary: "PgBouncer connection pool nearly exhausted"
+          description: "Connection pool usage is {{ $value | humanizePercentage }}"
+
+      - alert: PostgresHighQueryTime
+        expr: pg_stat_activity_max_tx_duration > 60
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Long running PostgreSQL query detected"
+          description: "Query running for {{ $value }}s"
+
+      # Redis Alerts
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis has been down for more than 1 minute"
+          runbook_url: "https://docs.aiwfe.com/runbooks/redis-down"
+
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Redis memory usage is high"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}"
+
+      # Qdrant Vector DB Alerts
+      - alert: QdrantDown
+        expr: up{job="qdrant"} == 0
+        for: 2m
+        labels:
+          severity: high
+          component: vectordb
+        annotations:
+          summary: "Qdrant vector database is down"
+          description: "Qdrant has been down for more than 2 minutes"
+
+      # Ollama LLM Alerts
+      - alert: OllamaDown
+        expr: up{job="ollama"} == 0
+        for: 2m
+        labels:
+          severity: high
+          component: llm
+        annotations:
+          summary: "Ollama LLM service is down"
+          description: "Ollama has been down for more than 2 minutes"
+
+      - alert: OllamaHighLatency
+        expr: histogram_quantile(0.95, rate(ollama_request_duration_seconds_bucket[5m])) > 30
+        for: 5m
+        labels:
+          severity: warning
+          component: llm
+        annotations:
+          summary: "Ollama response time is high"
+          description: "95th percentile response time is {{ $value }}s"
+
+  - name: service_alerts
+    interval: 30s
+    rules:
+      # API Service Alerts
+      - alert: APIHighErrorRate
+        expr: rate(http_requests_total{job="api",status=~"5.."}[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: high
+          component: api
+        annotations:
+          summary: "High API error rate"
+          description: "API error rate is {{ $value | humanizePercentage }}"
+
+      - alert: APIHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="api"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "API response time degraded"
+          description: "95th percentile response time is {{ $value }}s"
+
+      # Worker Service Alerts
+      - alert: WorkerQueueBacklog
+        expr: celery_queue_length{queue="default"} > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: worker
+        annotations:
+          summary: "Worker queue backlog growing"
+          description: "{{ $value }} tasks in queue"
+
+      - alert: WorkerTaskFailures
+        expr: rate(celery_task_failed_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: high
+          component: worker
+        annotations:
+          summary: "High worker task failure rate"
+          description: "Task failure rate is {{ $value | humanizePercentage }}"
+
+      # Service Health Checks
+      - alert: ServiceHealthCheckFailing
+        expr: service_health_check_status{} == 0
+        for: 2m
+        labels:
+          severity: high
+          component: health
+        annotations:
+          summary: "Service {{ $labels.service }} health check failing"
+          description: "Health check for {{ $labels.service }} has been failing for 2 minutes"
+
+  - name: endpoint_monitoring
+    interval: 30s
+    rules:
+      # Production Website Monitoring
+      - alert: ProductionWebsiteDown
+        expr: probe_success{job="blackbox-http",instance="https://aiwfe.com"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: website
+        annotations:
+          summary: "Production website is down"
+          description: "https://aiwfe.com has been unreachable for 2 minutes"
+          runbook_url: "https://docs.aiwfe.com/runbooks/website-down"
+
+      - alert: ProductionAPIDown
+        expr: probe_success{job="blackbox-http",instance="https://aiwfe.com/api/v1/health"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "Production API endpoint is down"
+          description: "API health endpoint has been unreachable for 2 minutes"
+
+      - alert: SSLCertificateExpiringSoon
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 30
+        for: 24h
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} expires in {{ $value }} days"
+
+  - name: system_resources
+    interval: 30s
+    rules:
+      # Host System Alerts
+      - alert: HostHighCPU
+        expr: (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m]))) > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Host CPU usage is high"
+          description: "CPU usage is {{ $value | humanizePercentage }}"
+
+      - alert: HostHighMemory
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Host memory usage is high"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      - alert: HostDiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: high
+          component: system
+        annotations:
+          summary: "Host disk space is low"
+          description: "Only {{ $value | humanizePercentage }} disk space remaining"
+
+      - alert: HostHighIOWait
+        expr: avg(rate(node_cpu_seconds_total{mode="iowait"}[5m])) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Host I/O wait is high"
+          description: "I/O wait is {{ $value | humanizePercentage }}"

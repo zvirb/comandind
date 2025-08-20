@@ -1,0 +1,404 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "WebSocket Performance & SSL Certificate Monitoring",
+    "tags": ["websocket", "ssl", "performance", "security"],
+    "style": "dark",
+    "timezone": "browser",
+    "editable": true,
+    "graphTooltip": 1,
+    "time": {
+      "from": "now-2h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"],
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    },
+    "refresh": "30s",
+    "schemaVersion": 27,
+    "version": 1,
+    "panels": [
+      {
+        "id": 1,
+        "title": "WebSocket Performance Target Compliance (30s)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "websocket:target_compliance_rate",
+            "legendFormat": "Target Compliance %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 90},
+                {"color": "green", "value": 95}
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "WebSocket Connection Time",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "websocket:avg_connection_time_5m",
+            "legendFormat": "Average Time"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 10},
+                {"color": "orange", "value": 20},
+                {"color": "red", "value": 30}
+              ]
+            },
+            "unit": "s",
+            "max": 35
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area"
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "WebSocket Health Score",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "websocket:health_score",
+            "legendFormat": "Health Score"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 70},
+                {"color": "green", "value": 80}
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "WebSocket Connection Performance Trend",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "probe_duration_seconds{job=\"websocket-performance\"}",
+            "legendFormat": "Connection Time"
+          },
+          {
+            "expr": "websocket:avg_connection_time_5m",
+            "legendFormat": "5-min Average"
+          },
+          {
+            "expr": "30",
+            "legendFormat": "30s Target Threshold"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "s"
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "WebSocket Success Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "websocket:connection_success_rate_5m",
+            "legendFormat": "Success Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 6,
+        "title": "WebSocket Performance Percentiles",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "websocket:p95_connection_time_5m",
+            "legendFormat": "95th Percentile"
+          },
+          {
+            "expr": "websocket:avg_connection_time_5m",
+            "legendFormat": "Average"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "s"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 7,
+        "title": "SSL Certificate Status - aiwfe.com",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(probe_ssl_earliest_cert_expiry{instance=\"aiwfe.com:443\"} - time()) / 86400",
+            "legendFormat": "Days Until Expiry"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "orange", "value": 7},
+                {"color": "yellow", "value": 30},
+                {"color": "green", "value": 60}
+              ]
+            },
+            "unit": "days"
+          }
+        },
+        "options": {
+          "colorMode": "background"
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 24}
+      },
+      {
+        "id": 8,
+        "title": "SSL Health Score",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "ssl:health_score{instance=\"aiwfe.com:443\"}",
+            "legendFormat": "SSL Health"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 80},
+                {"color": "green", "value": 90}
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 24}
+      },
+      {
+        "id": 9,
+        "title": "SSL Certificate Validation Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "ssl:validation_success_rate",
+            "legendFormat": "Validation Success %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 95},
+                {"color": "green", "value": 99}
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 24}
+      },
+      {
+        "id": 10,
+        "title": "SSL Certificate Details",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "probe_ssl_earliest_cert_expiry{job=\"ssl-certificate-monitoring\"}",
+            "legendFormat": "Certificate Expiry",
+            "format": "table"
+          },
+          {
+            "expr": "probe_ssl_chain_valid{job=\"ssl-certificate-monitoring\"}",
+            "legendFormat": "Chain Valid",
+            "format": "table"
+          },
+          {
+            "expr": "probe_ssl_subject_matches{job=\"ssl-certificate-monitoring\"}",
+            "legendFormat": "Subject Match",
+            "format": "table"
+          },
+          {
+            "expr": "probe_ssl_key_bits{job=\"ssl-certificate-monitoring\"}",
+            "legendFormat": "Key Size",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 32}
+      },
+      {
+        "id": 11,
+        "title": "Production Endpoint Response Times",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "probe_duration_seconds{job=\"production-health\"}",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "s"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 40}
+      },
+      {
+        "id": 12,
+        "title": "Production Endpoint Success Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "probe_success{job=\"production-health\"}",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short",
+            "min": 0,
+            "max": 1
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 40}
+      },
+      {
+        "id": 13,
+        "title": "Performance & Security Summary",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "websocket:target_compliance_rate >= 95",
+            "legendFormat": "WebSocket Target Met"
+          },
+          {
+            "expr": "(probe_ssl_earliest_cert_expiry{instance=\"aiwfe.com:443\"} - time()) > 2592000",
+            "legendFormat": "SSL Certificate Healthy"
+          },
+          {
+            "expr": "probe_success{job=\"production-health\", instance=\"https://aiwfe.com\"} == 1",
+            "legendFormat": "Production Site Up"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "value": "0", "text": "FAIL"},
+              {"type": "value", "value": "1", "text": "PASS"}
+            ]
+          }
+        },
+        "options": {
+          "colorMode": "background"
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 48}
+      }
+    ]
+  }
+}

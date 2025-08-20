@@ -1,0 +1,109 @@
+{
+  "todos": [
+    {
+      "id": "auth-state-machine-loop-01",
+      "content": "CRITICAL: Authentication state machine blocking session restoration with 'State change too frequent' error - user seeing endless 'Restoring session...' wheel despite authentication fix attempts",
+      "priority": "critical",
+      "status": "in_progress",
+      "context_tags": ["authentication", "state-machine", "session-restore", "timing", "critical", "frontend"],
+      "related_issues": ["auth-root-cause-analysis-01", "webui-deployment-workflow-01"],
+      "dependencies": [],
+      "urgency_score": 100,
+      "impact_score": 100,
+      "created_date": "2025-08-19T00:00:00Z",
+      "updated_date": "2025-08-19T00:00:00Z",
+      "session_context": "phase0-auth-bug-deep-investigation",
+      "notes": "User reports previous authStateMachine.js fix did not resolve issue. Console shows 'AuthContext: Session restore blocked by state machine: State change too frequent'. Need comprehensive 10+ root cause analysis.",
+      "investigation_requirements": {
+        "minimum_causes": 10,
+        "systematic_testing": true,
+        "evidence_validation": true,
+        "user_perspective": true
+      }
+    },
+    {
+      "id": "auth-root-cause-analysis-01", 
+      "content": "Systematic investigation of at least 10 possible root causes for authentication state machine timing issues",
+      "priority": "critical",
+      "status": "pending",
+      "context_tags": ["analysis", "debugging", "authentication", "systematic"],
+      "related_issues": ["auth-state-machine-loop-01"],
+      "dependencies": [],
+      "urgency_score": 99,
+      "impact_score": 95,
+      "created_date": "2025-08-19T00:00:00Z",
+      "updated_date": "2025-08-19T00:00:00Z",
+      "session_context": "phase0-auth-bug-deep-investigation",
+      "investigation_areas": [
+        "timing_conflicts",
+        "concurrent_state_changes", 
+        "session_restore_flow",
+        "cooldown_mechanisms",
+        "initialization_sequence",
+        "event_loop_conflicts",
+        "react_render_cycles",
+        "context_provider_interactions",
+        "browser_storage_timing",
+        "network_request_race_conditions"
+      ]
+    },
+    {
+      "id": "webui-deployment-workflow-01", 
+      "content": "Fix WebUI deployment process to ensure changes reflect correctly in container",
+      "priority": "high",
+      "status": "pending", 
+      "context_tags": ["devops", "deployment", "container"],
+      "urgency_score": 90,
+      "impact_score": 85,
+      "notes": "Reduced priority due to login functionality taking precedence"
+    },
+    {
+      "id": "galaxy-animation-speed-01",
+      "content": "Optimize Galaxy animation speed in GalaxyConstellation component",
+      "priority": "medium",
+      "status": "pending",
+      "context_tags": ["frontend", "performance", "animation"],
+      "urgency_score": 75,
+      "impact_score": 80,
+      "notes": "Deprioritized while login issue is resolved"
+    },
+    {
+      "id": "floating-balls-motion-01",
+      "content": "Verify and maintain current ultra-slow floating balls movement settings",
+      "priority": "low",
+      "status": "pending",
+      "context_tags": ["frontend", "animation", "ux"],
+      "urgency_score": 40,
+      "impact_score": 50,
+      "notes": "Deferred until critical login functionality is restored"
+    }
+  ],
+  "context_integration": {
+    "current_focus": "auth-state-machine-deep-investigation",
+    "recent_completions": [
+      "webui-flickering-fix",
+      "authentication-backend-optimization", 
+      "performance-enhancement"
+    ],
+    "failed_attempts": [
+      "authStateMachine.js-timing-fix"
+    ],
+    "system_status": {
+      "api_health": "ok",
+      "authentication_endpoints": "functional",
+      "webui_accessibility": "ok",
+      "known_issues": [
+        "auth-state-machine-blocking-session-restore",
+        "endless-restoring-session-wheel",
+        "state-change-frequency-limits"
+      ]
+    },
+    "investigation_status": {
+      "phase": "comprehensive-root-cause-analysis",
+      "minimum_causes_required": 10,
+      "systematic_approach": true,
+      "evidence_collection": "mandatory",
+      "user_validation": "required"
+    }
+  }
+}

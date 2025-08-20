@@ -1,0 +1,51 @@
+{
+    "package_type": "system_validation",
+    "validation_stages": [
+        {
+            "stage": "infrastructure_health",
+            "checks": [
+                "docker ps --format '{{.Names}}: {{.Status}}'",
+                "systemctl list-units --type=service | grep -E 'failed|error'"
+            ]
+        },
+        {
+            "stage": "service_connectivity",
+            "tests": [
+                {
+                    "service": "database",
+                    "test_command": "pg_isready -h localhost",
+                    "expected_status": "accepting connections"
+                },
+                {
+                    "service": "redis",
+                    "test_command": "redis-cli PING",
+                    "expected_response": "PONG"
+                },
+                {
+                    "service": "cognitive_service",
+                    "test_command": "curl http://localhost:5000/health",
+                    "expected_status_code": 200
+                }
+            ]
+        },
+        {
+            "stage": "production_endpoint_validation",
+            "endpoints": [
+                "https://aiwfe.com",
+                "http://aiwfe.com"
+            ],
+            "validation_method": "curl -I -s"
+        }
+    ],
+    "monitoring_dashboard_checks": [
+        "Grafana dashboard connectivity",
+        "Prometheus metrics collection",
+        "Alerting system functional"
+    ],
+    "recovery_priority": "VALIDATION",
+    "estimated_validation_time": "15-20 minutes",
+    "final_stability_threshold": {
+        "min_uptime_seconds": 300,
+        "max_error_rate": 0.01
+    }
+}

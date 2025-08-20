@@ -1,0 +1,219 @@
+# docker-compose.green.yml
+# Green Environment Configuration for AI Workflow Engine
+# This file extends the base docker-compose.yml with green-specific configurations
+
+include:
+  - docker-compose.yml
+
+# Override service configurations for Green environment
+services:
+  postgres:
+    container_name: ai_workflow_engine_green_postgres
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "15432:5432"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  redis:
+    container_name: ai_workflow_engine_green_redis
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "16379:6379"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  qdrant:
+    container_name: ai_workflow_engine_green_qdrant
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "16333:6333"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  api:
+    container_name: ai_workflow_engine_green_api
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "8001:8000"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+        
+  worker:
+    container_name: ai_workflow_engine_green_worker
+    environment:
+      - ENVIRONMENT=green
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+        
+  webui:
+    container_name: ai_workflow_engine_green_webui
+    environment:
+      - ENVIRONMENT=green
+      - API_BASE_URL=http://api:8000
+    ports:
+      - "3001:3000"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+    depends_on:
+      api:
+        condition: service_healthy
+        
+  caddy_reverse_proxy:
+    container_name: ai_workflow_engine_green_caddy
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "8080:80"    # Different ports to avoid conflicts
+      - "8443:443"
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+    depends_on:
+      api:
+        condition: service_healthy
+      webui:
+        condition: service_started
+        
+  # Monitoring services with green environment configuration
+  prometheus:
+    container_name: ai_workflow_engine_green_prometheus
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "19090:9090"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  grafana:
+    container_name: ai_workflow_engine_green_grafana
+    environment:
+      - ENVIRONMENT=green
+      - GF_SERVER_ROOT_URL=http://localhost:13001
+    ports:
+      - "13001:3000"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  alertmanager:
+    container_name: ai_workflow_engine_green_alertmanager
+    environment:
+      - ENVIRONMENT=green
+    ports:
+      - "19093:9093"  # Different port to avoid conflicts
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  # Exporters with green environment labels
+  redis_exporter:
+    container_name: ai_workflow_engine_green_redis_exporter
+    environment:
+      - ENVIRONMENT=green
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  postgres_exporter:
+    container_name: ai_workflow_engine_green_postgres_exporter
+    environment:
+      - ENVIRONMENT=green
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  pgbouncer_exporter:
+    container_name: ai_workflow_engine_green_pgbouncer_exporter
+    environment:
+      - ENVIRONMENT=green
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+      
+  # Additional monitoring
+  cadvisor:
+    container_name: ai_workflow_engine_green_cadvisor
+    environment:
+      - ENVIRONMENT=green
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+
+# Green-specific networks
+networks:
+  default:
+    name: ai_workflow_engine_green_net
+    driver: bridge
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+
+# Green-specific volumes (isolated from blue environment)
+volumes:
+  postgres_data:
+    name: ai_workflow_engine_green_postgres_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  redis_data:
+    name: ai_workflow_engine_green_redis_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  qdrant_data:
+    name: ai_workflow_engine_green_qdrant_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  prometheus_data:
+    name: ai_workflow_engine_green_prometheus_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  grafana_data:
+    name: ai_workflow_engine_green_grafana_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  alertmanager_data:
+    name: ai_workflow_engine_green_alertmanager_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  ollama_data:
+    name: ai_workflow_engine_green_ollama_data
+    labels:
+      - "environment=green"
+      - "deployment.type=blue-green"
+  # Shared volumes (certificates can be shared between environments)
+  certs:
+    name: ai_workflow_engine_shared_certs
+    labels:
+      - "shared=true"
+      - "deployment.type=blue-green"

@@ -1,0 +1,84 @@
+{
+  "package_type": "GPU_OPTIMIZATION_PRIORITY_1",
+  "size_limit": 4000,
+  "target_agents": [
+    "performance-profiler",
+    "monitoring-analyst",
+    "k8s-architecture-specialist",
+    "langgraph-ollama-analyst"
+  ],
+  "coordination_metadata": {
+    "resource_allocation": "PRIMARY_OPTIMIZATION_FOCUS",
+    "conflict_prevention": "COORDINATE_WITH_SERVICE_OPTIMIZATION",
+    "execution_priority": 1,
+    "expected_roi": "268% tokens/second improvement, 183% VRAM efficiency"
+  },
+  "current_status": {
+    "gpu_utilization": "0-32% across 3x TITAN X GPUs",
+    "power_consumption": "200W baseline",
+    "performance_baseline": "Current throughput measurements needed",
+    "target_utilization": "55-75% optimal range",
+    "expected_power": "300-400W optimized consumption"
+  },
+  "ollama_configuration": {
+    "current_config": "/home/marku/ai_workflow_engine/config/ollama/ollama-optimized.env",
+    "key_parameters": {
+      "OLLAMA_NUM_PARALLEL": "2 (current)",
+      "OLLAMA_MAX_LOADED_MODELS": "3",
+      "OLLAMA_FLASH_ATTENTION": "true",
+      "OLLAMA_GPU_OVERHEAD": "0",
+      "OLLAMA_SCHED_SPREAD": "true",
+      "OLLAMA_MAX_QUEUE": "256"
+    },
+    "optimization_targets": {
+      "multi_model_distribution": "Distribute models across 3 GPUs",
+      "memory_optimization": "12GB VRAM per GPU utilization",
+      "parallel_processing": "Increase OLLAMA_NUM_PARALLEL to 4-6",
+      "queue_management": "Optimize request distribution"
+    }
+  },
+  "implementation_strategy": {
+    "approach": "CONFIGURATION_OPTIMIZATION",
+    "risk_level": "MEDIUM (22%)",
+    "success_probability": "78%",
+    "timeline": "45-60 minutes",
+    "rollback_plan": "Revert to current ollama-optimized.env"
+  },
+  "monitoring_requirements": {
+    "gpu_metrics": [
+      "GPU utilization per device",
+      "VRAM usage per model",
+      "Temperature monitoring",
+      "Power consumption tracking"
+    ],
+    "performance_metrics": [
+      "Tokens per second throughput",
+      "Model loading times",
+      "Queue processing speed",
+      "Response latency"
+    ],
+    "validation_criteria": [
+      "Sustained 55-75% GPU utilization",
+      "200-300% throughput improvement",
+      "No thermal throttling",
+      "Stable multi-model operation"
+    ]
+  },
+  "evidence_collection": {
+    "baseline_measurements": "nvidia-smi, ollama ps outputs",
+    "optimization_validation": "Before/after performance benchmarks",
+    "monitoring_integration": "Grafana GPU dashboard updates",
+    "success_metrics": "Concrete utilization and throughput evidence"
+  },
+  "agent_coordination": {
+    "performance-profiler": "GPU utilization analysis and optimization",
+    "monitoring-analyst": "Grafana dashboard updates and alerting",
+    "k8s-architecture-specialist": "Container resource allocation optimization",
+    "langgraph-ollama-analyst": "Ollama configuration and model distribution"
+  },
+  "historical_patterns": {
+    "ml_decision_engine_insights": "Configuration approach recommended over hardware changes",
+    "similar_optimizations": "Container resource allocation patterns show 200-400% improvements",
+    "risk_mitigation": "Environment variable changes allow rapid rollback"
+  }
+}

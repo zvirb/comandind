@@ -1,0 +1,79 @@
+groups:
+- name: business_critical_alerts
+  rules:
+  # High Error Rate Alert
+  - alert: HighErrorRateDetected
+    expr: sum(rate(http_request_duration_seconds_count{status=~"5.."}[5m])) / sum(rate(http_request_duration_seconds_count[5m])) * 100 > 5
+    for: 10m
+    labels:
+      severity: critical
+      team: platform
+    annotations:
+      summary: "High Error Rate Detected ({{ $value }}%)"
+      description: "More than 5% of requests are failing. This indicates a significant service degradation."
+
+  # API Latency Alert
+  - alert: APILatencyTooHigh
+    expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 2
+    for: 10m
+    labels:
+      severity: warning
+      team: performance
+    annotations:
+      summary: "API Latency Exceeding SLA"
+      description: "95th percentile API request latency is over 2 seconds."
+
+  # Authentication Failure Rate
+  - alert: HighAuthenticationFailureRate
+    expr: sum(rate(authentication_failures_total[5m])) / sum(rate(authentication_attempts_total[5m])) * 100 > 10
+    for: 5m
+    labels:
+      severity: critical
+      team: security
+    annotations:
+      summary: "High Authentication Failure Rate"
+      description: "More than 10% of authentication attempts are failing."
+
+  # Database Connection Pool Exhaustion
+  - alert: DatabaseConnectionPoolExhausted
+    expr: pg_stat_activity_max_connections{database="aiwfe"} / pg_stat_activity_max_connections{database="aiwfe"} * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+      team: database
+    annotations:
+      summary: "Database Connection Pool Nearly Full"
+      description: "More than 90% of database connections are in use."
+
+  # Worker Queue Backlog
+  - alert: WorkerQueueBacklogGrowing
+    expr: celery_tasks_total{state="waiting"} > 100
+    for: 15m
+    labels:
+      severity: warning
+      team: platform
+    annotations:
+      summary: "Celery Worker Queue Backlog"
+      description: "More than 100 tasks are waiting in the queue for an extended period."
+
+  # Redis Memory Usage Alert
+  - alert: RedisHighMemoryUsage
+    expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 85
+    for: 10m
+    labels:
+      severity: warning
+      team: infrastructure
+    annotations:
+      summary: "Redis High Memory Usage"
+      description: "Redis memory usage is over 85% of maximum configured memory."
+
+  # Prometheus Target Scrape Failures
+  - alert: PrometheusScrapeFailures
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+      team: monitoring
+    annotations:
+      summary: "Monitoring Target Scrape Failures"
+      description: "Some monitoring targets are not reachable or responding."

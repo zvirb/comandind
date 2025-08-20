@@ -1,0 +1,194 @@
+{
+  "title": "WebUI Flickering Testing Context Package",
+  "context_type": "testing_validation",
+  "token_limit": 3000,
+  "priority": "critical",
+  "generated": "2025-08-18T22:05:00Z",
+  "target_specialists": ["user-experience-auditor", "ui-regression-debugger", "test-automation-engineer"],
+
+  "flicker_detection_methodology": {
+    "visual_regression_testing": {
+      "tool": "Playwright browser automation",
+      "approach": "Screenshot comparison at polling intervals",
+      "baseline_captures": [
+        "Initial page load state",
+        "After authentication completion", 
+        "During service status updates",
+        "During performance metrics collection"
+      ],
+      "flicker_indicators": [
+        "Loading spinner appears and disappears rapidly",
+        "Data visible → loading state → clear UI → data returns cycle",
+        "Component dimensions or positions shifting",
+        "Authentication state toggling without user action"
+      ]
+    },
+    "timing_analysis": {
+      "setInterval_monitoring": "Track all polling intervals and their overlap",
+      "state_update_tracking": "Monitor React state changes and re-render frequency",
+      "api_call_deduplication": "Verify no duplicate requests during polling",
+      "circuit_breaker_validation": "Confirm polling stops during failures"
+    }
+  },
+
+  "baseline_establishment": {
+    "pre_fix_evidence": {
+      "required_screenshots": [
+        "WebUI showing flickering during normal browsing",
+        "Performance dashboard opening causing UI instability",
+        "Service status indicator updates affecting other components",
+        "Authentication polling causing loading state flicker"
+      ],
+      "performance_metrics": [
+        "Count of setInterval operations (expect 3+ concurrent)",
+        "API call frequency during peak polling",
+        "React component re-render count per minute",
+        "Memory usage during heavy polling periods"
+      ]
+    },
+    "reproduction_scenarios": [
+      "Navigate between pages while service status polling active",
+      "Open performance dashboard and observe other components",
+      "Login and observe authentication polling effects",
+      "Leave browser idle for 10+ minutes and observe periodic checks"
+    ]
+  },
+
+  "testing_automation_scripts": {
+    "playwright_flicker_detection": {
+      "purpose": "Automated detection of UI flickering patterns",
+      "methodology": [
+        "Take screenshot every 500ms during polling cycles", 
+        "Compare consecutive screenshots for unexpected changes",
+        "Flag rapid state transitions (visible→loading→visible)",
+        "Measure time spent in loading states vs data display"
+      ],
+      "success_criteria": "Zero unexpected visual transitions during 5-minute observation"
+    },
+    "polling_coordination_validation": {
+      "purpose": "Verify centralized polling coordinator prevents overlap",
+      "tests": [
+        "Confirm only one polling operation active per component type",
+        "Verify operation locks prevent concurrent requests",
+        "Test circuit breaker integration with polling coordinator",
+        "Validate proper cleanup when components unmount"
+      ]
+    },
+    "authentication_flow_preservation": {
+      "purpose": "Ensure auth functionality unchanged after polling fixes",
+      "tests": [
+        "Login success rate remains 100%",
+        "Session restoration works correctly",
+        "Authentication state consistency during polling",
+        "Logout functionality unaffected"
+      ]
+    }
+  },
+
+  "performance_validation": {
+    "metrics_comparison": {
+      "before_fix": {
+        "api_calls_per_minute": "Expected high due to overlapping polls",
+        "react_renders_per_minute": "Expected high due to state conflicts",
+        "memory_usage_growth": "Expected increase from multiple timers",
+        "cpu_usage_during_polling": "Expected elevated"
+      },
+      "after_fix": {
+        "api_calls_per_minute": "Reduced due to coordination",
+        "react_renders_per_minute": "Reduced due to batched updates",
+        "memory_usage_growth": "Stabilized due to unified timer management",
+        "cpu_usage_during_polling": "Reduced due to elimination of conflicts"
+      }
+    },
+    "load_testing": {
+      "scenario": "Multiple tabs open with webui, each with polling components",
+      "validation": "Polling coordination works across multiple instances",
+      "success_criteria": "No exponential increase in resource usage"
+    }
+  },
+
+  "evidence_collection_requirements": {
+    "screenshots": {
+      "before_fix": [
+        "Flickering UI during service status updates",
+        "Performance dashboard causing main UI instability",
+        "Loading states appearing without user action",
+        "Authentication indicator rapid state changes"
+      ],
+      "after_fix": [
+        "Stable UI during all polling operations",
+        "Performance dashboard opening without affecting other components",
+        "Smooth loading states with proper transitions",
+        "Consistent authentication status display"
+      ]
+    },
+    "performance_logs": {
+      "browser_console": "Capture polling coordination debug messages",
+      "network_activity": "API call frequency and timing",
+      "react_profiler": "Component render analysis before and after",
+      "memory_timeline": "JavaScript heap usage during polling cycles"
+    },
+    "user_experience_validation": {
+      "real_user_scenarios": [
+        "Navigate through application during peak polling",
+        "Open multiple components that trigger polling",
+        "Leave application idle and observe periodic behavior",
+        "Test under slow network conditions"
+      ],
+      "success_indicators": [
+        "No unexpected loading spinners",
+        "Smooth page transitions",
+        "Responsive component interactions",
+        "Stable visual layout"
+      ]
+    }
+  },
+
+  "regression_testing_checklist": {
+    "core_functionality": [
+      "Authentication login/logout cycles",
+      "Service status indicator accuracy",
+      "Performance dashboard functionality",
+      "Navigation between application sections"
+    ],
+    "edge_cases": [
+      "Network timeout during polling",
+      "Service failures during status checks",
+      "Browser tab switching during polling",
+      "Component unmounting during active polls"
+    ],
+    "cross_browser_validation": [
+      "Chrome: Primary testing environment",
+      "Firefox: Alternative engine validation", 
+      "Safari: WebKit compatibility check",
+      "Edge: Additional Chromium variant testing"
+    ]
+  },
+
+  "success_metrics": {
+    "visual_stability": "Zero UI flickering events during 10-minute observation",
+    "polling_efficiency": "Single polling operation per component type",
+    "authentication_reliability": "100% login success rate maintained",
+    "performance_improvement": "Reduced API calls and render cycles",
+    "user_experience": "Smooth transitions without loading interruptions"
+  },
+
+  "failure_detection": {
+    "rollback_triggers": [
+      "Visual regression detected by screenshot comparison",
+      "Authentication failure rate increase",
+      "Performance degradation in metrics collection",
+      "Component state synchronization issues",
+      "Memory leaks from polling coordination"
+    ],
+    "monitoring_period": "24 hours post-deployment with hourly checks",
+    "escalation_criteria": "Any rollback trigger detected within first 2 hours"
+  },
+
+  "testing_coordination": {
+    "frontend_stream": "Provide implementation feedback during testing",
+    "backend_stream": "Coordinate API response timing optimization",
+    "security_stream": "Validate authentication flow integrity",
+    "deployment_readiness": "Evidence package for production deployment"
+  }
+}

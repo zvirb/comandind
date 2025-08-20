@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIWFE Chat Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        #chat-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        #input-container {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .user-message {
+            background: #e3f2fd;
+            text-align: right;
+        }
+        .ai-message {
+            background: #f3e5f5;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Workflow Engine - Chat Test</h1>
+    
+    <div id="status"></div>
+    
+    <div id="chat-container">
+        <div id="messages"></div>
+    </div>
+    
+    <div id="input-container">
+        <input type="text" id="message-input" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="testWebSocket()">Test WebSocket</button>
+        <button onclick="testAPI()">Test API</button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        const WS_URL = 'ws://localhost:8000';
+        let ws = null;
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = type;
+            status.textContent = message;
+        }
+
+        function addMessage(content, isUser = false) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
+            messageDiv.textContent = content;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function testAPI() {
+            updateStatus('Testing API connection...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('API is healthy: ' + JSON.stringify(data), 'success');
+                } else {
+                    updateStatus(`API returned status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('API connection failed: ' + error.message, 'error');
+            }
+        }
+
+        function testWebSocket() {
+            updateStatus('Testing WebSocket connection...', 'info');
+            
+            if (ws) {
+                ws.close();
+            }
+
+            ws = new WebSocket(`${WS_URL}/ws/chat`);
+            
+            ws.onopen = () => {
+                updateStatus('WebSocket connected!', 'success');
+                addMessage('WebSocket connection established', false);
+            };
+
+            ws.onmessage = (event) => {
+                console.log('WebSocket message:', event.data);
+                try {
+                    const data = JSON.parse(event.data);
+                    addMessage(data.content || data.message || event.data, false);
+                } catch {
+                    addMessage(event.data, false);
+                }
+            };
+
+            ws.onerror = (error) => {
+                updateStatus('WebSocket error: ' + error.message, 'error');
+            };
+
+            ws.onclose = () => {
+                updateStatus('WebSocket disconnected', 'info');
+            };
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+
+            // Try WebSocket first
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ message }));
+                return;
+            }
+
+            // Fall back to REST API
+            try {
+                const response = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage(data.response || 'No response', false);
+                } else {
+                    updateStatus(`Chat API returned status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('Failed to send message: ' + error.message, 'error');
+            }
+        }
+
+        // Test API on load
+        window.onload = () => {
+            testAPI();
+        };
+    </script>
+</body>
+</html>

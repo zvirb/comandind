@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Worker Network Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 40px auto; 
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-radius: 4px; 
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Service Worker Network Test</h1>
+    
+    <div class="test-container">
+        <h2>Service Worker Status</h2>
+        <div id="sw-status">Checking...</div>
+        <button onclick="registerServiceWorker()">Register Service Worker</button>
+        <button onclick="unregisterServiceWorker()">Unregister Service Worker</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>Network Request Tests</h2>
+        <button onclick="testHealthEndpoint()">Test Health Endpoint</button>
+        <button onclick="testCorsRequest()">Test CORS Request</button>
+        <button onclick="testFailingEndpoint()">Test Failing Endpoint</button>
+        <button onclick="clearResults()">Clear Results</button>
+        <div id="network-results"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Service Worker Events</h2>
+        <div id="sw-events"></div>
+    </div>
+
+    <script>
+        let swEvents = [];
+        
+        // Service Worker registration and status
+        async function checkServiceWorkerStatus() {
+            const statusDiv = document.getElementById('sw-status');
+            
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    
+                    if (registration) {
+                        const sw = registration.active || registration.waiting || registration.installing;
+                        if (sw) {
+                            statusDiv.innerHTML = `<div class="result success">✅ Service Worker Active: ${sw.state}</div>`;
+                        } else {
+                            statusDiv.innerHTML = `<div class="result error">❌ Service Worker Registered but not Active</div>`;
+                        }
+                    } else {
+                        statusDiv.innerHTML = `<div class="result error">❌ No Service Worker Registered</div>`;
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = `<div class="result error">❌ Error checking Service Worker: ${error.message}</div>`;
+                }
+            } else {
+                statusDiv.innerHTML = `<div class="result error">❌ Service Worker not supported</div>`;
+            }
+        }
+        
+        // Register service worker (simplified version)
+        async function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    // This is a test - we can't register the actual complex service worker without build process
+                    const testSW = `
+                        self.addEventListener('install', (event) => {
+                            console.log('[Test SW] Installing');
+                            self.skipWaiting();
+                        });
+                        
+                        self.addEventListener('activate', (event) => {
+                            console.log('[Test SW] Activating');
+                            event.waitUntil(self.clients.claim());
+                        });
+                        
+                        self.addEventListener('fetch', (event) => {
+                            console.log('[Test SW] Fetch:', event.request.url);
+                            
+                            // Enhanced fetch with error handling
+                            event.respondWith(
+                                fetch(event.request, {
+                                    mode: 'cors',
+                                    credentials: 'include'
+                                }).catch(error => {
+                                    console.error('[Test SW] Fetch failed:', error);
+                                    return new Response(
+                                        JSON.stringify({
+                                            error: 'Network request failed',
+                                            message: error.message,
+                                            url: event.request.url,
+                                            timestamp: new Date().toISOString()
+                                        }),
+                                        {
+                                            status: 503,
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Access-Control-Allow-Origin': '*'
+                                            }
+                                        }
+                                    );
+                                })
+                            );
+                        });
+                    `;
+                    
+                    const blob = new Blob([testSW], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    
+                    await navigator.serviceWorker.register(swUrl);
+                    addEvent('Service Worker registered successfully');
+                    
+                    setTimeout(checkServiceWorkerStatus, 1000);
+                    
+                } catch (error) {
+                    addEvent(`Service Worker registration failed: ${error.message}`);
+                }
+            }
+        }
+        
+        async function unregisterServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        await registration.unregister();
+                        addEvent('Service Worker unregistered');
+                    }
+                    checkServiceWorkerStatus();
+                } catch (error) {
+                    addEvent(`Error unregistering Service Worker: ${error.message}`);
+                }
+            }
+        }
+        
+        // Network tests
+        async function testHealthEndpoint() {
+            const resultsDiv = document.getElementById('network-results');
+            const testUrl = 'http://localhost:8000/api/v1/health';
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(testUrl, {
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+                
+                const duration = Date.now() - startTime;
+                const responseText = await response.text();
+                
+                resultsDiv.innerHTML += `
+                    <div class="result ${response.ok ? 'success' : 'error'}">
+                        <strong>Health Endpoint Test</strong><br>
+                        Status: ${response.status} ${response.statusText}<br>
+                        Duration: ${duration}ms<br>
+                        Response: <pre>${responseText}</pre>
+                    </div>
+                `;
+                
+                addEvent(`Health endpoint test: ${response.status} in ${duration}ms`);
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>Health Endpoint Test Failed</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+                addEvent(`Health endpoint test failed: ${error.message}`);
+            }
+        }
+        
+        async function testCorsRequest() {
+            const resultsDiv = document.getElementById('network-results');
+            const testUrl = 'http://localhost:8000/api/v1/health';
+            
+            try {
+                // First test OPTIONS preflight
+                const optionsResponse = await fetch(testUrl, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': 'https://aiwfe.com',
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type, Authorization'
+                    }
+                });
+                
+                const corsHeaders = {
+                    'access-control-allow-origin': optionsResponse.headers.get('access-control-allow-origin'),
+                    'access-control-allow-methods': optionsResponse.headers.get('access-control-allow-methods'),
+                    'access-control-allow-headers': optionsResponse.headers.get('access-control-allow-headers')
+                };
+                
+                resultsDiv.innerHTML += `
+                    <div class="result ${optionsResponse.ok ? 'success' : 'error'}">
+                        <strong>CORS Preflight Test</strong><br>
+                        Status: ${optionsResponse.status}<br>
+                        CORS Headers: <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                    </div>
+                `;
+                
+                addEvent(`CORS preflight test: ${optionsResponse.status}`);
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>CORS Test Failed</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+                addEvent(`CORS test failed: ${error.message}`);
+            }
+        }
+        
+        async function testFailingEndpoint() {
+            const resultsDiv = document.getElementById('network-results');
+            const testUrl = 'http://localhost:8000/api/v1/nonexistent-endpoint';
+            
+            try {
+                const response = await fetch(testUrl);
+                const responseText = await response.text();
+                
+                resultsDiv.innerHTML += `
+                    <div class="result ${response.ok ? 'success' : 'info'}">
+                        <strong>Failing Endpoint Test</strong><br>
+                        Status: ${response.status} ${response.statusText}<br>
+                        Response: <pre>${responseText}</pre>
+                    </div>
+                `;
+                
+                addEvent(`Failing endpoint test: ${response.status}`);
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>Failing Endpoint Test - Network Error</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+                addEvent(`Failing endpoint test failed: ${error.message}`);
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('network-results').innerHTML = '';
+        }
+        
+        function addEvent(message) {
+            swEvents.push(`${new Date().toLocaleTimeString()}: ${message}`);
+            const eventsDiv = document.getElementById('sw-events');
+            eventsDiv.innerHTML = '<pre>' + swEvents.slice(-10).join('\\n') + '</pre>';
+        }
+        
+        // Initialize
+        checkServiceWorkerStatus();
+        
+        // Listen for service worker messages
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                addEvent(`SW Message: ${JSON.stringify(event.data)}`);
+            });
+        }
+    </script>
+</body>
+</html>

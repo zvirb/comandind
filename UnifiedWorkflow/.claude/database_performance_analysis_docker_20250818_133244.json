@@ -1,0 +1,216 @@
+{
+  "timestamp": "2025-08-18T13:32:38.860821",
+  "current_metrics": {},
+  "connection_pool_analysis": {
+    "connection_pool_performance": {
+      "avg_ms": 84.84298790281173,
+      "median_ms": 86.30894999078009,
+      "p95_ms": 97.11929300101474,
+      "efficiency_rating": "Good (80-90%)"
+    },
+    "configuration_effectiveness": {
+      "pgbouncer_config": {
+        "default_pool_size": "60",
+        "max_client_conn": "500",
+        "reserve_pool_size": "20",
+        "max_db_connections": "100",
+        "pool_mode": "transaction"
+      },
+      "pool_recommendations": [
+        {
+          "parameter": "default_pool_size",
+          "current": "60",
+          "recommended": "80-100",
+          "impact": "High - Increase connection availability for high concurrency"
+        },
+        {
+          "parameter": "max_client_conn",
+          "current": "500",
+          "recommended": "600-800",
+          "impact": "Medium - Handle more concurrent requests"
+        }
+      ]
+    }
+  },
+  "query_performance": {},
+  "configuration_analysis": {
+    "current_configuration": {},
+    "memory_analysis": {
+      "current_memory_allocation": {
+        "shared_buffers_mb": 0,
+        "effective_cache_size_mb": 0,
+        "work_mem_mb": 0
+      },
+      "memory_recommendations": [
+        {
+          "parameter": "shared_buffers",
+          "current": "0MB",
+          "recommended": "512MB",
+          "impact": "High - Better buffer cache performance",
+          "justification": "For production workloads, larger shared buffers improve performance"
+        },
+        {
+          "parameter": "work_mem",
+          "current": "0MB",
+          "recommended": "16MB",
+          "impact": "Medium - Improved sorting and hash operations",
+          "justification": "Higher work_mem reduces disk I/O for complex queries"
+        }
+      ]
+    }
+  },
+  "optimization_recommendations": [
+    {
+      "category": "Query Performance",
+      "priority": "High",
+      "recommendation": "Optimize basic query performance",
+      "current_value": "86.58ms",
+      "target_value": "<20ms",
+      "actions": [
+        "Implement missing database indexes",
+        "Optimize slow queries with EXPLAIN ANALYZE",
+        "Consider query result caching with Redis",
+        "Review and optimize join patterns"
+      ],
+      "estimated_improvement": "40-60% reduction in response time"
+    },
+    {
+      "category": "Database Indexing",
+      "priority": "High",
+      "recommendation": "Create missing critical indexes",
+      "actions": [
+        "CREATE INDEX CONCURRENTLY idx_users_username ON users (username);",
+        "CREATE INDEX CONCURRENTLY idx_oauth_tokens_user_service ON user_oauth_tokens (user_id, service);"
+      ],
+      "estimated_improvement": "50-80% improvement in query performance"
+    },
+    {
+      "category": "Memory Configuration",
+      "priority": "Medium",
+      "recommendation": "Optimize PostgreSQL memory settings",
+      "actions": [
+        "shared_buffers: 512MB",
+        "work_mem: 16MB"
+      ],
+      "estimated_improvement": "20-40% improvement in query performance"
+    }
+  ],
+  "performance_baseline": {
+    "simple_query_performance": {
+      "avg_ms": 86.57646879728418,
+      "median_ms": 85.17067300272174,
+      "min_ms": 74.93673299904913,
+      "max_ms": 100.29650398064405,
+      "p95_ms": 100.29650398064405
+    },
+    "connection_establishment": {
+      "avg_ms": 80.65605480805971,
+      "median_ms": 80.68445499520749,
+      "target_improvement_needed": 30.656054808059707
+    },
+    "complex_query_performance": {
+      "avg_ms": 92.27346360567026,
+      "target_improvement_needed": 0
+    }
+  },
+  "target_metrics": {
+    "response_time_target_ms": 100,
+    "connection_pool_efficiency_target": 85,
+    "cache_hit_ratio_target": 95
+  },
+  "index_effectiveness": {
+    "index_usage_statistics": [
+      {
+        "schema": "schemaname",
+        "table": "table_name",
+        "index": "index_name",
+        "scans": 0,
+        "tuples_read": 0,
+        "tuples_fetched": 0,
+        "effectiveness": "Low"
+      }
+    ],
+    "table_sizes": [
+      {
+        "schema": "schemaname",
+        "table": "tablename",
+        "size_pretty": "table_size"
+      }
+    ],
+    "missing_indexes": [
+      {
+        "table": "users",
+        "columns": "username",
+        "type": "btree",
+        "justification": "Authentication queries frequently filter by username",
+        "priority": "High",
+        "sql": "CREATE INDEX CONCURRENTLY idx_users_username ON users (username);"
+      },
+      {
+        "table": "users",
+        "columns": "email",
+        "type": "btree",
+        "justification": "Email-based lookups for password reset and notifications",
+        "priority": "Medium",
+        "sql": "CREATE INDEX CONCURRENTLY idx_users_email ON users (email);"
+      },
+      {
+        "table": "user_oauth_tokens",
+        "columns": "(user_id, service)",
+        "type": "btree",
+        "justification": "OAuth token lookups always filter by user and service",
+        "priority": "High",
+        "sql": "CREATE INDEX CONCURRENTLY idx_oauth_tokens_user_service ON user_oauth_tokens (user_id, service);"
+      },
+      {
+        "table": "user_oauth_tokens",
+        "columns": "token_expiry",
+        "type": "btree",
+        "justification": "Token cleanup and validation queries filter by expiry",
+        "priority": "Medium",
+        "sql": "CREATE INDEX CONCURRENTLY idx_oauth_tokens_expiry ON user_oauth_tokens (token_expiry);"
+      },
+      {
+        "table": "users",
+        "columns": "(is_active, created_at)",
+        "type": "btree",
+        "justification": "User listing queries often filter by status and sort by creation date",
+        "priority": "Medium",
+        "sql": "CREATE INDEX CONCURRENTLY idx_users_active_created ON users (is_active, created_at);"
+      }
+    ],
+    "efficiency_metrics": {
+      "total_index_scans": 0,
+      "active_indexes": 0,
+      "efficiency_score": 0.0
+    }
+  },
+  "database_statistics": {
+    "cache_hit_ratios": {},
+    "database_activity": {
+      "active_connections": 0,
+      "transactions_committed": 0,
+      "transactions_rolled_back": 0,
+      "blocks_read_from_disk": 0,
+      "blocks_read_from_cache": 0,
+      "cache_hit_ratio": 0,
+      "tuples_returned": 0,
+      "tuples_fetched": 0
+    }
+  },
+  "improvement_potential": {
+    "current_baseline_ms": 86.57646879728418,
+    "target_response_time_ms": 100,
+    "projected_response_time_ms": 7.090612794497573,
+    "total_improvement_percentage": 91.81,
+    "target_achievable": true,
+    "improvement_breakdown": {
+      "index_optimization": 0.6,
+      "connection_pool_optimization": 0.3,
+      "memory_configuration": 0.25,
+      "query_optimization": 0.4,
+      "caching_improvements": 0.35
+    },
+    "confidence_level": "High"
+  }
+}

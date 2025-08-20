@@ -1,0 +1,41 @@
+{
+  "timestamp": "2025-08-08T07:29:23.244351",
+  "target": "https://aiwfe.com",
+  "vulnerability_summary": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 1,
+    "LOW": 2
+  },
+  "risk_level": "\ud83d\udfe1 MEDIUM RISK",
+  "total_vulnerabilities": 3,
+  "vulnerabilities": [
+    {
+      "severity": "MEDIUM",
+      "category": "Insufficient Rate Limiting",
+      "endpoint": "/api/v1/auth/jwt/login",
+      "description": "No rate limiting detected after 0 failed attempts",
+      "evidence": "Successfully made 10 requests without being rate limited"
+    },
+    {
+      "severity": "LOW",
+      "category": "User Enumeration",
+      "endpoint": "/api/v1/auth/jwt/login",
+      "description": "Different response patterns may allow user enumeration",
+      "evidence": "Response patterns: {'401:333:-2159571893640108794': ['nonexistent@example.com'], '401:333:1266755740532925491': ['admin@example.com'], '401:333:5583435137224813691': ['test@example.com'], '401:333:8520749426483149895': ['user@example.com']}"
+    },
+    {
+      "severity": "LOW",
+      "category": "Insecure Cookie",
+      "endpoint": "Cookie Security",
+      "description": "Token cookie 'csrf_token' lacks HttpOnly flag",
+      "evidence": "Cookie: csrf_token=1754602163:oiX1Q58sP..."
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udd0d Conduct regular security audits and penetration testing",
+    "\ud83d\udcda Train development team on secure coding practices",
+    "\ud83c\udfd7\ufe0f Implement security controls in CI/CD pipeline",
+    "\ud83d\udcca Set up security monitoring and alerting"
+  ]
+}

@@ -1,0 +1,341 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Cost Optimization & $400K Savings Tracking",
+    "tags": ["cost", "optimization", "savings", "efficiency"],
+    "style": "dark",
+    "timezone": "browser",
+    "editable": true,
+    "graphTooltip": 1,
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["1m", "5m", "15m", "30m", "1h", "2h", "1d"],
+      "time_options": ["1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    },
+    "refresh": "5m",
+    "schemaVersion": 27,
+    "version": 1,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Annual Savings Progress ($400K Target)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "cost:annual_savings_projection_usd",
+            "legendFormat": "Annual Savings Projection"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 200000},
+                {"color": "orange", "value": 300000},
+                {"color": "green", "value": 400000}
+              ]
+            },
+            "unit": "currencyUSD",
+            "min": 0,
+            "max": 500000
+          }
+        },
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Target Achievement Percentage",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(cost:annual_savings_projection_usd / 400000) * 100",
+            "legendFormat": "% of $400K Target"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 50},
+                {"color": "orange", "value": 75},
+                {"color": "green", "value": 100}
+              ]
+            },
+            "unit": "percent",
+            "max": 150
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area"
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Daily Savings Breakdown",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "cost:total_daily_savings_usd",
+            "legendFormat": "Total Daily Savings"
+          },
+          {
+            "expr": "cost:daily_cpu_savings_usd",
+            "legendFormat": "CPU Savings"
+          },
+          {
+            "expr": "cost:daily_memory_savings_usd",
+            "legendFormat": "Memory Savings"
+          },
+          {
+            "expr": "cost:daily_storage_savings_usd",
+            "legendFormat": "Storage Savings"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Resource Efficiency vs Cost Optimization Targets",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "cost:cpu_efficiency_percentage",
+            "legendFormat": "CPU Efficiency %"
+          },
+          {
+            "expr": "cost:memory_efficiency_percentage",
+            "legendFormat": "Memory Efficiency %"
+          },
+          {
+            "expr": "70",
+            "legendFormat": "Target Min (70%)"
+          },
+          {
+            "expr": "80",
+            "legendFormat": "Target Max (80%)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+      },
+      {
+        "id": 5,
+        "title": "Current vs Baseline Cost Comparison",
+        "type": "barchart",
+        "targets": [
+          {
+            "expr": "cost:baseline_daily_cpu_cost_usd + cost:baseline_daily_memory_cost_usd + cost:baseline_daily_storage_cost_usd",
+            "legendFormat": "Baseline Daily Cost (31 Services)"
+          },
+          {
+            "expr": "cost:daily_cpu_cost_usd + cost:daily_memory_cost_usd + cost:daily_storage_cost_usd",
+            "legendFormat": "Current Daily Cost (8 Consolidated Services)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
+      },
+      {
+        "id": 6,
+        "title": "Monthly Savings Projection",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "cost:monthly_savings_projection_usd",
+            "legendFormat": "Monthly Savings"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 25000},
+                {"color": "green", "value": 33333}
+              ]
+            },
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
+      },
+      {
+        "id": 7,
+        "title": "Service-Level Cost Breakdown",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "cost:database_infrastructure_cost_usd",
+            "legendFormat": "Database Infrastructure"
+          },
+          {
+            "expr": "cost:cache_infrastructure_cost_usd",
+            "legendFormat": "Cache Infrastructure"
+          },
+          {
+            "expr": "cost:ai_infrastructure_cost_usd",
+            "legendFormat": "AI/ML Infrastructure"
+          },
+          {
+            "expr": "sum(cost:service_cpu_cost_breakdown{name=~\".*api.*\"})",
+            "legendFormat": "API Services"
+          },
+          {
+            "expr": "sum(cost:service_cpu_cost_breakdown{name=~\".*web.*\"})",
+            "legendFormat": "Web Services"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32}
+      },
+      {
+        "id": 8,
+        "title": "Cost Optimization Trend (7-Day Average)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "cost:weekly_savings_trend",
+            "legendFormat": "7-Day Average Savings"
+          },
+          {
+            "expr": "cost:total_daily_savings_usd",
+            "legendFormat": "Daily Savings"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32}
+      },
+      {
+        "id": 9,
+        "title": "Resource Utilization Heatmap",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "cost:cpu_efficiency_percentage",
+            "legendFormat": "CPU Efficiency"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "spectrum"
+            },
+            "unit": "percent"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 40}
+      },
+      {
+        "id": 10,
+        "title": "Cost Savings Acceleration",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "cost:savings_acceleration",
+            "legendFormat": "Savings Acceleration"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 40}
+      },
+      {
+        "id": 11,
+        "title": "Cost Optimization KPIs",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "cost:total_daily_savings_usd",
+            "legendFormat": "Daily Savings",
+            "format": "table"
+          },
+          {
+            "expr": "cost:monthly_savings_projection_usd",
+            "legendFormat": "Monthly Projection",
+            "format": "table"
+          },
+          {
+            "expr": "cost:annual_savings_projection_usd",
+            "legendFormat": "Annual Projection",
+            "format": "table"
+          },
+          {
+            "expr": "cost:savings_percentage",
+            "legendFormat": "Savings %",
+            "format": "table"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 48}
+      }
+    ]
+  }
+}

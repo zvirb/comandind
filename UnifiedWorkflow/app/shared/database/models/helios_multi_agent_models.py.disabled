@@ -1,0 +1,839 @@
+"""
+SQLAlchemy models for Helios Multi-Agent Collaborative Environment framework.
+
+This module extends the existing database schema to support agent configuration,
+task delegation, GPU resource allocation, and multi-agent session management
+for the Helios Multi-Agent framework.
+
+Features:
+- Agent configuration with LLM assignments and GPU allocations
+- Task delegation tracking from PM to expert agents
+- Multi-agent conversation session management
+- GPU resource monitoring and load balancing
+- Integration with existing User and cognitive state models
+"""
+
+import enum
+import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import (
+    Boolean,
+    Enum as SQLAlchemyEnum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    DateTime,
+    Index,
+)
+from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.sql import func
+
+from shared.utils.database_setup import Base
+
+
+class AgentStatus(str, enum.Enum):
+    """Status of agents in the multi-agent system."""
+    ONLINE = "online"
+    WORKING = "working" 
+    IDLE = "idle"
+    OFFLINE = "offline"
+    ERROR = "error"
+    OVERLOADED = "overloaded"
+
+
+class TaskDelegationStatus(str, enum.Enum):
+    """Status of task delegation between agents."""
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    TIMEOUT = "timeout"
+
+
+class ConversationPhase(str, enum.Enum):
+    """Phases of multi-agent conversation management."""
+    INITIALIZATION = "initialization"
+    INGESTION = "ingestion"
+    PLANNING = "planning"
+    DELEGATION = "delegation"
+    PROCESSING = "processing"
+    SYNTHESIS = "synthesis"
+    REVIEW = "review"
+    COMPLETION = "completion"
+
+
+class GPUAllocationStatus(str, enum.Enum):
+    """Status of GPU resource allocations."""
+    ACTIVE = "active"
+    IDLE = "idle"
+    OVERLOADED = "overloaded"
+    ERROR = "error"
+    MAINTENANCE = "maintenance"
+
+
+class ModelProvider(str, enum.Enum):
+    """Available LLM model providers."""
+    OLLAMA = "ollama"
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    GOOGLE = "google"
+    HUGGINGFACE = "huggingface"
+
+
+class AgentConfiguration(Base):
+    """
+    Agent configuration model for LLM assignments, GPU allocations, and system prompts.
+    
+    Stores per-agent configuration including model assignments, resource allocations,
+    system prompts, and operational constraints for the Helios Multi-Agent framework.
+    """
+    __tablename__ = "agent_configurations"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Agent identification
+    agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # research_specialist, business_analyst, etc.
+    agent_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # expert, pm, synthesizer
+    agent_role: Mapped[str] = mapped_column(String(100), nullable=False)  # Human-readable role name
+    
+    # User context
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)  # NULL for global configs
+    
+    # Model configuration
+    assigned_llm: Mapped[str] = mapped_column(String(100), nullable=False)  # claude-3-opus, gpt-4, gemini-1.5-pro
+    model_provider: Mapped[ModelProvider] = mapped_column(
+        SQLAlchemyEnum(ModelProvider, values_callable=lambda x: [e.value for e in x]), 
+        nullable=False, index=True
+    )
+    model_version: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    
+    # GPU resource allocation
+    gpu_assignment: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)  # 0, 1, 2 for RTX Titan X GPUs
+    allocated_memory_mb: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    max_concurrent_requests: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    # Agent behavior configuration
+    system_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    temperature: Mapped[float] = mapped_column(Float, default=0.7, nullable=False)
+    max_tokens: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Operational constraints
+    constraints: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    capabilities: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    specializations: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    
+    # Performance settings
+    timeout_seconds: Mapped[int] = mapped_column(Integer, default=300, nullable=False)  # 5 minute default
+    retry_attempts: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
+    priority_level: Mapped[int] = mapped_column(Integer, default=1, nullable=False)  # 1-10 priority scale
+    
+    # Status and lifecycle
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_global_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Relationships
+    user: Mapped[Optional["User"]] = relationship("User")
+    gpu_allocations: Mapped[List["GPUAllocation"]] = relationship(
+        "GPUAllocation", back_populates="agent_config", cascade="all, delete-orphan"
+    )
+    agent_profiles: Mapped[List["AgentProfile"]] = relationship(
+        "AgentProfile", back_populates="config", cascade="all, delete-orphan"
+    )
+    
+    # Table configuration
+    __table_args__ = (
+        UniqueConstraint('user_id', 'agent_id', name='_user_agent_config_uc'),
+        Index('idx_agent_config_gpu', 'gpu_assignment', 'is_active'),
+        Index('idx_agent_config_provider', 'model_provider', 'agent_type'),
+        Index('idx_agent_config_constraints_gin', 'constraints', postgresql_using='gin'),
+    )
+
+
+class AgentProfile(Base):
+    """
+    Agent profile metadata including images, capabilities, and operational status.
+    
+    Stores agent metadata, visual representations, capability descriptions,
+    and real-time status information for the multi-agent interface.
+    """
+    __tablename__ = "agent_profiles"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Agent identification
+    agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    config_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("agent_configurations.id"), nullable=False, index=True)
+    
+    # Profile information
+    display_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    profile_image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    avatar_style: Mapped[str] = mapped_column(String(50), default="default", nullable=False)
+    
+    # Capabilities and expertise
+    expertise_areas: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    skill_ratings: Mapped[Dict[str, int]] = mapped_column(JSONB, nullable=False, default=dict)  # skill -> 1-10 rating
+    typical_response_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # seconds
+    
+    # Behavioral characteristics
+    communication_style: Mapped[str] = mapped_column(String(50), default="professional", nullable=False)
+    interaction_preferences: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    personality_traits: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    
+    # Status tracking
+    current_status: Mapped[AgentStatus] = mapped_column(
+        SQLAlchemyEnum(AgentStatus, values_callable=lambda x: [e.value for e in x]), 
+        default=AgentStatus.OFFLINE, nullable=False, index=True
+    )
+    last_active_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    current_workload: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # Current active tasks
+    max_workload: Mapped[int] = mapped_column(Integer, default=5, nullable=False)  # Maximum concurrent tasks
+    
+    # Performance metrics
+    total_tasks_completed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    average_response_time: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    success_rate: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # 0.0-1.0
+    user_satisfaction_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # 1.0-5.0
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Relationships
+    config: Mapped["AgentConfiguration"] = relationship("AgentConfiguration", back_populates="agent_profiles")
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_agent_profile_status', 'current_status', 'last_active_at'),
+        Index('idx_agent_profile_workload', 'current_workload', 'max_workload'),
+        Index('idx_agent_profile_performance', 'success_rate', 'user_satisfaction_score'),
+        Index('idx_agent_profile_expertise_gin', 'expertise_areas', postgresql_using='gin'),
+    )
+
+
+class GPUResource(Base):
+    """
+    GPU resource definition and capability tracking.
+    
+    Defines available GPU resources, their capabilities, and performance
+    characteristics for agent allocation and load balancing.
+    """
+    __tablename__ = "gpu_resources"
+    
+    # Primary identification
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)  # GPU ID (0, 1, 2)
+    
+    # Hardware specifications
+    gpu_name: Mapped[str] = mapped_column(String(100), nullable=False)  # "RTX Titan X"
+    gpu_model: Mapped[str] = mapped_column(String(100), nullable=False)
+    total_memory_mb: Mapped[int] = mapped_column(Integer, nullable=False)
+    compute_capability: Mapped[str] = mapped_column(String(20), nullable=False)
+    cuda_cores: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Performance characteristics
+    base_clock_mhz: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    boost_clock_mhz: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    memory_bandwidth_gbps: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    power_limit_watts: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Operational configuration
+    is_available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    maintenance_mode: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    max_concurrent_agents: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
+    reserved_memory_mb: Mapped[int] = mapped_column(Integer, default=1024, nullable=False)  # OS/system reserve
+    
+    # Usage tracking
+    current_utilization_percent: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    current_memory_used_mb: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    current_temperature_c: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    current_power_usage_watts: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    
+    # Performance history
+    average_utilization_24h: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    peak_utilization_24h: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    uptime_hours: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    
+    # Timestamps
+    last_updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    
+    # Relationships
+    allocations: Mapped[List["GPUAllocation"]] = relationship(
+        "GPUAllocation", back_populates="gpu_resource", cascade="all, delete-orphan"
+    )
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_gpu_resource_availability', 'is_available', 'maintenance_mode'),
+        Index('idx_gpu_resource_utilization', 'current_utilization_percent', 'current_memory_used_mb'),
+        Index('idx_gpu_resource_performance', 'average_utilization_24h', 'uptime_hours'),
+    )
+
+
+class GPUAllocation(Base):
+    """
+    GPU allocation tracking for agent assignments.
+    
+    Tracks which agents are assigned to which GPUs, memory allocations,
+    and real-time resource utilization for load balancing.
+    """
+    __tablename__ = "gpu_allocations"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Resource assignment
+    gpu_id: Mapped[int] = mapped_column(ForeignKey("gpu_resources.id"), nullable=False, index=True)
+    agent_config_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("agent_configurations.id"), nullable=False, index=True
+    )
+    agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    
+    # Allocation details
+    allocated_memory_mb: Mapped[int] = mapped_column(Integer, nullable=False)
+    reserved_memory_mb: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    priority_level: Mapped[int] = mapped_column(Integer, default=1, nullable=False)  # 1-10
+    
+    # Status tracking
+    status: Mapped[GPUAllocationStatus] = mapped_column(
+        SQLAlchemyEnum(GPUAllocationStatus, values_callable=lambda x: [e.value for e in x]), 
+        default=GPUAllocationStatus.ACTIVE, nullable=False, index=True
+    )
+    
+    # Performance metrics
+    current_memory_usage_mb: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    current_utilization_percent: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    average_utilization_percent: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    
+    # Usage statistics
+    total_inference_time_seconds: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    total_requests_processed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_request_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Error tracking
+    error_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_error_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    # Timestamps
+    allocated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    last_updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Relationships
+    gpu_resource: Mapped["GPUResource"] = relationship("GPUResource", back_populates="allocations")
+    agent_config: Mapped["AgentConfiguration"] = relationship("AgentConfiguration", back_populates="gpu_allocations")
+    
+    # Table configuration
+    __table_args__ = (
+        UniqueConstraint('agent_config_id', name='_agent_gpu_allocation_uc'),
+        Index('idx_gpu_allocation_status', 'status', 'allocated_at'),
+        Index('idx_gpu_allocation_utilization', 'current_utilization_percent', 'current_memory_usage_mb'),
+        Index('idx_gpu_allocation_performance', 'average_utilization_percent', 'total_requests_processed'),
+    )
+
+
+class TaskDelegation(Base):
+    """
+    Task delegation tracking from PM to expert agents.
+    
+    Records task assignments from project manager agents to specialized
+    expert agents with delegation directives and response tracking.
+    """
+    __tablename__ = "task_delegations"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Session and user context
+    session_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    conversation_id: Mapped[Optional[str]] = mapped_column(String, nullable=True, index=True)
+    
+    # Agent delegation
+    pm_agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # Project manager agent
+    target_agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # Target expert agent
+    agent_role: Mapped[str] = mapped_column(String(100), nullable=False)  # Human-readable role
+    
+    # Task details
+    task_description: Mapped[str] = mapped_column(Text, nullable=False)
+    delegation_directive: Mapped[str] = mapped_column(Text, nullable=False)  # "@[Technical Expert] Assess feasibility..."
+    task_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    priority_level: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    # Context and requirements
+    context_data: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    requirements: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    constraints: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    expected_deliverables: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    
+    # Status and progress
+    status: Mapped[TaskDelegationStatus] = mapped_column(
+        SQLAlchemyEnum(TaskDelegationStatus, values_callable=lambda x: [e.value for e in x]), 
+        default=TaskDelegationStatus.PENDING, nullable=False, index=True
+    )
+    progress_percentage: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    
+    # Timing
+    estimated_duration_minutes: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    actual_duration_minutes: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    deadline: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Integration with cognitive state
+    blackboard_event_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("blackboard_events.id"), nullable=True, index=True
+    )
+    consensus_node_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("consensus_memory_nodes.id"), nullable=True, index=True
+    )
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    assigned_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    blackboard_event: Mapped[Optional["BlackboardEvent"]] = relationship("BlackboardEvent")
+    consensus_node: Mapped[Optional["ConsensusMemoryNode"]] = relationship("ConsensusMemoryNode")
+    agent_responses: Mapped[List["AgentResponse"]] = relationship(
+        "AgentResponse", back_populates="task_delegation", cascade="all, delete-orphan"
+    )
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_task_delegation_session', 'session_id', 'status'),
+        Index('idx_task_delegation_agents', 'pm_agent_id', 'target_agent_id'),
+        Index('idx_task_delegation_timing', 'created_at', 'deadline'),
+        Index('idx_task_delegation_context_gin', 'context_data', postgresql_using='gin'),
+    )
+
+
+class AgentResponse(Base):
+    """
+    Agent responses to delegated tasks.
+    
+    Stores individual agent responses to task delegations including
+    analysis results, recommendations, and deliverables.
+    """
+    __tablename__ = "agent_responses"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Task delegation context
+    task_delegation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("task_delegations.id"), nullable=False, index=True
+    )
+    agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    
+    # Response content
+    response_text: Mapped[str] = mapped_column(Text, nullable=False)
+    response_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # analysis, recommendation, deliverable
+    response_format: Mapped[str] = mapped_column(String(20), default="text", nullable=False)  # text, json, markdown
+    
+    # Analysis and insights
+    key_findings: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    recommendations: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    concerns_raised: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    confidence_score: Mapped[float] = mapped_column(Float, default=0.5, nullable=False)  # 0.0-1.0
+    
+    # Deliverables and outputs
+    deliverables: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    attachments: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)  # File paths/URLs
+    references: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)  # External references
+    
+    # Quality and validation
+    quality_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Automated quality assessment
+    has_been_validated: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    validation_feedback: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    # Performance metrics
+    processing_time_seconds: Mapped[float] = mapped_column(Float, nullable=False)
+    tokens_used: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    model_used: Mapped[str] = mapped_column(String(100), nullable=False)
+    
+    # Integration with cognitive state
+    blackboard_event_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("blackboard_events.id"), nullable=True, index=True
+    )
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    
+    # Relationships
+    task_delegation: Mapped["TaskDelegation"] = relationship("TaskDelegation", back_populates="agent_responses")
+    blackboard_event: Mapped[Optional["BlackboardEvent"]] = relationship("BlackboardEvent")
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_agent_response_type', 'response_type', 'confidence_score'),
+        Index('idx_agent_response_quality', 'quality_score', 'has_been_validated'),
+        Index('idx_agent_response_performance', 'processing_time_seconds', 'tokens_used'),
+        Index('idx_agent_response_deliverables_gin', 'deliverables', postgresql_using='gin'),
+    )
+
+
+class TaskSynthesis(Base):
+    """
+    Final synthesis of multiple agent contributions.
+    
+    Combines and synthesizes responses from multiple expert agents
+    into a coherent final output for the user.
+    """
+    __tablename__ = "task_synthesis"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Session context
+    session_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    conversation_id: Mapped[Optional[str]] = mapped_column(String, nullable=True, index=True)
+    
+    # Synthesis details
+    synthesis_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # final_answer, recommendation, analysis
+    synthesizer_agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    
+    # Source data
+    source_task_delegations: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)  # UUIDs
+    source_agent_responses: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)  # UUIDs
+    contributing_agents: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    
+    # Synthesized content
+    synthesized_response: Mapped[str] = mapped_column(Text, nullable=False)
+    key_conclusions: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    consolidated_recommendations: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    areas_of_consensus: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    areas_of_disagreement: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    
+    # Quality metrics
+    synthesis_confidence: Mapped[float] = mapped_column(Float, default=0.5, nullable=False)
+    completeness_score: Mapped[float] = mapped_column(Float, default=0.5, nullable=False)
+    coherence_score: Mapped[float] = mapped_column(Float, default=0.5, nullable=False)
+    
+    # Performance tracking
+    synthesis_time_seconds: Mapped[float] = mapped_column(Float, nullable=False)
+    total_tokens_processed: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    model_used: Mapped[str] = mapped_column(String(100), nullable=False)
+    
+    # User feedback
+    user_satisfaction_rating: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # 1-5
+    user_feedback: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    # Integration with cognitive state
+    consensus_node_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("consensus_memory_nodes.id"), nullable=True, index=True
+    )
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    consensus_node: Mapped[Optional["ConsensusMemoryNode"]] = relationship("ConsensusMemoryNode")
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_task_synthesis_session', 'session_id', 'synthesis_type'),
+        Index('idx_task_synthesis_quality', 'synthesis_confidence', 'completeness_score', 'coherence_score'),
+        Index('idx_task_synthesis_performance', 'synthesis_time_seconds', 'total_tokens_processed'),
+        Index('idx_task_synthesis_sources_gin', 'source_agent_responses', postgresql_using='gin'),
+    )
+
+
+class MultiAgentConversation(Base):
+    """
+    Multi-agent conversation session management.
+    
+    Tracks overall multi-agent conversation sessions including
+    participating agents, conversation phases, and coordination.
+    """
+    __tablename__ = "multi_agent_conversations"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Session identification
+    session_id: Mapped[str] = mapped_column(String, nullable=False, unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    conversation_id: Mapped[Optional[str]] = mapped_column(String, nullable=True, index=True)
+    
+    # Conversation metadata
+    conversation_title: Mapped[str] = mapped_column(String(200), nullable=False)
+    conversation_description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    conversation_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # expert_group, planning, analysis
+    domain: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, index=True)
+    
+    # Current state
+    current_phase: Mapped[ConversationPhase] = mapped_column(
+        SQLAlchemyEnum(ConversationPhase, values_callable=lambda x: [e.value for e in x]), 
+        default=ConversationPhase.INITIALIZATION, nullable=False, index=True
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    
+    # Participating agents
+    participating_agents: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    coordinator_agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    total_agents: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    active_agents: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    
+    # Progress tracking
+    total_tasks_delegated: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tasks_completed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    total_agent_responses: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    synthesis_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    
+    # Performance metrics
+    total_processing_time_seconds: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    average_response_time_seconds: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    total_tokens_used: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Quality and outcome
+    overall_satisfaction_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # 1.0-5.0
+    completion_status: Mapped[str] = mapped_column(String(20), default="in_progress", nullable=False)
+    final_outcome: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    # Timestamps
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    last_activity_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    agent_participations: Mapped[List["AgentParticipation"]] = relationship(
+        "AgentParticipation", back_populates="conversation", cascade="all, delete-orphan"
+    )
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_multi_agent_conversation_phase', 'current_phase', 'is_active'),
+        Index('idx_multi_agent_conversation_progress', 'tasks_completed', 'total_tasks_delegated'),
+        Index('idx_multi_agent_conversation_performance', 'total_processing_time_seconds', 'average_response_time_seconds'),
+        Index('idx_multi_agent_conversation_agents_gin', 'participating_agents', postgresql_using='gin'),
+    )
+
+
+class AgentParticipation(Base):
+    """
+    Agent participation tracking within multi-agent conversations.
+    
+    Records which agents participate in each conversation session
+    with their roles, contributions, and performance metrics.
+    """
+    __tablename__ = "agent_participations"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Conversation and agent context
+    conversation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("multi_agent_conversations.id"), nullable=False, index=True
+    )
+    agent_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    agent_role: Mapped[str] = mapped_column(String(100), nullable=False)
+    
+    # Participation details
+    participation_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # coordinator, expert, reviewer
+    joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_contribution_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_currently_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    
+    # Contribution metrics
+    total_contributions: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tasks_assigned: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tasks_completed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    responses_provided: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    
+    # Performance metrics
+    average_response_time_seconds: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    total_processing_time_seconds: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    contribution_quality_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # 0.0-1.0
+    
+    # Status tracking
+    current_status: Mapped[AgentStatus] = mapped_column(
+        SQLAlchemyEnum(AgentStatus, values_callable=lambda x: [e.value for e in x]), 
+        default=AgentStatus.ONLINE, nullable=False, index=True
+    )
+    current_workload: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Relationships
+    conversation: Mapped["MultiAgentConversation"] = relationship("MultiAgentConversation", back_populates="agent_participations")
+    
+    # Table configuration
+    __table_args__ = (
+        UniqueConstraint('conversation_id', 'agent_id', name='_conversation_agent_participation_uc'),
+        Index('idx_agent_participation_status', 'current_status', 'is_currently_active'),
+        Index('idx_agent_participation_metrics', 'total_contributions', 'contribution_quality_score'),
+        Index('idx_agent_participation_workload', 'current_workload', 'tasks_assigned'),
+    )
+
+
+class LoadBalancingRule(Base):
+    """
+    Load balancing rules for distributing agents across GPUs.
+    
+    Defines rules and policies for automatically distributing
+    agent workloads across available GPU resources.
+    """
+    __tablename__ = "load_balancing_rules"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Rule definition
+    rule_name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    rule_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # memory_based, utilization_based, round_robin
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    
+    # Rule configuration
+    criteria: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    thresholds: Mapped[Dict[str, float]] = mapped_column(JSONB, nullable=False, default=dict)
+    weights: Mapped[Dict[str, float]] = mapped_column(JSONB, nullable=False, default=dict)
+    
+    # Scope and applicability
+    applicable_agent_types: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    applicable_model_providers: Mapped[List[str]] = mapped_column(JSONB, nullable=False, default=list)
+    priority_level: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    # Status and activation
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    
+    # Performance tracking
+    times_applied: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    success_rate: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    last_applied_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Table configuration
+    __table_args__ = (
+        Index('idx_load_balancing_rule_type', 'rule_type', 'is_active'),
+        Index('idx_load_balancing_rule_priority', 'priority_level', 'is_default'),
+        Index('idx_load_balancing_rule_criteria_gin', 'criteria', postgresql_using='gin'),
+        Index('idx_load_balancing_rule_agents_gin', 'applicable_agent_types', postgresql_using='gin'),
+    )
+
+
+class ResourceConstraint(Base):
+    """
+    Model-specific resource requirements and limits.
+    
+    Defines resource constraints and requirements for different
+    LLM models to guide allocation and load balancing decisions.
+    """
+    __tablename__ = "resource_constraints"
+    
+    # Primary identification
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    # Model identification
+    model_name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    model_provider: Mapped[ModelProvider] = mapped_column(
+        SQLAlchemyEnum(ModelProvider, values_callable=lambda x: [e.value for e in x]), 
+        nullable=False, index=True
+    )
+    model_version: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    
+    # Resource requirements
+    min_memory_mb: Mapped[int] = mapped_column(Integer, nullable=False)
+    recommended_memory_mb: Mapped[int] = mapped_column(Integer, nullable=False)
+    max_memory_mb: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Performance characteristics
+    min_compute_capability: Mapped[str] = mapped_column(String(20), nullable=False)
+    preferred_batch_size: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    max_concurrent_requests: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    # Timing constraints
+    typical_inference_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    max_inference_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    warmup_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Advanced requirements
+    requires_fp16: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    requires_int8: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    supports_quantization: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    
+    # Additional metadata
+    optimization_settings: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    compatibility_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    # Status
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+    
+    # Table configuration
+    __table_args__ = (
+        UniqueConstraint('model_name', 'model_provider', 'model_version', name='_model_constraint_uc'),
+        Index('idx_resource_constraint_memory', 'min_memory_mb', 'recommended_memory_mb'),
+        Index('idx_resource_constraint_performance', 'max_concurrent_requests', 'typical_inference_time_ms'),
+        Index('idx_resource_constraint_requirements', 'requires_fp16', 'requires_int8', 'supports_quantization'),
+        Index('idx_resource_constraint_optimization_gin', 'optimization_settings', postgresql_using='gin'),
+    )

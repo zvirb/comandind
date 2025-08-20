@@ -1,0 +1,60 @@
+{
+  "package_type": "user_experience_validation",
+  "priority": "critical",
+  "scope": "chat_functionality_testing",
+  "target_specialists": ["user-experience-auditor", "test-automation-engineer"],
+  "coordination_metadata": {
+    "phase": "6_validation",
+    "dependencies": ["frontend_fix_complete", "backend_validation_complete"],
+    "success_trigger": "production_site_accessibility"
+  },
+  "testing_context": {
+    "objective": "Validate chat functionality from user perspective",
+    "test_environment": "Production site - http://aiwfe.com and https://aiwfe.com",
+    "user_workflow": "Complete chat message send/receive cycle",
+    "automation_requirement": "Playwright browser automation mandatory"
+  },
+  "test_specifications": {
+    "functional_tests": [
+      "Navigate to chat interface",
+      "Send test message",
+      "Verify message appears in chat",
+      "Confirm message timestamp",
+      "Validate WebSocket connection status"
+    ],
+    "user_experience_tests": [
+      "Interface responsiveness during message send",
+      "Message delivery confirmation feedback",
+      "Error handling for connection issues",
+      "Chat interface visual integrity"
+    ]
+  },
+  "evidence_requirements": {
+    "mandatory_evidence": [
+      "Playwright test execution screenshots",
+      "Browser automation interaction logs",
+      "Production site accessibility curl outputs",
+      "WebSocket connection success confirmation",
+      "Complete user workflow demonstration"
+    ],
+    "validation_commands": [
+      "curl -I http://aiwfe.com (production accessibility)",
+      "curl -I https://aiwfe.com (SSL production accessibility)",
+      "Playwright: page.goto, page.click, page.type, page.screenshot",
+      "Browser network monitoring during chat interaction"
+    ]
+  },
+  "tools_required": [
+    "Bash (production site validation)",
+    "Browser automation (Playwright testing)",
+    "WebFetch (site accessibility verification)",
+    "Screenshots (visual evidence capture)"
+  ],
+  "success_criteria": {
+    "production_access": "Both HTTP and HTTPS sites accessible",
+    "chat_functionality": "Messages send and receive successfully", 
+    "user_experience": "Smooth interaction without errors",
+    "visual_integrity": "Chat interface displays correctly",
+    "automation_evidence": "Playwright execution logs with screenshots"
+  }
+}

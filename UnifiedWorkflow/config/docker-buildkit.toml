@@ -1,0 +1,37 @@
+# Docker BuildKit Configuration for Optimized Builds
+# Enable with: export DOCKER_BUILDKIT=1
+
+[worker.oci]
+  # Enable parallel execution of build stages
+  max-parallelism = 4
+
+[registry."docker.io"]
+  # Configure Docker Hub mirror for faster pulls
+  mirrors = ["mirror.gcr.io"]
+
+# Cache configuration
+[[cache]]
+  # Use inline cache for better layer reuse
+  type = "inline"
+
+[[cache]]
+  # Use registry cache for distributed builds
+  type = "registry"
+  ref = "ai_workflow_engine/buildcache"
+
+# Network configuration
+[network]
+  # Use host network for faster downloads during build
+  mode = "auto"
+
+# Garbage collection
+[gc]
+  # Keep build cache for 7 days
+  keepDuration = 604800
+  # Keep maximum 10GB of cache
+  keepBytes = 10737418240
+  
+# Security
+[security]
+  # Enable security features
+  insecure-entitlements = []

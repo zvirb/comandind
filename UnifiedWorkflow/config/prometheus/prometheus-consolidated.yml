@@ -1,0 +1,344 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'ai_workflow_engine'
+    environment: 'production'
+    architecture: 'consolidated-8-service'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+      timeout: 10s
+      api_version: v2
+
+# Load alerting rules
+rule_files:
+  - "consolidated_service_rules.yml"
+  - "infrastructure_rules.yml"  
+  - "ssl_certificate_rules.yml"
+  - "websocket_performance_rules.yml"
+  - "cost_optimization_rules.yml"
+
+# ===============================================================================
+# CONSOLIDATED 8-SERVICE ARCHITECTURE MONITORING
+# ===============================================================================
+
+scrape_configs:
+  # === CORE INFRASTRUCTURE (Always Available) ===
+  
+  # Container metrics via cAdvisor
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 10s
+    metrics_path: /metrics
+    
+  # System node metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node_exporter:9100']
+    scrape_interval: 15s
+
+  # === KUBERNETES CLUSTER SERVICES (8 Consolidated Services) ===
+  
+  # API Gateway (Consolidated: API + Auth + WebUI Backend)
+  - job_name: 'aiwfe-api-gateway'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: aiwfe-api-gateway
+      - source_labels: [__meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: http
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    
+  # WebUI Service (Consolidated Frontend)
+  - job_name: 'aiwfe-webui'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: aiwfe-webui
+    metrics_path: /metrics
+    scrape_interval: 30s
+    
+  # Integration Service (Consolidated: Google Services + External APIs)
+  - job_name: 'integration-service'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: integration-service
+    metrics_path: /metrics
+    scrape_interval: 30s
+    
+  # Reasoning Service (Consolidated: AI Processing + Workflow)
+  - job_name: 'reasoning-service'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: reasoning-service
+    metrics_path: /metrics
+    scrape_interval: 30s
+    
+  # Metrics Aggregator (Consolidated: Data Collection + Analytics)
+  - job_name: 'metrics-aggregator'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: metrics-aggregator
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # === DATABASE LAYER (3 Consolidated Services) ===
+  
+  # PostgreSQL Database
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres_exporter:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    
+  # Redis Cache
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis_exporter:9121']
+    scrape_interval: 15s
+    
+  # Qdrant Vector Database
+  - job_name: 'qdrant'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: qdrant
+    scheme: https
+    tls_config:
+      ca_file: /etc/certs/prometheus/rootCA.pem
+      insecure_skip_verify: false
+    authorization:
+      type: Bearer
+      credentials_file: /run/secrets/QDRANT_API_KEY
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # === AI/ML SERVICES ===
+  
+  # Ollama LLM Service
+  - job_name: 'ollama'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: ollama
+    metrics_path: /metrics
+    scrape_interval: 30s
+    scrape_timeout: 15s
+
+  # === PROMETHEUS SELF-MONITORING ===
+  
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 15s
+    
+  # Alertmanager monitoring
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+    scrape_interval: 30s
+
+  # === PRODUCTION ENDPOINT MONITORING ===
+  
+  # External Production Health Checks
+  - job_name: 'production-health'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://aiwfe.com
+        - https://aiwfe.com/health
+        - https://aiwfe.com/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
+    scrape_interval: 60s
+    scrape_timeout: 30s
+
+  # === SSL CERTIFICATE MONITORING ===
+  
+  # SSL Certificate Expiry Monitoring
+  - job_name: 'ssl-certificate-monitoring'
+    metrics_path: /probe
+    params:
+      module: [ssl_expiry]
+    static_configs:
+      - targets:
+        - aiwfe.com:443
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
+    scrape_interval: 300s  # Check every 5 minutes
+
+  # === WEBSOCKET PERFORMANCE MONITORING ===
+  
+  # WebSocket Connection Performance
+  - job_name: 'websocket-performance'
+    metrics_path: /probe
+    params:
+      module: [websocket_connect]
+    static_configs:
+      - targets:
+        - wss://aiwfe.com/ws
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
+    scrape_interval: 30s
+    scrape_timeout: 25s  # Allow up to 25s for WebSocket connection
+
+  # === BUSINESS/COST OPTIMIZATION METRICS ===
+  
+  # Resource Usage for Cost Optimization Tracking
+  - job_name: 'resource-cost-tracking'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    metrics_path: /metrics
+    scrape_interval: 60s
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'container_(cpu_usage_seconds_total|memory_usage_bytes|network_.*_bytes_total)'
+        action: keep
+
+# ===============================================================================
+# KUBERNETES SERVICE DISCOVERY CONFIGURATION
+# ===============================================================================
+
+  # Kubernetes Pods Discovery (for additional metrics)
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: kubernetes_pod_name
+    scrape_interval: 30s
+
+  # Kubernetes Services Discovery
+  - job_name: 'kubernetes-services'
+    kubernetes_sd_configs:
+      - role: service
+        namespaces:
+          names:
+            - aiwfe
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+        action: replace
+        target_label: __scheme__
+        regex: (https?)
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: kubernetes_name
+    scrape_interval: 30s
+
+# ===============================================================================
+# RECORDING RULES FOR PERFORMANCE OPTIMIZATION
+# ===============================================================================
+
+  # Resource Efficiency Recording (for $400K savings validation)
+  - job_name: 'resource-efficiency-recording'
+    static_configs:
+      - targets: ['prometheus:9090']
+    metrics_path: /api/v1/query
+    params:
+      query: 
+        - 'avg_over_time(container_cpu_usage_seconds_total[1h])'
+        - 'avg_over_time(container_memory_usage_bytes[1h])'
+    scrape_interval: 300s  # Record every 5 minutes

@@ -1,0 +1,25 @@
+[ req ]
+default_bits = 4096
+prompt = no
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[ req_distinguished_name ]
+C=US
+ST=California
+L=San Francisco
+O=AI Workflow Engine
+OU=Security
+CN=ollama.ai-workflow-engine.local
+
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = ollama
+DNS.2 = localhost
+IP.3 = 127.0.0.1
+DNS.4 = ollama.ai-workflow-engine.local

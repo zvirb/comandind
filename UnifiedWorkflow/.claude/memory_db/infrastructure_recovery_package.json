@@ -1,0 +1,13 @@
+{
+  "package_id": "infrastructure_recovery_package",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"infrastructure_recovery\",\n  \"priority\": \"CRITICAL\",\n  \"token_limit\": 4000,\n  \"created_at\": \"2025-08-15T21:10:00Z\",\n  \"iteration\": 5,\n  \"phase\": 4,\n  \n  \"root_cause_analysis\": {\n    \"primary_issue\": \"Qdrant TLS/HTTP protocol mismatch\",\n    \"impact\": \"5 cognitive services failing\",\n    \"evidence\": {\n      \"qdrant_config\": \"Expecting HTTPS on port 6333\",\n      \"service_config\": \"Using HTTP in QDRANT_URL\",\n      \"error_pattern\": \"Connection refused, protocol error\"\n    }\n  },\n  \n  \"immediate_fix\": {\n    \"action\": \"Update QDRANT_URL environment variable\",\n    \"change\": \"http://qdrant:6333 \u2192 https://qdrant:6333\",\n    \"affected_services\": [\n      \"reasoning_service\",\n      \"memory_service\",\n      \"coordination_service\",\n      \"reasoning_development_service\",\n      \"infrastructure_recovery_service\"\n    ],\n    \"implementation_files\": [\n      \"docker-compose.yml\",\n      \"app/{service}/config.py for each service\"\n    ]\n  },\n  \n  \"recovery_sequence\": {\n    \"step_1\": \"Update docker-compose.yml QDRANT_URL variables\",\n    \"step_2\": \"Update service config.py files for fallback\",\n    \"step_3\": \"Restart affected containers\",\n    \"step_4\": \"Validate Qdrant connectivity\",\n    \"step_5\": \"Verify service health endpoints\"\n  },\n  \n  \"validation_requirements\": {\n    \"connectivity_test\": \"curl https://qdrant:6333/health\",\n    \"service_health\": \"Check /health endpoints for all services\",\n    \"vector_operations\": \"Test actual vector storage/retrieval\",\n    \"evidence_collection\": \"Container logs, health checks, curl outputs\"\n  },\n  \n  \"risk_mitigation\": {\n    \"rollback_plan\": \"Revert environment variables if issues\",\n    \"monitoring\": \"Watch container logs during restart\",\n    \"gradual_rollout\": \"Test one service first, then others\"\n  }\n}",
+  "tokens": 193,
+  "created_at": "2025-08-18T15:14:25.350763",
+  "last_accessed": "2025-08-18T15:14:25.350772",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

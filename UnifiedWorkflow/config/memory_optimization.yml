@@ -1,0 +1,160 @@
+# Memory Optimization Configuration
+# System-wide memory management and optimization settings
+
+services:
+  ollama:
+    memory_optimization:
+      # Reduce GPU overhead for better memory utilization
+      gpu_overhead_reduction: 0.05  # Reduce from 0.1 to 0.05
+      # Optimize model loading and caching
+      max_loaded_models: 2  # Reduce from 3 to 2
+      model_unload_timeout: "10m"  # Reduce from 15m to 10m
+      # Memory pool configuration
+      kv_cache_optimization: "f16"  # Use f16 for lower memory usage
+      context_length_optimization: 16384  # Reduce from 32768 to 16384
+      # Batch processing optimization
+      batch_size_optimization: 16  # Reduce from 32 to 16
+      concurrent_requests_limit: 8  # Reduce from 16 to 8
+  
+  postgres:
+    memory_optimization:
+      # Connection pooling optimization
+      max_connections: 100  # Optimized connection limit
+      shared_buffers: "256MB"  # Optimized buffer size
+      effective_cache_size: "1GB"  # Cache optimization
+      work_mem: "4MB"  # Work memory per operation
+      maintenance_work_mem: "64MB"  # Maintenance operations
+      checkpoint_completion_target: 0.9
+      # WAL optimization
+      wal_buffers: "16MB"
+      max_wal_size: "1GB"
+      min_wal_size: "80MB"
+  
+  redis:
+    memory_optimization:
+      # Memory usage optimization
+      maxmemory_policy: "allkeys-lru"
+      maxmemory: "512MB"  # Set memory limit
+      # Database configuration
+      databases: 16  # Reduce database count if not needed
+      # Save optimization
+      save_frequency: "900 1"  # Save every 15 minutes if 1+ changes
+      # Memory efficiency
+      hash_max_ziplist_entries: 512
+      hash_max_ziplist_value: 64
+      list_max_ziplist_size: -2
+      set_max_intset_entries: 512
+  
+  api:
+    memory_optimization:
+      # Python optimization
+      workers: 4  # Optimize worker count
+      worker_memory_limit: "512MB"  # Memory limit per worker
+      # Database connection pooling
+      db_pool_size: 10
+      db_pool_overflow: 20
+      db_pool_timeout: 30
+      # Cache optimization
+      response_cache_size: 1000
+      session_cache_size: 5000
+  
+  hybrid_memory_service:
+    memory_optimization:
+      # Vector database optimization
+      vector_cache_size: "256MB"
+      batch_processing_size: 100
+      # Memory pool management
+      embedding_cache_limit: 10000
+      context_window_optimization: 4096
+      # Processing optimization
+      concurrent_operations: 4
+      memory_cleanup_interval: 300  # 5 minutes
+  
+  reasoning_service:
+    memory_optimization:
+      # Processing optimization
+      reasoning_cache_size: "128MB"
+      max_reasoning_depth: 5
+      context_compression_threshold: 8192
+      # Memory management
+      garbage_collection_frequency: 60  # seconds
+      memory_threshold_cleanup: 0.8  # 80% memory usage
+  
+  learning_service:
+    memory_optimization:
+      # Learning model optimization
+      model_cache_size: "256MB"
+      training_batch_size: 32
+      gradient_accumulation_steps: 2
+      # Memory efficient training
+      mixed_precision: true
+      memory_efficient_attention: true
+      checkpoint_frequency: 100
+
+global_optimization:
+  # Container-level optimizations
+  memory_limits:
+    ollama: "8192MB"      # 8GB limit
+    postgres: "2048MB"    # 2GB limit
+    redis: "512MB"        # 512MB limit
+    api: "1024MB"         # 1GB limit
+    hybrid_memory_service: "1024MB"  # 1GB limit
+    reasoning_service: "512MB"       # 512MB limit
+    learning_service: "1024MB"       # 1GB limit
+    coordination_service: "512MB"    # 512MB limit
+    gpu_monitor: "256MB"             # 256MB limit
+    monitoring_service: "256MB"      # 256MB limit
+  
+  # Memory reservation (guaranteed minimum)
+  memory_reservations:
+    ollama: "4096MB"      # 4GB reserved
+    postgres: "1024MB"    # 1GB reserved
+    redis: "256MB"        # 256MB reserved
+    api: "512MB"          # 512MB reserved
+    hybrid_memory_service: "512MB"   # 512MB reserved
+  
+  # Swap optimization
+  swap_configuration:
+    swappiness: 10  # Reduce swap usage
+    vm_pressure_optimization: true
+  
+  # System-wide memory monitoring
+  monitoring:
+    memory_alert_threshold: 0.85  # 85% memory usage alert
+    gc_optimization: true
+    memory_profiling: true
+    oom_prevention: true
+
+# Performance targets
+performance_targets:
+  memory_efficiency:
+    target_memory_reduction: 25  # 25% memory usage reduction
+    fragmentation_reduction: 15  # 15% fragmentation reduction
+    cache_hit_ratio_improvement: 20  # 20% cache improvement
+  
+  response_time_improvement:
+    database_query_optimization: 30  # 30% faster queries
+    api_response_optimization: 40   # 40% faster API responses
+    memory_allocation_optimization: 50  # 50% faster allocations
+
+# Memory optimization strategies
+optimization_strategies:
+  - name: "lazy_loading"
+    description: "Load resources only when needed"
+    services: ["ollama", "hybrid_memory_service", "learning_service"]
+  
+  - name: "connection_pooling"
+    description: "Optimize database connections"
+    services: ["postgres", "redis", "api"]
+  
+  - name: "cache_optimization"
+    description: "Improve cache efficiency and reduce memory footprint"
+    services: ["redis", "api", "hybrid_memory_service"]
+  
+  - name: "garbage_collection_tuning"
+    description: "Optimize memory cleanup and GC timing"
+    services: ["api", "reasoning_service", "learning_service"]
+  
+  - name: "batch_processing"
+    description: "Process operations in optimized batches"
+    services: ["ollama", "hybrid_memory_service", "learning_service"]

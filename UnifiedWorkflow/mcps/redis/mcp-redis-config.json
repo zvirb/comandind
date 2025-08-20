@@ -1,0 +1,198 @@
+{
+  "name": "mcp-redis-server",
+  "version": "1.0.0", 
+  "description": "Redis MCP server for real-time agent coordination and scratch pad communication",
+  "type": "redis",
+  "configuration": {
+    "connection": {
+      "host": "localhost",
+      "port": 6379,
+      "password": null,
+      "database": 0,
+      "ssl": false,
+      "connection_timeout": 5000,
+      "socket_timeout": 5000,
+      "retry_attempts": 3
+    },
+    "namespaces": {
+      "coordination": "coord:",
+      "scratch_pad": "scratch:",
+      "notifications": "notify:",
+      "timeline": "timeline:",
+      "state": "state:"
+    },
+    "expiration": {
+      "default": 3600,
+      "scratch_pad": 1800,
+      "notifications": 600,
+      "coordination": 7200
+    }
+  },
+  "capabilities": {
+    "hset": {
+      "description": "Set field values in hash (shared workspace)",
+      "parameters": {
+        "key": "string (required)",
+        "field": "string (required)", 
+        "value": "string (required)"
+      },
+      "usage": "Store agent findings and coordination data",
+      "example": {
+        "key": "scratch:backend-stream",
+        "field": "gateway-config",
+        "value": "nginx configuration completed with load balancing"
+      }
+    },
+    "hget": {
+      "description": "Get field value from hash",
+      "parameters": {
+        "key": "string (required)",
+        "field": "string (required)"
+      },
+      "usage": "Retrieve specific coordination data"
+    },
+    "hgetall": {
+      "description": "Get all field-value pairs from hash",
+      "parameters": {
+        "key": "string (required)"
+      },
+      "usage": "Get complete coordination context for a stream or phase"
+    },
+    "sadd": {
+      "description": "Add members to set (notifications)",
+      "parameters": {
+        "key": "string (required)",
+        "members": "array of strings (required)"
+      },
+      "usage": "Notify agents of completion or events",
+      "example": {
+        "key": "notify:phase-5-completions",
+        "members": ["backend-gateway-expert", "ui-architect"]
+      }
+    },
+    "smembers": {
+      "description": "Get all members of set",
+      "parameters": {
+        "key": "string (required)"
+      },
+      "usage": "Check notification status and agent readiness"
+    },
+    "zadd": {
+      "description": "Add members to sorted set with scores (timeline)",
+      "parameters": {
+        "key": "string (required)",
+        "score": "number (required)",
+        "member": "string (required)"
+      },
+      "usage": "Track chronological coordination events",
+      "example": {
+        "key": "timeline:coordination-events",
+        "score": 1705747800,
+        "member": "backend-stream:gateway-config-complete"
+      }
+    },
+    "zrange": {
+      "description": "Get members from sorted set by score range",
+      "parameters": {
+        "key": "string (required)",
+        "start": "number (required)",
+        "stop": "number (required)"
+      },
+      "usage": "Retrieve chronological coordination timeline"
+    }
+  },
+  "coordination_patterns": {
+    "shared_workspace": {
+      "description": "Redis hash for cross-domain information sharing",
+      "key_format": "scratch:{stream-name}",
+      "fields": [
+        "status",
+        "progress",
+        "blockers",
+        "dependencies",
+        "outputs",
+        "next_steps"
+      ],
+      "example": {
+        "scratch:backend-stream": {
+          "status": "in_progress",
+          "progress": "75%",
+          "blockers": "none",
+          "dependencies": "database-schema-complete",
+          "outputs": "gateway-config, auth-middleware",
+          "next_steps": "performance-testing"
+        }
+      }
+    },
+    "notification_system": {
+      "description": "Redis sets for agent notification and coordination",
+      "key_format": "notify:{event-type}",
+      "types": [
+        "phase-completions",
+        "stream-dependencies",
+        "validation-ready",
+        "error-alerts",
+        "coordination-requests"
+      ]
+    },
+    "timeline_tracking": {
+      "description": "Redis sorted sets for chronological event tracking",
+      "key_format": "timeline:{context}",
+      "score": "unix_timestamp",
+      "member": "{stream}:{event}:{details}",
+      "contexts": [
+        "coordination-events",
+        "phase-transitions",
+        "error-occurrences",
+        "milestone-achievements"
+      ]
+    }
+  },
+  "integration": {
+    "claude_tools": [
+      "mcp__redis__hset",
+      "mcp__redis__hget", 
+      "mcp__redis__hgetall",
+      "mcp__redis__sadd",
+      "mcp__redis__smembers",
+      "mcp__redis__zadd",
+      "mcp__redis__zrange"
+    ],
+    "workflow_usage": {
+      "phase_5": "Primary coordination during parallel implementation",
+      "phase_6": "Validation status and evidence sharing",
+      "cross_phase": "Dependency tracking and milestone coordination"
+    },
+    "stream_coordination": {
+      "backend": "scratch:backend-stream",
+      "frontend": "scratch:frontend-stream", 
+      "security": "scratch:security-stream",
+      "infrastructure": "scratch:infrastructure-stream",
+      "quality": "scratch:quality-stream",
+      "documentation": "scratch:documentation-stream"
+    }
+  },
+  "best_practices": {
+    "key_naming": {
+      "namespaced": "Always use namespace prefixes",
+      "descriptive": "Use clear, descriptive key names",
+      "consistent": "Follow established naming patterns"
+    },
+    "data_structure": {
+      "hash_for_objects": "Use hashes for structured data",
+      "sets_for_lists": "Use sets for unique item collections",
+      "sorted_sets_for_timeline": "Use sorted sets for chronological data"
+    },
+    "expiration": {
+      "set_ttl": "Always set appropriate TTL values",
+      "cleanup": "Regular cleanup of expired coordination data",
+      "persistence": "Important data should be moved to memory MCP"
+    }
+  },
+  "error_handling": {
+    "connection_failures": "Graceful degradation to local coordination",
+    "timeout_handling": "Retry with exponential backoff",
+    "data_corruption": "Validation and auto-repair mechanisms",
+    "memory_management": "Automatic cleanup and memory monitoring"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "package_id": "websocket_restoration_package",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"websocket_restoration\",\n  \"priority\": \"CRITICAL\",\n  \"target_agent\": \"backend-gateway-expert\",\n  \"token_count\": 3200,\n  \"created\": \"2025-08-16T10:15:00Z\",\n  \"iteration\": 7,\n  \"issue\": {\n    \"description\": \"Chat system completely blocked by WebSocket 404 errors\",\n    \"root_cause\": \"Double prefix routing (/app/app/) in nginx proxy configuration\",\n    \"impact\": \"100% chat functionality loss\"\n  },\n  \"fixes\": {\n    \"nginx_config\": {\n      \"file\": \"/etc/nginx/sites-available/aiwfe.com\",\n      \"change\": \"Remove duplicate /app prefix in proxy_pass for WebSocket location\"\n    },\n    \"backend_handler\": {\n      \"file\": \"app/main.py\",\n      \"change\": \"Ensure WebSocket endpoint matches nginx routing\"\n    },\n    \"authentication\": {\n      \"requirement\": \"Validate session tokens for WebSocket connections\",\n      \"method\": \"Use existing SessionMiddleware\"\n    }\n  },\n  \"testing\": {\n    \"connection_test\": \"wscat -c wss://aiwfe.com/app/chat/ws -H 'Cookie: session=valid_token'\",\n    \"message_test\": \"Send/receive JSON messages through WebSocket\",\n    \"auth_test\": \"Verify invalid tokens are rejected\"\n  },\n  \"success_criteria\": [\n    \"WebSocket connects without 404 errors\",\n    \"Chat messages send/receive successfully\",\n    \"Authentication validates properly\",\n    \"No duplicate prefix in routing\",\n    \"Production chat fully functional\"\n  ],\n  \"coordination\": {\n    \"dependencies\": [\"session_management\"],\n    \"parallel_work\": true,\n    \"validation_by\": \"user-experience-auditor\"\n  }\n}",
+  "tokens": 180,
+  "created_at": "2025-08-18T15:14:25.831296",
+  "last_accessed": "2025-08-18T15:14:25.831310",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+    # Global configuration for Let's Encrypt testing
+    admin 0.0.0.0:2019
+    
+    # ACME settings for Let's Encrypt
+    email {env.ACME_EMAIL}
+    
+    # Logging configuration
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+}
+
+# Main domain with Let's Encrypt SSL
+{env.DOMAIN} {
+    # DNS-01 challenge for certificate using Cloudflare
+    tls {
+        dns cloudflare {env.DNS_API_TOKEN}
+        
+        # DNS resolvers for validation
+        resolvers 1.1.1.1 8.8.8.8 8.8.4.4
+        
+        # Certificate settings
+        key_type rsa2048
+    }
+    
+    # Security headers
+    header {
+        # HSTS with preload
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Prevent clickjacking
+        X-Frame-Options "DENY"
+        
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # XSS protection
+        X-XSS-Protection "1; mode=block"
+        
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Remove server information
+        -Server
+    }
+    
+    # Serve test page
+    root * /usr/share/nginx/html
+    file_server
+    
+    # Health check endpoint
+    handle /health {
+        respond "Let's Encrypt Certificate Test: OK" 200
+    }
+    
+    # Certificate info endpoint
+    handle /cert-info {
+        respond "Certificate acquired via Let's Encrypt DNS-01 challenge" 200
+    }
+}
+
+# HTTP to HTTPS redirect
+http://{env.DOMAIN} {
+    redir https://{env.DOMAIN}{uri} permanent
+}

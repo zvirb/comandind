@@ -1,0 +1,139 @@
+{
+  "phase": 5,
+  "title": "Parallel Implementation Execution - Qdrant TLS Fixes",
+  "execution_strategy": "MULTI-STREAM PARALLEL",
+  "critical_path": "Stream 1 → Streams 2-5 (Infrastructure fixes enable all other streams)",
+  
+  "implementation_streams": {
+    "stream_1": {
+      "name": "Infrastructure SSL Fixes",
+      "specialists": ["backend-gateway-expert", "python-refactoring-architect"],
+      "context_package": "infrastructure_fix_package.json",
+      "priority": "CRITICAL - EXECUTE FIRST",
+      "tasks": [
+        "Fix learning_service Qdrant SSL verification",
+        "Fix worker_service Qdrant SSL verification",
+        "Restart affected services",
+        "Verify Qdrant connections"
+      ],
+      "estimated_time": "15 minutes",
+      "success_criteria": "No SSL errors in logs, services connect to Qdrant"
+    },
+    
+    "stream_2": {
+      "name": "Service Health Monitoring",
+      "specialists": ["monitoring-analyst", "infrastructure-recovery-specialist"],
+      "context_package": "service_health_package.json",
+      "priority": "HIGH",
+      "dependencies": ["stream_1"],
+      "tasks": [
+        "Implement missing health endpoints",
+        "Configure health monitoring dashboard",
+        "Set up automated health checks",
+        "Validate all services report healthy"
+      ],
+      "estimated_time": "20 minutes",
+      "success_criteria": "All services return 200 on /health endpoints"
+    },
+    
+    "stream_3": {
+      "name": "API Endpoint Implementation",
+      "specialists": ["backend-gateway-expert", "fullstack-communication-auditor"],
+      "context_package": "api_implementation_package.json",
+      "priority": "HIGH",
+      "dependencies": ["stream_1"],
+      "tasks": [
+        "Implement /api/chat endpoints",
+        "Implement /api/documents endpoints",
+        "Implement /api/calendar endpoints",
+        "Add router integrations to main.py",
+        "Test all new endpoints"
+      ],
+      "estimated_time": "25 minutes",
+      "success_criteria": "All API endpoints return valid responses"
+    },
+    
+    "stream_4": {
+      "name": "Evidence Collection",
+      "specialists": ["test-automation-engineer", "performance-profiler"],
+      "context_package": "evidence_collection_package.json",
+      "priority": "HIGH",
+      "dependencies": ["stream_1", "stream_2", "stream_3"],
+      "tasks": [
+        "Collect infrastructure evidence (Docker status)",
+        "Gather service health evidence",
+        "Document API functionality",
+        "Generate evidence report"
+      ],
+      "estimated_time": "30 minutes",
+      "success_criteria": "Complete evidence package with 0% false positives"
+    },
+    
+    "stream_5": {
+      "name": "User Experience Validation",
+      "specialists": ["user-experience-auditor", "ui-regression-debugger"],
+      "context_package": "user_validation_package.json",
+      "priority": "CRITICAL",
+      "dependencies": ["stream_1", "stream_2", "stream_3"],
+      "tasks": [
+        "Execute Playwright test suite",
+        "Validate critical user workflows",
+        "Test production URLs (http/https)",
+        "Capture screenshots and videos",
+        "Generate test report"
+      ],
+      "estimated_time": "35 minutes",
+      "success_criteria": "All user workflows complete successfully"
+    }
+  },
+  
+  "coordination_rules": {
+    "parallel_execution": "Streams 2-5 can execute in parallel after Stream 1 completes",
+    "communication": "All specialists report to Main Claude, no inter-specialist communication",
+    "evidence_aggregation": "All evidence collected in .claude/evidence/phase5_validation/",
+    "failure_handling": "If any stream fails, halt others and report to orchestration-auditor"
+  },
+  
+  "implementation_sequence": [
+    "1. START: Execute Stream 1 (Infrastructure SSL Fixes) - CRITICAL PATH",
+    "2. VERIFY: Confirm Qdrant connections restored",
+    "3. PARALLEL: Launch Streams 2, 3, 4, 5 simultaneously",
+    "4. MONITOR: Track progress of all parallel streams",
+    "5. AGGREGATE: Collect all evidence and results",
+    "6. VALIDATE: Confirm all success criteria met",
+    "7. REPORT: Generate comprehensive validation report"
+  ],
+  
+  "risk_mitigation": {
+    "rollback_plan": "Docker container restart if fixes cause issues",
+    "testing_environment": "Local Docker environment isolated from production",
+    "incremental_validation": "Test each fix immediately after implementation",
+    "evidence_requirement": "Every claim must have supporting evidence"
+  },
+  
+  "expected_outcomes": {
+    "immediate": [
+      "Learning and Worker services connect to Qdrant successfully",
+      "All health endpoints return 200 OK",
+      "Core API endpoints functional"
+    ],
+    "validation": [
+      "Complete evidence package demonstrating functionality",
+      "Playwright tests pass for all user workflows",
+      "Production URLs accessible and functional"
+    ],
+    "long_term": [
+      "Stable cognitive services infrastructure",
+      "Reliable health monitoring system",
+      "Complete API surface for frontend integration"
+    ]
+  },
+  
+  "success_metrics": {
+    "infrastructure": "100% services healthy (0 SSL errors)",
+    "api": "100% endpoints returning valid responses",
+    "monitoring": "100% health endpoints operational",
+    "user_experience": "100% critical workflows completable",
+    "evidence": "100% validation claims backed by concrete proof"
+  }
+}

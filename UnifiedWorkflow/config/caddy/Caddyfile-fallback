@@ -1,0 +1,140 @@
+{
+    # Global options block for fallback mode (development without mTLS)
+    email admin@example.com
+    log {
+        output stdout
+        level DEBUG
+    }
+    # Disable automatic HTTPS for localhost in development
+    local_certs
+}
+
+# HTTP to HTTPS redirect (only for production domains)
+:80 {
+    @production_domain host {$DOMAIN:aiwfe.com}
+    redir @production_domain https://{host}{uri}
+    
+    # For localhost development, serve directly without redirect
+    @localhost host localhost 127.0.0.1
+    handle @localhost {
+        # Route API requests to the backend
+        handle /api/* {
+            reverse_proxy http://api:8000
+        }
+        
+        # Handle WebSocket connections
+        handle /ws/* {
+            reverse_proxy http://api:8000
+        }
+        
+        # Handle all other requests - WebUI
+        handle {
+            reverse_proxy webui:3000
+        }
+    }
+}
+
+# Production domain - OAuth endpoints without mTLS
+{$DOMAIN:aiwfe.com} {
+    # Try to use automatic HTTPS, fallback to HTTP if certificates fail
+    tls {
+        on_demand
+    }
+
+    # OAuth endpoints - no mTLS required for external redirects
+    @oauth_endpoints path /api/v1/oauth/*
+    handle @oauth_endpoints {
+        reverse_proxy http://api:8000
+    }
+
+    # Google API integration endpoints - no mTLS required
+    @google_endpoints path /api/v1/google/*
+    handle @google_endpoints {
+        reverse_proxy http://api:8000
+    }
+
+    # SerAPI integration endpoints - no mTLS required  
+    @search_endpoints path /api/v1/search/*
+    handle @search_endpoints {
+        reverse_proxy http://api:8000
+    }
+
+    # All other requests - regular web interface
+    handle /api/* {
+        reverse_proxy http://api:8000
+    }
+
+    # Handle WebSocket connections
+    handle /ws/* {
+        reverse_proxy http://api:8000
+    }
+
+    # Handle all other requests - WebUI
+    handle {
+        reverse_proxy webui:3000
+    }
+}
+
+# Local development with self-signed certificates (HTTPS when available)
+localhost, 127.0.0.1, *.local, :443 {
+    # Try to use certificates if available, otherwise use self-signed
+    tls internal {
+        on_demand
+    }
+
+    # Route all API requests to the backend
+    handle /api/* {
+        reverse_proxy http://api:8000 {
+            # Add health check headers for better error handling
+            header_up X-Forwarded-Proto https
+            header_up X-Forwarded-Host {host}
+        }
+    }
+
+    # Handle WebSocket connections
+    handle /ws/* {
+        reverse_proxy http://api:8000 {
+            header_up Connection {>Connection}
+            header_up Upgrade {>Upgrade}
+            header_up X-Forwarded-Proto https
+        }
+    }
+
+    # Handle all other requests - WebUI
+    handle {
+        reverse_proxy webui:3000 {
+            header_up X-Forwarded-Proto https
+            header_up X-Forwarded-Host {host}
+        }
+    }
+    
+    # Error handling for certificate issues
+    handle_errors {
+        @ssl_error expression {http.error.status_code} >= 500
+        respond @ssl_error "SSL Configuration Error - Please check certificates" 503
+    }
+}
+
+# Fallback for any unmatched requests (HTTP mode)
+:8080 {
+    # HTTP-only fallback for complete SSL failure
+    log {
+        output stdout
+        format console
+    }
+    
+    # Route all API requests
+    handle /api/* {
+        reverse_proxy http://api:8000
+    }
+    
+    # Handle WebSocket connections
+    handle /ws/* {
+        reverse_proxy http://api:8000
+    }
+    
+    # Handle all other requests - WebUI
+    handle {
+        reverse_proxy webui:3000
+    }
+}

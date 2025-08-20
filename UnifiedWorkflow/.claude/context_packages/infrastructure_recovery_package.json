@@ -1,0 +1,55 @@
+{
+  "package_type": "infrastructure_recovery",
+  "priority": "CRITICAL",
+  "token_limit": 4000,
+  "created_at": "2025-08-15T21:10:00Z",
+  "iteration": 5,
+  "phase": 4,
+  
+  "root_cause_analysis": {
+    "primary_issue": "Qdrant TLS/HTTP protocol mismatch",
+    "impact": "5 cognitive services failing",
+    "evidence": {
+      "qdrant_config": "Expecting HTTPS on port 6333",
+      "service_config": "Using HTTP in QDRANT_URL",
+      "error_pattern": "Connection refused, protocol error"
+    }
+  },
+  
+  "immediate_fix": {
+    "action": "Update QDRANT_URL environment variable",
+    "change": "http://qdrant:6333 → https://qdrant:6333",
+    "affected_services": [
+      "reasoning_service",
+      "memory_service",
+      "coordination_service",
+      "reasoning_development_service",
+      "infrastructure_recovery_service"
+    ],
+    "implementation_files": [
+      "docker-compose.yml",
+      "app/{service}/config.py for each service"
+    ]
+  },
+  
+  "recovery_sequence": {
+    "step_1": "Update docker-compose.yml QDRANT_URL variables",
+    "step_2": "Update service config.py files for fallback",
+    "step_3": "Restart affected containers",
+    "step_4": "Validate Qdrant connectivity",
+    "step_5": "Verify service health endpoints"
+  },
+  
+  "validation_requirements": {
+    "connectivity_test": "curl https://qdrant:6333/health",
+    "service_health": "Check /health endpoints for all services",
+    "vector_operations": "Test actual vector storage/retrieval",
+    "evidence_collection": "Container logs, health checks, curl outputs"
+  },
+  
+  "risk_mitigation": {
+    "rollback_plan": "Revert environment variables if issues",
+    "monitoring": "Watch container logs during restart",
+    "gradual_rollout": "Test one service first, then others"
+  }
+}

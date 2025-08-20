@@ -1,0 +1,5 @@
+aiohttp==3.9.5
+prometheus-client==0.20.0
+docker==7.1.0
+redis==5.0.8
+requests==2.32.3

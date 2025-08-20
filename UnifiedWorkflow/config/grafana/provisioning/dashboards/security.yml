@@ -1,0 +1,23 @@
+apiVersion: 1
+
+providers:
+  - name: 'Security Monitoring'
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/security
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    
+  - name: 'System Monitoring'
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/system
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    
+  - name: 'Application Monitoring'
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards/application
+    updateIntervalSeconds: 30
+    allowUiUpdates: true

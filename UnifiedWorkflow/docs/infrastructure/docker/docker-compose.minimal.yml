@@ -1,0 +1,55 @@
+version: '3.8'
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+networks:
+  ai_workflow_engine_net:
+    driver: bridge
+
+volumes:
+  certs:
+  caddy_data:
+  caddy_config:
+
+services:
+  webui:
+    build:
+      context: ./app/webui-next
+      dockerfile: ../../docker/webui-next/Dockerfile
+    image: ai_workflow_engine/webui-next
+    command:
+      - node
+      - server.js
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://host.docker.internal:8000
+    ports:
+      - "3000:3000"
+    networks:
+      - ai_workflow_engine_net
+    restart: unless-stopped
+    logging: *default-logging
+
+  caddy_reverse_proxy:
+    build:
+      context: ./config/caddy
+      dockerfile: ../../docker/caddy/Dockerfile
+    image: ai_workflow_engine-caddy_letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - certs:/certs:ro
+    networks:
+      - ai_workflow_engine_net
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      - webui

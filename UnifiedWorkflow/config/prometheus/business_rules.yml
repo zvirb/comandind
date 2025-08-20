@@ -1,0 +1,333 @@
+groups:
+  # ==============================================================================
+  # BUSINESS METRICS AND KPI MONITORING RULES
+  # ==============================================================================
+  
+  - name: business.user.engagement
+    interval: 60s
+    rules:
+      # User Activity Metrics
+      - alert: UnusuallyLowUserActivity
+        expr: rate(user_requests_total[10m]) < (avg_over_time(rate(user_requests_total[10m])[24h:10m]) * 0.3)
+        for: 15m
+        labels:
+          severity: medium
+          category: user-engagement
+        annotations:
+          summary: "Unusually low user activity detected"
+          description: "Current user activity ({{ $value | humanize }}req/min) is 70% below normal levels"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/business/low-user-activity"
+
+      - alert: NoUserActivityDetected
+        expr: rate(user_requests_total[30m]) == 0 and hour() >= 8 and hour() <= 20
+        for: 30m
+        labels:
+          severity: high
+          category: user-engagement
+        annotations:
+          summary: "No user activity detected during business hours"
+          description: "No user requests have been recorded in the last 30 minutes during business hours"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/business/no-user-activity"
+
+      # User Registration and Onboarding
+      - alert: LowUserRegistrationRate
+        expr: rate(user_registrations_total[6h]) < 1
+        for: 6h
+        labels:
+          severity: low
+          category: user-growth
+        annotations:
+          summary: "Low user registration rate"
+          description: "User registration rate is {{ $value | humanize }} registrations per hour"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/business/low-registration-rate"
+
+      - alert: HighUserChurnRate
+        expr: (rate(user_deletions_total[24h]) / rate(user_registrations_total[24h])) > 0.5
+        for: 4h
+        labels:
+          severity: medium
+          category: user-retention
+        annotations:
+          summary: "High user churn rate detected"
+          description: "User churn rate is {{ $value | humanizePercentage }} (deletions vs registrations)"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/business/high-churn-rate"
+
+  - name: business.authentication.metrics
+    interval: 30s
+    rules:
+      # Authentication Success Rates
+      - alert: DropInAuthenticationSuccess
+        expr: (rate(auth_attempts_total{status="success"}[10m]) / rate(auth_attempts_total[10m])) * 100 < 90
+        for: 5m
+        labels:
+          severity: medium
+          category: authentication
+        annotations:
+          summary: "Drop in authentication success rate"
+          description: "Authentication success rate dropped to {{ $value | humanizePercentage }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/business/auth-success-drop"
+
+      # Failed Authentication Spikes
+      - alert: AuthenticationFailureSpike
+        expr: rate(auth_attempts_total{status="failure"}[5m]) > (avg_over_time(rate(auth_attempts_total{status="failure"}[5m])[1h:5m]) * 5)
+        for: 3m
+        labels:
+          severity: high
+          category: security
+        annotations:
+          summary: "Authentication failure spike detected"
+          description: "Authentication failure rate ({{ $value | humanize }}/min) is 5x higher than normal"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/security/auth-failure-spike"
+
+      # Account Lockouts
+      - alert: HighAccountLockoutRate
+        expr: rate(auth_account_lockouts_total[10m]) > 0.1
+        for: 5m
+        labels:
+          severity: medium
+          category: security
+        annotations:
+          summary: "High account lockout rate"
+          description: "Account lockout rate is {{ $value | humanize }}/min"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/security/high-lockout-rate"
+
+      # Multi-Factor Authentication Bypass Attempts
+      - alert: MFABypassAttempts
+        expr: rate(auth_mfa_bypass_attempts_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "MFA bypass attempts detected"
+          description: "{{ $value | humanize }} MFA bypass attempts per minute detected"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/security/mfa-bypass-attempts"
+
+  - name: business.ai.workflow.metrics
+    interval: 60s
+    rules:
+      # AI Task Processing Metrics
+      - alert: LowAITaskSuccessRate
+        expr: (rate(ai_tasks_total{status="success"}[10m]) / rate(ai_tasks_total[10m])) * 100 < 80
+        for: 10m
+        labels:
+          severity: medium
+          category: ai-performance
+        annotations:
+          summary: "Low AI task success rate"
+          description: "AI task success rate is {{ $value | humanizePercentage }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/ai/low-success-rate"
+
+      - alert: AITaskProcessingBacklog
+        expr: ai_tasks_queue_depth > 100
+        for: 10m
+        labels:
+          severity: high
+          category: ai-performance
+        annotations:
+          summary: "AI task processing backlog"
+          description: "AI task queue has {{ $value }} pending tasks"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/ai/task-backlog"
+
+      # AI Model Performance
+      - alert: SlowAIResponseTime
+        expr: histogram_quantile(0.95, rate(ai_task_duration_seconds_bucket[10m])) > 60
+        for: 10m
+        labels:
+          severity: medium
+          category: ai-performance
+        annotations:
+          summary: "Slow AI task response time"
+          description: "95th percentile AI task duration is {{ $value | humanizeDuration }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/ai/slow-response-time"
+
+      - alert: AIModelResourceExhaustion
+        expr: ai_model_resource_utilization > 95
+        for: 5m
+        labels:
+          severity: high
+          category: ai-resources
+        annotations:
+          summary: "AI model resource exhaustion"
+          description: "AI model resource utilization is {{ $value | humanizePercentage }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/ai/resource-exhaustion"
+
+  - name: business.api.consumption
+    interval: 60s
+    rules:
+      # API Usage Patterns
+      - alert: UnusualAPIUsagePattern
+        expr: rate(http_requests_total{job="fastapi-api"}[10m]) > (avg_over_time(rate(http_requests_total{job="fastapi-api"}[10m])[7d:10m]) * 5)
+        for: 10m
+        labels:
+          severity: medium
+          category: api-usage
+        annotations:
+          summary: "Unusual API usage pattern detected"
+          description: "Current API usage ({{ $value | humanize }}req/min) is 5x higher than weekly average"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/api/unusual-usage-pattern"
+
+      # Rate Limiting Effectiveness
+      - alert: HighRateLimitingActivity
+        expr: rate(api_rate_limit_hits_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: medium
+          category: api-protection
+        annotations:
+          summary: "High rate limiting activity"
+          description: "Rate limiting is blocking {{ $value | humanize }} requests per minute"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/api/high-rate-limiting"
+
+      # API Quota Utilization
+      - alert: HighAPIQuotaUtilization
+        expr: (api_quota_used / api_quota_limit) * 100 > 80
+        for: 5m
+        labels:
+          severity: medium
+          category: api-usage
+        annotations:
+          summary: "High API quota utilization"
+          description: "API quota utilization is {{ $value | humanizePercentage }} for user {{ $labels.user_id }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/api/high-quota-utilization"
+
+      - alert: APIQuotaExhaustion
+        expr: (api_quota_used / api_quota_limit) * 100 >= 100
+        for: 0m
+        labels:
+          severity: high
+          category: api-usage
+        annotations:
+          summary: "API quota exhausted"
+          description: "API quota exhausted for user {{ $labels.user_id }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/api/quota-exhausted"
+
+  - name: business.data.metrics
+    interval: 120s
+    rules:
+      # Data Processing Metrics
+      - alert: DataProcessingLatency
+        expr: histogram_quantile(0.95, rate(data_processing_duration_seconds_bucket[10m])) > 300
+        for: 10m
+        labels:
+          severity: medium
+          category: data-processing
+        annotations:
+          summary: "High data processing latency"
+          description: "95th percentile data processing time is {{ $value | humanizeDuration }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/data/high-processing-latency"
+
+      # Data Quality Metrics
+      - alert: DataValidationFailures
+        expr: (rate(data_validation_failures_total[10m]) / rate(data_validation_attempts_total[10m])) * 100 > 5
+        for: 10m
+        labels:
+          severity: medium
+          category: data-quality
+        annotations:
+          summary: "High data validation failure rate"
+          description: "Data validation failure rate is {{ $value | humanizePercentage }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/data/validation-failures"
+
+      # Data Storage Growth
+      - alert: RapidDataGrowth
+        expr: increase(data_storage_bytes_total[1h]) > (1 * 1024 * 1024 * 1024)  # 1GB per hour
+        for: 0m
+        labels:
+          severity: medium
+          category: data-capacity
+        annotations:
+          summary: "Rapid data growth detected"
+          description: "Data storage grew by {{ $value | humanizeBytes }} in the last hour"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/data/rapid-growth"
+
+  - name: business.compliance.metrics
+    interval: 300s  # 5 minute intervals for compliance checks
+    rules:
+      # GDPR Compliance Metrics
+      - alert: DataRetentionPolicyViolation
+        expr: data_retention_policy_violations_total > 0
+        for: 0m
+        labels:
+          severity: high
+          category: compliance
+        annotations:
+          summary: "Data retention policy violation"
+          description: "{{ $value }} data retention policy violations detected"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/compliance/data-retention-violation"
+
+      - alert: PersonalDataAccessWithoutConsent
+        expr: rate(personal_data_access_without_consent_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          category: compliance
+        annotations:
+          summary: "Personal data accessed without consent"
+          description: "Personal data access without proper consent detected"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/compliance/data-access-without-consent"
+
+      # Audit Log Completeness
+      - alert: AuditLogGaps
+        expr: audit_log_gaps_detected_total > 0
+        for: 0m
+        labels:
+          severity: high
+          category: compliance
+        annotations:
+          summary: "Audit log gaps detected"
+          description: "{{ $value }} gaps in audit logging detected"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/compliance/audit-log-gaps"
+
+  - name: business.cost.optimization
+    interval: 300s
+    rules:
+      # Resource Cost Monitoring
+      - alert: UnusualResourceCostIncrease
+        expr: increase(estimated_infrastructure_cost_usd[24h]) > (avg_over_time(increase(estimated_infrastructure_cost_usd[24h])[7d:24h]) * 2)
+        for: 1h
+        labels:
+          severity: medium
+          category: cost-optimization
+        annotations:
+          summary: "Unusual resource cost increase"
+          description: "Daily infrastructure cost increased by ${{ $value }} (2x above weekly average)"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/cost/unusual-increase"
+
+      # Idle Resource Detection
+      - alert: IdleResourcesDetected
+        expr: idle_compute_resources_cost_usd > 10
+        for: 4h
+        labels:
+          severity: low
+          category: cost-optimization
+        annotations:
+          summary: "Idle resources detected"
+          description: "Estimated ${{ $value }} in idle compute resources detected"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/cost/idle-resources"
+
+  - name: business.sla.compliance
+    interval: 60s
+    rules:
+      # Service Level Agreement Monitoring
+      - alert: SLABreachWarning
+        expr: (avg_over_time(probe_success{job="blackbox-http"}[10m]) * 100) < 99.5
+        for: 10m
+        labels:
+          severity: high
+          category: sla-compliance
+        annotations:
+          summary: "SLA breach warning - availability below 99.5%"
+          description: "Service availability is {{ $value | humanizePercentage }} for endpoint {{ $labels.instance }}"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/sla/availability-breach"
+
+      - alert: ResponseTimeSLABreach
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="fastapi-api"}[10m])) > 1.0
+        for: 10m
+        labels:
+          severity: high
+          category: sla-compliance
+        annotations:
+          summary: "Response time SLA breach"
+          description: "95th percentile response time ({{ $value }}s) exceeds 1s SLA threshold"
+          runbook_url: "https://docs.ai-workflow-engine.local/runbooks/sla/response-time-breach"

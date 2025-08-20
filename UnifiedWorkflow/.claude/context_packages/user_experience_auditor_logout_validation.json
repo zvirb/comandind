@@ -1,0 +1,51 @@
+{
+  "context": {
+    "validation_objective": "Verify Documents/Calendar logout crisis is resolved through browser automation",
+    "test_scenarios": [
+      {
+        "name": "Documents Navigation Test",
+        "steps": [
+          "Login to https://aiwfe.com",
+          "Wait for dashboard to load",
+          "Click Documents in navigation",
+          "Verify user remains logged in",
+          "Take screenshot of Documents page",
+          "Check auth status indicator shows logged in"
+        ]
+      },
+      {
+        "name": "Calendar Navigation Test",
+        "steps": [
+          "From Documents page, click Calendar",
+          "Verify no redirect to login",
+          "Take screenshot of Calendar page",
+          "Check session cookie still present",
+          "Verify auth API returns authenticated"
+        ]
+      },
+      {
+        "name": "Rapid Navigation Test",
+        "steps": [
+          "Navigate Dashboard -> Documents -> Calendar -> Chat rapidly",
+          "Verify no logout at any point",
+          "Check console for session restoration attempts",
+          "Take screenshots at each route"
+        ]
+      }
+    ],
+    "evidence_requirements": [
+      "Screenshot showing logged-in Documents page",
+      "Screenshot showing logged-in Calendar page",
+      "Console logs showing no session restoration attempts",
+      "Network tab showing auth tokens remain valid",
+      "Auth status indicator remains green throughout"
+    ],
+    "failure_indicators": [
+      "Redirect to /login at any point",
+      "Auth status indicator turns red",
+      "Console shows 'Session restoration failed'",
+      "Network shows 401/403 errors"
+    ],
+    "production_url": "https://aiwfe.com"
+  }
+}

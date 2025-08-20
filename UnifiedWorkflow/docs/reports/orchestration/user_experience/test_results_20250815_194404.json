@@ -1,0 +1,623 @@
+{
+  "timestamp": "2025-08-15T19:43:18.215937",
+  "base_url": "https://aiwfe.com",
+  "tests": [
+    {
+      "test_name": "authentication_flow",
+      "status": "success",
+      "steps": [
+        {
+          "step": "navigate_login",
+          "status": "success"
+        },
+        {
+          "step": "verify_form_elements",
+          "status": "success"
+        },
+        {
+          "step": "form_validation",
+          "status": "success",
+          "note": "Validation messages shown"
+        },
+        {
+          "step": "login_attempt",
+          "status": "expected_failure",
+          "note": "Login failed as expected with test credentials"
+        }
+      ],
+      "evidence": {
+        "login_page": {
+          "screenshot": "/home/marku/ai_workflow_engine/.claude/audit_reports/user_experience/20250815_194319_auth_login_page.png",
+          "content": "/home/marku/ai_workflow_engine/.claude/audit_reports/user_experience/20250815_194319_auth_login_page_content.html",
+          "console_logs": [
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/jwt/login",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Login error: Error: Incorrect email/username or password\n    at u (https://aiwfe.com/assets/index-DlwR8rVl.js:19:20313)",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 18,
+                "columnNumber": 20804
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Current authentication state: null",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86155
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Starting authentication check...",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 85913
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Starting check...",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2119
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: localStorage token exists: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2208
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Checking cookie authentication...",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2583
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/validate",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Validation response status: 401 ok: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2808
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Cookie authentication failed",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2986
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Authentication result: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86009
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Current authentication state: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86155
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Redirecting to login - authentication failed",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86498
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 405 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/chat",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 404 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/session",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/projects",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ]
+        },
+        "filled_form": {
+          "screenshot": "/home/marku/ai_workflow_engine/.claude/audit_reports/user_experience/20250815_194322_auth_filled_form.png",
+          "content": "/home/marku/ai_workflow_engine/.claude/audit_reports/user_experience/20250815_194322_auth_filled_form_content.html",
+          "console_logs": [
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/jwt/login",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Login error: Error: Incorrect email/username or password\n    at u (https://aiwfe.com/assets/index-DlwR8rVl.js:19:20313)",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 18,
+                "columnNumber": 20804
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Current authentication state: null",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86155
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Starting authentication check...",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 85913
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Starting check...",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2119
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: localStorage token exists: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2208
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Checking cookie authentication...",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2583
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/validate",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Validation response status: 401 ok: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2808
+              }
+            },
+            {
+              "type": "log",
+              "text": "SecureAuth.isAuthenticated: Cookie authentication failed",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 9,
+                "columnNumber": 2986
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Authentication result: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86009
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Current authentication state: false",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86155
+              }
+            },
+            {
+              "type": "log",
+              "text": "PrivateRoute: Redirecting to login - authentication failed",
+              "location": {
+                "url": "https://aiwfe.com/assets/index-DlwR8rVl.js",
+                "lineNumber": 48,
+                "columnNumber": 86498
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 405 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/chat",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 404 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/session",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/projects",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ]
+        }
+      },
+      "errors": []
+    },
+    {
+      "test_name": "chat_functionality",
+      "status": "failed",
+      "steps": [],
+      "evidence": {},
+      "performance": {},
+      "errors": [
+        "Timeout 30000ms exceeded."
+      ]
+    },
+    {
+      "test_name": "galaxy_animation_performance",
+      "status": "success",
+      "fps_measurements": {
+        "average": 63,
+        "samples": [
+          62,
+          63,
+          63,
+          63,
+          63,
+          63,
+          62,
+          63,
+          63,
+          62,
+          63,
+          63,
+          62,
+          63,
+          63,
+          62,
+          63,
+          63,
+          63,
+          63,
+          63,
+          63,
+          62,
+          63,
+          63,
+          63,
+          62,
+          63,
+          62,
+          63,
+          63,
+          62,
+          63,
+          63,
+          62,
+          63,
+          63,
+          63,
+          63,
+          63,
+          62,
+          63,
+          63,
+          63,
+          62,
+          63,
+          63,
+          62,
+          63,
+          62,
+          63,
+          63,
+          63,
+          63,
+          63,
+          62,
+          63,
+          63,
+          63,
+          62
+        ],
+        "min": 62,
+        "max": 63
+      },
+      "evidence": {
+        "animation": {
+          "screenshot": "/home/marku/ai_workflow_engine/.claude/audit_reports/user_experience/20250815_194403_galaxy_performance.png",
+          "content": "/home/marku/ai_workflow_engine/.claude/audit_reports/user_experience/20250815_194403_galaxy_performance_content.html",
+          "console_logs": [
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 405 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/chat",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 404 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/auth/session",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "type": "error",
+              "text": "Failed to load resource: the server responded with a status of 401 ()",
+              "location": {
+                "url": "https://aiwfe.com/api/v1/projects",
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ]
+        }
+      },
+      "errors": []
+    },
+    {
+      "test_name": "api_endpoints",
+      "status": "success",
+      "endpoints": [
+        {
+          "endpoint": "/api/v1/health",
+          "response": {
+            "status": 200,
+            "statusText": "",
+            "headers": {
+              "alt-svc": "h3=\":443\"; ma=2592000",
+              "cache-control": "no-store, no-cache, must-revalidate, private",
+              "content-length": "39",
+              "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ws: wss: https://accounts.google.com https://oauth2.googleapis.com; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com; object-src 'none'; media-src 'self'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests;",
+              "content-type": "application/json",
+              "cross-origin-embedder-policy": "require-corp",
+              "cross-origin-opener-policy": "same-origin",
+              "cross-origin-resource-policy": "same-origin",
+              "date": "Fri, 15 Aug 2025 09:44:04 GMT",
+              "expires": "0",
+              "permissions-policy": "accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()",
+              "pragma": "no-cache",
+              "referrer-policy": "strict-origin-when-cross-origin",
+              "server": "uvicorn",
+              "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+              "via": "1.1 Caddy",
+              "x-content-type-options": "nosniff",
+              "x-contract-validation": "passed",
+              "x-download-options": "noopen",
+              "x-evidence-id": "b4baa929-2320-4eb3-867f-348892970da9",
+              "x-execution-time": "6.03",
+              "x-frame-options": "DENY",
+              "x-permitted-cross-domain-policies": "none",
+              "x-request-id": "req_d0064f097651",
+              "x-validation-count": "1",
+              "x-xss-protection": "1; mode=block"
+            },
+            "ok": true
+          },
+          "accessible": true
+        },
+        {
+          "endpoint": "/api/v1/chat",
+          "response": {
+            "status": 405,
+            "statusText": "",
+            "headers": {
+              "allow": "POST",
+              "alt-svc": "h3=\":443\"; ma=2592000",
+              "cache-control": "no-store, no-cache, must-revalidate, private",
+              "content-length": "31",
+              "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ws: wss: https://accounts.google.com https://oauth2.googleapis.com; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com; object-src 'none'; media-src 'self'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests;",
+              "content-type": "application/json",
+              "cross-origin-embedder-policy": "require-corp",
+              "cross-origin-opener-policy": "same-origin",
+              "cross-origin-resource-policy": "same-origin",
+              "date": "Fri, 15 Aug 2025 09:44:04 GMT",
+              "expires": "0",
+              "permissions-policy": "accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()",
+              "pragma": "no-cache",
+              "referrer-policy": "strict-origin-when-cross-origin",
+              "server": "uvicorn",
+              "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+              "via": "1.1 Caddy",
+              "x-content-type-options": "nosniff",
+              "x-contract-validation": "passed",
+              "x-download-options": "noopen",
+              "x-evidence-id": "cf95fe9f-4968-45aa-986f-fd5e94703977",
+              "x-execution-time": "7.19",
+              "x-frame-options": "DENY",
+              "x-permitted-cross-domain-policies": "none",
+              "x-process-time": "13.08",
+              "x-ratelimit-limit": "200",
+              "x-ratelimit-remaining": "199",
+              "x-ratelimit-reset": "1755251104",
+              "x-request-id": "req_1acaef42a0ff",
+              "x-validation-count": "1",
+              "x-xss-protection": "1; mode=block"
+            },
+            "ok": false
+          },
+          "accessible": true
+        },
+        {
+          "endpoint": "/api/v1/auth/session",
+          "response": {
+            "status": 404,
+            "statusText": "",
+            "headers": {
+              "alt-svc": "h3=\":443\"; ma=2592000",
+              "cache-control": "no-store, no-cache, must-revalidate, private",
+              "content-length": "22",
+              "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ws: wss: https://accounts.google.com https://oauth2.googleapis.com; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com; object-src 'none'; media-src 'self'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests;",
+              "content-type": "application/json",
+              "cross-origin-embedder-policy": "require-corp",
+              "cross-origin-opener-policy": "same-origin",
+              "cross-origin-resource-policy": "same-origin",
+              "date": "Fri, 15 Aug 2025 09:44:04 GMT",
+              "expires": "0",
+              "permissions-policy": "accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()",
+              "pragma": "no-cache",
+              "referrer-policy": "strict-origin-when-cross-origin",
+              "server": "uvicorn",
+              "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+              "via": "1.1 Caddy",
+              "x-content-type-options": "nosniff",
+              "x-contract-validation": "passed",
+              "x-download-options": "noopen",
+              "x-evidence-id": "1a22c08c-c02c-4a29-8ad4-e0ffccfc116e",
+              "x-execution-time": "8.13",
+              "x-frame-options": "DENY",
+              "x-permitted-cross-domain-policies": "none",
+              "x-process-time": "13.27",
+              "x-request-id": "req_a148abf805d6",
+              "x-validation-count": "1",
+              "x-xss-protection": "1; mode=block"
+            },
+            "ok": false
+          },
+          "accessible": true
+        },
+        {
+          "endpoint": "/api/v1/projects",
+          "response": {
+            "status": 401,
+            "statusText": "",
+            "headers": {
+              "alt-svc": "h3=\":443\"; ma=2592000",
+              "cache-control": "no-store, no-cache, must-revalidate, private",
+              "content-length": "336",
+              "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ws: wss: https://accounts.google.com https://oauth2.googleapis.com; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com; object-src 'none'; media-src 'self'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests;",
+              "content-type": "application/json",
+              "cross-origin-embedder-policy": "require-corp",
+              "cross-origin-opener-policy": "same-origin",
+              "cross-origin-resource-policy": "same-origin",
+              "date": "Fri, 15 Aug 2025 09:44:04 GMT",
+              "expires": "0",
+              "permissions-policy": "accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()",
+              "pragma": "no-cache",
+              "referrer-policy": "strict-origin-when-cross-origin",
+              "server": "uvicorn",
+              "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+              "via": "1.1 Caddy",
+              "x-content-type-options": "nosniff",
+              "x-contract-validation": "passed",
+              "x-download-options": "noopen",
+              "x-evidence-id": "f12f5ef8-d659-4792-bffc-b47aeb5dcc46",
+              "x-execution-time": "5.79",
+              "x-frame-options": "DENY",
+              "x-permitted-cross-domain-policies": "none",
+              "x-process-time": "10.61",
+              "x-ratelimit-limit": "200",
+              "x-ratelimit-remaining": "198",
+              "x-ratelimit-reset": "1755251104",
+              "x-request-id": "req_4331f32fac5c",
+              "x-validation-count": "1",
+              "x-xss-protection": "1; mode=block"
+            },
+            "ok": false
+          },
+          "accessible": true
+        }
+      ],
+      "evidence": {},
+      "errors": []
+    }
+  ],
+  "summary": {
+    "total_tests": 4,
+    "passed": 3,
+    "warnings": 0,
+    "failed": 1
+  },
+  "duration": 46.83498215675354
+}

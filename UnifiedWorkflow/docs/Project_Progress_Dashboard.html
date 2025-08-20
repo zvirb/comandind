@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Project Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --vscode-bg: #1E1E1E;
+            --vscode-card-bg: #252526;
+            --vscode-border: #333333;
+            --vscode-text-primary: #D4D4D4;
+            --vscode-text-secondary: #808080;
+            --python-string-green: #6A9955;
+            --python-keyword-blue: #569CD6;
+            --python-comment-grey: #6A737D;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--vscode-bg);
+            color: var(--vscode-text-primary);
+        }
+        .progress-bar-container { background-color: var(--vscode-border); border-radius: 9999px; overflow: hidden; height: 0.75rem; }
+        .progress-bar { height: 100%; border-radius: 9999px; transition: width 0.5s ease-in-out; }
+        .card { background-color: var(--vscode-card-bg); border: 1px solid var(--vscode-border); transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
+
+        /* Add this CSS for modal transitions */
+        #detailedSummaryModal {
+            transition: opacity 0.3s ease-in-out; /* Smooth opacity transition */
+        }
+        #detailedSummaryModal.hidden {
+            opacity: 0;
+            pointer-events: none; /* Prevents interaction when hidden */
+        }
+        #detailedSummaryModal:not(.hidden) {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .task-list-modal {
+            list-style: none; /* Remove default list styling */
+            padding-left: 0;
+        }
+        .task-list-modal li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 1rem; /* Adjust font size for modal */
+            color: var(--gray-300); /* text-gray-300 */
+            margin-bottom: 0.75rem; /* More space in modal */
+        }
+        .task-list-modal li .icon {
+            font-size: 1.25rem; /* text-xl for icons in modal */
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white">AI Assistant Project Dashboard</h1>
+            <p class="text-md text-gray-400 mt-2">A high-level summary of project status.</p>
+        </header>
+
+        <section id="overall-summary" class="p-6 rounded-xl shadow-md mb-8 card">
+            <h2 class="text-2xl font-bold text-white mb-4 text-center">Overall Project Health</h2>
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-8">
+                <div class="w-full lg:w-1/3 h-72">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                <div id="stats-container" class="flex flex-wrap justify-center gap-4 w-full lg:w-2/3">
+                    </div>
+            </div>
+        </section>
+
+        <main id="sections-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>Last updated: <span id="last-updated"></span></p>
+        </footer>
+    </div>
+
+    <div id="detailedSummaryModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold" onclick="closeDetailedSummary()">
+                &times;
+            </button>
+            <h3 id="detailedSummaryTitle" class="text-2xl font-bold text-white mb-6 text-center"></h3>
+            <div id="detailedSummaryContent" class="space-y-3">
+                </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('PROGRESS_CHECKLIST.txt') // Fetch from the same directory
+            .then(response => {
+                if (!response.ok) throw new Error(`Network error! status: ${response.status}`);
+                return response.text();
+            })
+            .then(markdownContent => {
+                console.log("Fetched PROGRESS_CHECKLIST.md content:\n", markdownContent); // DEBUGGING: Log fetched content
+                const data = parseMarkdown(markdownContent);
+                if (data.length === 0) {
+                    throw new Error("Markdown parsing resulted in no data. Please check the format of PROGRESS_CHECKLIST.md.");
+                }
+                renderDashboard(data);
+                document.getElementById('last-updated').textContent = new Date().toLocaleString();
+            })
+            .catch(error => {
+                console.error('Error loading or parsing dashboard data:', error);
+                const container = document.getElementById('overall-summary');
+                if (container) {
+                    container.innerHTML = `<p class="text-red-500 text-center p-4">Error: Could not load or parse data from PROGRESS_CHECKLIST.md. Please check the file format and the browser's developer console for details.</p>`;
+                }
+                document.getElementById('sections-container').innerHTML = '';
+            });
+    });
+
+    function parseMarkdown(markdown) {
+        const sections = [];
+        // Regex to find sections starting with "## I. Title", "## II. Title", etc., handling potential CRLF line endings
+        const sectionRegex = /^\s*##\s*([IVXLCDM]+)\.\s(.*?)\r?\n([\s\S]*?)(?=\r?\n\s*##\s*[IVXLCDM]+\.\s|$)/gmi;
+        let sectionMatch;
+
+        while ((sectionMatch = sectionRegex.exec(markdown)) !== null) {
+            console.log("Section matched:", sectionMatch[0].substring(0, 100) + "..."); // Log part of the matched section
+            const title = sectionMatch[2].trim();
+            const content = sectionMatch[3]; // This is the content string for the current section
+            console.log(`  Section Title: "${title}"`);
+            console.log("  Section Content (first 100 chars):", content.substring(0, 100) + "...");
+            const tasks = [];
+
+            // Split the content into lines and process each line individually
+            const lines = content.split(/\r?\n/); // Split by Windows or Unix newlines
+            const taskLineRegex = /^\s*-\s\[([x\s-])\]\s*(.*)/; // No 'g' or 'm' flags here, apply per line
+
+            lines.forEach(line => {
+                const taskMatch = line.match(taskLineRegex); // Use String.prototype.match() for per-line matching
+                if (taskMatch) {
+                    // taskCounter++; // No longer needed
+                    // console.log(`    Task ${taskCounter} in section "${title}":`, taskMatch[0].substring(0, 100) + "..."); // No longer needed
+                    const checkboxState = taskMatch[1]; // 'x', ' ', or '-'
+                    const description = taskMatch[2].trim(); // Capture the task description
+                    let statusIcon;
+                    let progress = 0;
+
+                    if (checkboxState === 'x') {
+                        statusIcon = '✅';
+                        progress = 100;
+                    } else if (checkboxState === '-') { // New: In Progress
+                        statusIcon = '🟡'; // Yellow circle for in-progress
+                        progress = 50; // Assign 50% progress for started but not completed
+                    }
+                    else { // Not Started
+                        statusIcon = '🔲';
+                        progress = 0;
+                    }
+                    // Store the full task object
+                    tasks.push({ description, statusIcon, progress });
+                }
+            });
+            console.log(`  Found ${tasks.length} tasks in section "${title}".`);
+
+
+            if (tasks.length > 0) {
+                sections.push({ title, tasks });
+                console.log(`  Added section "${title}" to dashboard data.`);
+            }
+        }
+        console.log("Final parsed sections data:", sections);
+        return sections;
+    }
+
+    function renderDashboard(sections) {
+        let totalTasks = 0;
+        let totalCompleted = 0;
+        let totalNotStarted = 0;
+        let totalInProgress = 0; // New variable for in-progress tasks
+        let totalProgressSum = 0;
+
+        const sectionsContainer = document.getElementById('sections-container');
+        sectionsContainer.innerHTML = '';
+
+        sections.forEach((section, index) => { // Added index to uniquely identify sections if needed
+            let sectionCompleted = 0;
+            let sectionNotStarted = 0;
+            let sectionInProgress = 0; // New variable for in-progress tasks
+            let sectionProgressSum = 0;
+
+            section.tasks.forEach(task => {
+                if (task.statusIcon === '✅') {
+                    sectionCompleted++;
+                } else if (task.statusIcon === '🟡') { // Check for in-progress tasks
+                    sectionInProgress++;
+                }
+                else if (task.statusIcon === '🔲') {
+                    sectionNotStarted++;
+                }
+                sectionProgressSum += task.progress;
+            });
+            
+            const sectionTotalTasks = section.tasks.length;
+            const sectionProgress = sectionTotalTasks > 0 ? Math.round(sectionProgressSum / sectionTotalTasks) : 0;
+
+            totalCompleted += sectionCompleted;
+            totalNotStarted += sectionNotStarted;
+            totalInProgress += sectionInProgress; // Accumulate total in-progress tasks
+            totalProgressSum += sectionProgressSum;
+            totalTasks += sectionTotalTasks;
+
+            const sectionCard = document.createElement('div');
+            sectionCard.className = 'p-6 rounded-xl shadow-md flex flex-col card cursor-pointer'; // Added cursor-pointer
+            
+            // Add click event listener to the card
+            sectionCard.onclick = () => showDetailedSummary(section); // Pass the entire section object
+
+            sectionCard.innerHTML = `
+                <h3 class="text-xl font-bold text-white mb-3">${section.title}</h3>
+                <div class="mt-auto">
+                    <div class="flex justify-between items-center mb-1 text-sm font-medium text-gray-400">
+                        <span>Progress</span>
+                        <span>${sectionProgress}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${sectionProgress}%; background-color: var(--python-keyword-blue);"></div>
+                    </div>
+                    <div class="flex justify-between text-center mt-4 text-sm text-gray-400">
+                        <span class="flex-1"><span class="font-bold" style="color: var(--python-string-green);">${sectionCompleted}</span> ✅</span>
+                        <span class="flex-1"><span class="font-bold" style="color: #FFD700;">${sectionInProgress}</span> 🟡</span>
+                        <span class="flex-1"><span class="font-bold" style="color: var(--vscode-text-secondary);">${sectionNotStarted}</span> 🔲</span>
+                    </div>
+                </div>
+            `;
+            sectionsContainer.appendChild(sectionCard);
+        });
+        
+        const overallProgress = totalTasks > 0 ? Math.round(totalProgressSum / totalTasks) : 0;
+        renderOverallChart(totalCompleted, totalInProgress, totalNotStarted, overallProgress);
+        renderStats(totalTasks, totalCompleted, totalInProgress, totalNotStarted);
+    }
+
+    function renderOverallChart(completed, inProgress, notStarted, overallProgress) {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const colors = {
+            completed: '#6A9955',
+            inProgress: '#FFD700', // New color for in-progress tasks (Gold)
+            notStarted: '#808080'
+        };
+
+        // Destroy existing chart if it exists to prevent re-rendering issues
+        if (Chart.getChart('progressChart')) {
+            Chart.getChart('progressChart').destroy();
+        }
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'In Progress', 'Not Started'],
+                datasets: [{
+                    data: [completed, inProgress, notStarted],
+                    backgroundColor: [colors.completed, colors.inProgress, colors.notStarted],
+                    borderColor: 'var(--vscode-card-bg)',
+                    borderWidth: 4,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                }
+            },
+            plugins: [{
+                id: 'centerText',
+                beforeDraw: function(chart) {
+                    const { ctx } = chart;
+                    ctx.save();
+                    const height = chart.height;
+                    const fontSize = (height / 114).toFixed(2);
+                    ctx.font = `bold ${fontSize}rem Inter`;
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const text = `${overallProgress}%`;
+                    const centerX = chart.width / 2;
+                    const centerY = chart.height / 2;
+                    ctx.fillText(text, centerX, centerY);
+                    ctx.restore();
+                }
+            }]
+        });
+    }
+
+    function renderStats(total, completed, inProgress, notStarted) {
+        const container = document.getElementById('stats-container');
+        container.innerHTML = `
+            <div class="p-4 rounded-lg text-center flex-grow min-w-[140px]" style="background-color: rgba(128, 128, 128, 0.1);">
+                <div class="text-3xl font-bold text-white">${total}</div>
+                <div class="text-sm text-gray-400">Total Tasks</div>
+            </div>
+            <div class="p-4 rounded-lg text-center flex-grow min-w-[140px]" style="background-color: rgba(106, 153, 85, 0.15);">
+                <div class="text-3xl font-bold" style="color: var(--python-string-green);">${completed}</div>
+                <div class="text-sm" style="color: var(--python-string-green); opacity: 0.8;">Completed</div>
+            </div>
+            <div class="p-4 rounded-lg text-center flex-grow min-w-[140px]" style="background-color: rgba(255, 215, 0, 0.15);">
+                <div class="text-3xl font-bold" style="color: #FFD700;">${inProgress}</div>
+                <div class="text-sm" style="color: #FFD700; opacity: 0.8;">In Progress</div>
+            </div>
+            <div class="p-4 rounded-lg text-center flex-grow min-w-[140px]" style="background-color: rgba(106, 115, 125, 0.15);">
+                <div class="text-3xl font-bold" style="color: var(--vscode-text-secondary);">${notStarted}</div>
+                <div class="text-sm" style="color: var(--vscode-text-secondary); opacity: 0.8;">Not Started</div>
+            </div>
+        `;
+    }
+
+    function showDetailedSummary(section) {
+        const modal = document.getElementById('detailedSummaryModal');
+        const title = document.getElementById('detailedSummaryTitle');
+        const content = document.getElementById('detailedSummaryContent');
+
+        title.textContent = `Tasks for: ${section.title}`;
+        content.innerHTML = ''; // Clear previous content
+
+        // Dynamically create a list of tasks for the modal
+        const taskList = document.createElement('ul');
+        taskList.className = 'task-list-modal'; // Apply specific modal list styling
+
+        section.tasks.forEach(task => {
+            const taskElement = document.createElement('li');
+            taskElement.innerHTML = `<span class="icon">${task.statusIcon}</span><span>${task.description}</span>`;
+            taskList.appendChild(taskElement);
+        });
+        content.appendChild(taskList);
+
+
+        modal.classList.remove('hidden'); // Remove 'hidden' class to make it block, and start opacity transition
+        setTimeout(() => {
+            modal.style.opacity = '1'; // Explicitly set opacity for transition
+        }, 10); 
+    }
+
+    function closeDetailedSummary() {
+        const modal = document.getElementById('detailedSummaryModal');
+        modal.style.opacity = '0'; // Start fading out
+
+        // After the transition completes, add the 'hidden' class to remove it from flow
+        modal.addEventListener('transitionend', function handler() {
+            modal.classList.add('hidden');
+            modal.removeEventListener('transitionend', handler); // Remove the event listener after one use
+        });
+    }
+</script>
+</body>
+</html>

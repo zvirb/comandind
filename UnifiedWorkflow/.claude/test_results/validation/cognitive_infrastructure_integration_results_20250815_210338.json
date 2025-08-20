@@ -1,0 +1,155 @@
+{
+  "timestamp": "2025-08-15T21:03:37.023305",
+  "test_suite": "cognitive_infrastructure_integration",
+  "version": "1.0.0",
+  "tests": {
+    "main_api_integration": {
+      "name": "main_api_integration",
+      "status": "passed",
+      "details": {
+        "basic_health": {
+          "status": "ok",
+          "redis_connection": "ok"
+        },
+        "detailed_health": {
+          "timestamp": "2025-08-15T11:03:37.067154",
+          "status": "ok",
+          "components": {
+            "redis": {
+              "status": "ok",
+              "response_time_ms": 0.49
+            },
+            "database": {
+              "status": "ok",
+              "response_time_ms": 3.16
+            },
+            "celery": {
+              "status": "ok",
+              "active_workers": 1,
+              "response_time_ms": 1009.24
+            }
+          },
+          "performance": {
+            "cpu_percent": 10.1,
+            "memory_percent": 18.5,
+            "disk_percent": 2.3
+          }
+        },
+        "infrastructure_status": {
+          "database": true,
+          "redis": true,
+          "celery": true
+        }
+      },
+      "message": "Main API integration: Infrastructure healthy"
+    },
+    "database_integration": {
+      "name": "database_integration",
+      "status": "failed",
+      "details": {},
+      "error": "[Errno -3] Temporary failure in name resolution",
+      "message": "Database integration failed: [Errno -3] Temporary failure in name resolution"
+    },
+    "redis_integration": {
+      "name": "redis_integration",
+      "status": "failed",
+      "details": {},
+      "error": "Error 111 connecting to localhost:6379. 111.",
+      "message": "Redis integration failed: Error 111 connecting to localhost:6379. 111."
+    },
+    "qdrant_integration": {
+      "name": "qdrant_integration",
+      "status": "failed",
+      "details": {},
+      "error": "Cannot connect to host qdrant:6333 ssl:False [Temporary failure in name resolution]",
+      "message": "Qdrant integration failed: Cannot connect to host qdrant:6333 ssl:False [Temporary failure in name resolution]"
+    },
+    "api_gateway_routing": {
+      "name": "api_gateway_routing",
+      "status": "passed",
+      "details": {
+        "services": {
+          "coordination-service": {
+            "route_configured": true,
+            "status_code": 404,
+            "routable": false
+          },
+          "hybrid-memory-service": {
+            "route_configured": true,
+            "status_code": 404,
+            "routable": false
+          },
+          "learning-service": {
+            "route_configured": true,
+            "status_code": 404,
+            "routable": false
+          },
+          "perception-service": {
+            "route_configured": true,
+            "status_code": 404,
+            "routable": false
+          },
+          "reasoning-service": {
+            "route_configured": true,
+            "status_code": 404,
+            "routable": false
+          },
+          "infrastructure-recovery-service": {
+            "route_configured": true,
+            "status_code": 404,
+            "routable": false
+          }
+        },
+        "routes_configured": "6/6"
+      },
+      "message": "API Gateway routing: 6/6 services configured"
+    },
+    "prometheus_monitoring": {
+      "name": "prometheus_monitoring",
+      "status": "passed",
+      "details": {
+        "cognitive_targets": {
+          "coordination-service": {
+            "health": "down",
+            "last_scrape": "2025-08-15T11:03:15.115270233Z",
+            "scrape_url": "http://coordination-service:8001/metrics"
+          },
+          "hybrid-memory-service": {
+            "health": "down",
+            "last_scrape": "2025-08-15T11:03:20.756797025Z",
+            "scrape_url": "http://hybrid-memory-service:8002/metrics"
+          },
+          "infrastructure-recovery-service": {
+            "health": "down",
+            "last_scrape": "2025-08-15T11:03:21.752327281Z",
+            "scrape_url": "http://infrastructure-recovery-service:8010/metrics"
+          },
+          "learning-service": {
+            "health": "down",
+            "last_scrape": "2025-08-15T11:03:31.574974903Z",
+            "scrape_url": "http://learning-service:8003/metrics"
+          },
+          "perception-service": {
+            "health": "down",
+            "last_scrape": "2025-08-15T11:03:09.031522397Z",
+            "scrape_url": "http://perception-service:8004/metrics"
+          },
+          "reasoning-service": {
+            "health": "down",
+            "last_scrape": "2025-08-15T11:03:28.076565023Z",
+            "scrape_url": "http://reasoning-service:8005/metrics"
+          }
+        },
+        "targets_configured": 6,
+        "expected_services": 6
+      },
+      "message": "Prometheus monitoring: 6/6 services configured"
+    }
+  },
+  "summary": {
+    "total_tests": 6,
+    "passed": 3,
+    "failed": 3,
+    "warnings": 0
+  }
+}

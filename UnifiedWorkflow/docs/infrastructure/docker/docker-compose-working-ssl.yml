@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Custom Caddy with Let's Encrypt DNS plugins
+  caddy_letsencrypt:
+    build:
+      context: .
+      dockerfile: docker/caddy_reverse_proxy/Dockerfile-letsencrypt
+    container_name: caddy_letsencrypt
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443" 
+      - "2019:2019"  # Admin API
+    volumes:
+      - ./config/caddy/Caddyfile-letsencrypt-test:/etc/caddy/Caddyfile:ro
+      - ./test_html:/usr/share/nginx/html:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./logs/caddy:/var/log/caddy
+    environment:
+      - DOMAIN=${DOMAIN:-aiwfe.com}
+      - DNS_PROVIDER=${DNS_PROVIDER:-cloudflare}
+      - DNS_API_TOKEN=${DNS_API_TOKEN}
+      - ACME_EMAIL=${ACME_EMAIL:-markuszvirbulis@gmail.com}
+    networks:
+      - ssl_test_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2019/config/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # PostgreSQL for authentication testing
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_ssl_test
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-ai_workflow_engine}
+      - POSTGRES_USER=${POSTGRES_USER:-lwe-admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ssl_test_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lwe-admin}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis for session management
+  redis:
+    image: redis:7-alpine
+    container_name: redis_ssl_test
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - ssl_test_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  ssl_test_network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data:
+  redis_data:

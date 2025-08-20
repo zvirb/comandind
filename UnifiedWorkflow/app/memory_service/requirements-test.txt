@@ -1,0 +1,54 @@
+# Testing dependencies for Hybrid Memory Service
+# Comprehensive test automation framework
+
+# Core testing framework
+pytest==8.4.1
+pytest-asyncio==1.1.0
+pytest-cov==6.2.1
+pytest-mock==3.15.0
+pytest-timeout==2.5.0
+pytest-benchmark==5.1.0
+pytest-xdist==4.0.0  # Parallel test execution
+pytest-html==4.2.0  # HTML test reports
+
+# HTTP testing
+httpx==0.28.1
+pytest-httpx==1.1.0
+
+# Database testing
+pytest-postgresql==6.2.0
+pytest-redis==3.3.1
+alembic==1.16.4
+
+# Async testing utilities
+asyncio-throttle==1.0.2
+pytest-asyncio-cooperative==0.36.0
+
+# Mock and factory utilities
+factory-boy==3.4.1
+faker==38.3.0
+responses==0.26.0
+aioresponses==0.7.8
+
+# Performance and load testing
+locust==2.34.0
+memory-profiler==0.65.0
+
+# Security testing
+bandit==1.7.12
+safety==3.3.1
+
+# Code quality and formatting
+black==25.3.0
+isort==5.13.2
+flake8==8.0.0
+mypy==1.14.1
+pre-commit==4.0.1
+
+# Test data and utilities
+pillow==11.1.0  # For test image generation
+numpy==2.3.2
+pydantic-factories==1.19.3
+
+# Monitoring and metrics testing
+prometheus-client==0.22.1

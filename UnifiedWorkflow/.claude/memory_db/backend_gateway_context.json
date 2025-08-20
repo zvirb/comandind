@@ -1,0 +1,13 @@
+{
+  "package_id": "backend_gateway_context",
+  "package_type": "migrated-context",
+  "content": "{\n    \"package_type\": \"Backend Gateway Context\",\n    \"token_limit\": 3500,\n    \"package_version\": \"1.0\",\n    \"compression_strategy\": \"Technical Precision Preservation\",\n    \"core_components\": {\n        \"pythonpath_config\": {\n            \"primary_resolution_strategy\": \"Modular container-based import resolution\",\n            \"critical_paths\": [\"/app\", \"/app/modules\", \"/app/services\"],\n            \"import_validation_rules\": [\n                \"Enforce absolute imports\",\n                \"Prevent circular dependencies\",\n                \"Validate module boundaries\"\n            ]\n        },\n        \"api_evidence_collection\": {\n            \"middleware_pattern\": \"Decorator-based tracing\",\n            \"logging_strategy\": \"Contextual request/response metadata\",\n            \"validation_points\": [\n                \"Request structure integrity\",\n                \"Authentication token verification\",\n                \"Response schema compliance\"\n            ]\n        },\n        \"contract_validation\": {\n            \"validation_layers\": [\n                \"Schema validation\",\n                \"Permission boundary checks\",\n                \"Data transformation integrity\"\n            ],\n            \"error_handling_strategy\": \"Standardized error response format\"\n        }\n    },\n    \"implementation_guidance\": {\n        \"key_focus_areas\": [\n            \"Modular import resolution\",\n            \"Evidence collection implementation\",\n            \"Contract validation middleware\"\n        ],\n        \"recommended_tools\": [\n            \"Python import system enhancements\",\n            \"Decorator-based tracing\",\n            \"Standardized error handling\"\n        ]\n    }\n}\n",
+  "tokens": 141,
+  "created_at": "2025-08-18T15:14:25.290562",
+  "last_accessed": "2025-08-18T15:14:25.290575",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

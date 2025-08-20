@@ -1,0 +1,20 @@
+services:
+  redis-mcp:
+    image: redis:7-alpine
+    container_name: redis-mcp
+    ports:
+      - "6380:6379"  # Use different port to avoid conflicts
+    restart: no  # Only run when explicitly started
+    command: redis-server --requirepass simple_mcp_password --maxmemory 256mb --maxmemory-policy allkeys-lru
+    environment:
+      - REDIS_PASSWORD=simple_mcp_password
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "simple_mcp_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - redis_mcp_data:/data
+
+volumes:
+  redis_mcp_data:

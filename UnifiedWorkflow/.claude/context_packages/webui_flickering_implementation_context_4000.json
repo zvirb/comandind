@@ -1,0 +1,187 @@
+{
+  "title": "WebUI Flickering Implementation Context Package",
+  "context_type": "implementation_technical",
+  "token_limit": 4000,
+  "priority": "critical",
+  "generated": "2025-08-18T22:05:00Z",
+  "target_specialists": ["ui-regression-debugger", "webui-architect", "frictionless-ux-architect"],
+  
+  "critical_polling_sources": {
+    "primary_culprits": [
+      {
+        "file": "/app/webui-next/src/context/AuthContext.jsx",
+        "intervals": [
+          "Line 508: setInterval(checkAuthStatus, 600000) // 10 minutes",
+          "Line 124-131: Health check throttling 30s minimum",
+          "Line 308-310: Auth status throttling 5s forced, 5m regular"
+        ],
+        "impact": "Authentication state changes trigger UI updates"
+      },
+      {
+        "file": "/app/webui-next/src/components/ServiceStatusIndicator.jsx", 
+        "intervals": [
+          "Line 108: setInterval(checkAllServices, 30000) // 30 seconds"
+        ],
+        "impact": "Service status changes affect component rendering"
+      },
+      {
+        "file": "/app/webui-next/src/components/PerformanceDashboard.jsx",
+        "intervals": [
+          "Line 55: setInterval(collectMetrics, 2000) // 2 seconds when open"
+        ],
+        "impact": "High-frequency metrics updates causing visual instability"
+      }
+    ]
+  },
+
+  "proven_solution_patterns": {
+    "operation_locks": {
+      "implementation": "const [operationLocks, setOperationLocks] = useState({ polling: false, auth: false, metrics: false })",
+      "usage": "Prevent concurrent polling operations across components",
+      "location": "AuthContext.jsx lines 38-42 (existing pattern to extend)"
+    },
+    "request_deduplication": {
+      "implementation": "const activeRequests = useRef(new Map())",
+      "usage": "Prevent duplicate API calls from multiple components",
+      "location": "AuthContext.jsx lines 45-83 (existing pattern to replicate)"
+    },
+    "circuit_breaker": {
+      "implementation": "circuitBreaker: { failureCount: 0, isOpen: false, nextRetryTime: null }",
+      "usage": "5-failure threshold with exponential backoff (max 64s)",
+      "location": "AuthContext.jsx lines 52-56 (existing pattern to extend)"
+    },
+    "centralized_polling_coordinator": {
+      "requirement": "Create shared polling manager to coordinate all intervals",
+      "implementation": "useSharedPolling hook with centralized state management",
+      "prevents": "Multiple overlapping setInterval calls causing flicker"
+    }
+  },
+
+  "specific_code_modifications": {
+    "create_polling_coordinator": {
+      "file": "/app/webui-next/src/utils/pollingCoordinator.js",
+      "purpose": "Centralized interval management to prevent overlap",
+      "structure": {
+        "intervals": "Map of component-specific polling configurations",
+        "activePolls": "Set of currently running polls",
+        "locks": "Operation locks to prevent concurrent execution",
+        "register": "Function to register component polling needs",
+        "unregister": "Function to cleanup component polling"
+      }
+    },
+    "modify_auth_context": {
+      "file": "/app/webui-next/src/context/AuthContext.jsx", 
+      "changes": [
+        "Line 495-511: Replace setInterval with pollingCoordinator.register",
+        "Add polling lock check before state updates",
+        "Extend existing operation locks to include 'polling'",
+        "Use existing circuit breaker pattern for polling protection"
+      ]
+    },
+    "modify_service_status": {
+      "file": "/app/webui-next/src/components/ServiceStatusIndicator.jsx",
+      "changes": [
+        "Line 104-111: Replace setInterval with pollingCoordinator.register",
+        "Add check for existing auth health checks before starting",
+        "Implement request deduplication pattern from AuthContext",
+        "Add operation lock to prevent concurrent service checks"
+      ]
+    },
+    "modify_performance_dashboard": {
+      "file": "/app/webui-next/src/components/PerformanceDashboard.jsx",
+      "changes": [
+        "Line 54-62: Replace setInterval with pollingCoordinator.register",
+        "Only poll when dashboard is open AND no other active polling",
+        "Reduce frequency from 2s to 5s when other components polling",
+        "Add polling pause when circuit breaker is open"
+      ]
+    }
+  },
+
+  "state_update_optimization": {
+    "minimize_useeffect_dependencies": {
+      "principle": "Remove cascading dependencies that trigger useEffect loops",
+      "current_issue": "AuthContext line 511 has dependencies causing cascades",
+      "solution": "Use empty dependency array [] with internal state checks"
+    },
+    "batched_state_updates": {
+      "principle": "Group related state updates to prevent multiple renders",
+      "implementation": "React.unstable_batchedUpdates for multiple setAuthState calls",
+      "locations": ["AuthContext.jsx lines 166-171", "ServiceStatusIndicator.jsx lines 75-97"]
+    },
+    "component_isolation": {
+      "principle": "Prevent component state changes from affecting others",
+      "implementation": "Local state before global state propagation",
+      "prevents": "Service status changes triggering auth re-checks"
+    }
+  },
+
+  "implementation_sequence": {
+    "phase_1_coordinator": [
+      "Create /app/webui-next/src/utils/pollingCoordinator.js",
+      "Implement centralized interval management with operation locks",
+      "Add registration/unregistration methods for components",
+      "Include circuit breaker integration for failed polling"
+    ],
+    "phase_2_auth_integration": [
+      "Modify AuthContext.jsx to use pollingCoordinator.register",
+      "Extend existing operation locks to include polling coordination",
+      "Remove direct setInterval calls and dependency arrays",
+      "Test authentication flow integrity"
+    ],
+    "phase_3_component_migration": [
+      "Update ServiceStatusIndicator.jsx to use coordinator",
+      "Update PerformanceDashboard.jsx to use coordinator", 
+      "Implement frequency reduction logic when multiple components active",
+      "Add polling pause during circuit breaker activation"
+    ],
+    "phase_4_optimization": [
+      "Implement batched state updates for reduced renders",
+      "Add component isolation patterns to prevent cross-contamination",
+      "Apply minimal useEffect dependency patterns",
+      "Validate no new polling conflicts introduced"
+    ]
+  },
+
+  "validation_requirements": {
+    "flicker_elimination": "Zero UI flickering during normal operation",
+    "auth_preservation": "100% login success rate maintained",
+    "performance_impact": "No increase in API call frequency",
+    "component_independence": "Service status changes don't trigger auth re-checks",
+    "circuit_breaker_integration": "Polling respects existing failure protection"
+  },
+
+  "rollback_conditions": {
+    "immediate_triggers": [
+      "Authentication failures increase above baseline",
+      "New visual regression issues introduced", 
+      "API rate limiting errors (429) reoccur",
+      "User login success rate drops below 95%",
+      "Component polling conflicts cause infinite loops"
+    ],
+    "rollback_files": [
+      "AuthContext.jsx (preserve existing patterns)",
+      "ServiceStatusIndicator.jsx (revert to original intervals)",
+      "PerformanceDashboard.jsx (revert to original intervals)"
+    ]
+  },
+
+  "historical_success_integration": {
+    "documents_calendar_fix": "Race condition elimination in PrivateRoute (100% success)",
+    "authentication_loop_resolution": "Operation locks and request deduplication",
+    "frontend_auth_integration": "Grace period handling and sync state management",
+    "lessons_applied": [
+      "Operation locks prevent concurrent operations",
+      "Request deduplication eliminates race conditions",
+      "Circuit breakers prevent cascading failures",
+      "Minimal dependencies prevent useEffect loops"
+    ]
+  },
+
+  "coordination_notes": {
+    "backend_coordination": "Coordinate with performance-profiler for API response optimization",
+    "quality_coordination": "Coordinate with user-experience-auditor for validation testing",
+    "security_preservation": "Do not modify core authentication logic without security consultation",
+    "evidence_collection": "Capture before/after screenshots and performance metrics"
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "success_agent_combo_29c9c2d8": {
+    "pattern_id": "success_agent_combo_29c9c2d8",
+    "pattern_type": "success",
+    "pattern_description": "Successful agent combination: codebase-research-analyst, backend-gateway-expert",
+    "confidence_score": 0.75,
+    "frequency": 2,
+    "contexts": [
+      "backend"
+    ],
+    "evidence": [
+      "Orchestration learning_test_1 completed successfully"
+    ],
+    "recommendations": [
+      "Prioritize agent combination codebase-research-analyst, backend-gateway-expert for similar tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.452544",
+    "last_validated": "2025-08-14T22:26:08.089277"
+  },
+  "success_affinity_backend_codebase-research-analyst": {
+    "pattern_id": "success_affinity_backend_codebase-research-analyst",
+    "pattern_type": "success",
+    "pattern_description": "Agent codebase-research-analyst shows high success in backend domain",
+    "confidence_score": 0.63,
+    "frequency": 2,
+    "contexts": [
+      "backend"
+    ],
+    "evidence": [
+      "Successful completion in orchestration learning_test_1"
+    ],
+    "recommendations": [
+      "Prioritize codebase-research-analyst for backend tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.452562",
+    "last_validated": "2025-08-14T22:24:16.452563"
+  },
+  "success_affinity_backend_backend-gateway-expert": {
+    "pattern_id": "success_affinity_backend_backend-gateway-expert",
+    "pattern_type": "success",
+    "pattern_description": "Agent backend-gateway-expert shows high success in backend domain",
+    "confidence_score": 0.63,
+    "frequency": 2,
+    "contexts": [
+      "backend"
+    ],
+    "evidence": [
+      "Successful completion in orchestration learning_test_1"
+    ],
+    "recommendations": [
+      "Prioritize backend-gateway-expert for backend tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.452572",
+    "last_validated": "2025-08-14T22:24:16.452573"
+  },
+  "failure_agent_combo_39d87a09": {
+    "pattern_id": "failure_agent_combo_39d87a09",
+    "pattern_type": "failure",
+    "pattern_description": "Problematic agent combination: webui-architect, backend-gateway-expert, performance-profiler",
+    "confidence_score": 0.9,
+    "frequency": 2,
+    "contexts": [
+      "frontend"
+    ],
+    "evidence": [
+      "Orchestration learning_test_2 failed or performed poorly"
+    ],
+    "recommendations": [
+      "Avoid agent combination webui-architect, backend-gateway-expert, performance-profiler for similar tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.454388",
+    "last_validated": "2025-08-14T22:24:16.454391"
+  },
+  "bottleneck_resource_contention": {
+    "pattern_id": "bottleneck_resource_contention",
+    "pattern_type": "bottleneck",
+    "pattern_description": "Recurring bottleneck: resource contention",
+    "confidence_score": 0.75,
+    "frequency": 2,
+    "contexts": [
+      "frontend"
+    ],
+    "evidence": [
+      "Bottleneck occurred in learning_test_2"
+    ],
+    "recommendations": [
+      "Implement proactive measures to prevent resource contention"
+    ],
+    "created_at": "2025-08-14T22:24:16.454409",
+    "last_validated": "2025-08-14T22:24:16.454410"
+  },
+  "bottleneck_communication_overhead": {
+    "pattern_id": "bottleneck_communication_overhead",
+    "pattern_type": "bottleneck",
+    "pattern_description": "Recurring bottleneck: communication overhead",
+    "confidence_score": 0.7,
+    "frequency": 1,
+    "contexts": [
+      "frontend"
+    ],
+    "evidence": [
+      "Bottleneck occurred in learning_test_2"
+    ],
+    "recommendations": [
+      "Implement proactive measures to prevent communication overhead"
+    ],
+    "created_at": "2025-08-14T22:24:16.454418",
+    "last_validated": "2025-08-14T22:24:16.454419"
+  },
+  "optimization_slow_completion_frontend": {
+    "pattern_id": "optimization_slow_completion_frontend",
+    "pattern_type": "optimization",
+    "pattern_description": "Slow completion times in frontend domain",
+    "confidence_score": 0.6,
+    "frequency": 2,
+    "contexts": [
+      "frontend"
+    ],
+    "evidence": [
+      "Completion time 520s vs estimated 300s"
+    ],
+    "recommendations": [
+      "Consider parallel execution or agent optimization"
+    ],
+    "created_at": "2025-08-14T22:24:16.454432",
+    "last_validated": "2025-08-14T22:24:16.454433"
+  },
+  "success_agent_combo_03cae61e": {
+    "pattern_id": "success_agent_combo_03cae61e",
+    "pattern_type": "success",
+    "pattern_description": "Successful agent combination: security-validator, performance-profiler",
+    "confidence_score": 0.7,
+    "frequency": 1,
+    "contexts": [
+      "security"
+    ],
+    "evidence": [
+      "Orchestration learning_test_3 completed successfully"
+    ],
+    "recommendations": [
+      "Prioritize agent combination security-validator, performance-profiler for similar tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.456488",
+    "last_validated": "2025-08-14T22:24:16.456491"
+  },
+  "success_affinity_security_security-validator": {
+    "pattern_id": "success_affinity_security_security-validator",
+    "pattern_type": "success",
+    "pattern_description": "Agent security-validator shows high success in security domain",
+    "confidence_score": 0.6,
+    "frequency": 1,
+    "contexts": [
+      "security"
+    ],
+    "evidence": [
+      "Successful completion in orchestration learning_test_3"
+    ],
+    "recommendations": [
+      "Prioritize security-validator for security tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.456504",
+    "last_validated": "2025-08-14T22:24:16.456505"
+  },
+  "success_affinity_security_performance-profiler": {
+    "pattern_id": "success_affinity_security_performance-profiler",
+    "pattern_type": "success",
+    "pattern_description": "Agent performance-profiler shows high success in security domain",
+    "confidence_score": 0.6,
+    "frequency": 1,
+    "contexts": [
+      "security"
+    ],
+    "evidence": [
+      "Successful completion in orchestration learning_test_3"
+    ],
+    "recommendations": [
+      "Prioritize performance-profiler for security tasks"
+    ],
+    "created_at": "2025-08-14T22:24:16.456511",
+    "last_validated": "2025-08-14T22:24:16.456512"
+  },
+  "failure_agent_combo_6622b5bc": {
+    "pattern_id": "failure_agent_combo_6622b5bc",
+    "pattern_type": "failure",
+    "pattern_description": "Problematic agent combination: backend-gateway-expert, performance-profiler",
+    "confidence_score": 0.8,
+    "frequency": 1,
+    "contexts": [
+      "backend_optimization"
+    ],
+    "evidence": [
+      "Orchestration integration_test_001 failed or performed poorly"
+    ],
+    "recommendations": [
+      "Avoid agent combination backend-gateway-expert, performance-profiler for similar tasks"
+    ],
+    "created_at": "2025-08-14T22:24:17.557305",
+    "last_validated": "2025-08-14T22:24:17.557306"
+  },
+  "failure_resource_cpu_overuse": {
+    "pattern_id": "failure_resource_cpu_overuse",
+    "pattern_type": "failure",
+    "pattern_description": "High cpu utilization leads to poor performance",
+    "confidence_score": 0.8,
+    "frequency": 1,
+    "contexts": [
+      "frontend"
+    ],
+    "evidence": [
+      "Resource utilization 95.0% in test_outcome_2"
+    ],
+    "recommendations": [
+      "Implement cpu throttling or staggered execution"
+    ],
+    "created_at": "2025-08-14T22:26:08.090668",
+    "last_validated": "2025-08-14T22:26:08.090670"
+  },
+  "success_agent_combo_6622b5bc": {
+    "pattern_id": "success_agent_combo_6622b5bc",
+    "pattern_type": "success",
+    "pattern_description": "Successful agent combination: backend-gateway-expert, performance-profiler",
+    "confidence_score": 0.7,
+    "frequency": 1,
+    "contexts": [
+      "backend_optimization"
+    ],
+    "evidence": [
+      "Orchestration integration_test_001 completed successfully"
+    ],
+    "recommendations": [
+      "Prioritize agent combination backend-gateway-expert, performance-profiler for similar tasks"
+    ],
+    "created_at": "2025-08-14T22:26:08.096671",
+    "last_validated": "2025-08-14T22:26:08.096672"
+  },
+  "success_affinity_backend_optimization_backend-gateway-expert": {
+    "pattern_id": "success_affinity_backend_optimization_backend-gateway-expert",
+    "pattern_type": "success",
+    "pattern_description": "Agent backend-gateway-expert shows high success in backend_optimization domain",
+    "confidence_score": 0.6,
+    "frequency": 1,
+    "contexts": [
+      "backend_optimization"
+    ],
+    "evidence": [
+      "Successful completion in orchestration integration_test_001"
+    ],
+    "recommendations": [
+      "Prioritize backend-gateway-expert for backend_optimization tasks"
+    ],
+    "created_at": "2025-08-14T22:26:08.096676",
+    "last_validated": "2025-08-14T22:26:08.096677"
+  },
+  "success_affinity_backend_optimization_performance-profiler": {
+    "pattern_id": "success_affinity_backend_optimization_performance-profiler",
+    "pattern_type": "success",
+    "pattern_description": "Agent performance-profiler shows high success in backend_optimization domain",
+    "confidence_score": 0.6,
+    "frequency": 1,
+    "contexts": [
+      "backend_optimization"
+    ],
+    "evidence": [
+      "Successful completion in orchestration integration_test_001"
+    ],
+    "recommendations": [
+      "Prioritize performance-profiler for backend_optimization tasks"
+    ],
+    "created_at": "2025-08-14T22:26:08.096679",
+    "last_validated": "2025-08-14T22:26:08.096680"
+  }
+}

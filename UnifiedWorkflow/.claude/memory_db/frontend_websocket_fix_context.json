@@ -1,0 +1,13 @@
+{
+  "package_id": "frontend_websocket_fix_context",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"frontend_implementation\",\n  \"priority\": \"critical\",\n  \"scope\": \"websocket_url_fix\",\n  \"target_specialists\": [\"webui-architect\", \"ui-regression-debugger\"],\n  \"coordination_metadata\": {\n    \"phase\": \"5_parallel_implementation\",\n    \"dependencies\": [\"backend_validation\"],\n    \"success_trigger\": \"backend_validation_complete\"\n  },\n  \"implementation_context\": {\n    \"issue\": \"WebSocket URL syntax error preventing chat functionality\",\n    \"root_cause\": \"Extra colon in WebSocket URL construction in Chat.jsx\",\n    \"impact\": \"Chat messages fail to send/receive\",\n    \"file_target\": \"/home/marku/ai_workflow_engine/app/webui-next/src/pages/Chat.jsx\",\n    \"fix_type\": \"syntax_correction\"\n  },\n  \"technical_specifications\": {\n    \"current_issue\": \"Malformed WebSocket URL with redundant colon\",\n    \"fix_approach\": \"Remove extra colon from URL construction\",\n    \"validation_method\": \"Browser WebSocket connection test\",\n    \"testing_scope\": \"Chat message send/receive functionality\"\n  },\n  \"evidence_requirements\": {\n    \"mandatory_evidence\": [\n      \"Browser console showing successful WebSocket connection\",\n      \"Chat message send confirmation in UI\",\n      \"Chat message receive confirmation in UI\",\n      \"Network tab showing proper WebSocket handshake\"\n    ],\n    \"validation_commands\": [\n      \"Open browser developer tools\",\n      \"Monitor Network \u2192 WS tab\",\n      \"Send test chat message\",\n      \"Verify message appears in chat interface\",\n      \"Confirm no console errors\"\n    ]\n  },\n  \"tools_required\": [\n    \"Read (examine current Chat.jsx)\",\n    \"Edit (fix WebSocket URL syntax)\",\n    \"Bash (run development server for testing)\",\n    \"Browser tools (validate WebSocket connection)\"\n  ],\n  \"success_criteria\": {\n    \"functional\": \"Chat messages successfully send and receive\",\n    \"technical\": \"Clean WebSocket connection in network logs\",\n    \"user_experience\": \"No error messages in chat interface\",\n    \"performance\": \"No degradation in message latency\"\n  }\n}",
+  "tokens": 241,
+  "created_at": "2025-08-18T15:14:25.816106",
+  "last_accessed": "2025-08-18T15:14:25.816119",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

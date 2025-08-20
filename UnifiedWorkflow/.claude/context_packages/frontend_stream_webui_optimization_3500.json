@@ -1,0 +1,109 @@
+{
+  "title": "Frontend Stream: WebUI Flickering Resolution Package",
+  "target_agents": ["ui-regression-debugger", "webui-architect", "frictionless-ux-architect"],
+  "context_type": "frontend_optimization",
+  "token_limit": 3500,
+  "priority": "critical",
+  "generated": "2025-08-18T21:49:00Z",
+  
+  "mission_objective": "Eliminate WebUI flickering through React component optimization and polling interval consolidation using proven historical patterns",
+  
+  "technical_context": {
+    "current_issue": "WebUI shows flickering pattern: data visible → loading state → clear UI → fetch complete → data returns",
+    "root_cause_hypothesis": "Multiple concurrent polling intervals causing overlapping state updates",
+    "primary_components": [
+      "/app/webui-next/src/context/AuthContext.jsx",
+      "/app/webui-next/src/components/PrivateRoute.jsx", 
+      "/app/webui-next/src/components/ServiceStatusIndicator.jsx",
+      "/app/webui-next/src/components/PerformanceDashboard.jsx"
+    ]
+  },
+  
+  "historical_success_patterns": {
+    "proven_solution": "Operation locks + request deduplication + circuit breakers (Documents/Calendar fix)",
+    "effective_code_patterns": {
+      "operation_locks": "const [operationLocks, setOperationLocks] = useState({ polling: false, auth: false })",
+      "request_deduplication": "const activeRequests = useRef(new Map()); // Prevent duplicate requests",
+      "circuit_breaker": "failureCount >= 5 → exponential backoff with 30s max",
+      "minimal_dependencies": "useEffect(() => {}, [location.pathname]) // Prevent cascading loops"
+    }
+  },
+  
+  "identified_polling_sources": [
+    {
+      "component": "AuthContext.jsx",
+      "interval": "setInterval 30s health checks + 10min auth validation",
+      "impact": "Authentication state changes trigger UI updates"
+    },
+    {
+      "component": "ServiceStatusIndicator.jsx", 
+      "interval": "setInterval 30s service status checks",
+      "impact": "Service status changes may affect component rendering"
+    },
+    {
+      "component": "PerformanceDashboard.jsx",
+      "interval": "setInterval 2s performance metrics collection", 
+      "impact": "High-frequency updates potentially causing visual instability"
+    },
+    {
+      "component": "WebGLPerformanceIsolationMonitor.jsx",
+      "interval": "Real-time WebGL monitoring intervals",
+      "impact": "Continuous monitoring may interfere with React state"
+    }
+  ],
+  
+  "implementation_strategy": {
+    "phase_1_audit": [
+      "Map all setInterval and polling operations in WebUI Next",
+      "Identify state update patterns causing visual flicker", 
+      "Document current authentication flow and timing",
+      "Reproduce flickering issue with specific user actions"
+    ],
+    "phase_2_consolidation": [
+      "Implement centralized polling coordinator to prevent overlap",
+      "Apply operation lock patterns from successful AuthContext fixes",
+      "Add request deduplication for all API calls",
+      "Implement circuit breaker protection for high-frequency requests"
+    ],
+    "phase_3_optimization": [
+      "Minimize useEffect dependencies to prevent cascading updates",
+      "Consolidate state management to reduce concurrent updates",
+      "Apply proven patterns from PrivateRoute optimization",
+      "Add exponential backoff for failed operations"
+    ]
+  },
+  
+  "validation_requirements": {
+    "browser_automation": "Use Playwright for flicker detection and user experience validation",
+    "performance_testing": "Monitor for increased API call frequency or response degradation",
+    "authentication_integrity": "Ensure 100% login success rate maintained",
+    "cross_browser_validation": "Test across Chrome, Firefox, Safari for consistent behavior"
+  },
+  
+  "proven_debugging_methodology": [
+    "Start with React DevTools to identify unnecessary re-renders",
+    "Use browser Performance tab to track state update cascades", 
+    "Apply network throttling to simulate production conditions",
+    "Implement console logging for polling operation coordination"
+  ],
+  
+  "rollback_safety": {
+    "fallback_components": "Maintain SimplifiedPrivateRoute.jsx and SimplifiedAuthContext.jsx as backups",
+    "rollback_triggers": ["Authentication failures increase", "New visual regressions", "Performance degradation"],
+    "preservation_requirements": "Keep operation lock patterns and circuit breaker mechanisms active"
+  },
+  
+  "coordination_boundaries": [
+    "Frontend stream owns React component optimization",
+    "Coordinate with backend stream for API response timing",
+    "Coordinate with quality stream for user experience validation",
+    "Do not modify core authentication logic without backend consultation"
+  ],
+  
+  "success_criteria": [
+    "Zero UI flickering during normal operation",
+    "Smooth loading states without visual interruption", 
+    "Maintained authentication reliability",
+    "No performance regression in component render times"
+  ]
+}

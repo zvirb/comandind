@@ -1,0 +1,199 @@
+{
+  "timestamp": "2025-08-18T23:38:54.609019",
+  "profiler_version": "1.0",
+  "target_metrics": {
+    "auth_validation_ms": 40,
+    "login_response_ms": 150,
+    "cache_hit_rate_percent": 80
+  },
+  "analysis_phases": {
+    "login_profiling": {
+      "endpoint": "/api/v1/auth/jwt/login",
+      "attempts": [
+        {
+          "attempt": 1,
+          "credentials": "admin@aiwfe.com",
+          "response_time_ms": 58.21,
+          "status_code": 401,
+          "success": false,
+          "error": "{\"success\":false,\"error\":{\"code\":\"ERR_401_5E593288\",\"message\":\"Incorrect email or password\",\"category\":\"authentication\",\"severity\":\"medium\",\"details\":null,\"suggestions\":[\"Check authentication credenti"
+        },
+        {
+          "attempt": 2,
+          "credentials": "test@aiwfe.com",
+          "response_time_ms": 36.75,
+          "status_code": 401,
+          "success": false,
+          "error": "{\"success\":false,\"error\":{\"code\":\"ERR_401_5CF57D00\",\"message\":\"Incorrect email or password\",\"category\":\"authentication\",\"severity\":\"medium\",\"details\":null,\"suggestions\":[\"Check authentication credenti"
+        },
+        {
+          "attempt": 3,
+          "credentials": "user@aiwfe.com",
+          "response_time_ms": 178.75,
+          "status_code": 401,
+          "success": false,
+          "error": "{\"success\":false,\"error\":{\"code\":\"ERR_401_C78D7A46\",\"message\":\"Incorrect email or password\",\"category\":\"authentication\",\"severity\":\"medium\",\"details\":null,\"suggestions\":[\"Check authentication credenti"
+        }
+      ],
+      "metrics": {
+        "overall_avg_time_ms": 91.24,
+        "min_time_ms": 36.75,
+        "max_time_ms": 178.75
+      }
+    },
+    "token_validation": {
+      "endpoints_tested": [
+        "/health",
+        "/api/v1/health",
+        "/api/v1/auth/status"
+      ],
+      "cache_analysis": {},
+      "performance_metrics": {
+        "health_check": {
+          "endpoint": "/health",
+          "avg_response_time_ms": 16.65,
+          "median_response_time_ms": 16.57,
+          "min_response_time_ms": 16.11,
+          "max_response_time_ms": 17.36,
+          "requests_tested": 20
+        },
+        "api_health": {
+          "endpoint": "/api/v1/health",
+          "avg_response_time_ms": 17.9,
+          "median_response_time_ms": 17.0,
+          "min_response_time_ms": 16.07,
+          "max_response_time_ms": 29.4,
+          "requests_tested": 20
+        },
+        "auth_status_no_token": {
+          "endpoint": "/api/v1/auth/status",
+          "avg_response_time_ms": 25.71,
+          "median_response_time_ms": 17.64,
+          "min_response_time_ms": 16.81,
+          "max_response_time_ms": 177.43,
+          "requests_tested": 20
+        }
+      }
+    },
+    "redis_cache_analysis": {
+      "redis_connectivity": {
+        "app_health_response_time_ms": 15.95,
+        "health_endpoint_accessible": true,
+        "response_indicates_healthy": true
+      },
+      "cache_performance": {},
+      "integration_health": {},
+      "authenticated_cache_test": {
+        "status": "skipped",
+        "reason": "no_valid_access_token"
+      }
+    },
+    "middleware_profiling": {
+      "baseline_performance": {},
+      "middleware_impact": {
+        "avg_no_auth_ms": 20.01,
+        "avg_with_auth_ms": 17.37,
+        "estimated_overhead_ms": -2.64,
+        "overhead_acceptable": true
+      },
+      "optimization_effectiveness": {},
+      "no_auth_required": {
+        "endpoint": "/health",
+        "requires_auth": false,
+        "avg_response_time_ms": 16.43,
+        "min_response_time_ms": 15.82,
+        "max_response_time_ms": 17.0,
+        "std_dev_ms": 0.34,
+        "requests_measured": 15
+      },
+      "api_health": {
+        "endpoint": "/api/v1/health",
+        "requires_auth": false,
+        "avg_response_time_ms": 27.05,
+        "min_response_time_ms": 16.04,
+        "max_response_time_ms": 174.28,
+        "std_dev_ms": 40.73,
+        "requests_measured": 15
+      },
+      "auth_status": {
+        "endpoint": "/api/v1/auth/status",
+        "requires_auth": true,
+        "avg_response_time_ms": 17.37,
+        "min_response_time_ms": 16.92,
+        "max_response_time_ms": 18.07,
+        "std_dev_ms": 0.31,
+        "requests_measured": 15
+      },
+      "root_endpoint": {
+        "endpoint": "/",
+        "requires_auth": false,
+        "avg_response_time_ms": 16.54,
+        "min_response_time_ms": 15.98,
+        "max_response_time_ms": 17.18,
+        "std_dev_ms": 0.39,
+        "requests_measured": 15
+      }
+    },
+    "webui_performance": {
+      "static_resource_performance": {
+        "webui_root": {
+          "endpoint": "/",
+          "response_time_ms": 17.19,
+          "status_code": 200,
+          "content_served": true,
+          "performance_good": true
+        },
+        "webui_index": {
+          "endpoint": "/index.html",
+          "response_time_ms": 18.13,
+          "status_code": 404,
+          "content_served": false,
+          "performance_good": true
+        }
+      },
+      "api_integration": {
+        "/api/v1/auth/csrf-token": {
+          "response_time_ms": 17.41,
+          "status_code": 200,
+          "api_responding": true,
+          "performance_acceptable": true
+        },
+        "/api/v1/auth/status": {
+          "response_time_ms": 17.24,
+          "status_code": 401,
+          "api_responding": true,
+          "performance_acceptable": true
+        }
+      },
+      "frontend_readiness": {}
+    }
+  },
+  "optimization_recommendations": {
+    "performance_summary": {
+      "overall_status": "acceptable",
+      "key_metrics": {
+        "login_avg_ms": 0,
+        "token_validation_avg_ms": 20.086666666666666,
+        "middleware_overhead_ms": -2.64
+      },
+      "targets_met": {
+        "login_under_150ms": false,
+        "validation_under_40ms": true,
+        "middleware_under_20ms": true
+      }
+    },
+    "optimization_opportunities": [
+      {
+        "area": "caching",
+        "issue": "Low cache effectiveness for authenticated requests",
+        "recommendation": "Increase cache TTL and implement better cache key strategies",
+        "priority": "medium"
+      }
+    ],
+    "priority_actions": [
+      "Fine-tune existing optimizations",
+      "Monitor performance metrics continuously",
+      "Consider implementing token refresh strategies"
+    ]
+  }
+}

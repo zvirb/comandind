@@ -1,0 +1,13 @@
+{
+  "package_id": "backend_validation_context",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"backend_validation\",\n  \"priority\": \"high\",\n  \"scope\": \"websocket_endpoint_health\",\n  \"target_specialists\": [\"backend-gateway-expert\", \"performance-profiler\"],\n  \"coordination_metadata\": {\n    \"phase\": \"5_parallel_implementation\", \n    \"dependencies\": [],\n    \"completion_trigger\": \"frontend_implementation_ready\"\n  },\n  \"validation_context\": {\n    \"requirement\": \"Verify WebSocket endpoint operational status\",\n    \"scope\": \"No backend changes required - infrastructure validated as operational\",\n    \"focus\": \"Endpoint health confirmation and connection monitoring\"\n  },\n  \"technical_specifications\": {\n    \"endpoint_validation\": \"WebSocket server responding correctly\",\n    \"connection_handling\": \"Proper WebSocket handshake processing\",\n    \"resource_monitoring\": \"CPU/memory usage within normal parameters\",\n    \"security_posture\": \"95/100 security score maintained\"\n  },\n  \"evidence_requirements\": {\n    \"mandatory_evidence\": [\n      \"WebSocket endpoint health check results\",\n      \"Server connection logs showing successful handshakes\", \n      \"Resource utilization metrics (CPU/memory)\",\n      \"Security validation confirmation\"\n    ],\n    \"validation_commands\": [\n      \"curl -i --no-buffer -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Key: test' -H 'Sec-WebSocket-Version: 13' http://localhost:8000/ws\",\n      \"docker logs [websocket-container] | grep -i websocket\",\n      \"docker stats --no-stream [container-name]\",\n      \"netstat -tlnp | grep 8000\"\n    ]\n  },\n  \"tools_required\": [\n    \"Bash (endpoint health checks)\",\n    \"Read (examine server logs)\", \n    \"Grep (search connection patterns)\",\n    \"Docker commands (container monitoring)\"\n  ],\n  \"success_criteria\": {\n    \"endpoint_status\": \"WebSocket endpoint responding to health checks\",\n    \"connection_stability\": \"Stable WebSocket connections established\",\n    \"performance_baseline\": \"Resource usage within expected parameters\",\n    \"security_maintained\": \"No security degradation detected\"\n  }\n}",
+  "tokens": 226,
+  "created_at": "2025-08-18T15:14:25.945473",
+  "last_accessed": "2025-08-18T15:14:25.945485",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "package_id": "service_coordination_package",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"service_coordination\",\n  \"priority\": \"HIGH\",\n  \"token_limit\": 4000,\n  \"created_at\": \"2025-08-15T21:10:00Z\",\n  \"iteration\": 5,\n  \"phase\": 4,\n  \n  \"service_dependencies\": {\n    \"tier_1_infrastructure\": [\n      \"qdrant\",\n      \"postgres\",\n      \"redis\",\n      \"ollama\"\n    ],\n    \"tier_2_cognitive\": [\n      \"reasoning_service\",\n      \"memory_service\",\n      \"coordination_service\",\n      \"reasoning_development_service\",\n      \"infrastructure_recovery_service\"\n    ],\n    \"tier_3_application\": [\n      \"main_api\",\n      \"webui\"\n    ]\n  },\n  \n  \"restoration_order\": {\n    \"phase_1\": {\n      \"services\": [\"qdrant\"],\n      \"action\": \"Fix TLS configuration\",\n      \"validation\": \"curl https://qdrant:6333/health\"\n    },\n    \"phase_2\": {\n      \"services\": [\"reasoning_service\", \"memory_service\"],\n      \"action\": \"Update QDRANT_URL and restart\",\n      \"validation\": \"Health endpoints and vector operations\"\n    },\n    \"phase_3\": {\n      \"services\": [\"coordination_service\", \"reasoning_development_service\", \"infrastructure_recovery_service\"],\n      \"action\": \"Update configurations and restart\",\n      \"validation\": \"Service health and integration tests\"\n    },\n    \"phase_4\": {\n      \"services\": [\"main_api\", \"webui\"],\n      \"action\": \"Validate authentication and UI\",\n      \"validation\": \"End-to-end user workflows\"\n    }\n  },\n  \n  \"health_check_endpoints\": {\n    \"qdrant\": \"https://qdrant:6333/health\",\n    \"reasoning_service\": \"http://reasoning_service:8000/health\",\n    \"memory_service\": \"http://memory_service:8001/health\",\n    \"coordination_service\": \"http://coordination_service:8002/health\",\n    \"reasoning_development_service\": \"http://reasoning_development_service:8003/health\",\n    \"infrastructure_recovery_service\": \"http://infrastructure_recovery_service:8004/health\",\n    \"main_api\": \"http://main_api:8080/health\",\n    \"webui\": \"http://webui:3000\"\n  },\n  \n  \"integration_tests\": {\n    \"qdrant_connectivity\": \"Test vector storage from each service\",\n    \"service_communication\": \"Verify inter-service API calls\",\n    \"authentication_flow\": \"Test unified auth through main_api\",\n    \"data_persistence\": \"Verify database operations\"\n  }\n}\n",
+  "tokens": 189,
+  "created_at": "2025-08-18T15:14:25.402439",
+  "last_accessed": "2025-08-18T15:14:25.402459",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

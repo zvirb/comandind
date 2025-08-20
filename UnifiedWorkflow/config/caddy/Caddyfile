@@ -1,0 +1,463 @@
+{
+    # This is a global options block.
+    # Enable automatic HTTPS with Let's Encrypt for production domains
+    # Keep custom certificates for localhost development
+    email admin@aiwfe.com  # Real email for Let's Encrypt
+    log {
+        output stdout
+        level DEBUG
+    }
+}
+
+# HTTP to HTTPS redirect
+:80 {
+    redir https://{host}{uri}
+}
+
+# Production domain - OAuth endpoints without mTLS
+# Replace with your actual DDNS domain (e.g., yourname.ddns.net)
+{$DOMAIN:aiwfe.com} {
+    # Enable automatic HTTPS with Let's Encrypt (no client auth for OAuth endpoints)
+
+    # OAuth endpoints - no mTLS required for external redirects
+    @oauth_endpoints path /api/v1/oauth/*
+    handle @oauth_endpoints {
+        reverse_proxy http://api:8000 {
+            health_uri /api/v1/health
+            health_interval 15s
+            health_timeout 10s
+            fail_duration 60s
+            max_fails 2
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Google API integration endpoints - no mTLS required
+    @google_endpoints path /api/v1/google/*
+    handle @google_endpoints {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # SerAPI integration endpoints - no mTLS required  
+    @search_endpoints path /api/v1/search/*
+    handle @search_endpoints {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Cognitive Services endpoints - direct routing to services
+    @coordination_endpoints path /api/v1/coordination/*
+    handle @coordination_endpoints {
+        reverse_proxy http://coordination-service:8001 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    @memory_endpoints path /api/v1/memory/*
+    handle @memory_endpoints {
+        reverse_proxy http://hybrid-memory-service:8002 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Voice Interaction Service endpoints - STT/TTS functionality
+    @voice_endpoints path /api/v1/voice/*
+    handle @voice_endpoints {
+        reverse_proxy http://voice-interaction-service:8006 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Dedicated Chat Service endpoints - WebSocket and REST chat
+    @chat_service_endpoints path /api/v1/chat-service/*
+    handle @chat_service_endpoints {
+        reverse_proxy http://chat-service:8007 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Dedicated Chat WebSocket endpoint
+    @chat_service_ws path /ws/chat-service
+    handle @chat_service_ws {
+        reverse_proxy http://chat-service:8007 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    @learning_endpoints path /api/v1/learning/*
+    handle @learning_endpoints {
+        reverse_proxy http://learning-service:8003 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    @perception_endpoints path /api/v1/perception/*
+    handle @perception_endpoints {
+        reverse_proxy http://perception-service:8004 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    @reasoning_endpoints path /api/v1/reasoning/*
+    handle @reasoning_endpoints {
+        reverse_proxy http://reasoning-service:8005 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    @infrastructure_recovery_endpoints path /api/v1/infrastructure/*
+    handle @infrastructure_recovery_endpoints {
+        reverse_proxy http://infrastructure-recovery-service:8010 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Enhanced LangGraph-Ollama Service (Blue-Green Deployment Ready)
+    # Currently routes to existing services, will be updated when enhanced service is deployed
+    @langgraph_enhanced_endpoints path /api/v1/langgraph/enhanced/*
+    handle @langgraph_enhanced_endpoints {
+        # Primary route (existing service for now)
+        reverse_proxy http://learning-service:8003 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+        # TODO: Implement blue-green routing when langgraph-enhanced-service is deployed
+        # Example future configuration:
+        # reverse_proxy http://langgraph-enhanced-service:8030 {
+        #     health_uri /health
+        #     fail_duration 30s
+        #     max_fails 3
+        # }
+        # reverse_proxy http://langgraph-enhanced-service-fallback:8031 {
+        #     health_uri /health
+        #     fail_duration 30s
+        #     max_fails 3
+        # }
+    }
+
+    # Authentication endpoints - support both /api/auth and /auth patterns
+    handle /auth/* {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Handle specific WebSocket endpoints (must come before general API handler)
+    handle /api/v1/chat/ws {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # All other API requests - back to containerized API
+    handle /api/* {
+        reverse_proxy http://api:8000 {
+            health_uri /api/v1/health
+            health_interval 15s
+            health_timeout 10s
+            fail_duration 60s
+            max_fails 2
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Handle WebSocket connections
+    handle /ws/* {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Handle all other requests - WebUI (React/Next.js) with enhanced DNS resolution
+    handle {
+        reverse_proxy webui:3001 {
+            health_uri /
+            health_interval 10s
+            health_timeout 5s
+            fail_duration 30s
+            max_fails 3
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+}
+
+# Production domain - Secured with mTLS for internal access on port 8443
+# Temporarily disabled due to missing custom certificates - will re-enable after Let's Encrypt is working
+# {$DOMAIN:aiwfe.com}:8443 {
+#     # Enable automatic HTTPS with Let's Encrypt and require client certificates for mTLS
+#     tls {
+#         client_auth {
+#             mode require_and_verify
+#             trusted_ca_cert_file /etc/certs/caddy_reverse_proxy/rootCA.pem
+#         }
+#     }
+
+#     # Public endpoints that don't require mTLS (certificate provisioning)
+#     @public_endpoints path /public/*
+#     handle @public_endpoints {
+#         reverse_proxy http://api:8000
+#     }
+#
+#     # Native client endpoints - require mTLS
+#     @native_endpoints path /native/*
+#     handle @native_endpoints {
+#         reverse_proxy http://api:8000
+#     }
+#
+#     # Regular API requests - require mTLS
+#     handle /api/* {
+#         reverse_proxy http://api:8000
+#     }
+#
+#     # Handle WebSocket connections - require mTLS
+#     handle /ws/* {
+#         reverse_proxy http://api:8000
+#     }
+#
+#     # Handle public request access page
+#     @request_access path /request-access
+#     handle @request_access {
+#         reverse_proxy webui:3000
+#     }
+#
+#     # Handle certificate download page  
+#     @download_certs path /download-certs*
+#     handle @download_certs {
+#         reverse_proxy webui:3000
+#     }
+#
+#     # mTLS protected WebUI - redirect failures to request access page
+#     handle {
+#         # This will catch mTLS authentication failures
+#         reverse_proxy webui:3000
+#     }
+#
+#     # Error handling for mTLS failures
+#     handle_errors {
+#         @cert_error expression {http.error.status_code} == 495
+#         redir @cert_error /request-access 302
+#         
+#         @cert_required expression {http.error.status_code} == 496  
+#         redir @cert_required /request-access 302
+#     }
+# }
+
+# Local development and internal access (all services - no mTLS for convenience)  
+localhost, 127.0.0.1, *.local, :443 {
+    # Enable TLS with our certificates - no client certificate required for local development  
+    # Temporarily disabled custom certificates to allow Let's Encrypt to work
+    # tls /etc/certs/caddy_reverse_proxy/unified-cert.pem /etc/certs/caddy_reverse_proxy/unified-key.pem
+
+    # Route authentication requests to the backend 'api' service on port 8000.
+    handle /auth/* {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+    
+    # Cognitive Services endpoints - direct routing to services (localhost)
+    handle /api/v1/coordination/* {
+        reverse_proxy http://coordination-service:8001 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    handle /api/v1/memory/* {
+        reverse_proxy http://hybrid-memory-service:8002 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Voice Interaction Service endpoints - STT/TTS functionality (localhost)
+    handle /api/v1/voice/* {
+        reverse_proxy http://voice-interaction-service:8006 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Dedicated Chat Service endpoints - WebSocket and REST chat (localhost)
+    handle /api/v1/chat-service/* {
+        reverse_proxy http://chat-service:8007 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Dedicated Chat WebSocket endpoint (localhost)
+    handle /ws/chat-service {
+        reverse_proxy http://chat-service:8007 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    handle /api/v1/learning/* {
+        reverse_proxy http://learning-service:8003 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    handle /api/v1/perception/* {
+        reverse_proxy http://perception-service:8004 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    handle /api/v1/reasoning/* {
+        reverse_proxy http://reasoning-service:8005 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    handle /api/v1/infrastructure/* {
+        reverse_proxy http://infrastructure-recovery-service:8010 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Enhanced LangGraph-Ollama Service (Blue-Green Deployment Ready) - localhost
+    handle /api/v1/langgraph/enhanced/* {
+        # Primary route (existing service for now)
+        reverse_proxy http://learning-service:8003 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Handle specific WebSocket endpoints (must come before general API handler)
+    handle /api/v1/chat/ws {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Route all API requests back to containerized API
+    handle /api/* {
+        reverse_proxy http://api:8000 {
+            health_uri /api/v1/health
+            health_interval 15s
+            health_timeout 10s
+            fail_duration 60s
+            max_fails 2
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Handle WebSocket connections
+    handle /ws/* {
+        reverse_proxy http://api:8000 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+
+    # Handle all other requests by proxying them to the React/Next.js
+    # frontend 'webui' service, which now runs on port 3001 with enhanced DNS resolution.
+    handle {
+        reverse_proxy webui:3001 {
+            health_uri /
+            health_interval 10s
+            health_timeout 5s
+            fail_duration 30s
+            max_fails 3
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+        }
+    }
+}

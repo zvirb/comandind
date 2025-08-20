@@ -1,0 +1,87 @@
+{
+  "package_id": "infra-phase5",
+  "specialist": "deployment-orchestrator",
+  "token_count": 2156,
+  "priority": "critical",
+  "coordination_metadata": {
+    "parallel_safe": false,
+    "dependencies": ["file-organization"],
+    "estimated_duration": "30 minutes",
+    "rollback_capable": true
+  },
+  "mission": {
+    "objective": "Ensure Docker infrastructure remains stable during reorganization",
+    "approach": "path-preservation",
+    "validation": "continuous health monitoring"
+  },
+  "docker_compose_analysis": {
+    "critical_paths": [
+      "./app/*/Dockerfile",
+      "./app/*/requirements.txt",
+      "./config/**/*.yaml",
+      "./shared:/app/shared"
+    ],
+    "services_count": 15,
+    "volume_mounts": 23,
+    "network_configs": 3
+  },
+  "path_dependencies": {
+    "must_preserve": [
+      "app/coordination_service/",
+      "app/memory_service/",
+      "app/reasoning_service/",
+      "app/learning_service/",
+      "app/worker/",
+      "app/webui-next/",
+      "shared/"
+    ],
+    "can_reorganize": [
+      "scripts/",
+      "tests/",
+      "docs/",
+      "data/"
+    ]
+  },
+  "monitoring_strategy": {
+    "health_endpoints": [
+      "http://localhost:8000/health",
+      "http://localhost:3000/api/health",
+      "http://localhost:6333/health"
+    ],
+    "validation_interval": "5 seconds",
+    "failure_threshold": 3,
+    "recovery_action": "automatic rollback"
+  },
+  "deployment_validation": {
+    "pre_deployment": [
+      "docker-compose config",
+      "docker network ls",
+      "docker volume ls"
+    ],
+    "post_deployment": [
+      "docker-compose ps",
+      "service health checks",
+      "integration tests"
+    ]
+  },
+  "rollback_procedures": {
+    "triggers": [
+      "service startup failure",
+      "health check failure",
+      "import error detection"
+    ],
+    "steps": [
+      "docker-compose down",
+      "git reset --hard HEAD",
+      "docker-compose up -d",
+      "verify all services healthy"
+    ]
+  },
+  "success_criteria": {
+    "all_services_running": true,
+    "health_checks_passing": true,
+    "no_path_errors": true,
+    "volumes_intact": true,
+    "networks_operational": true
+  }
+}

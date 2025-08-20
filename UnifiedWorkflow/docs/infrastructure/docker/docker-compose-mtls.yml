@@ -1,0 +1,1094 @@
+# ==============================================================================
+# Enhanced Docker Compose with mTLS Security
+# AI Workflow Engine - Secure Service Communication
+# ==============================================================================
+
+# Reusable YAML Anchors
+x-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-base-service-properties: &base-service-properties
+  restart: unless-stopped
+  networks:
+    - ai_workflow_engine_secure_net
+  logging: *logging
+
+x-gpu-deploy: &gpu-deploy
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+# Optimized GPU deployment for memory-intensive services
+x-gpu-deploy-memory-optimized: &gpu-deploy-memory-optimized
+  deploy:
+    resources:
+      limits:
+        memory: 8G
+      reservations:
+        memory: 4G
+        devices:
+          - driver: nvidia
+            count: 1
+            capabilities: [gpu]
+
+# Lightweight GPU deployment for reasoning services
+x-gpu-deploy-reasoning: &gpu-deploy-reasoning
+  deploy:
+    resources:
+      limits:
+        memory: 4G
+      reservations:
+        memory: 2G
+        devices:
+          - driver: nvidia
+            count: 1
+            capabilities: [gpu]
+
+# mTLS security configuration
+x-mtls-security: &mtls-security
+  security_opt:
+    - apparmor:unconfined
+  cap_add:
+    - SYS_ADMIN  # Required for certificate management
+  cap_drop:
+    - ALL
+
+x-mtls-volumes: &mtls-volumes
+  - type: volume
+    source: certs
+    target: /tmp/certs-volume
+    read_only: true
+  - type: bind
+    source: ./scripts/security
+    target: /app/security
+    read_only: true
+
+# ==============================================================================
+# Top-Level Keys
+# ==============================================================================
+networks:
+  ai_workflow_engine_secure_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+    driver_opts:
+      com.docker.network.bridge.enable_icc: "true"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.driver.mtu: "1500"
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  prometheus_data:
+  grafana_data:
+  alertmanager_data:
+  ollama_data:
+  certs:
+  webui_node_modules: {}
+  # New volumes for hybrid intelligence services
+  memory_service_data:
+  knowledge_graph_data:
+  sequentialthinking_data:
+
+secrets:
+  # Existing secrets
+  admin_email:
+    file: ./secrets/admin_email.txt
+  admin_password:
+    file: ./secrets/admin_password.txt
+  google_client_id:
+    file: ./secrets/google_client_id.txt
+  google_client_secret:
+    file: ./secrets/google_client_secret.txt
+  JWT_SECRET_KEY:
+    file: ./secrets/jwt_secret_key.txt
+  POSTGRES_PASSWORD:
+    file: ./secrets/postgres_password.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_db:
+    file: ./secrets/postgres_db.txt
+  QDRANT_API_KEY:
+    file: ./secrets/qdrant_api_key.txt
+  pgbouncer_users:
+    file: ./secrets/pgbouncer_userlist.txt
+  REDIS_PASSWORD:
+    file: ./secrets/redis_password.txt
+  redis_users_acl:
+    file: ./secrets/redis_users.acl
+  API_KEY:
+    file: ./secrets/api_key.txt
+  
+  # mTLS Certificates
+  mtls_ca_cert:
+    file: ./secrets/mtls_ca_cert.pem
+  api_cert_bundle:
+    file: ./secrets/api_cert_bundle.pem
+  api_private_key:
+    file: ./secrets/api_private_key.pem
+  worker_cert_bundle:
+    file: ./secrets/worker_cert_bundle.pem
+  worker_private_key:
+    file: ./secrets/worker_private_key.pem
+  postgres_cert_bundle:
+    file: ./secrets/postgres_cert_bundle.pem
+  postgres_private_key:
+    file: ./secrets/postgres_private_key.pem
+  pgbouncer_cert_bundle:
+    file: ./secrets/pgbouncer_cert_bundle.pem
+  pgbouncer_private_key:
+    file: ./secrets/pgbouncer_private_key.pem
+  redis_cert_bundle:
+    file: ./secrets/redis_cert_bundle.pem
+  redis_private_key:
+    file: ./secrets/redis_private_key.pem
+  qdrant_cert_bundle:
+    file: ./secrets/qdrant_cert_bundle.pem
+  qdrant_private_key:
+    file: ./secrets/qdrant_private_key.pem
+  ollama_cert_bundle:
+    file: ./secrets/ollama_cert_bundle.pem
+  ollama_private_key:
+    file: ./secrets/ollama_private_key.pem
+  caddy_reverse_proxy_cert_bundle:
+    file: ./secrets/caddy_reverse_proxy_cert_bundle.pem
+  caddy_reverse_proxy_private_key:
+    file: ./secrets/caddy_reverse_proxy_private_key.pem
+  
+  # AlertManager mTLS certificates
+  alertmanager_cert_bundle:
+    file: ./secrets/alertmanager_cert_bundle.pem
+  alertmanager_private_key:
+    file: ./secrets/alertmanager_private_key.pem
+  
+  # Additional monitoring certificates
+  prometheus_cert_bundle:
+    file: ./secrets/prometheus_cert_bundle.pem
+  prometheus_private_key:
+    file: ./secrets/prometheus_private_key.pem
+  grafana_cert_bundle:
+    file: ./secrets/grafana_cert_bundle.pem
+  grafana_private_key:
+    file: ./secrets/grafana_private_key.pem
+  webui_cert_bundle:
+    file: ./secrets/webui_cert_bundle.pem
+  webui_private_key:
+    file: ./secrets/webui_private_key.pem
+  redis_exporter_cert_bundle:
+    file: ./secrets/redis_exporter_cert_bundle.pem
+  redis_exporter_private_key:
+    file: ./secrets/redis_exporter_private_key.pem
+  postgres_exporter_cert_bundle:
+    file: ./secrets/postgres_exporter_cert_bundle.pem
+  postgres_exporter_private_key:
+    file: ./secrets/postgres_exporter_private_key.pem
+  pgbouncer_exporter_cert_bundle:
+    file: ./secrets/pgbouncer_exporter_cert_bundle.pem
+  pgbouncer_exporter_private_key:
+    file: ./secrets/pgbouncer_exporter_private_key.pem
+  
+  # Memory Service mTLS certificates
+  memory_service_cert_bundle:
+    file: ./secrets/memory_service_cert_bundle.pem
+  memory_service_private_key:
+    file: ./secrets/memory_service_private_key.pem
+  
+  # Sequential Thinking Service mTLS certificates
+  sequentialthinking_service_cert_bundle:
+    file: ./secrets/sequentialthinking_service_cert_bundle.pem
+  sequentialthinking_service_private_key:
+    file: ./secrets/sequentialthinking_service_private_key.pem
+
+# ==============================================================================
+# SERVICES
+# ==============================================================================
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+    <<: *base-service-properties
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - <<: *mtls-volumes
+      - ./docker/postgres/01-init-db.sh:/docker-entrypoint-initdb.d/01-init-db.sh:ro
+      - ./docker/postgres/docker-entrypoint-wrapper.sh:/usr/local/bin/docker-entrypoint-wrapper.sh:ro
+    secrets:
+      - POSTGRES_PASSWORD
+      - mtls_ca_cert
+      - postgres_cert_bundle
+      - postgres_private_key
+    environment:
+      - POSTGRES_USER=app_user
+      - POSTGRES_DB=ai_workflow_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+      - SERVICE_NAME=postgres
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/postgres_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/postgres_private_key
+      - MTLS_VERIFY_CLIENT=require
+    entrypoint: /usr/local/bin/docker-entrypoint-wrapper.sh
+    command:
+      - "postgres"
+      - "-c"
+      - "ssl=off"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d ai_workflow_db -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  pgbouncer:
+    build:
+      context: .
+      dockerfile: docker/pgbouncer/Dockerfile
+    image: ai_workflow_engine/pgbouncer
+    <<: [*base-service-properties, *mtls-security]
+    volumes:
+      - <<: *mtls-volumes
+      - ./config/pgbouncer/pgbouncer-mtls.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./docker/pgbouncer/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - pgbouncer_users
+      - POSTGRES_PASSWORD
+      - mtls_ca_cert
+      - pgbouncer_cert_bundle
+      - pgbouncer_private_key
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["su-exec", "pgbouncer", "pgbouncer", "/tmp/pgbouncer.processed.ini"]
+    environment:
+      - POSTGRES_HOST=postgres
+      - SERVICE_NAME=pgbouncer
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/pgbouncer_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/pgbouncer_private_key
+      # PgBouncer configuration
+      - PGBOUNCER_AUTH_FILE=/etc/pgbouncer/generated/pgbouncer_users_processed
+      - PGBOUNCER_USER_LIST_FILE=/run/secrets/pgbouncer_users
+      - PGBOUNCER_TARGET_USER=app_user
+      - POSTGRES_SUPERUSER=app_user
+      - POSTGRES_DB=ai_workflow_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=$(cat /run/secrets/POSTGRES_PASSWORD) psql 'host=localhost port=6432 dbname=pgbouncer user=app_user sslmode=verify-full sslrootcert=/etc/certs/pgbouncer/rootCA.pem' -c 'SHOW VERSION;' --quiet -w || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    <<: *base-service-properties
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--protected-mode", "no"]
+    environment:
+      - SERVICE_NAME=redis
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    build: { context: ., dockerfile: docker/qdrant/Dockerfile }
+    image: ai_workflow_engine/qdrant
+    <<: [*base-service-properties, *mtls-security]
+    volumes:
+      - qdrant_data:/qdrant/storage
+      - <<: *mtls-volumes
+      - ./config/qdrant/config-mtls.yaml:/qdrant/config/production.yaml:ro
+      - ./docker/qdrant/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./docker/qdrant/run-mtls.sh:/usr/local/bin/run.sh:ro
+    secrets:
+      - QDRANT_API_KEY
+      - mtls_ca_cert
+      - qdrant_cert_bundle
+      - qdrant_private_key
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["sh", "-c", "exec /usr/local/bin/run.sh"]
+    environment:
+      - QDRANT__SERVICE__API_KEY_FILE=/run/secrets/QDRANT_API_KEY
+      - SERVICE_NAME=qdrant
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/qdrant_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/qdrant_private_key
+      - QDRANT__SERVICE__ENABLE_TLS=true
+      - QDRANT__TLS__CERT=/etc/certs/qdrant/unified-cert.pem
+      - QDRANT__TLS__KEY=/etc/certs/qdrant/unified-key.pem
+      - QDRANT__TLS__CA_CERT=/etc/certs/qdrant/rootCA.pem
+      - QDRANT__TLS__VERIFY_CLIENT=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--cacert", "/etc/certs/qdrant/rootCA.pem", "--cert", "/etc/certs/qdrant/unified-cert.pem", "--key", "/etc/certs/qdrant/unified-key.pem", "https://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  ollama:
+    build:
+      context: .
+      dockerfile: docker/ollama/Dockerfile-mtls
+    image: ai_workflow_engine/ollama
+    <<: [*base-service-properties, *gpu-deploy, *mtls-security]
+    ports:
+      - "11434:11434"
+      - "11435:11435"  # mTLS port
+    volumes:
+      - ollama_data:/root/.ollama
+      - <<: *mtls-volumes
+      - ./docker/ollama/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - ollama_cert_bundle
+      - ollama_private_key
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - SERVICE_NAME=ollama
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/ollama_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/ollama_private_key
+      - OLLAMA_TLS_CERT_FILE=/etc/certs/ollama/unified-cert.pem
+      - OLLAMA_TLS_KEY_FILE=/etc/certs/ollama/unified-key.pem
+    command: ["ollama", "serve"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--cacert", "/etc/certs/ollama/rootCA.pem", "--cert", "/etc/certs/ollama/unified-cert.pem", "--key", "/etc/certs/ollama/unified-key.pem", "https://localhost:11435/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  ollama-pull-llama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./scripts/pull_models_if_needed.sh:/usr/local/bin/pull_models_if_needed.sh:ro
+    entrypoint: /bin/sh
+    command: /usr/local/bin/pull_models_if_needed.sh
+    networks: [ai_workflow_engine_secure_net]
+    environment:
+      - OLLAMA_HOST=https://ollama:11435
+    restart: 'no'
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  api-migrate:
+    build: { context: ., dockerfile: docker/api/Dockerfile }
+    image: ai_workflow_engine/api
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["sh", "-c", "exec /usr/local/bin/run-migrate.sh"]
+    restart: 'no'
+    networks: [ai_workflow_engine_secure_net]
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/api/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./docker/api/run-migrate-fixed.sh:/usr/local/bin/run-migrate.sh:ro
+    secrets:
+      - POSTGRES_PASSWORD
+      - JWT_SECRET_KEY
+      - API_KEY
+      - QDRANT_API_KEY
+      - postgres_user
+      - postgres_db
+      - mtls_ca_cert
+      - api_cert_bundle
+      - api_private_key
+    environment:
+      - SERVICE_NAME=api
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=app_user
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=ai_workflow_db
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/api_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/api_private_key
+      - DATABASE_TLS_MODE=disable
+    working_dir: /app
+    env_file: [".env"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    image: ai_workflow_engine/api
+    restart: unless-stopped
+    networks: [ai_workflow_engine_secure_net]
+    entrypoint: []
+    working_dir: /project/app
+    command: ["python", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - .:/project:rw
+    secrets:
+      - POSTGRES_PASSWORD
+      - REDIS_PASSWORD
+      - JWT_SECRET_KEY
+      - QDRANT_API_KEY
+      - API_KEY
+      - admin_email
+      - admin_password
+      - google_client_id
+      - google_client_secret
+      - mtls_ca_cert
+      - api_cert_bundle
+      - api_private_key
+    env_file:
+      - .env
+      - local.env
+    environment:
+      - PYTHONPATH=/project:/project/app
+      - GOOGLE_CLIENT_ID_FILE=/run/secrets/google_client_id
+      - GOOGLE_CLIENT_SECRET_FILE=/run/secrets/google_client_secret
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=app_user
+      - POSTGRES_PORT=5432
+      - PYTHONPATH=/project
+      - OLLAMA_API_BASE_URL=https://ollama:11435
+      - POSTGRES_DB=app_tx
+      - OLLAMA_GENERATION_MODEL_NAME=llama3.2:3b
+      - SERVICE_NAME=api
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/api_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/api_private_key
+      # Database mTLS
+      - DATABASE_TLS_MODE=disable
+      # Redis mTLS
+      - REDIS_TLS_ENABLED=true
+      - REDIS_TLS_CERT=/etc/certs/api/unified-cert.pem
+      - REDIS_TLS_KEY=/etc/certs/api/unified-key.pem
+      - REDIS_TLS_CA=/etc/certs/api/rootCA.pem
+      # Qdrant mTLS
+      - QDRANT_TLS_ENABLED=true
+      - QDRANT_TLS_CERT=/etc/certs/api/unified-cert.pem
+      - QDRANT_TLS_KEY=/etc/certs/api/unified-key.pem
+      - QDRANT_TLS_CA=/etc/certs/api/rootCA.pem
+      # Ollama mTLS
+      - OLLAMA_TLS_ENABLED=true
+      - OLLAMA_TLS_CERT=/etc/certs/api/unified-cert.pem
+      - OLLAMA_TLS_KEY=/etc/certs/api/unified-key.pem
+      - OLLAMA_TLS_CA=/etc/certs/api/rootCA.pem
+    # Temporarily disabled health check while Redis is being fixed
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 3
+    #   start_period: 30s
+    depends_on:
+      postgres: { condition: service_healthy }
+      api-create-admin: { condition: service_completed_successfully }
+
+  api-create-admin:
+    build: { context: ., dockerfile: docker/api/Dockerfile }
+    image: ai_workflow_engine/api
+    restart: 'no'
+    networks: [ai_workflow_engine_secure_net]
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["sh", "-c", "exec /app/scripts/create_admin.sh"]
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/api/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./scripts/create_admin.sh:/app/scripts/create_admin.sh:ro
+    secrets:
+      - POSTGRES_PASSWORD
+      - JWT_SECRET_KEY
+      - API_KEY
+      - QDRANT_API_KEY
+      - admin_email
+      - admin_password
+      - mtls_ca_cert
+      - api_cert_bundle
+      - api_private_key
+    environment:
+      - SERVICE_NAME=api
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=app_user
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=ai_workflow_db
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/api_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/api_private_key
+    working_dir: /app
+    depends_on:
+      api-migrate: { condition: service_completed_successfully }
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/worker/Dockerfile
+    image: ai_workflow_engine/worker
+    <<: [*base-service-properties, *gpu-deploy, *mtls-security]
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["sh", "-c", "exec /usr/local/bin/run.sh"]
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/worker/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./docker/worker/run-mtls.sh:/usr/local/bin/run.sh:ro
+      - ./docker/worker/healthcheck-mtls.sh:/usr/local/bin/healthcheck.sh:ro
+      - ./app:/app:rw
+    secrets:
+      - POSTGRES_PASSWORD
+      - JWT_SECRET_KEY
+      - QDRANT_API_KEY
+      - API_KEY
+      - REDIS_PASSWORD
+      - google_client_id
+      - google_client_secret
+      - mtls_ca_cert
+      - worker_cert_bundle
+      - worker_private_key
+    env_file:
+      - .env
+    environment:
+      - SERVICE_NAME=worker
+      - PYTHONPATH=/
+      - OLLAMA_API_BASE_URL=https://ollama:11435
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=app_user
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=app_tx
+      - OLLAMA_GENERATION_MODEL_NAME=llama3.2:3b
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/worker_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/worker_private_key
+      # Database mTLS
+      - DATABASE_TLS_MODE=verify-full
+      - DATABASE_TLS_CERT=/etc/certs/worker/unified-cert.pem
+      - DATABASE_TLS_KEY=/etc/certs/worker/unified-key.pem
+      - DATABASE_TLS_CA=/etc/certs/worker/rootCA.pem
+      # Redis mTLS
+      - REDIS_TLS_ENABLED=true
+      - REDIS_TLS_CERT=/etc/certs/worker/unified-cert.pem
+      - REDIS_TLS_KEY=/etc/certs/worker/unified-key.pem
+      - REDIS_TLS_CA=/etc/certs/worker/rootCA.pem
+      # Qdrant mTLS
+      - QDRANT_TLS_ENABLED=true
+      - QDRANT_TLS_CERT=/etc/certs/worker/unified-cert.pem
+      - QDRANT_TLS_KEY=/etc/certs/worker/unified-key.pem
+      - QDRANT_TLS_CA=/etc/certs/worker/rootCA.pem
+      # Ollama mTLS
+      - OLLAMA_TLS_ENABLED=true
+      - OLLAMA_TLS_CERT=/etc/certs/worker/unified-cert.pem
+      - OLLAMA_TLS_KEY=/etc/certs/worker/unified-key.pem
+      - OLLAMA_TLS_CA=/etc/certs/worker/rootCA.pem
+    working_dir: /app
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 120s
+    depends_on:
+      pgbouncer: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      ollama-pull-llama: { condition: service_completed_successfully }
+      ollama: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+
+  webui:
+    build:
+      context: ./app/webui
+      dockerfile: ../../docker/webui/Dockerfile
+    image: ai_workflow_engine/webui
+    <<: [*base-service-properties, *mtls-security]
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: sh -c "node build/index.js"
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/webui/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - webui_cert_bundle
+      - webui_private_key
+    environment:
+      - SERVICE_NAME=webui
+      - NODE_ENV=production
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/webui_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/webui_private_key
+    working_dir: /app
+    healthcheck:
+      disable: true
+    depends_on:
+      api: { condition: service_started }
+
+  caddy_reverse_proxy:
+    build:
+      context: .
+      dockerfile: docker/caddy_reverse_proxy/Dockerfile
+    image: ai_workflow_engine/caddy_reverse_proxy
+    restart: unless-stopped
+    networks: [ai_workflow_engine_secure_net]
+    logging: *logging
+    user: root
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8443:8443"
+    volumes:
+      - ./config/caddy/Caddyfile-mtls:/etc/caddy/Caddyfile:ro
+      - <<: *mtls-volumes
+      - ./docker/caddy_reverse_proxy/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - caddy_reverse_proxy_cert_bundle
+      - caddy_reverse_proxy_private_key
+    environment:
+      - SERVICE_NAME=caddy_reverse_proxy
+      - DOMAIN=${DOMAIN}
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/caddy_reverse_proxy_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/caddy_reverse_proxy_private_key
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:2019/config/"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    depends_on:
+      api: { condition: service_started }
+      webui: { condition: service_started }
+
+  # Monitoring services with mTLS
+  prometheus:
+    build:
+      context: .
+      dockerfile: docker/prometheus/Dockerfile
+    image: ai_workflow_engine/prometheus
+    user: root
+    <<: [*base-service-properties, *mtls-security]
+    volumes:
+      - ./config/prometheus/prometheus-mtls.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+      - <<: *mtls-volumes
+      - ./docker/prometheus/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - QDRANT_API_KEY
+      - mtls_ca_cert
+      - prometheus_cert_bundle
+      - prometheus_private_key
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command:
+      - '/bin/prometheus'
+      - '--storage.tsdb.path=/prometheus'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.external-url=https://prometheus.ai-workflow-engine.local:9090'
+    environment:
+      - SERVICE_NAME=prometheus
+      - RUN_AS_USER=nobody:nobody
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/prometheus_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/prometheus_private_key
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--cacert", "/etc/certs/prometheus/rootCA.pem", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:latest
+    <<: [*base-service-properties, *mtls-security]
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - <<: *mtls-volumes
+      - ./docker/grafana/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - grafana_cert_bundle
+      - grafana_private_key
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    environment:
+      - SERVICE_NAME=grafana
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/grafana_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/grafana_private_key
+      # Grafana TLS Configuration
+      - GF_SERVER_PROTOCOL=https
+      - GF_SERVER_CERT_FILE=/etc/certs/grafana/unified-cert.pem
+      - GF_SERVER_CERT_KEY=/etc/certs/grafana/unified-key.pem
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--cacert", "/etc/certs/grafana/rootCA.pem", "https://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
+    depends_on:
+      prometheus: { condition: service_healthy }
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    <<: [*base-service-properties, *mtls-security]
+    volumes:
+      - alertmanager_data:/alertmanager
+      - ./config/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - <<: *mtls-volumes
+      - ./docker/alertmanager/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - alertmanager_cert_bundle
+      - alertmanager_private_key
+      - API_KEY
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command:
+      - '/bin/alertmanager'
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=https://alertmanager.ai-workflow-engine.local:9093'
+      - '--cluster.listen-address='
+    environment:
+      - SERVICE_NAME=alertmanager
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/alertmanager_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/alertmanager_private_key
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--cacert", "/etc/certs/alertmanager/rootCA.pem", "https://localhost:9093/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      prometheus: { condition: service_healthy }
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    <<: *base-service-properties
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    privileged: true
+
+  # Exporters with mTLS support
+  redis_exporter:
+    build:
+      context: .
+      dockerfile: docker/redis-exporter/Dockerfile
+    image: ai_workflow_engine/redis_exporter
+    <<: [*base-service-properties, *mtls-security]
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["sh", "-c", "exec /usr/local/bin/run.sh"]
+    secrets:
+      - REDIS_PASSWORD
+      - mtls_ca_cert
+      - redis_exporter_cert_bundle
+      - redis_exporter_private_key
+    environment:
+      - SERVICE_NAME=redis_exporter
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/redis_exporter_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/redis_exporter_private_key
+      # Redis TLS connection
+      - REDIS_TLS_ENABLED=true
+      - REDIS_TLS_CERT=/etc/certs/redis_exporter/unified-cert.pem
+      - REDIS_TLS_KEY=/etc/certs/redis_exporter/unified-key.pem
+      - REDIS_TLS_CA=/etc/certs/redis_exporter/rootCA.pem
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/redis-exporter/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./docker/redis-exporter/run-mtls.sh:/usr/local/bin/run.sh:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9121/metrics"]
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  postgres_exporter:
+    build:
+      context: .
+      dockerfile: docker/postgres-exporter/Dockerfile
+    image: ai_workflow_engine/postgres_exporter
+    <<: [*base-service-properties, *mtls-security]
+    user: root
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command:
+      - "sh"
+      - "-c"
+      - "export PGPASSWORD=$(cat /run/secrets/POSTGRES_PASSWORD) && exec postgres_exporter"
+    secrets:
+      - POSTGRES_PASSWORD
+      - mtls_ca_cert
+      - postgres_exporter_cert_bundle
+      - postgres_exporter_private_key
+    environment:
+      - DATA_SOURCE_NAME=postgresql://app_user@postgres:5432/ai_workflow_db?sslmode=verify-full&sslcert=/etc/certs/postgres_exporter/unified-cert.pem&sslkey=/etc/certs/postgres_exporter/unified-key.pem&sslrootcert=/etc/certs/postgres_exporter/rootCA.pem
+      - SERVICE_NAME=postgres_exporter
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/postgres_exporter_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/postgres_exporter_private_key
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/postgres-exporter/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./config/postgres_exporter.yml:/postgres_exporter.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9187/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 2
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  pgbouncer_exporter:
+    build:
+      context: .
+      dockerfile: docker/pgbouncer-exporter/Dockerfile
+    image: ai_workflow_engine/pgbouncer_exporter
+    <<: [*base-service-properties, *mtls-security]
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["sh", "-c", "exec /usr/local/bin/run.sh"]
+    secrets:
+      - POSTGRES_PASSWORD
+      - mtls_ca_cert
+      - pgbouncer_exporter_cert_bundle
+      - pgbouncer_exporter_private_key
+    environment:
+      - SERVICE_NAME=pgbouncer_exporter
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/pgbouncer_exporter_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/pgbouncer_exporter_private_key
+    volumes:
+      - <<: *mtls-volumes
+      - ./docker/pgbouncer-exporter/entrypoint-wrapper-mtls.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+      - ./docker/pgbouncer-exporter/run-mtls.sh:/usr/local/bin/run.sh:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9127/metrics"]
+      interval: 30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+
+  # Log watcher service
+  log-watcher:
+    image: docker:27.1-cli
+    container_name: ai_workflow_engine-log-watcher-1
+    restart: always
+    networks:
+      - ai_workflow_engine_secure_net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./scripts:/app/scripts:rw
+      - ./logs:/app/logs
+      - ./app:/app/application:ro
+    command: ["sh", "-c", "apk add --no-cache bash jq && bash /app/scripts/_comprehensive_logger.sh"]
+
+  # ==============================================================================
+  # HYBRID INTELLIGENCE SERVICES
+  # ==============================================================================
+  
+  # Memory Service - Hybrid long-term and short-term memory management
+  memory-service:
+    build:
+      context: .
+      dockerfile: docker/memory-service/Dockerfile
+    image: ai_workflow_engine/memory-service
+    <<: [*base-service-properties, *gpu-deploy-memory-optimized, *mtls-security]
+    ports:
+      - "8001:8001"
+    volumes:
+      - memory_service_data:/data
+      - <<: *mtls-volumes
+      - ./docker/memory-service/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - memory_service_cert_bundle
+      - memory_service_private_key
+      - POSTGRES_PASSWORD
+      - REDIS_PASSWORD
+      - QDRANT_API_KEY
+      - JWT_SECRET_KEY
+    environment:
+      - SERVICE_NAME=memory-service
+      - PYTHONPATH=/app
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/memory_service_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/memory_service_private_key
+      # Database connection
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=app_user
+      - POSTGRES_DB=ai_workflow_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+      # Redis connection for short-term memory
+      - REDIS_URL=redis://redis:6379
+      - REDIS_PASSWORD_FILE=/run/secrets/REDIS_PASSWORD
+      # Qdrant connection for vector storage
+      - QDRANT_URL=https://qdrant:6333
+      - QDRANT_API_KEY_FILE=/run/secrets/QDRANT_API_KEY
+      # Ollama connection for embeddings and LLM
+      - OLLAMA_URL=https://ollama:11435
+      # JWT authentication
+      - JWT_SECRET_KEY_FILE=/run/secrets/JWT_SECRET_KEY
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["python", "-m", "uvicorn", "memory_service.main:app", "--host", "0.0.0.0", "--port", "8001"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+      ollama: { condition: service_healthy }
+
+  # Sequential Thinking Service - Enhanced reasoning with long-term knowledge
+  sequentialthinking-service:
+    build:
+      context: .
+      dockerfile: docker/sequentialthinking-service/Dockerfile
+    image: ai_workflow_engine/sequentialthinking-service
+    <<: [*base-service-properties, *gpu-deploy-reasoning, *mtls-security]
+    ports:
+      - "8002:8002"
+    volumes:
+      - sequentialthinking_data:/data
+      - <<: *mtls-volumes
+      - ./docker/sequentialthinking-service/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - sequentialthinking_service_cert_bundle
+      - sequentialthinking_service_private_key
+      - REDIS_PASSWORD
+      - JWT_SECRET_KEY
+    environment:
+      - SERVICE_NAME=sequentialthinking-service
+      - PYTHONPATH=/app
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      - MTLS_CERT_FILE=/run/secrets/sequentialthinking_service_cert_bundle
+      - MTLS_KEY_FILE=/run/secrets/sequentialthinking_service_private_key
+      # Redis connection for checkpointing
+      - REDIS_URL=redis://redis:6379
+      - REDIS_PASSWORD_FILE=/run/secrets/REDIS_PASSWORD
+      # Memory service connection
+      - MEMORY_SERVICE_URL=http://memory-service:8001
+      # Ollama connection for reasoning
+      - OLLAMA_URL=https://ollama:11435
+      # Authentication
+      - JWT_SECRET_KEY_FILE=/run/secrets/JWT_SECRET_KEY
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["python", "-m", "uvicorn", "sequentialthinking_service.main:app", "--host", "0.0.0.0", "--port", "8002"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      redis: { condition: service_healthy }
+      memory-service: { condition: service_healthy }
+      ollama: { condition: service_healthy }
+
+  # Knowledge Graph Service - langextract integration for entity extraction
+  knowledge-graph-service:
+    build:
+      context: .
+      dockerfile: docker/knowledge-graph-service/Dockerfile
+    image: ai_workflow_engine/knowledge-graph-service
+    <<: [*base-service-properties, *gpu-deploy-memory-optimized, *mtls-security]
+    ports:
+      - "8003:8003"
+    volumes:
+      - knowledge_graph_data:/data
+      - <<: *mtls-volumes
+      - ./docker/knowledge-graph-service/entrypoint-wrapper.sh:/usr/local/bin/entrypoint-wrapper.sh:ro
+    secrets:
+      - mtls_ca_cert
+      - POSTGRES_PASSWORD
+      - QDRANT_API_KEY
+    environment:
+      - SERVICE_NAME=knowledge-graph-service
+      - PYTHONPATH=/app
+      # mTLS Configuration
+      - MTLS_ENABLED=true
+      - MTLS_CA_CERT_FILE=/run/secrets/mtls_ca_cert
+      # Database connections
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=app_user
+      - POSTGRES_DB=ai_workflow_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+      # Qdrant connection for graph storage
+      - QDRANT_URL=https://qdrant:6333
+      - QDRANT_API_KEY_FILE=/run/secrets/QDRANT_API_KEY
+      # Ollama connection for entity extraction
+      - OLLAMA_URL=https://ollama:11435
+      # Memory service connection
+      - MEMORY_SERVICE_URL=http://memory-service:8001
+    entrypoint: /usr/local/bin/entrypoint-wrapper.sh
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      postgres: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+      ollama: { condition: service_healthy }
+      memory-service: { condition: service_healthy }

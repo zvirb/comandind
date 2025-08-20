@@ -1,0 +1,115 @@
+# ==============================================================================
+# Optimized Multi-Stage Build with Cache Management
+# ==============================================================================
+
+# Build stage with cache optimization
+FROM node:18-alpine AS builder
+
+# Add build arguments for cache busting
+ARG BUILD_DATE
+ARG GIT_HASH
+ARG NODE_ENV=production
+
+# Install build dependencies
+RUN apk add --no-cache git python3 make g++
+
+WORKDIR /app
+
+# Layer 1: Package files (changes less frequently)
+COPY package*.json ./
+
+# Cache npm dependencies separately
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Layer 2: Copy configuration files (changes occasionally)
+COPY tsconfig.json vite.config.ts ./
+COPY postcss.config.js tailwind.config.js ./
+
+# Layer 3: Copy public assets (changes occasionally)
+COPY public ./public
+
+# Layer 4: Copy source code (changes frequently)
+# This is placed last to maximize cache usage
+COPY src ./src
+COPY index.html ./
+COPY server.js ./
+
+# Add cache busting labels
+LABEL build.date="${BUILD_DATE}" \
+      build.git_hash="${GIT_HASH}" \
+      build.node_env="${NODE_ENV}"
+
+# Build the application with optimizations
+RUN npm run build && \
+    # Remove development dependencies after build
+    npm prune --production
+
+# ==============================================================================
+# Production stage with minimal footprint
+# ==============================================================================
+FROM node:18-alpine AS production
+
+# Add runtime dependencies
+RUN apk add --no-cache tini
+
+WORKDIR /app
+
+# Copy only production dependencies
+COPY package*.json ./
+RUN npm ci --only=production --omit=dev && \
+    npm cache clean --force
+
+# Copy built application from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server.js ./
+COPY --from=builder /app/public ./public
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3001
+
+# Health check with timeout
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {r.statusCode === 200 ? process.exit(0) : process.exit(1)})"
+
+# Use tini for proper signal handling
+ENTRYPOINT ["/sbin/tini", "--"]
+
+# Start the server
+CMD ["node", "server.js"]
+
+# ==============================================================================
+# Development stage with hot-reload support
+# ==============================================================================
+FROM node:18-alpine AS development
+
+# Add development dependencies
+RUN apk add --no-cache git python3 make g++
+
+WORKDIR /app
+
+# Install all dependencies including devDependencies
+COPY package*.json ./
+RUN npm install && \
+    npm cache clean --force
+
+# Copy all source files
+COPY . .
+
+# Expose development ports
+EXPOSE 3001 3002
+
+# Enable hot module replacement
+ENV WATCHPACK_POLLING=true
+ENV CHOKIDAR_USEPOLLING=true
+
+# Development command with hot-reload
+CMD ["npm", "run", "dev"]

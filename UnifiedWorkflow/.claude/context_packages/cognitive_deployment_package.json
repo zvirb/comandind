@@ -1,0 +1,97 @@
+{
+  "package_type": "cognitive_deployment",
+  "priority": "critical",
+  "token_limit": 4000,
+  "synthesis_timestamp": "2025-08-15T10:30:00Z",
+  
+  "deployment_strategy": {
+    "phase_1_container_fixes": {
+      "priority": "immediate",
+      "actions": [
+        "Debug container build failures for cognitive services",
+        "Verify all Dockerfile dependencies and base images",
+        "Check environment variable configurations",
+        "Resolve port conflicts and networking issues",
+        "Test individual container startups in isolation"
+      ],
+      "target_services": [
+        "text-to-speech-service",
+        "voice-to-text-service",
+        "voice-cloning-service",
+        "advanced-text-generation-service",
+        "llm-assistant-service",
+        "image-generation-service"
+      ],
+      "validation": "All containers start successfully with health checks passing"
+    },
+    
+    "phase_2_integration": {
+      "priority": "high",
+      "actions": [
+        "Connect services to ai_workflow_engine_net",
+        "Configure API gateway routing to cognitive services",
+        "Set up service discovery and registration",
+        "Implement fallback routing for service failures"
+      ],
+      "dependencies": ["api-gateway", "redis", "postgresql"],
+      "validation": "Services accessible via API gateway with proper routing"
+    },
+    
+    "phase_3_blue_green_deployment": {
+      "priority": "medium",
+      "strategy": "gradual_rollout",
+      "steps": [
+        "Deploy cognitive services as 'blue' environment",
+        "Validate functionality in isolation",
+        "Configure traffic routing (10% → 50% → 100%)",
+        "Maintain fallback to existing services"
+      ],
+      "rollback_trigger": "Error rate > 5% or latency > 2s"
+    }
+  },
+  
+  "critical_issues": {
+    "container_startup": {
+      "symptoms": "Services configured but not running",
+      "likely_causes": [
+        "Missing Python dependencies in Dockerfile",
+        "Incorrect base image versions",
+        "Environment variable misconfigurations",
+        "Volume mount permission issues"
+      ],
+      "debugging_commands": [
+        "docker-compose -f app/docker-compose.cognitive.yml build --no-cache",
+        "docker-compose -f app/docker-compose.cognitive.yml up -d text-to-speech-service",
+        "docker logs text-to-speech-service --tail 100",
+        "docker exec text-to-speech-service python -c 'import sys; print(sys.path)'"
+      ]
+    }
+  },
+  
+  "implementation_sequence": [
+    {
+      "step": 1,
+      "action": "Fix container builds",
+      "duration": "30 minutes",
+      "validation": "docker ps shows all cognitive services running"
+    },
+    {
+      "step": 2,
+      "action": "Configure networking",
+      "duration": "15 minutes",
+      "validation": "Services pingable from API gateway"
+    },
+    {
+      "step": 3,
+      "action": "Implement health checks",
+      "duration": "20 minutes",
+      "validation": "curl http://localhost:PORT/health returns 200"
+    },
+    {
+      "step": 4,
+      "action": "API gateway integration",
+      "duration": "25 minutes",
+      "validation": "Cognitive endpoints accessible via gateway"
+    }
+  ]
+}

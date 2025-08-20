@@ -1,0 +1,114 @@
+{
+  "package_type": "infrastructure_preservation",
+  "priority": "CRITICAL",
+  "target_agents": ["monitoring-analyst", "deployment-orchestrator"],
+  "token_count": 3700,
+  "created": "2025-08-16T10:15:00Z",
+  "iteration": 7,
+  "mission": "Maintain 100% system health during UX restoration",
+  "current_status": {
+    "healthy_components": [
+      "Prometheus (metrics)",
+      "Grafana (dashboards)",
+      "PostgreSQL (database)",
+      "Redis (cache)",
+      "Qdrant (vectors)",
+      "LangGraph (workflows)",
+      "Ollama (LLM)",
+      "SSL/TLS (certificates)"
+    ],
+    "health_score": "100%",
+    "must_preserve": true
+  },
+  "monitoring_requirements": {
+    "real_time_checks": {
+      "script": "monitor_infrastructure.sh",
+      "interval": "30 seconds",
+      "components": [
+        "docker-compose ps",
+        "curl health endpoints",
+        "container status check"
+      ]
+    },
+    "rollback_triggers": [
+      "Container restart count > 3",
+      "Memory usage > 90%",
+      "CPU sustained > 80%",
+      "Database connections drop",
+      "SSL certificate issues",
+      "Any service unhealthy"
+    ],
+    "safety_protocol": [
+      "Create backup snapshot",
+      "Test in isolation",
+      "Apply with monitoring",
+      "Verify no degradation",
+      "Document change"
+    ]
+  },
+  "preservation_rules": {
+    "do_not_modify": [
+      "Docker network configurations",
+      "Database connection strings",
+      "SSL certificate paths",
+      "Prometheus scrape configs",
+      "Grafana datasources",
+      "Volume mount points"
+    ],
+    "safe_to_modify": [
+      "Application code (with testing)",
+      "Nginx routing rules (with backup)",
+      "Frontend assets",
+      "API endpoints (maintain contracts)",
+      "WebSocket handlers"
+    ]
+  },
+  "metrics_monitoring": {
+    "critical_metrics": [
+      "container_health_status == 1",
+      "up{job=~\".*\"} == 1",
+      "postgres_connections < 90",
+      "redis_clients < 1000",
+      "http_errors_rate < 0.01",
+      "ssl_cert_expiry > 30"
+    ],
+    "alerting": true,
+    "dashboards": ["system-health", "ux-restoration"]
+  },
+  "backup_procedures": {
+    "before_fixes": [
+      "pg_dump database",
+      "backup docker-compose.yml",
+      "backup nginx configs"
+    ],
+    "rollback_commands": [
+      "docker-compose -f backup.yml up -d",
+      "psql restore from backup",
+      "nginx config restore"
+    ]
+  },
+  "reporting": {
+    "frequency": "Every 30 minutes",
+    "format": "Infrastructure Status Report",
+    "includes": [
+      "Container health",
+      "Resource usage",
+      "Changes applied",
+      "Issues detected"
+    ]
+  },
+  "success_criteria": [
+    "All containers remain healthy",
+    "No service interruptions",
+    "Metrics within normal ranges",
+    "No rollbacks triggered",
+    "SSL/TLS functional",
+    "Database integrity maintained",
+    "Zero data loss"
+  ],
+  "coordination": {
+    "communicate_with": ["all_implementation_agents"],
+    "alert_on": "any_infrastructure_impact",
+    "validation": "continuous"
+  }
+}

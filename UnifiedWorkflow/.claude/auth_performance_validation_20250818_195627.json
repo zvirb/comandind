@@ -1,0 +1,40 @@
+{
+  "api_frequency": {
+    "api_call_frequency": 25.0,
+    "total_api_calls": 40,
+    "auth_specific_calls": 10,
+    "cache_hits": 0,
+    "test_duration_minutes": 2,
+    "timestamp": "2025-08-18T19:56:21.949252"
+  },
+  "response_times": {
+    "average_response_time_ms": 13.52626085281372,
+    "median_response_time_ms": 13.711094856262207,
+    "p95_response_time_ms": 14.379119873046875,
+    "min_response_time_ms": 12.116670608520508,
+    "max_response_time_ms": 14.382123947143555,
+    "total_requests": 28,
+    "target_met": true,
+    "timestamp": "2025-08-18T19:56:22.330696"
+  },
+  "database_pool": {
+    "error": "PgBouncer stats failed: Password for user app_user: \npsql: error: connection to server at \"localhost\" (::1), port 6432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at \"localhost\" (127.0.0.1), port 6432 failed: fe_sendauth: no password supplied\n"
+  },
+  "redis_cache": {
+    "error": "Redis client not available"
+  },
+  "resource_utilization": {
+    "containers": {},
+    "auth_services_avg_cpu": 0,
+    "auth_services_avg_memory": 0,
+    "total_containers": 0,
+    "timestamp": "2025-08-18T19:56:27.592100"
+  },
+  "production": {
+    "status_code": 200,
+    "response_time_ms": 43.99752616882324,
+    "ssl_valid": true,
+    "accessible": true,
+    "timestamp": "2025-08-18T19:56:27.636140"
+  }
+}

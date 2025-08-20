@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-08-18T11:32:38.844567+00:00",
+  "target_improvement": "60%+ latency reduction (176ms \u2192 <40ms)",
+  "baseline_performance": {
+    "auth_latency_ms": 176
+  },
+  "endpoints_tested": [],
+  "performance_metrics": {},
+  "optimization_validation": {},
+  "error": "Authentication failed"
+}

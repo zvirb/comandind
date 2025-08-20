@@ -1,0 +1,13 @@
+{
+  "package_id": "session_management_package",
+  "package_type": "migrated-context",
+  "content": "{\n  \"package_type\": \"session_management\",\n  \"priority\": \"CRITICAL\",\n  \"target_agent\": \"frictionless-ux-architect\",\n  \"token_count\": 3100,\n  \"created\": \"2025-08-16T10:15:00Z\",\n  \"iteration\": 7,\n  \"issue\": {\n    \"description\": \"Users logged out on navigation between pages\",\n    \"root_cause\": \"Client-side validation without server verification\",\n    \"impact\": \"Complete loss of authentication on page changes\"\n  },\n  \"fixes\": {\n    \"server_validation\": {\n      \"file\": \"app/main.py\",\n      \"endpoint\": \"/api/auth/validate\",\n      \"purpose\": \"Server-side session validation endpoint\"\n    },\n    \"client_integration\": {\n      \"file\": \"webui-next/utils/auth.js\",\n      \"change\": \"Replace client-only validation with server API call\"\n    },\n    \"session_config\": {\n      \"file\": \"app/middleware/auth.py\",\n      \"settings\": {\n        \"max_age\": 86400,\n        \"same_site\": \"lax\",\n        \"https_only\": true,\n        \"httponly\": true\n      }\n    }\n  },\n  \"testing\": {\n    \"persistence_test\": \"Login \u2192 Navigate \u2192 Verify still authenticated\",\n    \"validation_test\": \"curl https://aiwfe.com/api/auth/validate -H 'Cookie: session=token'\",\n    \"logout_test\": \"Explicit logout \u2192 Session cleared\"\n  },\n  \"success_criteria\": [\n    \"Users stay logged in during navigation\",\n    \"Page refresh maintains session\",\n    \"Server validates all token checks\",\n    \"No false invalid token errors\",\n    \"Consistent auth state across app\"\n  ],\n  \"coordination\": {\n    \"dependencies\": [],\n    \"parallel_work\": true,\n    \"required_by\": [\"websocket_auth\"],\n    \"validation_by\": \"user-experience-auditor\"\n  }\n}",
+  "tokens": 188,
+  "created_at": "2025-08-18T15:14:25.530657",
+  "last_accessed": "2025-08-18T15:14:25.530667",
+  "priority": "medium",
+  "context_tags": [
+    "migrated",
+    "context-package"
+  ]
+}

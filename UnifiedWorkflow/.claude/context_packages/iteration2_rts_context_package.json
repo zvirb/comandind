@@ -1,0 +1,216 @@
+{
+  "package_info": {
+    "name": "Iteration 2 RTS Gameplay Context Package",
+    "version": "2.0",
+    "created": "2025-08-19T21:16:00Z",
+    "target_iteration": 2,
+    "phase": "gameplay-mechanics",
+    "agents_targeted": [
+      "game-engine-architect",
+      "graphics-specialist", 
+      "webui-architect",
+      "codebase-research-analyst",
+      "user-experience-auditor",
+      "test-automation-engineer",
+      "performance-profiler"
+    ]
+  },
+  "technical_requirements": {
+    "unit_selection_system": {
+      "description": "Interactive unit selection with visual feedback and box selection",
+      "requirements": [
+        "Mouse click selection for individual units",
+        "Box selection for multiple units with drag rectangle",
+        "Control groups (1-9 keys) for quick selection",
+        "Visual feedback with selection circles and health bars",
+        "Right-click command issuing with queuing support"
+      ],
+      "existing_foundation": "SelectionSystem class exists with complete input handling and visual feedback",
+      "integration_points": ["TransformComponent", "SelectableComponent", "CommandComponent"],
+      "performance_target": "Handle 100+ selectable units without performance degradation"
+    },
+    "resource_economy": {
+      "description": "Tiberium harvesting and credit-based economy system",
+      "requirements": [
+        "Tiberium field generation and visualization",
+        "Harvester units that collect resources automatically",
+        "Credit tracking and display in UI",
+        "Resource-based building and unit construction costs",
+        "Economic balancing for engaging gameplay progression"
+      ],
+      "existing_foundation": "ECS architecture ready for ResourceComponent and HarvesterComponent",
+      "integration_points": ["UnitComponent", "BuildingComponent", "MovementComponent"],
+      "performance_target": "Support 20+ active harvesters with real-time resource updates"
+    },
+    "a_star_pathfinding": {
+      "description": "Optimized A* pathfinding with group movement and obstacle avoidance",
+      "requirements": [
+        "Individual unit pathfinding with dynamic obstacle avoidance",
+        "Group movement formations (box, line, wedge)",
+        "Path caching and optimization for performance",
+        "Dynamic obstacle updates for moving units and buildings",
+        "Visual path debugging for development"
+      ],
+      "existing_foundation": "PathfindingSystem with A* implementation, spatial partitioning, and performance optimizations",
+      "integration_points": ["MovementComponent", "TransformComponent", "NavigationGrid"],
+      "performance_target": "Calculate 50+ paths per frame with 8ms time limit"
+    },
+    "building_construction": {
+      "description": "Building placement, validation, and construction mechanics",
+      "requirements": [
+        "Building placement validation with terrain and proximity checks", 
+        "Construction progress visualization and animation",
+        "Building prerequisites and tech tree dependencies",
+        "Resource cost validation and deduction",
+        "Construction queue management"
+      ],
+      "existing_foundation": "BuildingComponent exists, needs expansion for construction mechanics",
+      "integration_points": ["ResourceComponent", "ConstructionComponent", "SpriteComponent"],
+      "performance_target": "Support 50+ buildings with construction animations"
+    }
+  },
+  "existing_architecture": {
+    "ecs_foundation": {
+      "world_manager": "World class with entity/system coordination and memory leak detection",
+      "entity_system": "Entity class with component management and lifecycle",
+      "component_types": [
+        "TransformComponent (position, rotation, scale)",
+        "SpriteComponent (texture, animation)",
+        "SelectableComponent (selection state, visual feedback)",
+        "MovementComponent (pathfinding, speed, targets)",
+        "HealthComponent (HP management)",
+        "CommandComponent (order queuing)",
+        "VelocityComponent (physics integration)"
+      ],
+      "active_systems": [
+        "SelectionSystem (input handling, visual feedback)",
+        "PathfindingSystem (A* navigation, group movement)", 
+        "Rendering systems (PixiJS integration)"
+      ]
+    },
+    "rendering_foundation": {
+      "engine": "PixiJS 7.3.3+ with WebGL2 renderer",
+      "optimization": "SpriteBatcher for draw call reduction",
+      "texture_management": "TextureAtlasManager and TexturePool for memory efficiency",
+      "performance": "60 FPS baseline achieved with 200+ entities"
+    },
+    "input_handling": {
+      "system": "InputHandler with event delegation",
+      "selection": "Mouse interaction with selection rectangles",
+      "commands": "Right-click command issuing",
+      "camera": "Camera system with panning and zooming"
+    }
+  },
+  "agent_coordination_patterns": {
+    "game_logic_stream": {
+      "lead_agent": "game-engine-architect",
+      "supporting_agents": ["codebase-research-analyst"],
+      "responsibilities": [
+        "Implement core RTS gameplay mechanics",
+        "Integrate systems with existing ECS architecture",
+        "Ensure performance targets are met",
+        "Coordinate with graphics for visual feedback"
+      ]
+    },
+    "graphics_stream": {
+      "lead_agent": "graphics-specialist", 
+      "supporting_agents": ["performance-profiler"],
+      "responsibilities": [
+        "Optimize sprite batching for increased entity counts",
+        "Create visual effects for gameplay feedback",
+        "Manage texture memory and asset loading",
+        "Maintain 60+ FPS performance"
+      ]
+    },
+    "frontend_integration_stream": {
+      "lead_agent": "webui-architect",
+      "supporting_agents": ["user-experience-auditor"],
+      "responsibilities": [
+        "Implement UI components for resource display",
+        "Create building placement interfaces", 
+        "Design unit command interfaces",
+        "Ensure responsive and intuitive UX"
+      ]
+    },
+    "validation_stream": {
+      "lead_agent": "test-automation-engineer",
+      "supporting_agents": ["user-experience-auditor", "performance-profiler"],
+      "responsibilities": [
+        "Create automated tests for gameplay mechanics",
+        "Validate user interaction flows",
+        "Performance testing under load",
+        "Ensure stability with increased complexity"
+      ]
+    }
+  },
+  "communication_channels": {
+    "redis_scratch_pad": {
+      "coordination_key": "rts_iteration2_coordination",
+      "status_updates": "rts_agent_status",
+      "shared_resources": "rts_shared_resources",
+      "progress_tracking": "rts_implementation_progress"
+    },
+    "mcp_memory_integration": {
+      "entity_type": "rts_gameplay_context",
+      "knowledge_tags": ["iteration2", "rts", "gameplay", "ecs"],
+      "context_sharing": "Agent findings stored in memory MCP for cross-agent access"
+    }
+  },
+  "performance_constraints": {
+    "entity_count_targets": {
+      "units": "200+ active units",
+      "buildings": "50+ structures",
+      "projectiles": "100+ active projectiles",
+      "effects": "50+ visual effects"
+    },
+    "fps_requirements": {
+      "minimum": "60 FPS",
+      "target": "120 FPS",
+      "stress_test": "Maintain 30 FPS with 500+ entities"
+    },
+    "memory_limits": {
+      "baseline": "200MB maximum",
+      "texture_memory": "100MB for sprite atlases",
+      "javascript_heap": "150MB for game state"
+    }
+  },
+  "integration_validation": {
+    "ecs_compatibility": "All new components must inherit from Component base class",
+    "system_integration": "New systems must integrate with World.update() and World.render() lifecycle",
+    "event_handling": "Use existing InputHandler pattern for consistency",
+    "memory_management": "Implement proper cleanup in destroy() methods",
+    "performance_monitoring": "Use PerformanceBenchmark utility for metrics"
+  },
+  "success_criteria": {
+    "unit_selection": [
+      "Click selection works reliably",
+      "Box selection handles 50+ units smoothly", 
+      "Control groups function correctly",
+      "Visual feedback is responsive and clear"
+    ],
+    "resource_system": [
+      "Harvesters collect Tiberium automatically",
+      "Credits display updates in real-time",
+      "Building costs are enforced correctly",
+      "Economic progression feels balanced"
+    ],
+    "pathfinding": [
+      "Units navigate complex terrain",
+      "Group movement maintains formations", 
+      "Performance stays within 8ms limit",
+      "Dynamic obstacles update correctly"
+    ],
+    "building_system": [
+      "Placement validation works reliably",
+      "Construction progress is visible",
+      "Resource costs are deducted properly",
+      "Prerequisites are enforced"
+    ],
+    "overall_integration": [
+      "All systems work together seamlessly",
+      "Performance targets are maintained",
+      "Memory usage stays within limits",
+      "User experience is smooth and responsive"
+    ]
+  }
+}
