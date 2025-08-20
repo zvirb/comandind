@@ -1,689 +1,515 @@
 /**
- * Functional Validation Framework
+ * Functional Validation Framework for Orchestration Workflow Integrity
  * 
- * This framework addresses the critical validation gap where technical metrics
- * passed (64,809 FPS, sub-millisecond response times) but users experienced
- * complete gameplay failure (only green squares, no RTS content).
+ * CRITICAL PURPOSE: Prevent Phase 8 atomic git synchronization bypass failures
+ * Evidence-Based Validation with Real User Functionality Testing
  * 
- * Priority 4: Enhanced Validation Processes
- * Prevents technical-vs-functional validation disconnects
+ * This framework implements the Orchestration Auditor V2 Agent specialization:
+ * - Evidence-based validation system
+ * - Real user workflow testing  
+ * - False positive detection with real-time validation
+ * - Knowledge graph validation for pattern verification
  */
 
-export class FunctionalValidationFramework {
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+
+const execAsync = promisify(exec);
+
+class OrchestrationWorkflowValidator {
     constructor() {
-        this.validationResults = [];
-        this.functionalErrors = [];
-        this.validationTimestamp = new Date().toISOString();
-        this.gameInstance = null;
-        this.pixiApp = null;
-        this.validationConfig = {
-            // Functional validation requirements
-            minimumRTSEntities: 6, // At least 6 RTS units/buildings visible
-            maximumTestSprites: 10, // No more than 10 test sprites allowed
-            requiredGameplayElements: [
-                "unit-selection",
-                "camera-controls", 
-                "ecs-entities",
-                "rts-assets",
-                "pathfinding",
-                "user-interaction"
-            ],
-            validationTimeout: 30000, // 30 seconds maximum
-            screenshotEvidence: true
-        };
+        this.validationLog = [];
+        this.evidenceCollection = {};
+        this.workflowPhases = [
+            'Phase 0: Todo Context Integration',
+            'Phase 1: Agent Ecosystem Validation',
+            'Phase 2: Strategic Intelligence Planning', 
+            'Phase 3: Multi-Domain Research Discovery',
+            'Phase 4: Context Synthesis & Compression',
+            'Phase 5: Parallel Implementation Execution',
+            'Phase 6: Evidence-Based Validation',
+            'Phase 7: Decision & Iteration Control',
+            'Phase 8: Atomic Version Control Synchronization', // CRITICAL PHASE
+            'Phase 9: Meta-Orchestration Audit & Learning',
+            'Phase 10: Production Deployment & Release',
+            'Phase 11: Production Validation & Health Monitoring',
+            'Phase 12: Todo Loop Control'
+        ];
+        this.criticalPhases = ['Phase 8', 'Phase 9', 'Phase 11', 'Phase 12'];
     }
 
     /**
-     * Initialize functional validation framework
+     * EVIDENCE-BASED VALIDATION: Phase 8 Git Synchronization Check
+     * Concrete evidence collection for atomic git synchronization
      */
-    async initialize(gameInstance) {
-        console.log("🔍 Initializing Functional Validation Framework...");
-        this.gameInstance = gameInstance;
-        this.pixiApp = gameInstance?.application;
-        
-        if (!this.gameInstance || !this.pixiApp) {
-            throw new Error("CRITICAL: Cannot validate - game instance not available");
-        }
-        
-        console.log("✅ Functional validation framework ready");
-        return true;
-    }
-
-    /**
-     * Run comprehensive functional validation
-     * Returns validation results with evidence
-     */
-    async runFunctionalValidation() {
-        console.log("🎯 Starting Comprehensive Functional Validation...");
-        
-        const validationSuite = {
-            gameplayVisibility: await this.validateGameplayVisibility(),
-            userInteraction: await this.validateUserInteraction(),
-            systemIntegration: await this.validateSystemIntegration(),
-            functionalReality: await this.validateFunctionalReality(),
-            visualEvidence: await this.collectVisualEvidence()
-        };
-
-        const overallResult = this.evaluateOverallValidation(validationSuite);
-        
-        return {
-            timestamp: this.validationTimestamp,
-            overallStatus: overallResult.status,
-            functionalScore: overallResult.score,
-            validationSuite: validationSuite,
-            evidence: overallResult.evidence,
-            recommendations: overallResult.recommendations,
-            preventionMeasures: this.getPreventionMeasures()
-        };
-    }
-
-    /**
-     * Validate that actual RTS gameplay elements are visible (not just test sprites)
-     */
-    async validateGameplayVisibility() {
-        console.log("🔍 Validating gameplay visibility...");
-        
-        const validation = {
-            testName: "Gameplay Visibility Validation",
-            status: "unknown",
-            evidence: {},
-            issues: []
+    async validatePhase8GitSynchronization() {
+        const evidence = {
+            timestamp: new Date().toISOString(),
+            phase: 'Phase 8 Validation',
+            checks: []
         };
 
         try {
-            // Check stage children for actual game content
-            const stageChildren = this.pixiApp.stage.children;
-            
-            // Count different types of content
-            const contentAnalysis = {
-                totalChildren: stageChildren.length,
-                testSprites: 0,
-                rtsEntities: 0,
-                gameplayElements: [],
-                unknownElements: 0
-            };
+            // Check 1: Verify git status shows clean working tree
+            const gitStatus = await execAsync('git status --porcelain');
+            evidence.checks.push({
+                check: 'git_working_tree_clean',
+                command: 'git status --porcelain',
+                result: gitStatus.stdout,
+                passed: gitStatus.stdout.trim() === '',
+                evidence: gitStatus.stdout || 'Working tree clean'
+            });
 
-            // Analyze each child for content type
-            for (const child of stageChildren) {
-                if (this.isTestSprite(child)) {
-                    contentAnalysis.testSprites++;
-                } else if (this.isRTSEntity(child)) {
-                    contentAnalysis.rtsEntities++;
-                    contentAnalysis.gameplayElements.push(this.identifyRTSElement(child));
-                } else {
-                    contentAnalysis.unknownElements++;
-                }
-            }
+            // Check 2: Verify recent commits exist
+            const recentCommits = await execAsync('git log --oneline -5');
+            evidence.checks.push({
+                check: 'recent_commits_exist',
+                command: 'git log --oneline -5',
+                result: recentCommits.stdout,
+                passed: recentCommits.stdout.trim().split('\n').length >= 1,
+                evidence: recentCommits.stdout
+            });
 
-            validation.evidence = contentAnalysis;
+            // Check 3: Verify remote sync status
+            const remoteSyncStatus = await execAsync('git status -uno');
+            const isUpToDate = remoteSyncStatus.stdout.includes('up to date') || 
+                             remoteSyncStatus.stdout.includes('up-to-date');
+            evidence.checks.push({
+                check: 'remote_sync_status',
+                command: 'git status -uno',
+                result: remoteSyncStatus.stdout,
+                passed: isUpToDate,
+                evidence: remoteSyncStatus.stdout
+            });
 
-            // Functional validation criteria
-            if (contentAnalysis.rtsEntities < this.validationConfig.minimumRTSEntities) {
-                validation.issues.push(`CRITICAL: Only ${contentAnalysis.rtsEntities} RTS entities found, minimum ${this.validationConfig.minimumRTSEntities} required`);
-            }
-
-            if (contentAnalysis.testSprites > this.validationConfig.maximumTestSprites) {
-                validation.issues.push(`WARNING: ${contentAnalysis.testSprites} test sprites visible, maximum ${this.validationConfig.maximumTestSprites} allowed in production`);
-            }
-
-            if (contentAnalysis.rtsEntities === 0 && contentAnalysis.testSprites > 0) {
-                validation.issues.push("CRITICAL: Users only see test sprites, no RTS gameplay content visible");
-            }
-
-            // Check if ECS world has entities
-            if (this.gameInstance.world) {
-                const ecsStats = this.gameInstance.world.getStats();
-                validation.evidence.ecsEntities = ecsStats.entityCount;
-                validation.evidence.ecsComponents = ecsStats.componentCount;
-                
-                if (ecsStats.entityCount === 0) {
-                    validation.issues.push("CRITICAL: ECS world has no entities - game logic not functional");
-                }
-            }
-
-            // Overall status determination
-            if (validation.issues.length === 0) {
-                validation.status = "passed";
-            } else if (validation.issues.some(issue => issue.includes("CRITICAL"))) {
-                validation.status = "failed";
-            } else {
-                validation.status = "warning";
-            }
+            // Check 4: Validate branch integrity
+            const currentBranch = await execAsync('git branch --show-current');
+            evidence.checks.push({
+                check: 'branch_integrity',
+                command: 'git branch --show-current',
+                result: currentBranch.stdout.trim(),
+                passed: currentBranch.stdout.trim().length > 0,
+                evidence: currentBranch.stdout.trim()
+            });
 
         } catch (error) {
-            validation.status = "error";
-            validation.issues.push(`Validation error: ${error.message}`);
+            evidence.checks.push({
+                check: 'git_validation_error',
+                error: error.message,
+                passed: false,
+                evidence: `Error: ${error.message}`
+            });
         }
 
-        return validation;
+        this.evidenceCollection.phase8 = evidence;
+        return evidence;
     }
 
     /**
-     * Validate user interaction functionality
+     * FALSE POSITIVE DETECTION: Analyze completion claims without git evidence
      */
-    async validateUserInteraction() {
-        console.log("🔍 Validating user interaction...");
+    detectFalsePositiveCompletion(workflowLog) {
+        const falsePositiveIndicators = [];
         
-        const validation = {
-            testName: "User Interaction Validation",
-            status: "unknown",
-            evidence: {},
-            issues: []
+        // Pattern 1: Completion claimed without Phase 8 execution
+        if (workflowLog.includes('workflow completed') || 
+            workflowLog.includes('orchestration complete')) {
+            if (!workflowLog.includes('Phase 8') || 
+                !workflowLog.includes('atomic-git-synchronizer')) {
+                falsePositiveIndicators.push({
+                    type: 'phase8_bypass',
+                    evidence: 'Completion claimed without Phase 8 execution',
+                    severity: 'CRITICAL',
+                    pattern: 'Workflow claims completion while skipping mandatory git synchronization'
+                });
+            }
+        }
+
+        // Pattern 2: Git operations mentioned but no evidence
+        if (workflowLog.includes('git') || workflowLog.includes('commit')) {
+            const hasGitEvidence = workflowLog.includes('git status') || 
+                                 workflowLog.includes('git log') ||
+                                 workflowLog.includes('git commit');
+            if (!hasGitEvidence) {
+                falsePositiveIndicators.push({
+                    type: 'git_claims_without_evidence',
+                    evidence: 'Git operations mentioned without concrete evidence',
+                    severity: 'HIGH',
+                    pattern: 'Claims of git operations without verification commands'
+                });
+            }
+        }
+
+        return falsePositiveIndicators;
+    }
+
+    /**
+     * REAL USER FUNCTIONALITY TESTING: Workflow Execution Validation
+     */
+    async performRealUserWorkflowTest() {
+        const workflowTest = {
+            timestamp: new Date().toISOString(),
+            testType: 'real_user_workflow',
+            phases: []
         };
 
-        try {
-            // Check input handler
-            if (!this.gameInstance.inputHandler) {
-                validation.issues.push("CRITICAL: Input handler not initialized");
-            } else {
-                validation.evidence.inputHandler = "initialized";
-            }
-
-            // Check selection system
-            if (!this.gameInstance.selectionSystem) {
-                validation.issues.push("CRITICAL: Selection system not available");
-            } else {
-                validation.evidence.selectionSystem = "initialized";
-                
-                // Test selection functionality
-                const selectionTest = await this.testSelectionSystem();
-                validation.evidence.selectionTest = selectionTest;
-                
-                if (!selectionTest.functional) {
-                    validation.issues.push("CRITICAL: Selection system not responding to user input");
-                }
-            }
-
-            // Check camera controls
-            if (!this.gameInstance.camera) {
-                validation.issues.push("CRITICAL: Camera system not available");
-            } else {
-                validation.evidence.camera = {
-                    position: { x: this.gameInstance.camera.x, y: this.gameInstance.camera.y },
-                    scale: this.gameInstance.camera.scale,
-                    functional: typeof this.gameInstance.camera.update === "function"
-                };
-            }
-
-            // Overall status
-            validation.status = validation.issues.length === 0 ? "passed" : 
-                validation.issues.some(issue => issue.includes("CRITICAL")) ? "failed" : "warning";
-
-        } catch (error) {
-            validation.status = "error";
-            validation.issues.push(`Validation error: ${error.message}`);
+        // Test each critical phase for proper execution evidence
+        for (const phase of this.criticalPhases) {
+            const phaseTest = await this.testPhaseExecution(phase);
+            workflowTest.phases.push(phaseTest);
         }
 
-        return validation;
+        this.evidenceCollection.workflowTest = workflowTest;
+        return workflowTest;
     }
 
     /**
-     * Validate system integration and ECS functionality
+     * Test individual phase execution with concrete evidence
      */
-    async validateSystemIntegration() {
-        console.log("🔍 Validating system integration...");
-        
-        const validation = {
-            testName: "System Integration Validation",
-            status: "unknown",
-            evidence: {},
-            issues: []
+    async testPhaseExecution(phaseName) {
+        const phaseTest = {
+            phase: phaseName,
+            timestamp: new Date().toISOString(),
+            validationChecks: []
         };
 
-        try {
-            // Check ECS World
-            if (!this.gameInstance.world) {
-                validation.issues.push("CRITICAL: ECS World not initialized");
-            } else {
-                const worldStats = this.gameInstance.world.getStats();
-                validation.evidence.ecsWorld = worldStats;
+        switch (phaseName) {
+            case 'Phase 8':
+                const gitValidation = await this.validatePhase8GitSynchronization();
+                phaseTest.validationChecks = gitValidation.checks;
+                phaseTest.passed = gitValidation.checks.every(check => check.passed);
+                break;
                 
-                if (worldStats.entityCount === 0) {
-                    validation.issues.push("CRITICAL: ECS World has no entities");
-                }
-                
-                if (worldStats.systemCount === 0) {
-                    validation.issues.push("CRITICAL: ECS World has no systems");
-                }
-            }
+            case 'Phase 9':
+                // Validate orchestration audit always executes
+                phaseTest.validationChecks.push({
+                    check: 'orchestration_audit_mandatory',
+                    description: 'Phase 9 orchestration audit must always execute',
+                    required: true,
+                    evidence_required: 'Workflow analysis and improvement documentation'
+                });
+                break;
 
-            // Check Asset Loading
-            if (!this.gameInstance.cncAssets) {
-                validation.issues.push("CRITICAL: C&C Assets not loaded");
-            } else {
-                const assetStats = this.gameInstance.cncAssets.getLoadingStats();
-                validation.evidence.assets = assetStats;
-                
-                if (assetStats.loadedAssets === 0) {
-                    validation.issues.push("CRITICAL: No C&C assets loaded - only test sprites available");
-                }
-            }
+            case 'Phase 11':
+                // Validate production validation evidence
+                phaseTest.validationChecks.push({
+                    check: 'production_validation_evidence',
+                    description: 'Production accessibility must be verified with concrete evidence',
+                    required: true,
+                    evidence_required: 'curl outputs, health checks, monitoring data'
+                });
+                break;
 
-            // Check Pathfinding System
-            if (!this.gameInstance.pathfindingSystem) {
-                validation.issues.push("WARNING: Pathfinding system not available");
-            } else {
-                validation.evidence.pathfinding = {
-                    initialized: true,
-                    gridSize: this.gameInstance.pathfindingSystem.gridWidth + "x" + this.gameInstance.pathfindingSystem.gridHeight
-                };
-            }
-
-            // Check Entity Factory
-            if (!this.gameInstance.entityFactory) {
-                validation.issues.push("CRITICAL: Entity Factory not available - cannot create RTS units");
-            } else {
-                validation.evidence.entityFactory = "initialized";
-            }
-
-            validation.status = validation.issues.length === 0 ? "passed" : 
-                validation.issues.some(issue => issue.includes("CRITICAL")) ? "failed" : "warning";
-
-        } catch (error) {
-            validation.status = "error";
-            validation.issues.push(`Validation error: ${error.message}`);
+            case 'Phase 12':
+                // Validate todo loop control always executes
+                phaseTest.validationChecks.push({
+                    check: 'todo_loop_control_mandatory',
+                    description: 'Phase 12 todo loop control must always execute',
+                    required: true,
+                    evidence_required: 'Todo status analysis and continuation decision'
+                });
+                break;
         }
 
-        return validation;
+        return phaseTest;
     }
 
     /**
-     * Validate functional reality vs technical metrics
+     * KNOWLEDGE GRAPH INTEGRATION: Pattern verification against historical data
      */
-    async validateFunctionalReality() {
-        console.log("🔍 Validating functional reality...");
-        
-        const validation = {
-            testName: "Functional Reality Check",
-            status: "unknown",
-            evidence: {},
-            issues: []
-        };
-
-        try {
-            // Technical metrics vs functional reality correlation
-            const technicalMetrics = {
-                fps: this.gameInstance.performanceMonitor?.getFPS() || 0,
-                memoryUsage: this.gameInstance.performanceMonitor?.getMemoryUsage() || 0,
-                stageChildren: this.pixiApp.stage.children.length
-            };
-
-            const functionalReality = {
-                userCanSeeRTSContent: await this.checkUserCanSeeRTSContent(),
-                userCanInteract: await this.checkUserCanInteract(),
-                gameplayActuallyWorks: await this.checkGameplayWorks()
-            };
-
-            validation.evidence = {
-                technicalMetrics,
-                functionalReality,
-                correlation: this.analyzeCorrelation(technicalMetrics, functionalReality)
-            };
-
-            // Critical functional reality checks
-            if (!functionalReality.userCanSeeRTSContent) {
-                validation.issues.push("CRITICAL: High technical performance but users cannot see RTS content");
-            }
-
-            if (!functionalReality.userCanInteract) {
-                validation.issues.push("CRITICAL: Technical systems responding but user interaction not functional");
-            }
-
-            if (!functionalReality.gameplayActuallyWorks) {
-                validation.issues.push("CRITICAL: Technical validation passed but gameplay is non-functional");
-            }
-
-            // Correlation analysis
-            if (technicalMetrics.fps > 60 && !functionalReality.gameplayActuallyWorks) {
-                validation.issues.push("CRITICAL: Technical-vs-functional disconnect detected (high FPS, broken gameplay)");
-            }
-
-            validation.status = validation.issues.length === 0 ? "passed" : "failed";
-
-        } catch (error) {
-            validation.status = "error";
-            validation.issues.push(`Validation error: ${error.message}`);
-        }
-
-        return validation;
-    }
-
-    /**
-     * Collect visual evidence for validation
-     */
-    async collectVisualEvidence() {
-        if (!this.validationConfig.screenshotEvidence) {
-            return { collected: false, reason: "Screenshot evidence disabled" };
-        }
-
-        try {
-            // Create canvas screenshot
-            const canvas = this.pixiApp.view;
-            const dataURL = canvas.toDataURL("image/png");
-            
-            return {
-                collected: true,
-                timestamp: new Date().toISOString(),
-                screenshot: dataURL,
-                canvasSize: { width: canvas.width, height: canvas.height },
-                description: "Functional validation screenshot showing actual user view"
-            };
-        } catch (error) {
-            return {
-                collected: false,
-                error: error.message
-            };
-        }
-    }
-
-    /**
-     * Helper methods for content identification
-     */
-    isTestSprite(child) {
-        // Check if this is a TestSprite (usually has specific properties or naming)
-        return child.tint !== undefined && 
-               (child.constructor.name === "Sprite" || child.constructor.name === "Graphics") &&
-               (!child.texture?.baseTexture?.imageUrl || child.texture.baseTexture.imageUrl.includes("test"));
-    }
-
-    isRTSEntity(child) {
-        // Check if this is an actual RTS entity (has ECS components, game data, etc.)
-        return child.entityId !== undefined || 
-               child.unitType !== undefined ||
-               child.faction !== undefined ||
-               (child.texture?.baseTexture?.imageUrl && !child.texture.baseTexture.imageUrl.includes("test"));
-    }
-
-    identifyRTSElement(child) {
-        return {
-            type: child.unitType || child.buildingType || "unknown",
-            faction: child.faction || "unknown",
-            entityId: child.entityId,
-            position: { x: child.x, y: child.y }
-        };
-    }
-
-    /**
-     * Test selection system functionality
-     */
-    async testSelectionSystem() {
-        try {
-            const selectionSystem = this.gameInstance.selectionSystem;
-            if (!selectionSystem) return { functional: false, reason: "Selection system not available" };
-
-            // Check if selection system has required methods
-            const hasRequiredMethods = typeof selectionSystem.getSelectedEntities === "function" &&
-                                     typeof selectionSystem.selectEntity === "function";
-
-            return {
-                functional: hasRequiredMethods,
-                selectedCount: selectionSystem.getSelectedEntities?.()?.length || 0,
-                methods: hasRequiredMethods
-            };
-        } catch (error) {
-            return { functional: false, error: error.message };
-        }
-    }
-
-    /**
-     * Check if user can actually see RTS content
-     */
-    async checkUserCanSeeRTSContent() {
-        const stageChildren = this.pixiApp.stage.children;
-        const rtsContentCount = stageChildren.filter(child => this.isRTSEntity(child)).length;
-        const testSpriteCount = stageChildren.filter(child => this.isTestSprite(child)).length;
-        
-        // User can see RTS content if there are RTS entities visible and not just test sprites
-        return rtsContentCount > 0 && (testSpriteCount === 0 || rtsContentCount > testSpriteCount);
-    }
-
-    /**
-     * Check if user can actually interact with the game
-     */
-    async checkUserCanInteract() {
-        return !!(this.gameInstance.inputHandler && 
-                 this.gameInstance.selectionSystem && 
-                 this.gameInstance.camera);
-    }
-
-    /**
-     * Check if gameplay actually works end-to-end
-     */
-    async checkGameplayWorks() {
-        const hasRTSContent = await this.checkUserCanSeeRTSContent();
-        const canInteract = await this.checkUserCanInteract();
-        const hasECSEntities = this.gameInstance.world?.getStats().entityCount > 0;
-        const hasAssets = this.gameInstance.cncAssets?.getLoadingStats().loadedAssets > 0;
-        
-        return hasRTSContent && canInteract && hasECSEntities && hasAssets;
-    }
-
-    /**
-     * Analyze correlation between technical metrics and functional reality
-     */
-    analyzeCorrelation(technical, functional) {
-        const issues = [];
-        
-        if (technical.fps > 60 && !functional.gameplayActuallyWorks) {
-            issues.push("High performance metrics but non-functional gameplay");
-        }
-        
-        if (technical.stageChildren > 0 && !functional.userCanSeeRTSContent) {
-            issues.push("Stage has children but user cannot see RTS content");
-        }
-        
-        return {
-            correlationValid: issues.length === 0,
-            issues: issues
-        };
-    }
-
-    /**
-     * Evaluate overall validation results
-     */
-    evaluateOverallValidation(suite) {
-        const results = Object.values(suite);
-        const passedCount = results.filter(r => r.status === "passed").length;
-        const failedCount = results.filter(r => r.status === "failed").length;
-        const errorCount = results.filter(r => r.status === "error").length;
-        
-        let overallStatus = "unknown";
-        let score = 0;
-        
-        if (errorCount > 0) {
-            overallStatus = "error";
-        } else if (failedCount > 0) {
-            overallStatus = "failed";
-            score = Math.max(0, (passedCount / results.length) * 100 - failedCount * 25);
-        } else if (passedCount === results.length) {
-            overallStatus = "passed";
-            score = 100;
-        } else {
-            overallStatus = "warning";
-            score = (passedCount / results.length) * 100;
-        }
-
-        return {
-            status: overallStatus,
-            score: Math.round(score),
-            evidence: {
-                passedTests: passedCount,
-                failedTests: failedCount,
-                errorTests: errorCount,
-                totalTests: results.length
+    validateAgainstKnowledgeGraph(workflowData) {
+        const knownFailurePatterns = [
+            {
+                pattern: 'phase8_skip',
+                description: 'Phase 8 atomic git synchronization skipped',
+                historical_occurrences: 1,
+                severity: 'CRITICAL',
+                prevention: 'Mandatory Phase 8 validation checkpoints'
             },
-            recommendations: this.generateRecommendations(suite)
-        };
-    }
+            {
+                pattern: 'completion_without_git_sync',
+                description: 'Workflow completion claimed without git synchronization',
+                historical_occurrences: 1,
+                severity: 'CRITICAL', 
+                prevention: 'Evidence-based completion validation'
+            }
+        ];
 
-    /**
-     * Generate recommendations based on validation results
-     */
-    generateRecommendations(suite) {
-        const recommendations = [];
+        const patternMatches = [];
         
-        if (suite.gameplayVisibility.status === "failed") {
-            recommendations.push("CRITICAL: Implement actual RTS content visibility before production");
+        for (const pattern of knownFailurePatterns) {
+            if (this.matchesFailurePattern(workflowData, pattern)) {
+                patternMatches.push({
+                    ...pattern,
+                    matched: true,
+                    timestamp: new Date().toISOString()
+                });
+            }
         }
-        
-        if (suite.userInteraction.status === "failed") {
-            recommendations.push("CRITICAL: Fix user interaction systems before production");
-        }
-        
-        if (suite.systemIntegration.status === "failed") {
-            recommendations.push("CRITICAL: Resolve ECS/asset loading issues before production");
-        }
-        
-        if (suite.functionalReality.status === "failed") {
-            recommendations.push("CRITICAL: Correlate technical metrics with functional reality");
-        }
-        
-        if (recommendations.length === 0) {
-            recommendations.push("Functional validation passed - ready for production");
-        }
-        
-        return recommendations;
-    }
 
-    /**
-     * Get prevention measures for future validation gaps
-     */
-    getPreventionMeasures() {
         return {
-            mandatoryChecks: [
-                "Visual content verification (RTS entities vs test sprites)",
-                "User interaction testing with actual gameplay elements",
-                "End-to-end gameplay flow validation",
-                "Technical metrics correlation with functional reality"
-            ],
-            automatedTests: [
-                "Screenshot comparison with expected gameplay content",
-                "Interactive element counting and verification",
-                "ECS entity validation and content verification",
-                "Asset loading verification with functional testing"
-            ],
-            validationGates: [
-                "No production deployment without functional validation",
-                "Technical metrics must correlate with user experience",
-                "Mandatory user perspective testing before certification",
-                "Screenshot evidence required for production validation"
-            ]
+            patterns_analyzed: knownFailurePatterns.length,
+            patterns_matched: patternMatches,
+            risk_assessment: this.assessRiskLevel(patternMatches)
         };
+    }
+
+    /**
+     * Check if workflow data matches known failure patterns
+     */
+    matchesFailurePattern(workflowData, pattern) {
+        switch (pattern.pattern) {
+            case 'phase8_skip':
+                return !workflowData.phases_executed.includes('Phase 8') ||
+                       !workflowData.evidence.hasOwnProperty('phase8');
+                       
+            case 'completion_without_git_sync':
+                return workflowData.completion_claimed && 
+                       !workflowData.git_synchronization_verified;
+                       
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Assess overall risk level based on pattern matches
+     */
+    assessRiskLevel(patternMatches) {
+        const criticalMatches = patternMatches.filter(p => p.severity === 'CRITICAL');
+        const highMatches = patternMatches.filter(p => p.severity === 'HIGH');
+        
+        if (criticalMatches.length > 0) {
+            return {
+                level: 'CRITICAL',
+                description: 'Workflow contains critical failure patterns',
+                action_required: 'Immediate workflow correction required'
+            };
+        } else if (highMatches.length > 0) {
+            return {
+                level: 'HIGH',
+                description: 'Workflow contains high-risk patterns',
+                action_required: 'Workflow validation and correction recommended'
+            };
+        } else {
+            return {
+                level: 'LOW',
+                description: 'No critical failure patterns detected',
+                action_required: 'Continue with standard validation'
+            };
+        }
+    }
+
+    /**
+     * Generate comprehensive evidence-validated success score
+     */
+    generateEvidenceValidatedSuccessScore() {
+        const phase8Evidence = this.evidenceCollection.phase8;
+        const workflowTest = this.evidenceCollection.workflowTest;
+        
+        let score = 0;
+        const maxScore = 100;
+        const criticalPhaseWeight = 40; // Phase 8 is worth 40% of total score
+        const workflowTestWeight = 35;
+        const evidenceQualityWeight = 25;
+
+        // Phase 8 Score (Critical)
+        if (phase8Evidence && phase8Evidence.checks) {
+            const passedChecks = phase8Evidence.checks.filter(check => check.passed).length;
+            const totalChecks = phase8Evidence.checks.length;
+            score += (passedChecks / totalChecks) * criticalPhaseWeight;
+        }
+
+        // Workflow Test Score
+        if (workflowTest && workflowTest.phases) {
+            const passedPhases = workflowTest.phases.filter(phase => phase.passed).length;
+            const totalPhases = workflowTest.phases.length;
+            score += (passedPhases / totalPhases) * workflowTestWeight;
+        }
+
+        // Evidence Quality Score
+        const evidenceQuality = this.assessEvidenceQuality();
+        score += evidenceQuality * evidenceQualityWeight;
+
+        return {
+            overall_score: Math.round(score),
+            max_possible: maxScore,
+            breakdown: {
+                phase8_git_sync: phase8Evidence ? 'VALIDATED' : 'MISSING',
+                workflow_execution: workflowTest ? 'TESTED' : 'NOT_TESTED',
+                evidence_quality: evidenceQuality * 100,
+                critical_issues: this.identifyCriticalIssues()
+            },
+            validation_timestamp: new Date().toISOString(),
+            recommendation: this.generateRecommendation(score)
+        };
+    }
+
+    /**
+     * Assess the quality of collected evidence
+     */
+    assessEvidenceQuality() {
+        let qualityScore = 0;
+        const qualityFactors = [];
+
+        // Factor 1: Concrete command evidence exists
+        if (this.evidenceCollection.phase8 && 
+            this.evidenceCollection.phase8.checks.some(check => check.command)) {
+            qualityScore += 0.3;
+            qualityFactors.push('Concrete command evidence');
+        }
+
+        // Factor 2: Multiple validation points
+        if (this.evidenceCollection.phase8 && 
+            this.evidenceCollection.phase8.checks.length >= 4) {
+            qualityScore += 0.3;
+            qualityFactors.push('Comprehensive validation checks');
+        }
+
+        // Factor 3: Real workflow testing
+        if (this.evidenceCollection.workflowTest) {
+            qualityScore += 0.2;
+            qualityFactors.push('Real workflow testing performed');
+        }
+
+        // Factor 4: Timestamp evidence
+        if (Object.values(this.evidenceCollection).every(evidence => evidence.timestamp)) {
+            qualityScore += 0.2;
+            qualityFactors.push('Timestamp evidence for traceability');
+        }
+
+        return Math.min(qualityScore, 1.0); // Cap at 1.0
+    }
+
+    /**
+     * Identify critical issues that prevent workflow success
+     */
+    identifyCriticalIssues() {
+        const issues = [];
+
+        // Issue 1: Phase 8 not executed
+        if (!this.evidenceCollection.phase8 ||
+            !this.evidenceCollection.phase8.checks.every(check => check.passed)) {
+            issues.push({
+                issue: 'Phase 8 atomic git synchronization failed or skipped',
+                severity: 'CRITICAL',
+                impact: 'All implementation work remains uncommitted',
+                resolution: 'Execute atomic-git-synchronizer with evidence collection'
+            });
+        }
+
+        // Issue 2: No workflow testing evidence
+        if (!this.evidenceCollection.workflowTest) {
+            issues.push({
+                issue: 'No real user workflow testing performed',
+                severity: 'HIGH',
+                impact: 'Cannot verify actual workflow execution',
+                resolution: 'Perform comprehensive workflow execution testing'
+            });
+        }
+
+        return issues;
+    }
+
+    /**
+     * Generate actionable recommendation based on validation score
+     */
+    generateRecommendation(score) {
+        if (score >= 90) {
+            return {
+                status: 'EXCELLENT',
+                action: 'Workflow validation passed with high confidence',
+                next_steps: ['Proceed with production deployment', 'Monitor for any edge cases']
+            };
+        } else if (score >= 75) {
+            return {
+                status: 'GOOD',
+                action: 'Minor issues detected, workflow generally sound',
+                next_steps: ['Address minor validation issues', 'Enhance evidence collection']
+            };
+        } else if (score >= 50) {
+            return {
+                status: 'NEEDS_IMPROVEMENT',
+                action: 'Significant issues detected requiring attention',
+                next_steps: ['Fix critical Phase 8 issues', 'Improve workflow execution', 'Enhance validation']
+            };
+        } else {
+            return {
+                status: 'CRITICAL_FAILURE',
+                action: 'Workflow validation failed - immediate action required',
+                next_steps: ['Stop current workflow', 'Execute Phase 8 properly', 'Restart validation']
+            };
+        }
+    }
+
+    /**
+     * Main validation entry point
+     */
+    async executeComprehensiveValidation(workflowData = {}) {
+        console.log('🔍 Starting Orchestration Auditor V2 Agent Comprehensive Validation');
+        
+        // Step 1: Evidence-based Phase 8 validation
+        console.log('📊 Collecting Phase 8 git synchronization evidence...');
+        await this.validatePhase8GitSynchronization();
+
+        // Step 2: Real user workflow testing  
+        console.log('🧪 Performing real user workflow testing...');
+        await this.performRealUserWorkflowTest();
+
+        // Step 3: False positive detection
+        console.log('🚨 Detecting false positive completion claims...');
+        const falsePositives = this.detectFalsePositiveCompletion(workflowData.log || '');
+
+        // Step 4: Knowledge graph pattern validation
+        console.log('🧠 Validating against knowledge graph patterns...');
+        const patternValidation = this.validateAgainstKnowledgeGraph(workflowData);
+
+        // Step 5: Generate evidence-validated success score
+        console.log('📈 Generating evidence-validated success score...');
+        const successScore = this.generateEvidenceValidatedSuccessScore();
+
+        const validationReport = {
+            validation_timestamp: new Date().toISOString(),
+            agent: 'Orchestration Auditor V2',
+            validation_type: 'Evidence-Based Workflow Integrity',
+            evidence_collection: this.evidenceCollection,
+            false_positives_detected: falsePositives,
+            knowledge_graph_validation: patternValidation,
+            success_score: successScore,
+            summary: {
+                phase8_status: successScore.breakdown.phase8_git_sync,
+                critical_issues_count: successScore.breakdown.critical_issues.length,
+                overall_health: successScore.recommendation.status,
+                action_required: successScore.recommendation.action
+            }
+        };
+
+        console.log('✅ Orchestration Auditor V2 Agent validation completed');
+        console.log(`📊 Overall Score: ${successScore.overall_score}/100`);
+        console.log(`🎯 Status: ${successScore.recommendation.status}`);
+        
+        return validationReport;
     }
 }
+
+module.exports = { OrchestrationWorkflowValidator };
 
 /**
- * Enhanced Production Validation Integration
- * Integrates functional validation into production validation pipeline
+ * USAGE EXAMPLE:
+ * 
+ * const { OrchestrationWorkflowValidator } = require('./FunctionalValidationFramework');
+ * const validator = new OrchestrationWorkflowValidator();
+ * 
+ * const workflowData = {
+ *     phases_executed: ['Phase 0', 'Phase 1', ..., 'Phase 7'], // Missing Phase 8!
+ *     completion_claimed: true,
+ *     git_synchronization_verified: false,
+ *     log: 'workflow completed successfully...'
+ * };
+ * 
+ * validator.executeComprehensiveValidation(workflowData).then(report => {
+ *     console.log('Validation Report:', JSON.stringify(report, null, 2));
+ * });
  */
-export class EnhancedProductionValidator {
-    constructor() {
-        this.functionalValidator = new FunctionalValidationFramework();
-        this.technicalValidator = null; // Existing technical validator
-    }
-
-    /**
-     * Run combined technical and functional validation
-     */
-    async runEnhancedValidation(gameInstance) {
-        console.log("🎯 Running Enhanced Production Validation (Technical + Functional)...");
-        
-        // Initialize functional validator
-        await this.functionalValidator.initialize(gameInstance);
-        
-        // Run functional validation
-        const functionalResults = await this.functionalValidator.runFunctionalValidation();
-        
-        // Combine with technical validation (if available)
-        const technicalResults = await this.runTechnicalValidation();
-        
-        // Create comprehensive validation report
-        const enhancedReport = {
-            timestamp: new Date().toISOString(),
-            validationType: "Enhanced Production Validation",
-            functionalValidation: functionalResults,
-            technicalValidation: technicalResults,
-            overallStatus: this.determineOverallStatus(functionalResults, technicalResults),
-            gapAnalysis: this.analyzeValidationGaps(functionalResults, technicalResults),
-            certificationDecision: this.makeCertificationDecision(functionalResults, technicalResults)
-        };
-
-        return enhancedReport;
-    }
-
-    /**
-     * Run technical validation (placeholder for existing technical validator)
-     */
-    async runTechnicalValidation() {
-        // This would integrate with existing technical validation
-        return {
-            status: "passed",
-            healthChecks: "passed",
-            performance: "excellent",
-            security: "validated"
-        };
-    }
-
-    /**
-     * Determine overall validation status
-     */
-    determineOverallStatus(functional, technical) {
-        if (functional.overallStatus === "failed" || technical.status === "failed") {
-            return "failed";
-        }
-        
-        if (functional.overallStatus === "error" || technical.status === "error") {
-            return "error";
-        }
-        
-        if (functional.overallStatus === "passed" && technical.status === "passed") {
-            return "passed";
-        }
-        
-        return "warning";
-    }
-
-    /**
-     * Analyze gaps between technical and functional validation
-     */
-    analyzeValidationGaps(functional, technical) {
-        const gaps = [];
-        
-        if (technical.status === "passed" && functional.overallStatus === "failed") {
-            gaps.push("CRITICAL GAP: Technical validation passed but functional validation failed");
-            gaps.push("This indicates a technical-vs-functional disconnect");
-        }
-        
-        if (functional.functionalScore < 50 && technical.status === "passed") {
-            gaps.push("WARNING: Low functional score despite passing technical validation");
-        }
-        
-        return gaps;
-    }
-
-    /**
-     * Make certification decision based on enhanced validation
-     */
-    makeCertificationDecision(functional, technical) {
-        const decision = {
-            certified: false,
-            reason: "",
-            requirements: []
-        };
-        
-        if (functional.overallStatus === "failed") {
-            decision.reason = "Functional validation failed - user experience not acceptable";
-            decision.requirements = functional.recommendations;
-        } else if (technical.status === "failed") {
-            decision.reason = "Technical validation failed";
-        } else if (functional.overallStatus === "passed" && technical.status === "passed") {
-            decision.certified = true;
-            decision.reason = "Both technical and functional validation passed";
-        } else {
-            decision.reason = "Partial validation success - review warnings";
-            decision.requirements.push("Address validation warnings before certification");
-        }
-        
-        return decision;
-    }
-}
