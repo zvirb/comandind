@@ -26,14 +26,14 @@ export class EntityFactory {
     /**
      * Create a C&C unit entity
      */
-    createUnit(unitKey, x = 0, y = 0, faction = 'gdi') {
+    async createUnit(unitKey, x = 0, y = 0, faction = 'gdi') {
         const unitInfo = this.cncAssets.getUnitInfo(unitKey);
         if (!unitInfo) {
             console.warn(`Unit type '${unitKey}' not found`);
             return null;
         }
         
-        const texture = this.cncAssets.getTexture(`unit_${unitKey}`);
+        const texture = await this.cncAssets.getTexture(`unit_${unitKey}`);
         if (!texture) {
             console.warn(`Texture for unit '${unitKey}' not found`);
             return null;
@@ -74,14 +74,14 @@ export class EntityFactory {
     /**
      * Create a C&C building entity
      */
-    createBuilding(buildingKey, x = 0, y = 0, faction = 'gdi') {
+    async createBuilding(buildingKey, x = 0, y = 0, faction = 'gdi') {
         const buildingInfo = this.cncAssets.getBuildingInfo(buildingKey);
         if (!buildingInfo) {
             console.warn(`Building type '${buildingKey}' not found`);
             return null;
         }
         
-        const texture = this.cncAssets.getTexture(`building_${buildingKey}`);
+        const texture = await this.cncAssets.getTexture(`building_${buildingKey}`);
         if (!texture) {
             console.warn(`Texture for building '${buildingKey}' not found`);
             return null;

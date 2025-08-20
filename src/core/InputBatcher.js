@@ -15,9 +15,10 @@
  */
 
 export class InputBatcher {
-    constructor(inputHandler, camera, options = {}) {
+    constructor(inputHandler, camera, canvasElement = null, options = {}) {
         this.inputHandler = inputHandler;
         this.camera = camera;
+        this.canvasElement = canvasElement;
         
         // Configuration
         this.config = {
@@ -501,7 +502,7 @@ export class InputBatcher {
         }
         
         // Transform coordinates
-        const result = this.camera.screenToWorld(screenX, screenY);
+        const result = this.camera.screenToWorld(screenX, screenY, this.canvasElement);
         
         // Cache result
         this.transformCache.screenToWorld.set(cacheKey, result);

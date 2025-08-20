@@ -233,6 +233,13 @@ export class World {
     }
     
     /**
+     * Cleanup method (alias for destroy() for compatibility)
+     */
+    cleanup() {
+        this.destroy();
+    }
+    
+    /**
      * Destroy world and cleanup all resources
      */
     destroy() {

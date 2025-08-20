@@ -186,7 +186,7 @@ export class UIManager {
     async initializeInputBatcher() {
         console.log('⌨️  Initializing InputBatcher...');
         
-        this.systems.inputBatcher = new InputBatcher(this.inputHandler, this.camera, {
+        this.systems.inputBatcher = new InputBatcher(this.inputHandler, this.camera, this.app.view, {
             batchSize: this.config.isMobile ? 8 : 16,
             processFrequency: this.config.isMobile ? 30 : 60, // Lower frequency on mobile
             enableGestures: this.config.isMobile,
@@ -205,7 +205,7 @@ export class UIManager {
     async initializeBuildingPlacement() {
         console.log('🏗️  Initializing BuildingPlacementUI...');
         
-        this.systems.buildingPlacement = new BuildingPlacementUI(this.app, this.camera, this.world, {
+        this.systems.buildingPlacement = new BuildingPlacementUI(this.app, this.camera, this.world, this.app.view, {
             gridSize: 32,
             showGrid: !this.config.isMobile, // Hide grid on mobile for clarity
             enableSounds: true,

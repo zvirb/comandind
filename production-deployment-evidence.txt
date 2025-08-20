@@ -1,0 +1,61 @@
+=== PRODUCTION ACCESSIBILITY EVIDENCE ===
+Timestamp: Wed 20 Aug 2025 10:13:17 AEST
+
+=== CURL HEALTH CHECK EVIDENCE ===
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8080...
+* Connected to localhost (::1) port 8080
+> GET /health HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx
+< Date: Wed, 20 Aug 2025 00:13:23 GMT
+
+=== PING TEST EVIDENCE ===
+PING localhost (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.020 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=2 ttl=64 time=0.045 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=3 ttl=64 time=0.028 ms
+
+--- localhost ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2052ms
+rtt min/avg/max/mdev = 0.020/0.031/0.045/0.010 ms
+
+=== CONTAINER STATUS EVIDENCE ===
+NAMES               STATUS                   PORTS
+ai-rts-production   Up 3 minutes (healthy)   80/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+
+=== PERFORMANCE METRICS ===
+Request 1:
+
+real	0m0.007s
+user	0m0.003s
+sys	0m0.003s
+Request 2:
+
+real	0m0.006s
+user	0m0.001s
+sys	0m0.004s
+Request 3:
+
+real	0m0.005s
+user	0m0.001s
+sys	0m0.004s
+Request 4:
+
+real	0m0.007s
+user	0m0.001s
+sys	0m0.005s
+Request 5:
+
+real	0m0.006s
+user	0m0.001s
+sys	0m0.004s
+

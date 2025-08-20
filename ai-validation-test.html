@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Systems Validation - Phase 6 Evidence Collection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .running { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { 
+            background: #6c757d; 
+            cursor: not-allowed; 
+        }
+        
+        .test-section {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .test-content {
+            padding: 15px;
+            display: none;
+        }
+        
+        .test-content.expanded {
+            display: block;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        .evidence-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #28a745);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .benchmark-result {
+            background: #fff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        
+        .benchmark-pass { border-color: #28a745; background: #f8fff9; }
+        .benchmark-fail { border-color: #dc3545; background: #fff8f8; }
+        .benchmark-warn { border-color: #ffc107; background: #fffbf0; }
+    </style>
+</head>
+<body>
+    <h1>🤖 AI Systems Validation - Phase 6 Evidence Collection</h1>
+    <div class="status" id="overall-status">
+        <strong>Status:</strong> Ready to begin comprehensive AI validation
+    </div>
+    
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    
+    <div style="text-align: center; margin: 20px 0;">
+        <button onclick="runAllValidations()" id="run-all-btn">🚀 Run All AI Validations</button>
+        <button onclick="exportEvidence()" id="export-btn" disabled>📊 Export Evidence Report</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+    
+    <!-- TensorFlow.js Validation -->
+    <div class="container">
+        <div class="test-section">
+            <div class="test-header" onclick="toggleSection('tensorflow')">
+                <span>📊 TensorFlow.js Integration Validation</span>
+                <span id="tensorflow-status">⏳</span>
+            </div>
+            <div class="test-content" id="tensorflow-content">
+                <p><strong>Claims to Validate:</strong> WebGL backend with CPU fallback, 1-2ms inference, &lt;50MB memory</p>
+                <button onclick="validateTensorFlow()">🔍 Validate TensorFlow.js</button>
+                <div class="metrics-grid" id="tensorflow-metrics"></div>
+                <div class="evidence-output" id="tensorflow-evidence"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Q-Learning Validation -->
+    <div class="container">
+        <div class="test-section">
+            <div class="test-header" onclick="toggleSection('qlearning')">
+                <span>🧠 Q-Learning System Validation</span>
+                <span id="qlearning-status">⏳</span>
+            </div>
+            <div class="test-content" id="qlearning-content">
+                <p><strong>Claims to Validate:</strong> 36D state vector, 16 actions, neural network with 0.63ms inference</p>
+                <button onclick="validateQLearning()">🔍 Validate Q-Learning</button>
+                <div class="metrics-grid" id="qlearning-metrics"></div>
+                <div class="evidence-output" id="qlearning-evidence"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Behavior Tree Validation -->
+    <div class="container">
+        <div class="test-section">
+            <div class="test-header" onclick="toggleSection('behaviortree')">
+                <span>🌳 Behavior Tree System Validation</span>
+                <span id="behaviortree-status">⏳</span>
+            </div>
+            <div class="test-content" id="behaviortree-content">
+                <p><strong>Claims to Validate:</strong> Time-sliced execution &lt;1ms, Selector/Sequence/Action nodes</p>
+                <button onclick="validateBehaviorTree()">🔍 Validate Behavior Tree</button>
+                <div class="metrics-grid" id="behaviortree-metrics"></div>
+                <div class="evidence-output" id="behaviortree-evidence"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ollama Integration Validation -->
+    <div class="container">
+        <div class="test-section">
+            <div class="test-header" onclick="toggleSection('ollama')">
+                <span>🤖 Ollama Integration Validation</span>
+                <span id="ollama-status">⏳</span>
+            </div>
+            <div class="test-content" id="ollama-content">
+                <p><strong>Claims to Validate:</strong> Circuit breaker pattern, &lt;500ms responses, graceful fallback</p>
+                <button onclick="validateOllama()">🔍 Validate Ollama</button>
+                <div class="metrics-grid" id="ollama-metrics"></div>
+                <div class="evidence-output" id="ollama-evidence"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI System Integration Validation -->
+    <div class="container">
+        <div class="test-section">
+            <div class="test-header" onclick="toggleSection('integration')">
+                <span>🔧 AI System Integration Validation</span>
+                <span id="integration-status">⏳</span>
+            </div>
+            <div class="test-content" id="integration-content">
+                <p><strong>Claims to Validate:</strong> ECS integration, 8-10ms frame budget, 0.03ms average execution</p>
+                <button onclick="validateIntegration()">🔍 Validate Integration</button>
+                <div class="metrics-grid" id="integration-metrics"></div>
+                <div class="evidence-output" id="integration-evidence"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance Summary -->
+    <div class="container">
+        <div class="test-section">
+            <div class="test-header" onclick="toggleSection('summary')">
+                <span>📋 Validation Summary & Evidence</span>
+                <span id="summary-status">📊</span>
+            </div>
+            <div class="test-content" id="summary-content">
+                <div id="validation-summary"></div>
+                <div class="evidence-output" id="complete-evidence"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { TensorFlowManager } from './src/ai/TensorFlowManager.js';
+        import { QLearningComponent } from './src/ai/components/QLearningComponent.js';
+        import { TreeNode, NodeStatus, createNodeFromConfigSync } from './src/ai/behaviorTree/TreeNode.js';
+        import { SelectorNode, SequenceNode, ActionNode } from './src/ai/behaviorTree/BasicNodes.js';
+        import { OllamaClient } from './src/ai/OllamaClient.js';
+        import { AISystemIntegrationTest } from './src/ai/AISystemIntegrationTest.js';
+        
+        // Global validation state
+        let validationResults = {
+            tensorflow: null,
+            qlearning: null,
+            behaviortree: null,
+            ollama: null,
+            integration: null
+        };
+        
+        let evidenceLog = [];
+        let completedTests = 0;
+        let totalTests = 5;
+        
+        function log(category, message, type = 'info') {
+            const timestamp = new Date().toISOString();
+            const logEntry = {
+                timestamp,
+                category,
+                type,
+                message
+            };
+            evidenceLog.push(logEntry);
+            
+            // Update category-specific evidence display
+            const evidenceElement = document.getElementById(`${category}-evidence`);
+            if (evidenceElement) {
+                evidenceElement.textContent += `[${timestamp.substr(11, 8)}] ${message}\n`;
+                evidenceElement.scrollTop = evidenceElement.scrollHeight;
+            }
+            
+            console.log(`[${category}] ${message}`);
+        }
+        
+        function updateStatus(category, status, type = 'info') {
+            const statusElement = document.getElementById(`${category}-status`);
+            const icons = {
+                'info': '⏳',
+                'running': '🔄',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            };
+            statusElement.textContent = icons[type] || '⏳';
+            
+            if (type === 'success' || type === 'error') {
+                completedTests++;
+                updateProgress();
+            }
+        }
+        
+        function updateProgress() {
+            const progress = (completedTests / totalTests) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            
+            if (completedTests === totalTests) {
+                document.getElementById('export-btn').disabled = false;
+                generateSummary();
+            }
+        }
+        
+        function updateMetrics(category, metrics) {
+            const metricsElement = document.getElementById(`${category}-metrics`);
+            let html = '';
+            
+            for (const [key, value] of Object.entries(metrics)) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-value">${value}</div>
+                        <div class="metric-label">${key}</div>
+                    </div>
+                `;
+            }
+            
+            metricsElement.innerHTML = html;
+        }
+        
+        // TensorFlow.js Validation
+        window.validateTensorFlow = async function() {
+            updateStatus('tensorflow', 'Testing TensorFlow.js...', 'running');
+            log('tensorflow', '🔍 Starting TensorFlow.js validation...');
+            
+            try {
+                const tfManager = new TensorFlowManager();
+                log('tensorflow', 'Initializing TensorFlow.js...');
+                
+                const initResult = await tfManager.initialize();
+                log('tensorflow', `Initialization result: ${initResult}`);
+                
+                if (!initResult) {
+                    throw new Error('TensorFlow.js initialization failed');
+                }
+                
+                const status = tfManager.getStatus();
+                log('tensorflow', `Backend: ${status.backend}`);
+                log('tensorflow', `Memory usage: ${status.memory.currentMemoryUsage?.toFixed(2) || 'N/A'}MB`);
+                
+                // Run performance test
+                log('tensorflow', 'Running performance benchmark...');
+                await tfManager.performanceTest();
+                
+                // Multiple inference tests
+                const inferenceTimes = [];
+                for (let i = 0; i < 10; i++) {
+                    const inferenceResult = await tfManager.testInference();
+                    if (inferenceResult.success) {
+                        inferenceTimes.push(inferenceResult.inferenceTime);
+                        log('tensorflow', `Inference ${i + 1}: ${inferenceResult.inferenceTime.toFixed(2)}ms`);
+                    }
+                }
+                
+                const avgInference = inferenceTimes.reduce((a, b) => a + b, 0) / inferenceTimes.length;
+                const maxInference = Math.max(...inferenceTimes);
+                const minInference = Math.min(...inferenceTimes);
+                
+                // Memory validation
+                const finalMemory = tfManager.getStatus().memory;
+                const memoryUsage = finalMemory.currentMemoryUsage || 0;
+                
+                const metrics = {
+                    'Backend': status.backend || 'unknown',
+                    'Avg Inference': `${avgInference.toFixed(2)}ms`,
+                    'Min/Max Inference': `${minInference.toFixed(2)}/${maxInference.toFixed(2)}ms`,
+                    'Memory Usage': `${memoryUsage.toFixed(1)}MB`,
+                    'Target Met (1-2ms)': avgInference <= 2 ? '✅' : '❌',
+                    'Memory Target (<50MB)': memoryUsage < 50 ? '✅' : '❌'
+                };
+                
+                updateMetrics('tensorflow', metrics);
+                
+                // Validation assessment
+                const isPerformanceGood = avgInference <= 2;
+                const isMemoryGood = memoryUsage < 50;
+                const overallSuccess = isPerformanceGood && isMemoryGood;
+                
+                log('tensorflow', `Performance target (≤2ms): ${isPerformanceGood ? 'PASS' : 'FAIL'}`);
+                log('tensorflow', `Memory target (<50MB): ${isMemoryGood ? 'PASS' : 'FAIL'}`);
+                log('tensorflow', `Overall validation: ${overallSuccess ? 'PASS' : 'FAIL'}`);
+                
+                validationResults.tensorflow = {
+                    success: overallSuccess,
+                    backend: status.backend,
+                    avgInference,
+                    memoryUsage,
+                    targetsMet: { performance: isPerformanceGood, memory: isMemoryGood }
+                };
+                
+                updateStatus('tensorflow', 'TensorFlow.js validation complete', overallSuccess ? 'success' : 'warning');
+                
+            } catch (error) {
+                log('tensorflow', `ERROR: ${error.message}`, 'error');
+                validationResults.tensorflow = { success: false, error: error.message };
+                updateStatus('tensorflow', 'TensorFlow.js validation failed', 'error');
+            }
+        };
+        
+        // Q-Learning Validation
+        window.validateQLearning = async function() {
+            updateStatus('qlearning', 'Testing Q-Learning...', 'running');
+            log('qlearning', '🧠 Starting Q-Learning validation...');
+            
+            try {
+                const qLearning = new QLearningComponent({
+                    epsilon: 0.1,
+                    learningRate: 0.001,
+                    discountFactor: 0.95,
+                    isTraining: true
+                });
+                
+                log('qlearning', 'Q-Learning component created');
+                log('qlearning', `State vector size: ${qLearning.currentState.length}D`);
+                log('qlearning', `Action space size: ${qLearning.actionSpace.length} actions`);
+                
+                // Validate state vector
+                const stateSize = qLearning.currentState.length;
+                const actionCount = qLearning.actionSpace.length;
+                
+                log('qlearning', 'Testing action selection...');
+                const actionTimes = [];
+                
+                for (let i = 0; i < 100; i++) {
+                    const start = performance.now();
+                    const action = qLearning.selectAction();
+                    const end = performance.now();
+                    actionTimes.push(end - start);
+                    
+                    if (i < 5) {
+                        log('qlearning', `Action ${i + 1}: ${action.action.name} (${(end - start).toFixed(3)}ms)`);
+                    }
+                }
+                
+                const avgActionTime = actionTimes.reduce((a, b) => a + b, 0) / actionTimes.length;
+                const maxActionTime = Math.max(...actionTimes);
+                
+                // Test state updates
+                log('qlearning', 'Testing state updates...');
+                const gameState = {
+                    unit: { health: 100, x: 50, y: 50 },
+                    mapWidth: 800,
+                    mapHeight: 600
+                };
+                
+                qLearning.updateState(gameState);
+                qLearning.receiveReward(0.5);
+                
+                const metrics = {
+                    'State Vector Size': `${stateSize}D`,
+                    'Action Count': actionCount,
+                    'Avg Action Time': `${avgActionTime.toFixed(3)}ms`,
+                    'Max Action Time': `${maxActionTime.toFixed(3)}ms`,
+                    'Target Met (0.63ms)': avgActionTime <= 0.63 ? '✅' : '❌',
+                    'State Size Correct': stateSize === 36 ? '✅' : '❌'
+                };
+                
+                updateMetrics('qlearning', metrics);
+                
+                const isPerformanceGood = avgActionTime <= 0.63;
+                const isStateSizeCorrect = stateSize === 36;
+                const isActionCountCorrect = actionCount === 16;
+                const overallSuccess = isPerformanceGood && isStateSizeCorrect && isActionCountCorrect;
+                
+                log('qlearning', `Performance target (≤0.63ms): ${isPerformanceGood ? 'PASS' : 'FAIL'}`);
+                log('qlearning', `State size target (36D): ${isStateSizeCorrect ? 'PASS' : 'FAIL'}`);
+                log('qlearning', `Action count target (16): ${isActionCountCorrect ? 'PASS' : 'FAIL'}`);
+                log('qlearning', `Overall validation: ${overallSuccess ? 'PASS' : 'FAIL'}`);
+                
+                validationResults.qlearning = {
+                    success: overallSuccess,
+                    stateSize,
+                    actionCount,
+                    avgActionTime,
+                    targetsMet: {
+                        performance: isPerformanceGood,
+                        stateSize: isStateSizeCorrect,
+                        actionCount: isActionCountCorrect
+                    }
+                };
+                
+                updateStatus('qlearning', 'Q-Learning validation complete', overallSuccess ? 'success' : 'warning');
+                
+            } catch (error) {
+                log('qlearning', `ERROR: ${error.message}`, 'error');
+                validationResults.qlearning = { success: false, error: error.message };
+                updateStatus('qlearning', 'Q-Learning validation failed', 'error');
+            }
+        };
+        
+        // Behavior Tree Validation
+        window.validateBehaviorTree = async function() {
+            updateStatus('behaviortree', 'Testing Behavior Tree...', 'running');
+            log('behaviortree', '🌳 Starting Behavior Tree validation...');
+            
+            try {
+                const nodeTypes = { SelectorNode, SequenceNode, ActionNode };
+                
+                // Create test behavior tree
+                const treeConfig = {
+                    type: 'selector',
+                    name: 'Test Combat AI',
+                    children: [
+                        {
+                            type: 'sequence',
+                            name: 'Combat Sequence',
+                            children: [
+                                { type: 'action', name: 'Find Enemy', action: 'findEnemy' },
+                                { type: 'action', name: 'Attack Enemy', action: 'attackEnemy' }
+                            ]
+                        },
+                        { type: 'action', name: 'Idle', action: 'idle' }
+                    ]
+                };
+                
+                const tree = createNodeFromConfigSync(treeConfig, nodeTypes);
+                log('behaviortree', 'Behavior tree created successfully');
+                log('behaviortree', `Tree structure: ${tree.children.length} root children`);
+                
+                // Test execution timing
+                const executionTimes = [];
+                const iterations = 1000;
+                
+                log('behaviortree', `Running ${iterations} execution tests...`);
+                
+                for (let i = 0; i < iterations; i++) {
+                    tree.reset();
+                    const start = performance.now();
+                    const status = tree.execute(16.67); // 60fps delta
+                    const end = performance.now();
+                    executionTimes.push(end - start);
+                    
+                    if (i < 5) {
+                        log('behaviortree', `Execution ${i + 1}: ${status} (${(end - start).toFixed(3)}ms)`);
+                    }
+                }
+                
+                const avgExecutionTime = executionTimes.reduce((a, b) => a + b, 0) / executionTimes.length;
+                const maxExecutionTime = Math.max(...executionTimes);
+                const minExecutionTime = Math.min(...executionTimes);
+                
+                // Test node functionality
+                log('behaviortree', 'Testing node functionality...');
+                tree.reset();
+                const nodeCount = tree.children.length + tree.children.reduce((count, child) => 
+                    count + (child.children ? child.children.length : 0), 0);
+                
+                const metrics = {
+                    'Node Count': nodeCount,
+                    'Avg Execution': `${avgExecutionTime.toFixed(3)}ms`,
+                    'Min/Max Execution': `${minExecutionTime.toFixed(3)}/${maxExecutionTime.toFixed(3)}ms`,
+                    'Target Met (<1ms)': avgExecutionTime < 1 ? '✅' : '❌',
+                    'Max Under Budget': maxExecutionTime < 5 ? '✅' : '❌',
+                    'Tree Structure': tree.children.length > 0 ? '✅' : '❌'
+                };
+                
+                updateMetrics('behaviortree', metrics);
+                
+                const isPerformanceGood = avgExecutionTime < 1;
+                const isMaxTimeReasonable = maxExecutionTime < 5;
+                const isStructureValid = tree.children.length > 0;
+                const overallSuccess = isPerformanceGood && isMaxTimeReasonable && isStructureValid;
+                
+                log('behaviortree', `Performance target (<1ms): ${isPerformanceGood ? 'PASS' : 'FAIL'}`);
+                log('behaviortree', `Max time reasonable (<5ms): ${isMaxTimeReasonable ? 'PASS' : 'FAIL'}`);
+                log('behaviortree', `Structure valid: ${isStructureValid ? 'PASS' : 'FAIL'}`);
+                log('behaviortree', `Overall validation: ${overallSuccess ? 'PASS' : 'FAIL'}`);
+                
+                validationResults.behaviortree = {
+                    success: overallSuccess,
+                    nodeCount,
+                    avgExecutionTime,
+                    maxExecutionTime,
+                    targetsMet: {
+                        performance: isPerformanceGood,
+                        maxTime: isMaxTimeReasonable,
+                        structure: isStructureValid
+                    }
+                };
+                
+                updateStatus('behaviortree', 'Behavior Tree validation complete', overallSuccess ? 'success' : 'warning');
+                
+            } catch (error) {
+                log('behaviortree', `ERROR: ${error.message}`, 'error');
+                validationResults.behaviortree = { success: false, error: error.message };
+                updateStatus('behaviortree', 'Behavior Tree validation failed', 'error');
+            }
+        };
+        
+        // Ollama Validation
+        window.validateOllama = async function() {
+            updateStatus('ollama', 'Testing Ollama...', 'running');
+            log('ollama', '🤖 Starting Ollama validation...');
+            
+            try {
+                const ollama = new OllamaClient();
+                log('ollama', 'Ollama client created');
+                
+                // Test connection
+                log('ollama', 'Testing connection...');
+                const connectionStart = performance.now();
+                const connected = await ollama.testConnection();
+                const connectionTime = performance.now() - connectionStart;
+                
+                log('ollama', `Connection result: ${connected} (${connectionTime.toFixed(1)}ms)`);
+                
+                let promptTime = 0;
+                let promptSuccess = false;
+                
+                if (connected) {
+                    // Test prompt
+                    log('ollama', 'Testing prompt response...');
+                    const promptStart = performance.now();
+                    const promptResult = await ollama.sendTestPrompt('Test strategic analysis');
+                    promptTime = performance.now() - promptStart;
+                    promptSuccess = promptResult.success;
+                    
+                    log('ollama', `Prompt result: ${promptSuccess} (${promptTime.toFixed(1)}ms)`);
+                    if (promptSuccess) {
+                        log('ollama', `Response preview: ${promptResult.response?.substring(0, 100)}...`);
+                    }
+                }
+                
+                // Test circuit breaker
+                log('ollama', 'Testing circuit breaker...');
+                const status = ollama.getStatus();
+                const circuitBreakerWorking = status.circuitBreaker.state === 'closed';
+                
+                const metrics = {
+                    'Connection Status': connected ? '✅' : '❌',
+                    'Connection Time': `${connectionTime.toFixed(1)}ms`,
+                    'Prompt Success': promptSuccess ? '✅' : '❌',
+                    'Prompt Time': `${promptTime.toFixed(1)}ms`,
+                    'Circuit Breaker': status.circuitBreaker.state,
+                    'Target Met (<500ms)': (connected ? promptTime : connectionTime) < 500 ? '✅' : '❌'
+                };
+                
+                updateMetrics('ollama', metrics);
+                
+                const isConnectionGood = connected;
+                const isResponseTimeGood = (connected ? promptTime : connectionTime) < 500;
+                const isCircuitBreakerWorking = circuitBreakerWorking;
+                const overallSuccess = isConnectionGood && isResponseTimeGood && isCircuitBreakerWorking;
+                
+                log('ollama', `Connection working: ${isConnectionGood ? 'PASS' : 'FAIL'}`);
+                log('ollama', `Response time target (<500ms): ${isResponseTimeGood ? 'PASS' : 'FAIL'}`);
+                log('ollama', `Circuit breaker functional: ${isCircuitBreakerWorking ? 'PASS' : 'FAIL'}`);
+                log('ollama', `Overall validation: ${overallSuccess ? 'PASS' : 'FAIL'}`);
+                
+                validationResults.ollama = {
+                    success: overallSuccess,
+                    connected,
+                    connectionTime,
+                    promptTime,
+                    circuitBreakerState: status.circuitBreaker.state,
+                    targetsMet: {
+                        connection: isConnectionGood,
+                        responseTime: isResponseTimeGood,
+                        circuitBreaker: isCircuitBreakerWorking
+                    }
+                };
+                
+                updateStatus('ollama', 'Ollama validation complete', overallSuccess ? 'success' : 'warning');
+                
+            } catch (error) {
+                log('ollama', `ERROR: ${error.message}`, 'error');
+                validationResults.ollama = { success: false, error: error.message };
+                updateStatus('ollama', 'Ollama validation failed', 'error');
+            }
+        };
+        
+        // AI System Integration Validation
+        window.validateIntegration = async function() {
+            updateStatus('integration', 'Testing Integration...', 'running');
+            log('integration', '🔧 Starting AI System Integration validation...');
+            
+            try {
+                log('integration', 'Running AI Integration Test Suite...');
+                const testResult = await window.runAIIntegrationTest();
+                
+                log('integration', `Test suite completed`);
+                log('integration', `Total tests: ${testResult.totalTests}`);
+                log('integration', `Passed: ${testResult.passedTests}`);
+                log('integration', `Failed: ${testResult.failedTests}`);
+                log('integration', `Success rate: ${((testResult.passedTests / testResult.totalTests) * 100).toFixed(1)}%`);
+                
+                const performance = testResult.performance;
+                log('integration', `Average frame time: ${performance.averageFrameTime.toFixed(2)}ms`);
+                log('integration', `Max frame time: ${performance.maxFrameTime.toFixed(2)}ms`);
+                log('integration', `Frame budget violations: ${performance.frameBudgetViolations}`);
+                
+                const metrics = {
+                    'Tests Passed': `${testResult.passedTests}/${testResult.totalTests}`,
+                    'Success Rate': `${((testResult.passedTests / testResult.totalTests) * 100).toFixed(1)}%`,
+                    'Avg Frame Time': `${performance.averageFrameTime.toFixed(2)}ms`,
+                    'Max Frame Time': `${performance.maxFrameTime.toFixed(2)}ms`,
+                    'Budget Violations': performance.frameBudgetViolations,
+                    'Target Met (8-10ms)': performance.averageFrameTime <= 10 ? '✅' : '❌'
+                };
+                
+                updateMetrics('integration', metrics);
+                
+                const isTestsSuccessful = testResult.failedTests === 0;
+                const isPerformanceGood = performance.averageFrameTime <= 10;
+                const isBudgetRespected = performance.frameBudgetViolations < 5;
+                const overallSuccess = isTestsSuccessful && isPerformanceGood && isBudgetRespected;
+                
+                log('integration', `All tests passed: ${isTestsSuccessful ? 'PASS' : 'FAIL'}`);
+                log('integration', `Performance target (≤10ms): ${isPerformanceGood ? 'PASS' : 'FAIL'}`);
+                log('integration', `Budget respected (<5 violations): ${isBudgetRespected ? 'PASS' : 'FAIL'}`);
+                log('integration', `Overall validation: ${overallSuccess ? 'PASS' : 'FAIL'}`);
+                
+                if (testResult.errors.length > 0) {
+                    log('integration', 'Errors encountered:');
+                    testResult.errors.forEach(error => log('integration', `  - ${error}`));
+                }
+                
+                validationResults.integration = {
+                    success: overallSuccess,
+                    testResults: testResult,
+                    targetsMet: {
+                        tests: isTestsSuccessful,
+                        performance: isPerformanceGood,
+                        budget: isBudgetRespected
+                    }
+                };
+                
+                updateStatus('integration', 'Integration validation complete', overallSuccess ? 'success' : 'warning');
+                
+            } catch (error) {
+                log('integration', `ERROR: ${error.message}`, 'error');
+                validationResults.integration = { success: false, error: error.message };
+                updateStatus('integration', 'Integration validation failed', 'error');
+            }
+        };
+        
+        // Run all validations
+        window.runAllValidations = async function() {
+            const btn = document.getElementById('run-all-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Running Validations...';
+            
+            completedTests = 0;
+            evidenceLog = [];
+            validationResults = {};
+            
+            try {
+                await validateTensorFlow();
+                await validateQLearning();
+                await validateBehaviorTree();
+                await validateOllama();
+                await validateIntegration();
+            } catch (error) {
+                console.error('Validation error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Run All AI Validations';
+            }
+        };
+        
+        // Generate summary
+        function generateSummary() {
+            const summaryElement = document.getElementById('validation-summary');
+            const evidenceElement = document.getElementById('complete-evidence');
+            
+            let passCount = 0;
+            let totalCount = 0;
+            let summaryHtml = '<h3>🎯 Validation Results Summary</h3>';
+            
+            for (const [system, result] of Object.entries(validationResults)) {
+                if (result) {
+                    totalCount++;
+                    if (result.success) passCount++;
+                    
+                    const status = result.success ? '✅ PASS' : result.error ? '❌ FAIL' : '⚠️ PARTIAL';
+                    const cssClass = result.success ? 'benchmark-pass' : result.error ? 'benchmark-fail' : 'benchmark-warn';
+                    
+                    summaryHtml += `
+                        <div class="benchmark-result ${cssClass}">
+                            <strong>${system.toUpperCase()}: ${status}</strong>
+                            ${result.error ? `<br>Error: ${result.error}` : ''}
+                        </div>
+                    `;
+                }
+            }
+            
+            const overallSuccess = passCount === totalCount && totalCount > 0;
+            const successRate = totalCount > 0 ? (passCount / totalCount * 100).toFixed(1) : 0;
+            
+            summaryHtml += `
+                <div class="benchmark-result ${overallSuccess ? 'benchmark-pass' : 'benchmark-fail'}">
+                    <strong>OVERALL RESULT: ${overallSuccess ? '✅ ALL SYSTEMS VALIDATED' : '⚠️ VALIDATION ISSUES FOUND'}</strong>
+                    <br>Success Rate: ${successRate}% (${passCount}/${totalCount})
+                </div>
+            `;
+            
+            summaryElement.innerHTML = summaryHtml;
+            
+            // Generate complete evidence log
+            evidenceElement.textContent = evidenceLog.map(entry => 
+                `[${entry.timestamp}] [${entry.category.toUpperCase()}] ${entry.message}`
+            ).join('\n');
+        }
+        
+        // Export evidence
+        window.exportEvidence = function() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                validation: 'AI Systems Phase 6 Evidence Collection',
+                results: validationResults,
+                evidenceLog: evidenceLog,
+                summary: {
+                    totalSystems: Object.keys(validationResults).length,
+                    passedSystems: Object.values(validationResults).filter(r => r?.success).length,
+                    failedSystems: Object.values(validationResults).filter(r => r && !r.success).length
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ai-validation-evidence-${new Date().toISOString().substr(0, 19).replace(/:/g, '-')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        // Clear results
+        window.clearResults = function() {
+            evidenceLog = [];
+            validationResults = {};
+            completedTests = 0;
+            
+            const categories = ['tensorflow', 'qlearning', 'behaviortree', 'ollama', 'integration'];
+            categories.forEach(category => {
+                document.getElementById(`${category}-evidence`).textContent = '';
+                document.getElementById(`${category}-metrics`).innerHTML = '';
+                updateStatus(category, 'Ready', 'info');
+            });
+            
+            document.getElementById('validation-summary').innerHTML = '';
+            document.getElementById('complete-evidence').textContent = '';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('export-btn').disabled = true;
+        };
+        
+        // Toggle section
+        window.toggleSection = function(sectionId) {
+            const content = document.getElementById(`${sectionId}-content`);
+            content.classList.toggle('expanded');
+        };
+        
+        // Initialize - expand all sections
+        window.addEventListener('load', () => {
+            const sections = ['tensorflow', 'qlearning', 'behaviortree', 'ollama', 'integration', 'summary'];
+            sections.forEach(section => {
+                document.getElementById(`${section}-content`).classList.add('expanded');
+            });
+        });
+        
+        // Make runAIIntegrationTest available globally
+        window.runAIIntegrationTest = async function() {
+            const { runAIIntegrationTest } = await import('./src/ai/AISystemIntegrationTest.js');
+            return await runAIIntegrationTest();
+        };
+    </script>
+</body>
+</html>

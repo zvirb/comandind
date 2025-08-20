@@ -19,11 +19,12 @@
 import * as PIXI from 'pixi.js';
 
 export class BuildingPlacementUI {
-    constructor(app, camera, world, options = {}) {
+    constructor(app, camera, world, canvasElement = null, options = {}) {
         this.app = app;
         this.camera = camera;
         this.world = world;
         this.renderer = app.renderer;
+        this.canvasElement = canvasElement;
         
         // Configuration
         this.config = {
@@ -412,7 +413,7 @@ export class BuildingPlacementUI {
         
         // Convert screen to world coordinates
         const worldPos = this.camera ? 
-            this.camera.screenToWorld(screenX, screenY) : 
+            this.camera.screenToWorld(screenX, screenY, this.canvasElement) : 
             { x: screenX, y: screenY };
         
         this.mousePosition = worldPos;

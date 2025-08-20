@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { 
+            background: #6c757d; 
+            cursor: not-allowed; 
+        }
+        #output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .metric {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .metric-label {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Ollama Connection Test</h1>
+        <p>Test the basic Ollama HTTP client functionality, including connection testing, circuit breaker pattern, and fallback behavior.</p>
+        
+        <div class="status" id="status">
+            <strong>Status:</strong> Ready to test
+        </div>
+        
+        <div>
+            <button onclick="testConnection()">🔗 Test Connection</button>
+            <button onclick="testPrompt()">💬 Test Prompt</button>
+            <button onclick="testStream()">🌊 Test Streaming</button>
+            <button onclick="resetCircuitBreaker()">🔄 Reset Circuit Breaker</button>
+            <button onclick="getStatus()">📊 Get Status</button>
+        </div>
+        
+        <div class="metrics" id="metrics"></div>
+        
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        import { OllamaClient } from './src/ai/OllamaClient.js';
+        
+        let client = new OllamaClient();
+        let outputElement = document.getElementById('output');
+        let statusElement = document.getElementById('status');
+        let metricsElement = document.getElementById('metrics');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            outputElement.textContent += `[${timestamp}] ${message}\n`;
+            outputElement.scrollTop = outputElement.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            statusElement.className = `status ${type}`;
+            statusElement.innerHTML = `<strong>Status:</strong> ${message}`;
+        }
+        
+        function updateMetrics() {
+            const status = client.getStatus();
+            metricsElement.innerHTML = `
+                <div class="metric">
+                    <div class="metric-value">${status.connected ? '✅' : '❌'}</div>
+                    <div class="metric-label">Connected</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${status.circuitBreaker.state}</div>
+                    <div class="metric-label">Circuit Breaker</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${status.metrics.totalRequests}</div>
+                    <div class="metric-label">Total Requests</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${status.metrics.averageResponseTime}ms</div>
+                    <div class="metric-label">Avg Response Time</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${status.circuitBreaker.failures}</div>
+                    <div class="metric-label">Failures</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${status.available ? '✅' : '❌'}</div>
+                    <div class="metric-label">Available</div>
+                </div>
+            `;
+        }
+        
+        window.testConnection = async function() {
+            updateStatus('Testing connection...', 'info');
+            log('🔗 Starting connection test...');
+            
+            try {
+                const connected = await client.testConnection();
+                if (connected) {
+                    updateStatus('Connected successfully', 'success');
+                    log('✅ Connection successful');
+                } else {
+                    updateStatus('Connection failed', 'error');
+                    log('❌ Connection failed');
+                }
+            } catch (error) {
+                updateStatus(`Connection error: ${error.message}`, 'error');
+                log(`❌ Connection error: ${error.message}`);
+            }
+            
+            updateMetrics();
+        };
+        
+        window.testPrompt = async function() {
+            updateStatus('Testing prompt...', 'info');
+            log('💬 Sending test prompt...');
+            
+            try {
+                const result = await client.sendTestPrompt();
+                if (result.success) {
+                    updateStatus('Prompt successful', 'success');
+                    log(`✅ Prompt successful: ${result.response.substring(0, 100)}...`);
+                } else {
+                    updateStatus('Prompt failed (using fallback)', 'warning');
+                    log(`⚠️ Prompt failed: ${result.error} (fallback: ${result.fallback})`);
+                }
+            } catch (error) {
+                updateStatus(`Prompt error: ${error.message}`, 'error');
+                log(`❌ Prompt error: ${error.message}`);
+            }
+            
+            updateMetrics();
+        };
+        
+        window.testStream = async function() {
+            updateStatus('Testing streaming...', 'info');
+            log('🌊 Starting stream test...');
+            
+            try {
+                const stream = client.generateStream('Analyze: 3 enemy units approaching from the north');
+                let chunkCount = 0;
+                
+                for await (const chunk of stream) {
+                    chunkCount++;
+                    log(`Chunk ${chunkCount}: ${chunk}`);
+                    if (chunkCount >= 5) break; // Limit output
+                }
+                
+                updateStatus('Streaming test completed', 'success');
+                log('✅ Streaming test completed');
+            } catch (error) {
+                updateStatus(`Streaming error: ${error.message}`, 'error');
+                log(`❌ Streaming error: ${error.message}`);
+            }
+            
+            updateMetrics();
+        };
+        
+        window.resetCircuitBreaker = function() {
+            client.resetCircuitBreaker();
+            updateStatus('Circuit breaker reset', 'success');
+            log('🔄 Circuit breaker manually reset');
+            updateMetrics();
+        };
+        
+        window.getStatus = function() {
+            const status = client.getStatus();
+            log('📊 Current status: ' + JSON.stringify(status, null, 2));
+            updateMetrics();
+        };
+        
+        // Initialize
+        updateStatus('Ollama client initialized', 'info');
+        log('🤖 Ollama client initialized');
+        updateMetrics();
+    </script>
+</body>
+</html>

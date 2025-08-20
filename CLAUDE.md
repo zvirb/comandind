@@ -4,11 +4,11 @@
 
 ### ⚡ MANDATORY WORKFLOW SEQUENCE ⚡
 
-**Configuration**: Uses `.claude/unified-orchestration-config.yaml`
+**Configuration**: Uses `UnifiedWorkflow/.claude/unified-orchestration-config-webstrike.yaml`
 
 ```yaml
 Step 0: Todo Context Integration
-  - orchestration-todo-manager: Cross-session todo management from .claude/orchestration_todos.json
+  - orchestration-todo-manager: Cross-session todo management from UnifiedWorkflow/.claude/orchestration_todos.json
 
 Step 1: Agent Ecosystem Validation  
   - agent-integration-orchestrator: Agent discovery and integration
@@ -287,7 +287,7 @@ Documentation Access:
 ### **Two-Tier Todo System:**
 
 ```yaml
-Storage: .claude/orchestration_todos.json
+Storage: UnifiedWorkflow/.claude/orchestration_todos.json
 
 1. Session Todos (TodoWrite tool):
    - Temporary, current session tracking
@@ -298,7 +298,7 @@ Storage: .claude/orchestration_todos.json
    - Context continuity across Claude sessions
 
 Phase 0 Integration:
-  1. Read persistent todos from .claude/orchestration_todos.json
+  1. Read persistent todos from UnifiedWorkflow/.claude/orchestration_todos.json
   2. Analyze relevance to current context
   3. Prioritize based on urgency and impact
   4. Integrate high-priority items into current iteration

@@ -145,10 +145,21 @@ export class Camera {
     }
     
     // Convert screen coordinates to world coordinates
-    screenToWorld(screenX, screenY) {
+    // If canvasElement is provided, converts viewport coordinates to canvas-relative first
+    screenToWorld(screenX, screenY, canvasElement = null) {
+        let canvasX = screenX;
+        let canvasY = screenY;
+        
+        // Convert viewport coordinates to canvas-relative coordinates if canvas element provided
+        if (canvasElement) {
+            const rect = canvasElement.getBoundingClientRect();
+            canvasX = screenX - rect.left;
+            canvasY = screenY - rect.top;
+        }
+        
         return {
-            x: (screenX / this.scale) + this.x,
-            y: (screenY / this.scale) + this.y
+            x: (canvasX / this.scale) + this.x,
+            y: (canvasY / this.scale) + this.y
         };
     }
     

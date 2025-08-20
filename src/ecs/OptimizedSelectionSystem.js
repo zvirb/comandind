@@ -8,13 +8,14 @@ import { QuadTree } from '../utils/QuadTree.js';
  * Targets <16ms response time for selection operations with 200+ entities
  */
 export class OptimizedSelectionSystem extends System {
-    constructor(world, inputHandler, camera, stage) {
+    constructor(world, inputHandler, camera, stage, canvasElement = null) {
         super(world);
         this.priority = 5; // Priority 5 - runs after movement but before rendering
         this.requiredComponents = [SelectableComponent, TransformComponent];
         this.inputHandler = inputHandler;
         this.camera = camera;
         this.stage = stage;
+        this.canvasElement = canvasElement;
         
         // Selection state
         this.selectedEntities = new Set();
@@ -246,7 +247,7 @@ export class OptimizedSelectionSystem extends System {
      * Handle left mouse button down with optimized entity detection
      */
     handleLeftMouseDown(event) {
-        const worldPos = this.camera.screenToWorld(event.clientX, event.clientY);
+        const worldPos = this.camera.screenToWorld(event.clientX, event.clientY, this.canvasElement);
         
         // Start box selection
         this.isBoxSelecting = true;
@@ -277,8 +278,8 @@ export class OptimizedSelectionSystem extends System {
      */
     handleLeftMouseUp(event) {
         if (this.isBoxSelecting) {
-            const worldStart = this.camera.screenToWorld(this.boxSelectStart.x, this.boxSelectStart.y);
-            const worldEnd = this.camera.screenToWorld(this.boxSelectEnd.x, this.boxSelectEnd.y);
+            const worldStart = this.camera.screenToWorld(this.boxSelectStart.x, this.boxSelectStart.y, this.canvasElement);
+            const worldEnd = this.camera.screenToWorld(this.boxSelectEnd.x, this.boxSelectEnd.y, this.canvasElement);
             
             // Calculate box bounds
             const minX = Math.min(worldStart.x, worldEnd.x);
@@ -305,7 +306,7 @@ export class OptimizedSelectionSystem extends System {
      * Handle right mouse button down (issue commands)
      */
     handleRightMouseDown(event) {
-        const worldPos = this.camera.screenToWorld(event.clientX, event.clientY);
+        const worldPos = this.camera.screenToWorld(event.clientX, event.clientY, this.canvasElement);
         
         // Issue move command to selected units
         if (this.selectedEntities.size > 0) {
@@ -320,7 +321,7 @@ export class OptimizedSelectionSystem extends System {
      * Handle mouse move with optimized hover detection
      */
     handleMouseMove(event) {
-        const worldPos = this.camera.screenToWorld(event.clientX, event.clientY);
+        const worldPos = this.camera.screenToWorld(event.clientX, event.clientY, this.canvasElement);
         
         // Update box selection
         if (this.isBoxSelecting) {

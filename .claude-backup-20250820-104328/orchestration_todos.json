@@ -5,10 +5,10 @@
     "duration": "20 weeks (5 iterations × 4 weeks)",
     "technology_stack": ["HTML5", "JavaScript", "PixiJS", "Colyseus", "TensorFlow.js", "Ollama"],
     "created": "2025-08-18T00:00:00Z",
-    "updated": "2025-08-19T10:07:30Z",
-    "current_iteration": 3,
-    "current_phase": "ai-systems",
-    "project_status": "iteration-3-ai-systems-initiated",
+    "updated": "2025-08-20T00:32:00Z",
+    "current_iteration": "production-emergency",
+    "current_phase": "production-critical-fixes",
+    "project_status": "production-emergency-critical-fixes-required",
     "dependencies_status": "satisfied",
     "structure_status": "completed",
     "foundation_status": "completed",
@@ -18,16 +18,20 @@
     "completion_percentage": "100% Iteration 2 Complete - Starting Iteration 3 AI Systems",
     "next_priority_sequence": ["wsc-018-tensorflow-integration", "wsc-019-q-learning", "wsc-050-loose-command-system"],
     "phase_0_context_integration": {
-      "session_date": "2025-08-19T22:51:00Z",
-      "iteration_3_mission": "Transform operational RTS into intelligent battlefield",
-      "high_priority_ai_todos": 14,
-      "critical_priority_todos": 0,
-      "dependencies_satisfied": true,
-      "ai_implementation_sequence": "TensorFlow Integration → Q-Learning Foundation → Loose Command System → Behavior Trees → ML Goal Mapping",
-      "technical_readiness": "ECS architecture operational, 64,809 FPS performance achieved, production deployment validated",
-      "ai_foundation_requirements": "TensorFlow.js GPU acceleration, reinforcement learning framework, command-to-reward mapping",
-      "performance_constraints": "Maintain 60+ FPS with AI inference, memory < 500MB",
-      "integration_strategy": "Incremental AI layer addition without disrupting existing gameplay systems"
+      "session_date": "2025-08-20T00:32:00Z",
+      "production_emergency_mission": "Fix critical production failures blocking all user functionality",
+      "critical_priority_todos": 3,
+      "high_priority_analysis_todos": 2,
+      "emergency_status": "PRODUCTION DOWN - Core functionality missing despite healthy metrics",
+      "user_impact": "Complete gameplay failure - only test sprites visible, mouse interaction broken",
+      "technical_paradox": "64,809 FPS performance, healthy containers, but zero functional gameplay",
+      "immediate_fixes_required": [
+        "ECS World cleanup method (TypeError: this.world.cleanup is not a function)",
+        "Missing RTS gameplay rendering (only green test sprites visible)",
+        "Mouse coordinate desync during viewport scrolling"
+      ],
+      "validation_gap": "Massive disconnect between technical validation success and user experience failure",
+      "priority_sequence": "Fix ECS cleanup → Diagnose missing gameplay → Fix mouse coordinates → Validate user experience"
     }
   },
   "todos": [
@@ -1330,6 +1334,91 @@
       "iteration": 5,
       "phase": "polish",
       "notes": "Phase 10 feature - Each window maintains independent camera position and viewport. Windows sync game state but have independent view controls. Useful for monitoring base while commanding units elsewhere, or watching multiple battle fronts simultaneously."
+    },
+    {
+      "id": "wsc-prod-critical-001",
+      "content": "PRODUCTION CRITICAL: Fix ECS World cleanup method missing - 'this.world.cleanup is not a function' error breaking game shutdown",
+      "priority": "critical",
+      "status": "pending",
+      "context_tags": ["production", "ecs", "cleanup", "bug-fix"],
+      "related_issues": ["wsc-041-ecs-architecture"],
+      "dependencies": ["wsc-041-ecs-architecture"],
+      "urgency_score": 100,
+      "impact_score": 95,
+      "created_date": "2025-08-20T00:32:00Z",
+      "updated_date": "2025-08-20T00:32:00Z",
+      "session_context": "production-critical-fixes",
+      "iteration": "production",
+      "phase": "emergency-fix",
+      "notes": "IMMEDIATE FIX REQUIRED: World class has destroy() and clear() methods but main game calls this.world.cleanup() causing TypeError. User reports multiple cleanup errors."
+    },
+    {
+      "id": "wsc-prod-critical-002", 
+      "content": "PRODUCTION CRITICAL: Missing RTS gameplay mechanics - only test sprites visible, no functional game content for users",
+      "priority": "critical",
+      "status": "pending",
+      "context_tags": ["production", "gameplay", "rendering", "user-experience"],
+      "related_issues": ["wsc-010-unit-selection", "wsc-011-pathfinding", "wsc-014-resource-gathering"],
+      "dependencies": ["wsc-041-ecs-architecture"],
+      "urgency_score": 100,
+      "impact_score": 100,
+      "created_date": "2025-08-20T00:32:00Z",
+      "updated_date": "2025-08-20T00:32:00Z",
+      "session_context": "production-critical-fixes",
+      "iteration": "production",
+      "phase": "emergency-fix",
+      "notes": "CRITICAL GAP: Health checks pass, performance excellent (64,809 FPS), but users see only 'green spinning squares' - no actual RTS gameplay visible. Massive disconnect between technical validation and user experience."
+    },
+    {
+      "id": "wsc-prod-critical-003",
+      "content": "PRODUCTION CRITICAL: Mouse coordinate desync after viewport scrolling - selection box appears in wrong location breaking user interaction",
+      "priority": "critical", 
+      "status": "pending",
+      "context_tags": ["production", "input", "camera", "coordinates", "user-interaction"],
+      "related_issues": ["wsc-010-unit-selection", "wsc-006-camera-system"],
+      "dependencies": ["wsc-006-camera-system", "wsc-010-unit-selection"],
+      "urgency_score": 95,
+      "impact_score": 90,
+      "created_date": "2025-08-20T00:32:00Z",
+      "updated_date": "2025-08-20T00:32:00Z",
+      "session_context": "production-critical-fixes",
+      "iteration": "production",
+      "phase": "emergency-fix",
+      "notes": "BLOCKING USER INTERACTION: Camera.screenToWorld() coordinate conversion not accounting for viewport position changes during scrolling. SelectionSystem mouse events create selection boxes at incorrect world coordinates."
+    },
+    {
+      "id": "wsc-prod-analysis-001",
+      "content": "PRODUCTION ANALYSIS: Investigate massive gap between technical metrics and functional reality",
+      "priority": "high",
+      "status": "pending", 
+      "context_tags": ["production", "analysis", "validation", "gap-analysis"],
+      "related_issues": ["wsc-prod-critical-002"],
+      "dependencies": [],
+      "urgency_score": 90,
+      "impact_score": 95,
+      "created_date": "2025-08-20T00:32:00Z",
+      "updated_date": "2025-08-20T00:32:00Z",
+      "session_context": "production-critical-fixes", 
+      "iteration": "production",
+      "phase": "emergency-fix",
+      "notes": "VALIDATION FAILURE: System reports 'production-validated', excellent performance, healthy containers, but actual user experience is completely broken. Need comprehensive audit of validation vs reality."
+    },
+    {
+      "id": "wsc-prod-diagnosis-001",
+      "content": "PRODUCTION DIAGNOSIS: Determine if game systems initialize but fail to render, or fail to initialize entirely",
+      "priority": "high",
+      "status": "pending",
+      "context_tags": ["production", "diagnosis", "initialization", "rendering"],
+      "related_issues": ["wsc-prod-critical-002", "wsc-041-ecs-architecture"],
+      "dependencies": ["wsc-prod-critical-001"],
+      "urgency_score": 85,
+      "impact_score": 90,
+      "created_date": "2025-08-20T00:32:00Z",
+      "updated_date": "2025-08-20T00:32:00Z",
+      "session_context": "production-critical-fixes",
+      "iteration": "production", 
+      "phase": "emergency-fix",
+      "notes": "ROOT CAUSE ANALYSIS: Need to determine whether ECS entities/systems initialize successfully but rendering pipeline fails, or if entity creation itself is broken. Critical for choosing fix strategy."
     }
   ],
   "iteration_summary": {
@@ -1457,46 +1546,50 @@
     }
   },
   "next_priority_analysis": {
-    "critical_priority": {
-      "remaining_count": 0,
-      "notes": "All critical foundation tasks completed. ECS architecture operational."
+    "production_emergency": {
+      "critical_count": 3,
+      "high_priority_count": 2,
+      "status": "PRODUCTION EMERGENCY - Immediate fixes required",
+      "notes": "Despite 'production-validated' status, core functionality completely broken for users"
     },
-    "high_priority": {
-      "iteration_2_immediate": [
-        {
-          "id": "wsc-010-unit-selection",
-          "reason": "Foundation for player interaction - enables all gameplay mechanics",
-          "urgency_score": 95,
-          "impact_score": 100,
-          "prerequisites_met": true
-        },
-        {
-          "id": "wsc-014-resource-gathering",
-          "reason": "Core game economy - Tiberium harvesting mechanics essential for RTS gameplay",
-          "urgency_score": 90,
-          "impact_score": 95,
-          "prerequisites_met": true
-        },
-        {
-          "id": "wsc-011-pathfinding",
-          "reason": "Unit movement foundation - A* algorithm for individual unit navigation",
-          "urgency_score": 88,
-          "impact_score": 90,
-          "prerequisites_met": true
-        }
-      ],
-      "iteration_2_secondary": [
-        "wsc-016-building-system",
-        "wsc-015-economy-system",
-        "wsc-013-fog-of-war",
-        "wsc-012-flow-fields"
-      ]
+    "immediate_critical_fixes": [
+      {
+        "id": "wsc-prod-critical-001",
+        "issue": "ECS World cleanup method missing",
+        "urgency_score": 100,
+        "impact_score": 95,
+        "fix_complexity": "Simple - add cleanup() method alias to World.destroy()",
+        "user_impact": "Game shutdown errors, memory leaks"
+      },
+      {
+        "id": "wsc-prod-critical-002", 
+        "issue": "Missing RTS gameplay mechanics",
+        "urgency_score": 100,
+        "impact_score": 100,
+        "fix_complexity": "Complex - investigate entity creation vs rendering pipeline",
+        "user_impact": "Complete gameplay failure - no functional content visible"
+      },
+      {
+        "id": "wsc-prod-critical-003",
+        "issue": "Mouse coordinate desync during scrolling",
+        "urgency_score": 95,
+        "impact_score": 90,
+        "fix_complexity": "Medium - fix Camera.screenToWorld() coordinate conversion",
+        "user_impact": "Broken user interaction - selection boxes appear in wrong locations"
+      }
+    ],
+    "validation_gap_analysis": {
+      "technical_metrics": "Excellent - 64,809 FPS, healthy containers, responsive health checks",
+      "user_experience": "Complete failure - no gameplay visible, interaction broken",
+      "root_cause": "Validation focused on technical metrics, ignored functional gameplay testing",
+      "immediate_action": "Emergency user perspective validation required"
     },
-    "readiness_assessment": {
-      "iteration_1_status": "COMPLETED - All foundation systems operational",
-      "iteration_2_readiness": "READY - ECS foundation provides platform for game mechanics",
-      "recommendation": "START ITERATION 2 - Begin with unit selection system as foundation for all player interactions",
-      "priority_sequence": "Unit Selection → Resource Gathering → Pathfinding → Building System → Economy Integration"
+    "emergency_sequence": {
+      "phase_1": "Fix ECS cleanup method (5 minutes)",
+      "phase_2": "Diagnose missing gameplay entities/rendering (investigation)",
+      "phase_3": "Fix mouse coordinate transformation (30 minutes)", 
+      "phase_4": "Comprehensive user experience validation",
+      "phase_5": "Update validation procedures to prevent recurrence"
     }
   }
 }

@@ -112,7 +112,8 @@ class CommandAndIndependentThought {
                 this.world, 
                 this.inputHandler, 
                 this.camera, 
-                this.application.stage
+                this.application.stage,
+                this.application.view // Pass canvas element for coordinate transformation
             );
             this.world.addSystem(this.selectionSystem);
             this.world.addSystem(new CombatSystem(this.world));
@@ -126,7 +127,7 @@ class CommandAndIndependentThought {
             await this.testSprites.createTestSprites(100); // Start with 100 sprites
             
             // Add some C&C units for testing
-            this.createCnCTestUnits();
+            await this.createCnCTestUnits();
             
             this.updateLoadingProgress(95, 'Finalizing...');
             
@@ -186,45 +187,45 @@ class CommandAndIndependentThought {
         }
     }
     
-    createCnCTestUnits() {
+    async createCnCTestUnits() {
         if (!this.cncAssets || !this.entityFactory) return;
         
         console.log('🎮 Creating C&C test units with ECS...');
         
         // Create some GDI units using ECS
         const gdiUnits = this.cncAssets.getUnitsByFaction('gdi').slice(0, 3);
-        gdiUnits.forEach((unit, index) => {
-            const entity = this.entityFactory.createUnit(unit.key, 200 + index * 60, 200, 'gdi');
+        for (const [index, unit] of gdiUnits.entries()) {
+            const entity = await this.entityFactory.createUnit(unit.key, 200 + index * 60, 200, 'gdi');
             if (entity) {
                 console.log(`Created GDI unit entity: ${unit.name} (ID: ${entity.id})`);
             }
-        });
+        }
         
         // Create some NOD units using ECS
         const nodUnits = this.cncAssets.getUnitsByFaction('nod').slice(0, 3);
-        nodUnits.forEach((unit, index) => {
-            const entity = this.entityFactory.createUnit(unit.key, 200 + index * 60, 300, 'nod');
+        for (const [index, unit] of nodUnits.entries()) {
+            const entity = await this.entityFactory.createUnit(unit.key, 200 + index * 60, 300, 'nod');
             if (entity) {
                 console.log(`Created NOD unit entity: ${unit.name} (ID: ${entity.id})`);
             }
-        });
+        }
         
         // Create some buildings using ECS
         const gdiBuildings = this.cncAssets.getBuildingsByFaction('gdi').slice(0, 2);
-        gdiBuildings.forEach((building, index) => {
-            const entity = this.entityFactory.createBuilding(building.key, 400 + index * 80, 200, 'gdi');
+        for (const [index, building] of gdiBuildings.entries()) {
+            const entity = await this.entityFactory.createBuilding(building.key, 400 + index * 80, 200, 'gdi');
             if (entity) {
                 console.log(`Created GDI building entity: ${building.name} (ID: ${entity.id})`);
             }
-        });
+        }
         
         const nodBuildings = this.cncAssets.getBuildingsByFaction('nod').slice(0, 2);
-        nodBuildings.forEach((building, index) => {
-            const entity = this.entityFactory.createBuilding(building.key, 400 + index * 80, 320, 'nod');
+        for (const [index, building] of nodBuildings.entries()) {
+            const entity = await this.entityFactory.createBuilding(building.key, 400 + index * 80, 320, 'nod');
             if (entity) {
                 console.log(`Created NOD building entity: ${building.name} (ID: ${entity.id})`);
             }
-        });
+        }
         
         // Display ECS world stats
         console.log('🔧 ECS World Stats:', this.world.getStats());
