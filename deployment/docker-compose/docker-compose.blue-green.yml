@@ -26,7 +26,7 @@ x-game-service: &game-service
     - /tmp:rw,noexec,nosuid,size=100m
 
 services:
-  # Load Balancer / Reverse Proxy
+  # Load Balancer / Reverse Proxy with Static Asset Optimization
   nginx-lb:
     image: nginx:1.25-alpine
     container_name: game-loadbalancer
@@ -37,6 +37,10 @@ services:
       - ../nginx/loadbalancer.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream.conf:/etc/nginx/conf.d/upstream.conf:ro
       - ../certificates:/etc/nginx/certificates:ro
+      # PERFORMANCE OPTIMIZATION: Mount static assets directly for Nginx serving
+      - game-static-assets:/usr/share/nginx/html:ro
+      # Nginx cache directory for improved performance
+      - nginx-cache:/var/cache/nginx
     networks:
       - game-network
     depends_on:
@@ -51,6 +55,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.game.rule=Host(`game.localhost`)"
+    tmpfs:
+      # Additional tmpfs for optimal cache performance
+      - /tmp:rw,noexec,nosuid,size=50m
 
   # Blue Environment (Current Production)
   game-blue:
@@ -60,6 +67,9 @@ services:
       - NODE_ENV=production
       - DEPLOYMENT_SLOT=blue
       - VERSION=${BLUE_VERSION:-0.1.0}
+    volumes:
+      # PERFORMANCE OPTIMIZATION: Share static assets with load balancer
+      - game-static-assets:/usr/share/nginx/html:rw
     labels:
       - "deployment.slot=blue"
       - "deployment.status=active"
@@ -73,6 +83,9 @@ services:
       - NODE_ENV=production
       - DEPLOYMENT_SLOT=green
       - VERSION=${GREEN_VERSION:-0.1.0-next}
+    volumes:
+      # PERFORMANCE OPTIMIZATION: Share static assets with load balancer
+      - game-static-assets:/usr/share/nginx/html:rw
     labels:
       - "deployment.slot=green"
       - "deployment.status=standby"
@@ -83,7 +96,7 @@ services:
     image: prom/prometheus:latest
     container_name: game-prometheus
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
@@ -136,7 +149,7 @@ services:
     image: fluent/fluentd:v1.16-1
     container_name: game-fluentd
     volumes:
-      - ./monitoring/fluentd.conf:/fluentd/etc/fluent.conf:ro
+      - ../fluentd.conf:/fluentd/etc/fluent.conf:ro
       - fluentd-logs:/fluentd/log
     ports:
       - "24224:24224"
@@ -225,6 +238,16 @@ volumes:
   fluentd-logs:
     driver: local
   rts-monitor-logs:
+    driver: local
+  # PERFORMANCE OPTIMIZATION: Shared volume for static assets
+  game-static-assets:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: size=1g,uid=101,gid=101  # nginx user/group
+  # Nginx cache volume for improved performance
+  nginx-cache:
     driver: local
 
 # Environment-specific overrides

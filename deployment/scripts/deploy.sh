@@ -165,9 +165,9 @@ deploy_to_standby() {
     log "Waiting for ${standby_slot} slot to be ready..."
     sleep 10
     
-    # Perform health check
-    if ! health_check "game-${standby_slot}"; then
-        log_error "Health check failed for ${standby_slot} slot"
+    # Perform enhanced health check
+    if ! enhanced_health_check "game-${standby_slot}"; then
+        log_error "Enhanced health check failed for ${standby_slot} slot"
         return 1
     fi
     
@@ -182,28 +182,166 @@ switch_traffic() {
     
     log "Switching traffic from ${old_active_slot} to ${new_active_slot}..."
     
-    # Update nginx configuration to point to new active slot
-    # This would typically involve updating upstream configuration
-    # For now, we simulate this by updating container labels
+    # Update nginx upstream configuration
+    local nginx_dir="${PROJECT_ROOT}/deployment/nginx"
+    local upstream_source="${nginx_dir}/upstream-${new_active_slot}.conf"
+    local upstream_target="${nginx_dir}/upstream.conf"
     
-    # Mark new slot as active
-    docker container update --label-add "deployment.status=active" "game-${new_active_slot}"
+    if [ ! -f "${upstream_source}" ]; then
+        log_error "Upstream configuration template not found: ${upstream_source}"
+        return 1
+    fi
     
-    # Mark old slot as standby
+    # Backup current upstream config
+    if [ -f "${upstream_target}" ]; then
+        cp "${upstream_target}" "${upstream_target}.backup"
+    fi
+    
+    # Copy new upstream configuration
+    log "Updating upstream configuration to route traffic to ${new_active_slot}..."
+    if ! cp "${upstream_source}" "${upstream_target}"; then
+        log_error "Failed to update upstream configuration"
+        return 1
+    fi
+    
+    # Verify nginx configuration is valid
+    log "Validating nginx configuration..."
+    if ! docker compose -f "${COMPOSE_FILE}" exec nginx-lb nginx -t; then
+        log_error "Invalid nginx configuration, rolling back..."
+        if [ -f "${upstream_target}.backup" ]; then
+            cp "${upstream_target}.backup" "${upstream_target}"
+        fi
+        return 1
+    fi
+    
+    # Update container labels for tracking
+    docker container update --label-add "deployment.status=active" "game-${new_active_slot}" || true
     if [ "${old_active_slot}" != "none" ]; then
-        docker container update --label-add "deployment.status=standby" "game-${old_active_slot}"
+        docker container update --label-add "deployment.status=standby" "game-${old_active_slot}" || true
     fi
     
-    # Restart load balancer to pick up new configuration
-    if docker compose -f "${COMPOSE_FILE}" ps nginx-lb | grep -q "Up"; then
-        log "Reloading load balancer configuration..."
-        docker compose -f "${COMPOSE_FILE}" exec nginx-lb nginx -s reload || {
-            log_warning "Failed to reload nginx, restarting container..."
-            docker compose -f "${COMPOSE_FILE}" restart nginx-lb
-        }
+    # PERFORMANCE OPTIMIZATION: Synchronize static assets before nginx reload
+    log "Synchronizing static assets for ${new_active_slot} environment..."
+    local sync_script="${SCRIPT_DIR}/sync-static-assets.sh"
+    if [ -f "${sync_script}" ]; then
+        if ! "${sync_script}" "${new_active_slot}" sync; then
+            log_warning "Static asset synchronization failed, continuing with deployment..."
+            # Don't fail deployment for static asset sync issues, but log the problem
+        else
+            log_success "Static assets synchronized successfully"
+        fi
+    else
+        log_warning "Static asset sync script not found, skipping optimization"
     fi
     
-    log_success "Traffic switched to ${new_active_slot} slot"
+    # Gracefully reload nginx configuration
+    log "Reloading nginx to apply new upstream configuration..."
+    if ! docker compose -f "${COMPOSE_FILE}" exec nginx-lb nginx -s reload; then
+        log_warning "Graceful reload failed, attempting restart..."
+        if ! docker compose -f "${COMPOSE_FILE}" restart nginx-lb; then
+            log_error "Failed to restart nginx load balancer"
+            # Restore backup configuration
+            if [ -f "${upstream_target}.backup" ]; then
+                cp "${upstream_target}.backup" "${upstream_target}"
+                docker compose -f "${COMPOSE_FILE}" restart nginx-lb
+            fi
+            return 1
+        fi
+        # Wait for nginx to stabilize after restart
+        sleep 10
+    fi
+    
+    # Verify traffic is actually routing to new slot
+    log "Verifying traffic routing to ${new_active_slot}..."
+    if ! verify_traffic_routing "${new_active_slot}"; then
+        log_error "Traffic verification failed, rolling back..."
+        # Restore backup configuration
+        if [ -f "${upstream_target}.backup" ]; then
+            cp "${upstream_target}.backup" "${upstream_target}"
+            docker compose -f "${COMPOSE_FILE}" exec nginx-lb nginx -s reload || docker compose -f "${COMPOSE_FILE}" restart nginx-lb
+        fi
+        return 1
+    fi
+    
+    # Clean up backup
+    rm -f "${upstream_target}.backup"
+    
+    log_success "Traffic successfully switched to ${new_active_slot} slot"
+    log_success "Upstream configuration updated and nginx reloaded"
+}
+
+# Verify traffic is routing to the expected slot
+verify_traffic_routing() {
+    local expected_slot=$1
+    local retries=5
+    local interval=5
+    
+    for i in $(seq 1 $retries); do
+        # Get the container IP for the expected slot
+        local container_ip=$(docker inspect "game-${expected_slot}" --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')
+        
+        if [ -z "${container_ip}" ]; then
+            log_warning "Could not determine container IP for ${expected_slot}, attempt $i/$retries"
+            sleep $interval
+            continue
+        fi
+        
+        # Test through load balancer to see if we reach the expected container
+        local response_headers=$(docker compose -f "${COMPOSE_FILE}" exec nginx-lb curl -s -I http://localhost/health 2>/dev/null || echo "")
+        
+        if echo "${response_headers}" | grep -q "HTTP/1.1 200"; then
+            log "Traffic routing verification successful (attempt $i/$retries)"
+            return 0
+        fi
+        
+        if [ $i -lt $retries ]; then
+            log "Traffic routing verification failed, retrying in ${interval}s (attempt $i/$retries)..."
+            sleep $interval
+        fi
+    done
+    
+    log_error "Traffic routing verification failed after $retries attempts"
+    return 1
+}
+
+# Enhanced health check with slot verification
+enhanced_health_check() {
+    local service_name=$1
+    local retries=${2:-${HEALTH_CHECK_RETRIES}}
+    local interval=${3:-${HEALTH_CHECK_INTERVAL}}
+    
+    log "Performing enhanced health check for ${service_name}..."
+    
+    for i in $(seq 1 $retries); do
+        # Container health check
+        if ! docker compose -f "${COMPOSE_FILE}" exec -T "${service_name}" /usr/local/bin/health-check.sh quick >/dev/null 2>&1; then
+            if [ $i -lt $retries ]; then
+                log "Health check failed for ${service_name}, retrying in ${interval}s (attempt $i/$retries)..."
+                sleep $interval
+                continue
+            else
+                log_error "Health check failed for ${service_name} after $retries attempts"
+                return 1
+            fi
+        fi
+        
+        # Additional endpoint verification
+        local container_ip=$(docker inspect "${service_name}" --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')
+        if [ -n "${container_ip}" ]; then
+            if docker compose -f "${COMPOSE_FILE}" exec nginx-lb curl -f -s "http://${container_ip}:8080/health" >/dev/null 2>&1; then
+                log_success "Enhanced health check passed for ${service_name} (attempt $i/$retries)"
+                return 0
+            fi
+        fi
+        
+        if [ $i -lt $retries ]; then
+            log "Enhanced health check failed for ${service_name}, retrying in ${interval}s (attempt $i/$retries)..."
+            sleep $interval
+        fi
+    done
+    
+    log_error "Enhanced health check failed for ${service_name} after $retries attempts"
+    return 1
 }
 
 # Rollback to previous slot
@@ -219,13 +357,22 @@ rollback() {
     fi
     
     # Check if rollback target is healthy
-    if ! health_check "game-${rollback_target}" 3 10; then
+    if ! enhanced_health_check "game-${rollback_target}" 3 10; then
         log_error "Rollback target ${rollback_target} is not healthy"
         return 1
     fi
     
     # Switch traffic back
-    switch_traffic "${rollback_target}" "${current_active}"
+    if ! switch_traffic "${rollback_target}" "${current_active}"; then
+        log_error "Failed to switch traffic during rollback"
+        return 1
+    fi
+    
+    # Verify rollback was successful
+    if ! verify_traffic_routing "${rollback_target}"; then
+        log_error "Rollback traffic verification failed"
+        return 1
+    fi
     
     # Stop the failed deployment
     docker compose -f "${COMPOSE_FILE}" stop "game-${current_active}" || true
@@ -273,10 +420,10 @@ deploy() {
         exit 1
     fi
     
-    # Perform final health check before switching traffic
-    log "Performing final health check before traffic switch..."
-    if ! health_check "game-${standby_slot}" 5 15; then
-        log_error "Final health check failed, rolling back..."
+    # Perform final enhanced health check before switching traffic
+    log "Performing final enhanced health check before traffic switch..."
+    if ! enhanced_health_check "game-${standby_slot}" 5 15; then
+        log_error "Final enhanced health check failed, rolling back..."
         docker compose -f "${COMPOSE_FILE}" stop "game-${standby_slot}" || true
         exit 1
     fi
@@ -288,8 +435,15 @@ deploy() {
     log "Verifying new active slot after traffic switch..."
     sleep 30
     
-    if ! health_check "game-${standby_slot}" 3 10; then
-        log_error "Post-switch health check failed, initiating rollback..."
+    if ! enhanced_health_check "game-${standby_slot}" 3 10; then
+        log_error "Post-switch enhanced health check failed, initiating rollback..."
+        rollback "${standby_slot}" "${active_slot}"
+        exit 1
+    fi
+    
+    # Additional verification that traffic is actually routing correctly
+    if ! verify_traffic_routing "${standby_slot}"; then
+        log_error "Traffic routing verification failed, initiating rollback..."
         rollback "${standby_slot}" "${active_slot}"
         exit 1
     fi
@@ -329,7 +483,7 @@ case "${1:-deploy}" in
             log_error "No active slot found"
             exit 1
         fi
-        health_check "game-${slot}"
+        enhanced_health_check "game-${slot}"
         ;;
     "cleanup")
         cleanup

@@ -1,0 +1,99 @@
+# Test Configuration for Infrastructure Validation
+# Uses alternative ports to avoid conflicts with running production services
+
+x-game-service: &game-service
+  build:
+    context: ../..
+    dockerfile: Dockerfile
+  networks:
+    - test-network
+  environment:
+    - NODE_ENV=production
+    - DEPLOYMENT_SLOT=${DEPLOYMENT_SLOT:-blue}
+    - VERSION=${VERSION:-0.1.0}
+  restart: "no"  # Don't restart for testing
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  # Monitoring and Alerting (Test Ports)
+  prometheus-test:
+    image: prom/prometheus:latest
+    container_name: test-prometheus
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9091:9090"  # Use alternative port
+    networks:
+      - test-network
+    restart: "no"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  # Metrics Collection (Test Ports)
+  cadvisor-test:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: test-cadvisor
+    cap_add:
+      - SYS_ADMIN
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:unconfined
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro
+    ports:
+      - "8083:8080"  # Use alternative port
+    networks:
+      - test-network
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Log Aggregation (Test Ports)
+  fluentd-test:
+    image: fluent/fluentd:v1.16-1
+    container_name: test-fluentd
+    volumes:
+      - ../fluentd.conf:/fluentd/etc/fluent.conf:ro
+      - test-fluentd-logs:/fluentd/log
+    ports:
+      - "24225:24224"  # Use alternative port
+      - "24225:24224/udp"
+    networks:
+      - test-network
+    restart: "no"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+networks:
+  test-network:
+    driver: bridge
+    name: test-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  test-fluentd-logs:
+    driver: local
