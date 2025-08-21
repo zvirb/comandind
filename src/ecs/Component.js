@@ -430,17 +430,19 @@ export class CommandComponent extends Component {
      * Issue a new command
      */
     issueCommand(command, target = null, queued = false) {
+        const newCommand = { command, target };
         if (queued && this.currentCommand) {
-            this.commandQueue.push({ command, target });
+            this.commandQueue.push(newCommand);
         } else {
-            this.currentCommand = command;
-            this.commandTarget = target;
-            this.commandQueue = [];
+            // Overwrite current command and clear queue
+            this.commandQueue = [newCommand];
+            this.nextCommand();
         }
     }
-    
+
     /**
-     * Get next command from queue
+     * Completes the current command and gets the next one from the queue.
+     * @returns {boolean} - True if there is a new command, false otherwise.
      */
     nextCommand() {
         if (this.commandQueue.length > 0) {
@@ -448,8 +450,11 @@ export class CommandComponent extends Component {
             this.currentCommand = next.command;
             this.commandTarget = next.target;
             return true;
+        } else {
+            this.currentCommand = null;
+            this.commandTarget = null;
+            return false;
         }
-        return false;
     }
     
     /**

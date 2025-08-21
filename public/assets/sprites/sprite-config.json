@@ -156,9 +156,42 @@
             "speed": 0
           }
         }
+      },
+      "orca": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "directions": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        }
       }
     },
     "nod": {
+      "light-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "directions": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        }
+      },
+      "stealth-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "directions": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        }
+      },
       "recon-bike": {
         "frameWidth": 24,
         "frameHeight": 24,

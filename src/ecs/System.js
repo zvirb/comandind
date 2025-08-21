@@ -6,7 +6,10 @@ import {
     HealthComponent,
     MovementComponent,
     CombatComponent,
-    AIComponent
+    AIComponent,
+    UnitComponent,
+    BuildingComponent,
+    CommandComponent
 } from "./Component.js";
 
 /**
@@ -376,6 +379,10 @@ export class CombatSystem extends System {
     findNearestTarget(entity) {
         const transform = entity.getComponent(TransformComponent);
         const combat = entity.getComponent(CombatComponent);
+        const attackerUnit = entity.getComponent(UnitComponent);
+        const attackerFaction = attackerUnit ? attackerUnit.faction : null;
+
+        if (!attackerFaction) return null; // Can't attack without a faction
         
         let nearestTarget = null;
         let nearestDistance = combat.range;
@@ -387,7 +394,14 @@ export class CombatSystem extends System {
             // Check if target has health (can be damaged)
             if (!potentialTarget.hasComponent(HealthComponent)) continue;
             
-            // TODO: Add faction checking here
+            // Faction checking
+            const targetUnit = potentialTarget.getComponent(UnitComponent);
+            const targetBuilding = potentialTarget.getComponent(BuildingComponent);
+            const targetFaction = targetUnit ? targetUnit.faction : (targetBuilding ? targetBuilding.faction : null);
+
+            if (!targetFaction || targetFaction === attackerFaction) {
+                continue; // Skip if no faction or same faction
+            }
             
             const targetTransform = potentialTarget.getComponent(TransformComponent);
             const dx = targetTransform.x - transform.x;
@@ -436,6 +450,11 @@ export class AISystem extends System {
     update() {
         for (const entity of this.entities) {
             if (!entity.active) continue;
+
+            const commandComp = entity.getComponent(CommandComponent);
+            if (commandComp && commandComp.currentCommand) {
+                this.processCommand(entity, commandComp);
+            }
             
             const ai = entity.getComponent(AIComponent);
             
@@ -444,6 +463,30 @@ export class AISystem extends System {
             ai.think();
             this.updateBehavior(entity);
         }
+    }
+
+    processCommand(entity, commandComp) {
+        const { currentCommand, commandTarget } = commandComp;
+        const ai = entity.getComponent(AIComponent);
+        const movement = entity.getComponent(MovementComponent);
+
+        switch (currentCommand) {
+            case "move":
+                if (movement && commandTarget.x !== undefined) {
+                    movement.setTarget(commandTarget.x, commandTarget.y);
+                    ai.behaviorType = "move";
+                }
+                break;
+            case "attack":
+                if (ai && commandTarget.id !== undefined) {
+                    ai.behaviorType = "attack";
+                    ai.explicitTarget = commandTarget;
+                }
+                break;
+        }
+
+        // Mark command as processed by nulling it, but don't clear the queue
+        commandComp.currentCommand = null;
     }
     
     updateBehavior(entity) {
@@ -461,6 +504,9 @@ export class AISystem extends System {
             break;
         case "attack":
             this.handleAttackBehavior(entity);
+            break;
+        case "move":
+            this.handleMoveBehavior(entity);
             break;
         }
     }
@@ -509,34 +555,77 @@ export class AISystem extends System {
     }
     
     handleAttackBehavior(entity) {
-        // Actively pursue and attack enemies
         const ai = entity.getComponent(AIComponent);
-        const nearbyEnemy = this.findNearbyEnemy(entity, ai.alertRadius);
-        
-        if (!nearbyEnemy) {
-            ai.behaviorType = "guard";
-            return;
+        const combat = entity.getComponent(CombatComponent);
+        const movement = entity.getComponent(MovementComponent);
+        const commandComp = entity.getComponent(CommandComponent);
+
+        // Prioritize explicit target from a command
+        let target = ai.explicitTarget;
+
+        // If explicit target is dead or out of range, clear it
+        if (target && (!target.active || target.getComponent(HealthComponent)?.isDead)) {
+            ai.explicitTarget = null;
+            target = null;
+        }
+
+        // If no explicit target, find one nearby
+        if (!target) {
+            target = this.findNearbyEnemy(entity, ai.alertRadius);
         }
         
-        // Move towards enemy if not in combat range
-        if (entity.hasComponent(MovementComponent) && entity.hasComponent(CombatComponent)) {
-            const movement = entity.getComponent(MovementComponent);
-            const combat = entity.getComponent(CombatComponent);
-            const enemyTransform = nearbyEnemy.getComponent(TransformComponent);
+        if (target) {
+            combat.target = target; // Set target for CombatSystem
+            const targetTransform = target.getComponent(TransformComponent);
             
-            if (!combat.target || combat.target !== nearbyEnemy) {
-                movement.setTarget(enemyTransform.x, enemyTransform.y);
+            // Move towards enemy if not in attack range
+            if (movement && !this.isInRange(entity, target, combat.range)) {
+                movement.setTarget(targetTransform.x, targetTransform.y);
+            }
+        } else {
+            // No target, get next command or go back to guarding
+            if (commandComp && commandComp.nextCommand()) {
+                // New command is ready, it will be processed on the next tick
+            } else {
+                ai.behaviorType = "guard";
+            }
+            combat.target = null;
+        }
+    }
+
+    handleMoveBehavior(entity) {
+        const movement = entity.getComponent(MovementComponent);
+        const ai = entity.getComponent(AIComponent);
+        const commandComp = entity.getComponent(CommandComponent);
+
+        // If we are no longer moving, get next command or switch to guard
+        if (!movement.isMoving) {
+            if (commandComp && commandComp.nextCommand()) {
+                // New command is ready, will be processed next tick
+            } else {
+                ai.behaviorType = "guard";
             }
         }
     }
     
     findNearbyEnemy(entity, radius) {
         const transform = entity.getComponent(TransformComponent);
+        const attackerUnit = entity.getComponent(UnitComponent);
+        const attackerFaction = attackerUnit ? attackerUnit.faction : null;
+
+        if (!attackerFaction) return null;
         
         for (const potentialEnemy of this.world.entities) {
             if (potentialEnemy === entity || !potentialEnemy.active) continue;
             
-            // TODO: Add proper faction checking
+            // Faction checking
+            const enemyUnit = potentialEnemy.getComponent(UnitComponent);
+            const enemyBuilding = potentialEnemy.getComponent(BuildingComponent);
+            const enemyFaction = enemyUnit ? enemyUnit.faction : (enemyBuilding ? enemyBuilding.faction : null);
+
+            if (!enemyFaction || enemyFaction === attackerFaction) {
+                continue; // Skip if no faction or same faction
+            }
             
             const enemyTransform = potentialEnemy.getComponent(TransformComponent);
             if (!enemyTransform) continue;

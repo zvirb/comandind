@@ -1,13 +1,13 @@
 import * as PIXI from "pixi.js";
 import { System } from "./System.js";
-import { SelectableComponent, TransformComponent, SpriteComponent, HealthComponent, CommandComponent, MovementComponent } from "./Component.js";
+import { SelectableComponent, TransformComponent, SpriteComponent, HealthComponent, CommandComponent, MovementComponent, UnitComponent, BuildingComponent } from "./Component.js";
 
 /**
  * Selection System - Handles unit selection, box selection, and visual feedback
  * This system manages player interaction with selectable entities
  */
 export class SelectionSystem extends System {
-    constructor(world, inputHandler, camera, stage, canvasElement = null) {
+    constructor(world, inputHandler, camera, stage, canvasElement = null, playerFaction) {
         super(world); // Call parent constructor
         this.priority = 5; // Priority 5 - runs after movement but before rendering
         this.requiredComponents = [SelectableComponent, TransformComponent];
@@ -15,6 +15,7 @@ export class SelectionSystem extends System {
         this.camera = camera;
         this.stage = stage;
         this.canvasElement = canvasElement;
+        this.playerFaction = playerFaction;
         
         // Selection state
         this.selectedEntities = new Set();
@@ -162,13 +163,28 @@ export class SelectionSystem extends System {
      * Handle right mouse button down (issue commands)
      */
     handleRightMouseDown(event) {
+        if (this.selectedEntities.size === 0) return;
+
         const worldPos = this.camera.screenToWorld(event.clientX, event.clientY, this.canvasElement);
-        
-        // Issue move command to selected units
-        if (this.selectedEntities.size > 0) {
+        const targetEntity = this.getAnyEntityAtPosition(worldPos.x, worldPos.y);
+
+        if (targetEntity) {
+            const targetUnit = targetEntity.getComponent(UnitComponent);
+            const targetBuilding = targetEntity.getComponent(BuildingComponent);
+            const targetFaction = targetUnit ? targetUnit.faction : (targetBuilding ? targetBuilding.faction : null);
+
+            if (targetFaction && targetFaction !== this.playerFaction) {
+                // Issue attack command
+                this.issueCommandToSelected("attack", targetEntity, event.shiftKey);
+                this.showCommandMarker(worldPos.x, worldPos.y, "attack");
+            } else {
+                // It's a friendly unit, move to its location
+                this.issueCommandToSelected("move", { x: worldPos.x, y: worldPos.y }, event.shiftKey);
+                this.showCommandMarker(worldPos.x, worldPos.y, "move");
+            }
+        } else {
+            // No entity clicked, issue move command
             this.issueCommandToSelected("move", { x: worldPos.x, y: worldPos.y }, event.shiftKey);
-            
-            // Show move marker effect
             this.showCommandMarker(worldPos.x, worldPos.y, "move");
         }
     }
@@ -238,6 +254,30 @@ export class SelectionSystem extends System {
     }
     
     /**
+     * Get ANY entity at world position, regardless of faction
+     */
+    getAnyEntityAtPosition(x, y) {
+        for (const entity of this.world.entities) { // Search all world entities
+            if (!entity.active) continue;
+
+            const transform = entity.getComponent(TransformComponent);
+            // All targetable things should have a transform and be selectable or have health
+            if (transform && (entity.hasComponent(SelectableComponent) || entity.hasComponent(HealthComponent))) {
+                const radius = entity.hasComponent(SelectableComponent) ? entity.getComponent(SelectableComponent).selectableRadius : 16;
+                const distance = Math.sqrt(
+                    Math.pow(transform.x - x, 2) +
+                    Math.pow(transform.y - y, 2)
+                );
+
+                if (distance <= radius) {
+                    return entity;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get entity at world position
      */
     getEntityAtPosition(x, y) {
@@ -246,6 +286,15 @@ export class SelectionSystem extends System {
             const selectable = entity.getComponent(SelectableComponent);
             
             if (transform && selectable) {
+                // Faction check
+                const unit = entity.getComponent(UnitComponent);
+                const building = entity.getComponent(BuildingComponent);
+                const faction = unit ? unit.faction : (building ? building.faction : null);
+
+                if (faction !== this.playerFaction) {
+                    continue; // Skip non-player entities
+                }
+
                 const distance = Math.sqrt(
                     Math.pow(transform.x - x, 2) + 
                     Math.pow(transform.y - y, 2)
@@ -272,6 +321,15 @@ export class SelectionSystem extends System {
             const selectable = entity.getComponent(SelectableComponent);
             
             if (transform && selectable) {
+                // Faction check
+                const unit = entity.getComponent(UnitComponent);
+                const building = entity.getComponent(BuildingComponent);
+                const faction = unit ? unit.faction : (building ? building.faction : null);
+
+                if (faction !== this.playerFaction) {
+                    continue; // Skip non-player entities
+                }
+
                 if (transform.x >= minX && transform.x <= maxX &&
                     transform.y >= minY && transform.y <= maxY) {
                     this.selectEntity(entity);
@@ -457,26 +515,25 @@ export class SelectionSystem extends System {
      * Issue command to selected units
      */
     issueCommandToSelected(command, target, queued = false) {
-        // Check if we have a pathfinding system for group movement
         const pathfindingSystem = this.world.systems.find(s => s.constructor.name === "PathfindingSystem");
-        
-        if (command === "move" && target) {
-            // Use group movement if available and multiple units selected
+
+        if (command === "move" && target.x !== undefined) {
             if (pathfindingSystem && this.selectedEntities.size > 1) {
                 const entitiesArray = Array.from(this.selectedEntities);
                 pathfindingSystem.calculateGroupMovement(entitiesArray, target.x, target.y);
             } else {
-                // Individual movement for single unit or no pathfinding
                 for (const entity of this.selectedEntities) {
                     const commandComp = entity.getComponent(CommandComponent);
-                    const movement = entity.getComponent(MovementComponent);
-                    
-                    if (movement) {
-                        movement.setTarget(target.x, target.y);
-                        if (commandComp) {
-                            commandComp.issueCommand("move", target, queued);
-                        }
+                    if (commandComp) {
+                        commandComp.issueCommand("move", target, queued);
                     }
+                }
+            }
+        } else if (command === "attack" && target.id !== undefined) { // target is an entity
+            for (const entity of this.selectedEntities) {
+                const commandComp = entity.getComponent(CommandComponent);
+                if (commandComp) {
+                    commandComp.issueCommand("attack", target, queued);
                 }
             }
         }

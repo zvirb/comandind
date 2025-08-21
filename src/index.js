@@ -39,6 +39,7 @@ class CommandAndIndependentThought {
         this.mainMenu = null;
         this.isInitialized = false;
         this.gameStarted = false;
+        this.playerFaction = 'gdi'; // Player's faction
         
         // Create event listener manager for this game instance
         this.eventManager = createEventManager("GameInstance");
@@ -107,6 +108,11 @@ class CommandAndIndependentThought {
             this.textureAtlasManager = new TextureAtlasManager();
             await this.textureAtlasManager.initialize();
             await this.textureAtlasManager.loadSpriteSet('gdi-medium-tank');
+            await this.textureAtlasManager.loadSpriteSet('gdi-mammoth-tank');
+            await this.textureAtlasManager.loadSpriteSet('gdi-orca');
+            await this.textureAtlasManager.loadSpriteSet('nod-light-tank');
+            await this.textureAtlasManager.loadSpriteSet('nod-stealth-tank');
+            await this.textureAtlasManager.loadSpriteSet('nod-recon-bike');
 
             this.updateLoadingProgress(87, 'Initializing ECS world...');
             
@@ -124,7 +130,8 @@ class CommandAndIndependentThought {
                 this.inputHandler, 
                 this.camera, 
                 this.application.stage,
-                this.application.view // Pass canvas element for coordinate transformation
+                this.application.view, // Pass canvas element for coordinate transformation
+                this.playerFaction
             );
             this.world.addSystem(this.selectionSystem);
             this.world.addSystem(new CombatSystem(this.world));
