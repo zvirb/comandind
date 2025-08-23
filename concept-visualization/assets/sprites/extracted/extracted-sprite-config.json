@@ -1,0 +1,648 @@
+{
+  "structures": {
+    "gdi": {
+      "humvee": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "refinery": {
+        "frameWidth": 72,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "power-plant": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "war-factory": {
+        "frameWidth": 72,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "barracks": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "weapons-factory": {
+        "frameWidth": 72,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "guard-tower": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          }
+        }
+      },
+      "advanced-tower": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0
+            ],
+            "speed": 0
+          }
+        }
+      },
+      "construction-yard": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.15
+          }
+        }
+      }
+    },
+    "nod": {
+      "temple": {
+        "frameWidth": 72,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "advanced-temple": {
+        "frameWidth": 72,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "hand-of-nod": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "airfield": {
+        "frameWidth": 96,
+        "frameHeight": 72,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "obelisk": {
+        "frameWidth": 24,
+        "frameHeight": 48,
+        "animations": {
+          "idle": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.1
+          },
+          "active": {
+            "frames": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "speed": 0.15
+          }
+        }
+      },
+      "turret": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "sam-site": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      }
+    }
+  },
+  "units": {
+    "gdi": {
+      "medium-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "mammoth-tank": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "apc": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "artillery": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "mlrs": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "orca": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      }
+    },
+    "nod": {
+      "light-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "flame-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "stealth-tank": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          },
+          "turret": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "recon-bike": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "buggy": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      },
+      "apache": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 32
+      }
+    }
+  },
+  "infantry": {
+    "gdi": {
+      "minigunner": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "grenadier": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "rocket-soldier": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "engineer": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "commando": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      }
+    },
+    "nod": {
+      "flamethrower": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      },
+      "chem-warrior": {
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "animations": {
+          "move": {
+            "frames": "directional",
+            "speed": 0
+          }
+        },
+        "directions": 40
+      }
+    }
+  },
+  "resources": {
+    "green-1": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.1
+        },
+        "active": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.15
+        }
+      }
+    },
+    "green-2": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.1
+        },
+        "active": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.15
+        }
+      }
+    },
+    "blue-1": {
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "animations": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.1
+        },
+        "active": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "speed": 0.15
+        }
+      }
+    }
+  }
+}

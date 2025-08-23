@@ -1,0 +1,123 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-08-23",
+  "description": "Organized Command & Conquer sprite manifest",
+  "totalFiles": 263,
+  "categories": {
+    "units": {
+      "vehicles": {
+        "light": {
+          "path": "cnc-png/individual/units/vehicles/light/",
+          "description": "Light reconnaissance vehicles",
+          "fileCount": 32,
+          "sprites": [
+            "recon-bike"
+          ],
+          "files": [
+            "recon-bike-0000.png",
+            "recon-bike-0001.png",
+            "recon-bike-0002.png",
+            "recon-bike-0003.png",
+            "recon-bike-0004.png",
+            "recon-bike-0005.png",
+            "recon-bike-0006.png",
+            "recon-bike-0007.png",
+            "recon-bike-0008.png",
+            "recon-bike-0009.png",
+            "recon-bike-0010.png",
+            "recon-bike-0011.png",
+            "recon-bike-0012.png",
+            "recon-bike-0013.png",
+            "recon-bike-0014.png",
+            "recon-bike-0015.png",
+            "recon-bike-0016.png",
+            "recon-bike-0017.png",
+            "recon-bike-0018.png",
+            "recon-bike-0019.png",
+            "recon-bike-0020.png",
+            "recon-bike-0021.png",
+            "recon-bike-0022.png",
+            "recon-bike-0023.png",
+            "recon-bike-0024.png",
+            "recon-bike-0025.png",
+            "recon-bike-0026.png",
+            "recon-bike-0027.png",
+            "recon-bike-0028.png",
+            "recon-bike-0029.png",
+            "recon-bike-0030.png",
+            "recon-bike-0031.png"
+          ]
+        },
+        "medium": {
+          "path": "cnc-png/individual/units/vehicles/medium/",
+          "description": "Medium assault tanks",
+          "fileCount": 64,
+          "sprites": [
+            "medium-tank"
+          ],
+          "frameRange": "medium-tank-0000.png to medium-tank-0063.png"
+        },
+        "heavy": {
+          "path": "cnc-png/individual/units/vehicles/heavy/",
+          "description": "Heavy assault vehicles",
+          "fileCount": 64,
+          "sprites": [
+            "mammoth-tank"
+          ],
+          "frameRange": "mammoth-tank-0000.png to mammoth-tank-0063.png"
+        }
+      }
+    },
+    "structures": {
+      "production": {
+        "path": "cnc-png/individual/structures/production/",
+        "description": "Unit production buildings",
+        "fileCount": 85,
+        "sprites": [
+          "barracks",
+          "hand-of-nod",
+          "refinery"
+        ],
+        "breakdown": {
+          "barracks": "21 frames (barracks-0000.png to barracks-0020.png)",
+          "hand-of-nod": "3 frames (hand-of-nod-0000.png to hand-of-nod-0002.png)",
+          "refinery": "61 frames (refinery-0000.png to refinery-0060.png)"
+        }
+      },
+      "power": {
+        "path": "cnc-png/individual/structures/power/",
+        "description": "Power generation buildings",
+        "fileCount": 9,
+        "sprites": [
+          "power-plant"
+        ],
+        "frameRange": "power-plant-0000.png to power-plant-0008.png"
+      },
+      "defense": {
+        "path": "cnc-png/individual/structures/defense/",
+        "description": "Defensive structures",
+        "fileCount": 9,
+        "sprites": [
+          "obelisk"
+        ],
+        "frameRange": "obelisk-0000.png to obelisk-0008.png"
+      }
+    }
+  },
+  "fileNamingConvention": {
+    "format": "{sprite-name}-{frame-number}.png",
+    "frameNumberFormat": "4-digit zero-padded (0000-9999)",
+    "examples": [
+      "recon-bike-0000.png",
+      "mammoth-tank-0063.png",
+      "refinery-0060.png"
+    ]
+  },
+  "organizationComplete": true,
+  "notes": [
+    "All 263 PNG files successfully moved from root directory",
+    "Files organized by unit type and structure category",
+    "Duplicate files from existing directories were cleaned up",
+    "Each sprite represents different animation frames or directional views"
+  ]
+}

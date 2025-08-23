@@ -1,0 +1,30 @@
+{
+  "name": "mapgen-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive test suite for the Advanced Map Generation System",
+  "type": "module",
+  "main": "MapGenerationTests.js",
+  "scripts": {
+    "test": "node runTests.js",
+    "test:all": "node runTests.js --all",
+    "test:wfc": "node runTests.js --wfc",
+    "test:symmetric": "node runTests.js --symmetric",
+    "test:resources": "node runTests.js --resources",
+    "test:performance": "node runTests.js --performance",
+    "test:quality": "node runTests.js --quality",
+    "test:quick": "node runTests.js --quick",
+    "demo": "node runTests.js --demo",
+    "benchmark": "node runTests.js --performance --export-results",
+    "validate": "node runTests.js --quick --export-results"
+  },
+  "keywords": [
+    "map-generation",
+    "testing",
+    "openra",
+    "wfc",
+    "procedural-generation",
+    "game-development"
+  ],
+  "author": "Map Generation System",
+  "license": "MIT"
+}

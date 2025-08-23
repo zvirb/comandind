@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Map Generation Integration Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            font-size: 12px;
+            color: #cccccc;
+        }
+        
+        select, button {
+            padding: 8px;
+            border: 1px solid #555;
+            background: #333;
+            color: white;
+            border-radius: 4px;
+        }
+        
+        button {
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .canvas-container {
+            border: 2px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        #gameCanvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Advanced Map Generation Integration Test</h1>
+            <p>Testing the integration between concept visualization and advanced map generation systems</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Generation Method</label>
+                <select id="generationMethod">
+                    <option value="classic">Classic Generation</option>
+                    <option value="wfc">Wave Function Collapse</option>
+                    <option value="hybrid">Hybrid (Recommended)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Climate</label>
+                <select id="climate">
+                    <option value="temperate">Temperate</option>
+                    <option value="desert">Desert</option>
+                    <option value="arctic">Arctic</option>
+                    <option value="volcanic">Volcanic</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Device Mode</label>
+                <select id="deviceMode">
+                    <option value="auto">Auto Detect</option>
+                    <option value="high">High Performance</option>
+                    <option value="medium">Medium Performance</option>
+                    <option value="low">Low Performance</option>
+                </select>
+            </div>
+            
+            <button id="generateBtn">Generate New Map</button>
+            <button id="toggleAtlasBtn">Toggle Texture Atlas</button>
+            <button id="cleanupBtn">Cleanup Memory</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Generation Method</h3>
+                <div class="stat-value" id="currentMethod">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Load Time</h3>
+                <div class="stat-value" id="loadTime">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Sprites Loaded</h3>
+                <div class="stat-value" id="spritesLoaded">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Device Tier</h3>
+                <div class="stat-value" id="deviceTier">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Memory Usage</h3>
+                <div class="stat-value" id="memoryUsage">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Quality Score</h3>
+                <div class="stat-value" id="qualityScore">-</div>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="1280" height="960"></canvas>
+        </div>
+        
+        <div id="loading" class="loading" style="display: none;">
+            Generating map... Please wait.
+        </div>
+        
+        <div id="errorContainer"></div>
+    </div>
+
+    <script type="module">
+        import MapGenerator from './js/MapGenerator.js';
+        import ResponsiveCanvasManager from './js/ResponsiveCanvasManager.js';
+        
+        class IntegrationTest {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.mapGenerator = null;
+                this.canvasManager = null;
+                this.stats = {
+                    startTime: 0,
+                    loadTime: 0
+                };
+                
+                this.initializeTest();
+            }
+            
+            async initializeTest() {
+                try {
+                    // Initialize responsive canvas manager
+                    this.canvasManager = new ResponsiveCanvasManager(this.canvas, {
+                        enableTouch: true,
+                        enableMouse: true,
+                        performanceMode: 'auto'
+                    });
+                    
+                    // Setup input handlers for testing
+                    this.canvasManager.setInputHandler('click', (pos) => {
+                        console.log('Canvas clicked at:', pos);
+                    });
+                    
+                    // Update device capabilities display
+                    const capabilities = this.canvasManager.getDeviceCapabilities();
+                    document.getElementById('deviceTier').textContent = capabilities.performanceTier;
+                    
+                    // Initialize map generator with device-appropriate settings
+                    await this.createMapGenerator();
+                    
+                    // Setup event handlers
+                    this.setupEventHandlers();
+                    
+                    // Generate initial map
+                    await this.generateMap();
+                    
+                    // Start performance monitoring
+                    this.startPerformanceMonitoring();
+                    
+                } catch (error) {
+                    this.showError('Initialization failed: ' + error.message);
+                    console.error('Integration test initialization error:', error);
+                }
+            }
+            
+            async createMapGenerator() {
+                const deviceMode = document.getElementById('deviceMode').value;
+                const climate = document.getElementById('climate').value;
+                const method = document.getElementById('generationMethod').value;
+                
+                // Configure based on device mode
+                let deviceOverrides = {};
+                if (deviceMode !== 'auto') {
+                    deviceOverrides = {
+                        performanceTier: deviceMode,
+                        isLowEnd: deviceMode === 'low'
+                    };
+                }
+                
+                this.mapGenerator = new MapGenerator(this.canvas, null);
+                
+                // Override device capabilities if needed
+                if (Object.keys(deviceOverrides).length > 0) {
+                    Object.assign(this.mapGenerator.deviceCapabilities, deviceOverrides);
+                }
+                
+                // Configure terrain generation options
+                if (this.mapGenerator.terrainGenerator) {\n                    this.mapGenerator.terrainGenerator.options = {\n                        useWFC: method === 'wfc' || method === 'hybrid',\n                        climate: climate,\n                        resourceBalance: true,\n                        enableValidation: !this.mapGenerator.deviceCapabilities.isLowEnd\n                    };\n                }\n            }\n            \n            setupEventHandlers() {\n                document.getElementById('generateBtn').addEventListener('click', () => {\n                    this.generateMap();\n                });\n                \n                document.getElementById('toggleAtlasBtn').addEventListener('click', () => {\n                    this.toggleTextureAtlas();\n                });\n                \n                document.getElementById('cleanupBtn').addEventListener('click', () => {\n                    this.cleanupMemory();\n                });\n                \n                // Auto-regenerate when settings change\n                ['generationMethod', 'climate', 'deviceMode'].forEach(id => {\n                    document.getElementById(id).addEventListener('change', async () => {\n                        await this.createMapGenerator();\n                        await this.generateMap();\n                    });\n                });\n            }\n            \n            async generateMap() {\n                try {\n                    document.getElementById('loading').style.display = 'block';\n                    this.stats.startTime = performance.now();\n                    \n                    // Clear error messages\n                    document.getElementById('errorContainer').innerHTML = '';\n                    \n                    // Initialize and generate\n                    await this.mapGenerator.init();\n                    \n                    // Draw the terrain\n                    this.mapGenerator.clear();\n                    this.mapGenerator.drawTerrain();\n                    \n                    // Update statistics\n                    this.stats.loadTime = performance.now() - this.stats.startTime;\n                    this.updateStats();\n                    \n                    console.log('Map generation completed successfully');\n                    \n                } catch (error) {\n                    this.showError('Map generation failed: ' + error.message);\n                    console.error('Map generation error:', error);\n                } finally {\n                    document.getElementById('loading').style.display = 'none';\n                }\n            }\n            \n            toggleTextureAtlas() {\n                if (this.mapGenerator.textureAtlas) {\n                    this.mapGenerator.cleanupTextureMemory();\n                    console.log('Texture atlas disabled');\n                } else {\n                    this.mapGenerator.createTextureAtlas();\n                    console.log('Texture atlas enabled');\n                }\n                this.updateStats();\n            }\n            \n            cleanupMemory() {\n                if (this.mapGenerator) {\n                    this.mapGenerator.cleanupTextureMemory();\n                }\n                \n                if (this.canvasManager) {\n                    this.canvasManager.optimizeForLowMemory();\n                }\n                \n                // Force garbage collection if available\n                if (window.gc) {\n                    window.gc();\n                }\n                \n                this.updateStats();\n                console.log('Memory cleanup completed');\n            }\n            \n            updateStats() {\n                // Update generation method\n                document.getElementById('currentMethod').textContent = \n                    document.getElementById('generationMethod').value;\n                \n                // Update load time\n                document.getElementById('loadTime').textContent = \n                    Math.round(this.stats.loadTime) + 'ms';\n                \n                // Update sprites loaded\n                if (this.mapGenerator && this.mapGenerator.loadingState) {\n                    document.getElementById('spritesLoaded').textContent = \n                        this.mapGenerator.loadingState.loadedSprites + '/' + this.mapGenerator.loadingState.totalSprites;\n                }\n                \n                // Update memory usage\n                if (performance.memory) {\n                    const memoryMB = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));\n                    document.getElementById('memoryUsage').textContent = memoryMB + 'MB';\n                }\n                \n                // Update quality score\n                if (this.mapGenerator && this.mapGenerator.terrainMetadata && this.mapGenerator.terrainMetadata.quality) {\n                    const score = this.mapGenerator.terrainMetadata.quality.overallScore;\n                    document.getElementById('qualityScore').textContent = Math.round(score) + '%';\n                }\n            }\n            \n            startPerformanceMonitoring() {\n                setInterval(() => {\n                    this.updateStats();\n                }, 1000);\n            }\n            \n            showError(message) {\n                const errorDiv = document.createElement('div');\n                errorDiv.className = 'error';\n                errorDiv.textContent = message;\n                document.getElementById('errorContainer').appendChild(errorDiv);\n                \n                // Auto-remove after 10 seconds\n                setTimeout(() => {\n                    if (errorDiv.parentNode) {\n                        errorDiv.parentNode.removeChild(errorDiv);\n                    }\n                }, 10000);\n            }\n        }\n        \n        // Initialize the test when DOM is ready\n        document.addEventListener('DOMContentLoaded', () => {\n            new IntegrationTest();\n        });\n    </script>\n</body>\n</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>grenadier.shp</title>
+    <style>
+        body { 
+            background: #333; 
+            color: white; 
+            font-family: monospace; 
+            padding: 20px;
+        }
+        .info {
+            background: #444;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #666;
+        }
+        .frames {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .frame {
+            border: 1px solid #666;
+            padding: 5px;
+            text-align: center;
+            background: #222;
+        }
+        canvas {
+            border: 1px solid #888;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <h1>grenadier.shp</h1>
+    <div class="info">
+        <p>Frames: 660</p>
+        <p>Type: infantry</p>
+        <p>Note: This is a placeholder visualization. Use proper SHP converter for actual sprites.</p>
+    </div>
+    <div class="frames" id="frames"></div>
+    
+    <script>
+        const numFrames = 660;
+        const container = document.getElementById('frames');
+        
+        // Determine sprite type based on frame count
+        let frameSize = 32;
+        let spriteType = 'unknown';
+        
+        if (numFrames === 32 || numFrames === 64) {
+            spriteType = 'vehicle';
+            frameSize = 24;
+        } else if (numFrames > 100) {
+            spriteType = 'infantry';
+            frameSize = 16;
+        } else if (numFrames < 10) {
+            spriteType = 'building';
+            frameSize = 48;
+        }
+        
+        // Create placeholder frames
+        for (let i = 0; i < Math.min(numFrames, 8); i++) {
+            const div = document.createElement('div');
+            div.className = 'frame';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = frameSize;
+            canvas.height = frameSize;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw placeholder sprite
+            if (spriteType === 'vehicle') {
+                // Draw simple tank shape
+                ctx.fillStyle = '#666';
+                ctx.fillRect(frameSize/4, frameSize/3, frameSize/2, frameSize/3);
+                ctx.fillStyle = '#444';
+                ctx.fillRect(frameSize/6, frameSize/3 - 2, frameSize*2/3, 4);
+                ctx.fillRect(frameSize/6, frameSize*2/3 - 2, frameSize*2/3, 4);
+                // Turret
+                ctx.fillStyle = '#888';
+                ctx.beginPath();
+                ctx.arc(frameSize/2, frameSize/2, frameSize/6, 0, Math.PI * 2);
+                ctx.fill();
+                // Cannon rotated based on frame
+                ctx.strokeStyle = '#999';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(frameSize/2, frameSize/2);
+                const angle = (i / numFrames) * Math.PI * 2;
+                ctx.lineTo(frameSize/2 + Math.cos(angle) * frameSize/3, 
+                          frameSize/2 + Math.sin(angle) * frameSize/3);
+                ctx.stroke();
+            } else if (spriteType === 'building') {
+                // Draw simple building
+                ctx.fillStyle = '#555';
+                ctx.fillRect(frameSize/4, frameSize/3, frameSize/2, frameSize/2);
+                ctx.fillStyle = '#444';
+                ctx.beginPath();
+                ctx.moveTo(frameSize/4 - 4, frameSize/3);
+                ctx.lineTo(frameSize/2, frameSize/4);
+                ctx.lineTo(frameSize*3/4 + 4, frameSize/3);
+                ctx.closePath();
+                ctx.fill();
+                // Windows
+                ctx.fillStyle = i === 0 ? '#333' : '#ff0';
+                ctx.fillRect(frameSize/3, frameSize/2 - 4, 4, 4);
+                ctx.fillRect(frameSize*2/3 - 4, frameSize/2 - 4, 4, 4);
+            } else {
+                // Draw simple infantry
+                ctx.fillStyle = '#888';
+                // Head
+                ctx.beginPath();
+                ctx.arc(frameSize/2, frameSize/4, 2, 0, Math.PI * 2);
+                ctx.fill();
+                // Body
+                ctx.fillRect(frameSize/2 - 2, frameSize/3, 4, frameSize/3);
+                // Arms
+                ctx.fillRect(frameSize/3, frameSize/2 - 2, frameSize/3, 2);
+                // Legs
+                ctx.fillRect(frameSize/2 - 3, frameSize*2/3, 2, frameSize/4);
+                ctx.fillRect(frameSize/2 + 1, frameSize*2/3, 2, frameSize/4);
+            }
+            
+            // Frame number
+            ctx.fillStyle = '#0f0';
+            ctx.font = '8px monospace';
+            ctx.fillText(i.toString(), 2, 10);
+            
+            div.appendChild(canvas);
+            const label = document.createElement('div');
+            label.textContent = 'Frame ' + i;
+            label.style.fontSize = '10px';
+            label.style.color = '#888';
+            div.appendChild(label);
+            
+            container.appendChild(div);
+        }
+        
+        if (numFrames > 8) {
+            const more = document.createElement('div');
+            more.className = 'frame';
+            more.style.padding = '20px';
+            more.textContent = '+ ' + (numFrames - 8) + ' more frames';
+            container.appendChild(more);
+        }
+    </script>
+</body>
+</html>

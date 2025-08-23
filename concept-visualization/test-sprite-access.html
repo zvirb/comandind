@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite Access Test</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #333;
+        }
+        
+        .success {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .error {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        
+        .sprite-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .sprite-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            border: 1px solid #333;
+            margin: 2px;
+        }
+        
+        .sprite-item img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            border: 1px solid #666;
+        }
+        
+        .sprite-item.loaded img {
+            border-color: #00ff00;
+        }
+        
+        .sprite-item.error img {
+            border-color: #ff0000;
+            background: #330000;
+        }
+        
+        .sprite-item span {
+            font-size: 10px;
+            margin-top: 2px;
+            text-align: center;
+        }
+        
+        .progress {
+            background: #333;
+            height: 20px;
+            margin: 10px 0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: #00ff00;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        .stat {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <h1>C&C Sprite Access Verification</h1>
+    <div id="status">Initializing tests...</div>
+    
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="stats">
+        <div class="stat">Total: <span id="totalCount">0</span></div>
+        <div class="stat">Loaded: <span id="loadedCount">0</span></div>
+        <div class="stat">Failed: <span id="failedCount">0</span></div>
+        <div class="stat">Success Rate: <span id="successRate">0%</span></div>
+    </div>
+    
+    <div id="results"></div>
+    
+    <div class="sprite-preview" id="spritePreview"></div>
+    
+    <script>
+        class SpriteAccessTester {
+            constructor() {
+                this.testSprites = [
+                    // High priority sprites from MapGenerator
+                    { path: '/public/assets/sprites/cnc-png/terrain/S01-0000.png', key: 'S01', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/S02-0000.png', key: 'S02', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/D01-0000.png', key: 'D01', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/D02-0000.png', key: 'D02', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/W1-0000.png', key: 'W1', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/TI1-0000.png', key: 'TI1', category: 'terrain' },
+                    
+                    // Medium priority sprites
+                    { path: '/public/assets/sprites/cnc-png/individual/construction-yard-0000.png', key: 'gdi-cy', category: 'structures' },
+                    { path: '/public/assets/sprites/cnc-png/individual/barracks-0000.png', key: 'gdi-barracks', category: 'structures' },
+                    { path: '/public/assets/sprites/cnc-png/individual/mammoth-tank-0000.png', key: 'mammoth', category: 'units' },
+                    { path: '/public/assets/sprites/cnc-png/medium-tank-0000.png', key: 'medium-tank', category: 'units' },
+                    
+                    // Low priority sprites
+                    { path: '/public/assets/sprites/cnc-png/terrain/B1-0000.png', key: 'B1', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/B2-0000.png', key: 'B2', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/BR1-0000.png', key: 'BR1', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/T01-0000.png', key: 'T01', category: 'terrain' },
+                    { path: '/public/assets/sprites/cnc-png/terrain/T02-0000.png', key: 'T02', category: 'terrain' },
+                    
+                    // Additional test sprites
+                    { path: '/public/assets/sprites/cnc-png/individual/power-plant-0000.png', key: 'power-plant', category: 'structures' },
+                    { path: '/public/assets/sprites/cnc-png/individual/refinery-0000.png', key: 'refinery', category: 'structures' },
+                    { path: '/public/assets/sprites/cnc-png/individual/hand-of-nod-0000.png', key: 'hand-of-nod', category: 'structures' },
+                    { path: '/public/assets/sprites/cnc-png/individual/obelisk-0000.png', key: 'obelisk', category: 'structures' },
+                    { path: '/public/assets/sprites/cnc-png/individual/recon-bike-0000.png', key: 'recon-bike', category: 'units' }
+                ];
+                
+                this.results = {
+                    total: this.testSprites.length,
+                    loaded: 0,
+                    failed: 0,
+                    details: []
+                };
+                
+                this.statusEl = document.getElementById('status');
+                this.progressEl = document.getElementById('progressBar');
+                this.resultsEl = document.getElementById('results');
+                this.previewEl = document.getElementById('spritePreview');
+            }
+            
+            updateStats() {
+                document.getElementById('totalCount').textContent = this.results.total;
+                document.getElementById('loadedCount').textContent = this.results.loaded;
+                document.getElementById('failedCount').textContent = this.results.failed;
+                
+                const successRate = Math.round((this.results.loaded / this.results.total) * 100);
+                document.getElementById('successRate').textContent = successRate + '%';
+                
+                const progress = ((this.results.loaded + this.results.failed) / this.results.total) * 100;
+                this.progressEl.style.width = progress + '%';
+            }
+            
+            createSpriteElement(sprite, success) {
+                const spriteItem = document.createElement('div');
+                spriteItem.className = `sprite-item ${success ? 'loaded' : 'error'}`;
+                
+                const img = document.createElement('img');
+                img.src = success ? sprite.path : '';
+                img.alt = sprite.key;
+                
+                const label = document.createElement('span');
+                label.textContent = sprite.key;
+                
+                spriteItem.appendChild(img);
+                spriteItem.appendChild(label);
+                
+                return spriteItem;
+            }
+            
+            async testSpriteAccess(sprite) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    const timeout = setTimeout(() => {
+                        resolve(false);
+                    }, 5000); // 5 second timeout
+                    
+                    img.onload = () => {
+                        clearTimeout(timeout);
+                        resolve(true);
+                    };
+                    
+                    img.onerror = () => {
+                        clearTimeout(timeout);
+                        resolve(false);
+                    };
+                    
+                    img.src = sprite.path;
+                });
+            }
+            
+            logResult(sprite, success, error = null) {
+                const resultEl = document.createElement('div');
+                resultEl.className = `test-result ${success ? 'success' : 'error'}`;
+                
+                let message = `${sprite.category}/${sprite.key}: ${sprite.path}`;
+                if (!success && error) {
+                    message += ` - Error: ${error}`;
+                }
+                
+                resultEl.textContent = success ? '✓ ' + message : '✗ ' + message;
+                this.resultsEl.appendChild(resultEl);
+                
+                // Add to sprite preview
+                this.previewEl.appendChild(this.createSpriteElement(sprite, success));
+                
+                this.results.details.push({
+                    sprite,
+                    success,
+                    error
+                });
+            }
+            
+            async runTests() {
+                this.statusEl.textContent = `Testing ${this.results.total} sprites...`;
+                
+                for (let i = 0; i < this.testSprites.length; i++) {
+                    const sprite = this.testSprites[i];
+                    
+                    try {
+                        const success = await this.testSpriteAccess(sprite);
+                        
+                        if (success) {
+                            this.results.loaded++;
+                            this.logResult(sprite, true);
+                        } else {
+                            this.results.failed++;
+                            this.logResult(sprite, false, 'Failed to load');
+                        }
+                        
+                    } catch (error) {
+                        this.results.failed++;
+                        this.logResult(sprite, false, error.message);
+                    }
+                    
+                    this.updateStats();
+                    
+                    // Small delay to prevent overwhelming the browser
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                const successRate = Math.round((this.results.loaded / this.results.total) * 100);
+                
+                if (successRate === 100) {
+                    this.statusEl.textContent = '✓ All sprites loaded successfully!';
+                    this.statusEl.style.color = '#00ff00';
+                } else if (successRate >= 80) {
+                    this.statusEl.textContent = `⚠ ${successRate}% sprites loaded - Some issues detected`;
+                    this.statusEl.style.color = '#ffd700';
+                } else {
+                    this.statusEl.textContent = `✗ Only ${successRate}% sprites loaded - Major issues detected`;
+                    this.statusEl.style.color = '#ff0000';
+                }
+                
+                this.generateReport();
+            }
+            
+            generateReport() {
+                const report = {
+                    timestamp: new Date().toISOString(),
+                    total: this.results.total,
+                    loaded: this.results.loaded,
+                    failed: this.results.failed,
+                    successRate: Math.round((this.results.loaded / this.results.total) * 100),
+                    failures: this.results.details.filter(r => !r.success),
+                    userAgent: navigator.userAgent,
+                    viewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight
+                    }
+                };
+                
+                console.log('Sprite Access Test Report:', report);
+                
+                // Add summary to page
+                const summaryEl = document.createElement('div');
+                summaryEl.className = 'test-result';
+                summaryEl.innerHTML = `
+                    <h3>Test Summary</h3>
+                    <p>Total sprites tested: ${report.total}</p>
+                    <p>Successfully loaded: ${report.loaded}</p>
+                    <p>Failed to load: ${report.failed}</p>
+                    <p>Success rate: ${report.successRate}%</p>
+                    <p>Timestamp: ${report.timestamp}</p>
+                `;
+                
+                this.resultsEl.insertBefore(summaryEl, this.resultsEl.firstChild);
+            }
+        }
+        
+        // Run tests when page loads
+        window.addEventListener('load', () => {
+            const tester = new SpriteAccessTester();
+            tester.runTests();
+        });
+    </script>
+</body>
+</html>

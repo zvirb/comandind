@@ -222,7 +222,7 @@ class SecurityValidation {
         
         try {
             const testInputs = [
-                '<>&"\\'/',
+                '<>&"\'/',
                 'javascript:void(0)',
                 'data:text/html,<script>alert(1)</script>',
                 '../../etc/passwd',

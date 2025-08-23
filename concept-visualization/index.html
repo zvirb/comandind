@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Programming Concepts - Command & Conquer Style</title>
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+</head>
+<body>
+    <header>
+        <h1>PROGRAMMING CONCEPTS</h1>
+        <div class="subtitle">Command & Conquer Battlefield Training</div>
+        <button class="fab" id="menuBtn" aria-label="Open menu" style="position: absolute; right: 15px; top: 15px; width: 40px; height: 40px;">
+            ☰
+        </button>
+    </header>
+    
+    <!-- Progress indicator -->
+    <div class="progress-indicator" id="progressBar" style="width: 0%;"></div>
+    
+    <!-- Navigation dots -->
+    <div class="nav-dots" id="navDots">
+        <!-- Dots will be generated dynamically -->
+    </div>
+    
+    <!-- Collapsible sidebar -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <aside class="sidebar-overlay" id="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                SELECT CONCEPT
+                <button class="fab" id="closeSidebar" aria-label="Close menu" style="float: right; width: 30px; height: 30px; font-size: 0.8em;">
+                    ×
+                </button>
+            </div>
+            <ul class="concept-list">
+                <li class="category-header">CORE CONCEPTS</li>
+                <li><button class="concept-btn" data-concept="classes-objects" data-index="0">Classes & Objects</button></li>
+                <li><button class="concept-btn" data-concept="variables" data-index="1">Variables & Properties</button></li>
+                <li><button class="concept-btn" data-concept="methods" data-index="2">Methods & Constructors</button></li>
+                
+                <li class="category-header">CONTROL FLOW</li>
+                <li><button class="concept-btn" data-concept="conditionals" data-index="3">If-Else Statements</button></li>
+                <li><button class="concept-btn" data-concept="loops" data-index="4">Loops</button></li>
+                <li><button class="concept-btn" data-concept="switch" data-index="5">Switch Statements</button></li>
+                
+                <li class="category-header">OOP PRINCIPLES</li>
+                <li><button class="concept-btn" data-concept="abstraction" data-index="6">Abstraction</button></li>
+                <li><button class="concept-btn" data-concept="encapsulation" data-index="7">Encapsulation</button></li>
+                <li><button class="concept-btn" data-concept="inheritance" data-index="8">Inheritance</button></li>
+                <li><button class="concept-btn" data-concept="polymorphism" data-index="9">Polymorphism</button></li>
+                
+                <li class="category-header">ADVANCED</li>
+                <li><button class="concept-btn" data-concept="interfaces" data-index="10">Interfaces</button></li>
+                <li><button class="concept-btn" data-concept="events" data-index="11">Events & Delegates</button></li>
+                <li><button class="concept-btn" data-concept="exceptions" data-index="12">Exception Handling</button></li>
+                <li><button class="concept-btn" data-concept="collections" data-index="13">Arrays & Collections</button></li>
+                
+                <li class="category-header">SPECIAL WEAPONS</li>
+                <li><button class="concept-btn" data-concept="singleton" data-index="14">Singleton Pattern</button></li>
+                <li><button class="concept-btn" data-concept="debugging" data-index="15">Debugging</button></li>
+            </ul>
+        </div>
+    </aside>
+    
+    <!-- Main scrollable content -->
+    <div class="scroll-container" id="scrollContainer">
+        <div class="concept-section active" id="welcome-section">
+            <div class="concept-header">
+                <div class="concept-title">Welcome Commander!</div>
+                <div class="concept-category">Mission Briefing</div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+            <div class="explanation-area">
+                <div class="explanation-text">
+                    <p>Welcome to the Command & Conquer Programming Academy! Scroll down to explore programming concepts through battlefield metaphors.</p>
+                    <p>Each concept is visualized using familiar RTS gameplay elements to make learning intuitive and memorable.</p>
+                    <p><strong>Mission Objective:</strong> Master these programming concepts to become an elite software commander!</p>
+                    <p><em>Swipe down or scroll to begin your training...</em></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Concept sections will be generated dynamically -->
+    </div>
+    
+    <!-- Floating action buttons -->
+    <div class="fab-container">
+        <button class="fab" id="prevBtn" title="Previous concept" aria-label="Previous concept">↑</button>
+        <button class="fab" id="nextBtn" title="Next concept" aria-label="Next concept">↓</button>
+    </div>
+    
+    <script type="module">
+        import ConceptVisualizer from './js/ConceptVisualizer.js';
+        
+        // Mobile-first scroll-based app
+        class MobileProgrammingApp {
+            constructor() {
+                this.conceptData = {
+                    'classes-objects': {
+                        title: 'Classes and Objects',
+                        category: 'Core Concepts',
+                        explanation: `<p>Think of <strong>Classes</strong> as your building blueprints - like the construction yard's build menu. The "Barracks" blueprint (class) defines what a barracks should have: health points, production capabilities, and power requirements.</p>
+                        <p>When you actually place and construct a barracks on the map, that specific building becomes an <strong>Object</strong> - an instance of the Barracks class. You might build 3 barracks; each is a separate object from the same class blueprint.</p>
+                        <div class="code-example">
+class Barracks {
+    constructor() {
+        this.health = 800;
+        this.power = -20;
+        this.cost = 300;
+    }
+}
+
+// Creating objects
+const barracks1 = new Barracks();
+const barracks2 = new Barracks();
+                        </div>`,
+                        visualize: (viz) => viz.visualizeClassesAndObjects()
+                    },
+                    'variables': {
+                        title: 'Variables, Fields, and Properties',
+                        category: 'Core Concepts',
+                        explanation: `<p><strong>Variables</strong> are like your temporary reconnaissance intel that only lasts during a specific mission phase.</p>
+                        <p><strong>Fields</strong> are your base's persistent resources - your Tiberium reserves, power levels, and unit count that remain throughout the mission.</p>
+                        <p><strong>Properties</strong> are like your command interface displaying these resources - you can check your credits (get) or spend them (set).</p>
+                        <div class="code-example">
+class Base {
+    // Field
+    private credits = 5000;
+    
+    // Property
+    get currentCredits() {
+        return this.credits;
+    }
+    
+    set spendCredits(amount) {
+        this.credits -= amount;
+    }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeClassesAndObjects()
+                    },
+                    'methods': {
+                        title: 'Methods and Constructors',
+                        category: 'Core Concepts',
+                        explanation: `<p><strong>Methods</strong> are your unit commands and abilities. A Mammoth Tank has methods like Fire(), Move(), and SelfRepair().</p>
+                        <p><strong>Constructors</strong> are like the actual building process when you click "build" - they initialize your structure with starting health, connect it to the power grid, and set its team allegiance.</p>
+                        <div class="code-example">
+class MammothTank {
+    constructor(team) {
+        this.team = team;
+        this.health = 600;
+        this.ammo = 40;
+    }
+    
+    fire() {
+        if (this.ammo > 0) {
+            this.ammo--;
+            return "Firing main cannon!";
+        }
+    }
+    
+    selfRepair() {
+        this.health = Math.min(600, this.health + 50);
+    }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizePolymorphism()
+                    },
+                    'conditionals': {
+                        title: 'If-Else Statements',
+                        category: 'Control Flow',
+                        explanation: `<p>Like your tactical decisions: <em>"IF enemy has heavy armor, THEN build rocket infantry, ELSE build regular minigunners."</em></p>
+                        <p>Or <em>"IF power is sufficient, THEN activate advanced defenses, ELSE build more power plants."</em></p>
+                        <div class="code-example">
+if (enemyDetected) {
+    activateDefenses();
+    soundAlarm();
+} else {
+    continuePatrol();
+}
+
+if (power < requiredPower) {
+    buildPowerPlant();
+} else if (credits < 1000) {
+    harvestTiberium();
+} else {
+    buildUnits();
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeConditionals()
+                    },
+                    'loops': {
+                        title: 'Loops',
+                        category: 'Control Flow',
+                        explanation: `<p><strong>For Loop:</strong> "Send 10 reinforcement waves, one every 30 seconds"</p>
+                        <p><strong>While Loop:</strong> "Keep harvesting Tiberium WHILE the refinery exists"</p>
+                        <p><strong>Foreach Loop:</strong> "For EACH enemy structure detected, assign an airstrike target"</p>
+                        <div class="code-example">
+// For Loop
+for (let wave = 1; wave <= 10; wave++) {
+    sendReinforcements(wave);
+}
+
+// While Loop
+while (refinery.exists) {
+    harvester.collectTiberium();
+}
+
+// Foreach Loop
+enemyStructures.forEach(structure => {
+    assignAirstrikeTarget(structure);
+});
+                        </div>`,
+                        visualize: (viz) => viz.visualizeLoops()
+                    },
+                    'switch': {
+                        title: 'Switch Statements',
+                        category: 'Control Flow',
+                        explanation: `<p>Your response to enemy tactics:</p>
+                        <div class="code-example">
+switch (enemyUnitType) {
+    case "Infantry":
+        deployFlamers();
+        break;
+    case "Tanks":
+        buildRocketLaunchers();
+        break;
+    case "Aircraft":
+        buildSAMSites();
+        break;
+    case "Commando":
+        ringBaseWithGuardTowers();
+        break;
+    default:
+        standardDefense();
+}
+                        </div>
+                        <p>Each enemy type triggers a specific defensive response!</p>`,
+                        visualize: (viz) => viz.visualizeConditionals()
+                    },
+                    'abstraction': {
+                        title: 'Abstraction',
+                        category: 'OOP Principles',
+                        explanation: `<p>You don't need to know how the Ion Cannon satellite works internally - you just need to know it requires the Ion Cannon Uplink, takes time to charge, and devastates a target area.</p>
+                        <p>The complex orbital mechanics are <strong>abstracted away</strong>.</p>
+                        <div class="code-example">
+class IonCannon {
+    // Complex internal implementation hidden
+    private calculateOrbitalPosition() { /* ... */ }
+    private alignSatellite() { /* ... */ }
+    private chargeCapacitors() { /* ... */ }
+    
+    // Simple public interface
+    fire(target) {
+        if (this.isReady()) {
+            // All complexity hidden
+            return this.executeStrike(target);
+        }
+    }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeAbstraction()
+                    },
+                    'encapsulation': {
+                        title: 'Encapsulation',
+                        category: 'OOP Principles',
+                        explanation: `<p>Your Construction Yard hides its internal building queue and construction mechanisms. Other units can't directly mess with its build order - they can only interact through proper channels (the build interface).</p>
+                        <div class="code-example">
+class ConstructionYard {
+    // Private internal state
+    #buildQueue = [];
+    #currentConstruction = null;
+    #constructionProgress = 0;
+    
+    // Public interface
+    addToBuildQueue(structure) {
+        if (this.canBuild(structure)) {
+            this.#buildQueue.push(structure);
+        }
+    }
+    
+    getBuildStatus() {
+        return {
+            queue: this.#buildQueue.length,
+            progress: this.#constructionProgress
+        };
+    }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeEncapsulation()
+                    },
+                    'inheritance': {
+                        title: 'Inheritance',
+                        category: 'OOP Principles',
+                        explanation: `<p>All vehicles inherit from a base "Vehicle" class: they can move, take damage, and be repaired. Then specialized classes emerge:</p>
+                        <ul>
+                            <li><strong>Harvester</strong> inherits from Vehicle but adds Tiberium collection</li>
+                            <li><strong>Mammoth Tank</strong> inherits from Vehicle but adds dual cannons and missiles</li>
+                            <li><strong>MCV</strong> inherits from Vehicle but adds the ability to deploy into a Construction Yard</li>
+                        </ul>
+                        <div class="code-example">
+class Vehicle {
+    move() { /* ... */ }
+    takeDamage(amount) { /* ... */ }
+    repair() { /* ... */ }
+}
+
+class Harvester extends Vehicle {
+    harvestTiberium() { /* ... */ }
+    returnToRefinery() { /* ... */ }
+}
+
+class MammothTank extends Vehicle {
+    fireCannons() { /* ... */ }
+    launchMissiles() { /* ... */ }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeInheritance()
+                    },
+                    'polymorphism': {
+                        title: 'Polymorphism',
+                        category: 'OOP Principles',
+                        explanation: `<p>The "Attack" command works differently for different units (polymorphic behavior):</p>
+                        <ul>
+                            <li>Infantry use rifles</li>
+                            <li>Grenadiers throw grenades</li>
+                            <li>Flame tanks spray fire</li>
+                            <li>Ion Cannon fires from orbit</li>
+                        </ul>
+                        <p>But you issue the same "Attack" command to all of them!</p>
+                        <div class="code-example">
+class Unit {
+    attack(target) {
+        // Base implementation
+    }
+}
+
+class Infantry extends Unit {
+    attack(target) {
+        this.fireRifle(target);
+    }
+}
+
+class FlameTank extends Unit {
+    attack(target) {
+        this.sprayFire(target);
+    }
+}
+
+// Same method call, different behavior
+units.forEach(unit => unit.attack(enemy));
+                        </div>`,
+                        visualize: (viz) => viz.visualizePolymorphism()
+                    },
+                    'interfaces': {
+                        title: 'Interfaces',
+                        category: 'Advanced',
+                        explanation: `<p>Like combat protocols all military units must follow: <strong>IDestructible</strong> (can be destroyed), <strong>IRepairable</strong> (can be fixed), <strong>ICommandable</strong> (responds to orders).</p>
+                        <p>Both GDI and NOD units implement these same interfaces despite being different factions.</p>
+                        <div class="code-example">
+interface IDestructible {
+    takeDamage(amount: number): void;
+    getCurrentHealth(): number;
+    isDestroyed(): boolean;
+    explode(): void;
+}
+
+class GDIBarracks implements IDestructible {
+    takeDamage(amount) { /* GDI implementation */ }
+    // ...
+}
+
+class NODTemple implements IDestructible {
+    takeDamage(amount) { /* NOD implementation */ }
+    // ...
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeInterfaces()
+                    },
+                    'events': {
+                        title: 'Delegates and Events',
+                        category: 'Advanced',
+                        explanation: `<p>Your base's alert system! When an enemy is detected (event), it triggers multiple responses (delegates):</p>
+                        <ul>
+                            <li>Sound the alarm</li>
+                            <li>Auto-target defenses</li>
+                            <li>Flash the minimap</li>
+                            <li>Send "Unit under attack!" message</li>
+                        </ul>
+                        <div class="code-example">
+class BaseDefense {
+    onEnemyDetected = new Event();
+    
+    constructor() {
+        this.onEnemyDetected.subscribe(this.soundAlarm);
+        this.onEnemyDetected.subscribe(this.targetDefenses);
+        this.onEnemyDetected.subscribe(this.alertPlayer);
+    }
+    
+    detectEnemy(enemy) {
+        this.onEnemyDetected.trigger(enemy);
+    }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeEvents()
+                    },
+                    'exceptions': {
+                        title: 'Exception Handling',
+                        category: 'Advanced',
+                        explanation: `<p>When deploying the Ion Cannon:</p>
+                        <div class="code-example">
+try {
+    ionCannon.fire(coordinates);
+} catch (InsufficientPowerError) {
+    buildPowerPlants();
+} catch (UplinkDestroyedError) {
+    rebuildUplink();
+} finally {
+    resumeNormalOperations();
+}
+                        </div>
+                        <p>Handle errors gracefully to keep the battle going!</p>`,
+                        visualize: (viz) => viz.visualizeExceptionHandling()
+                    },
+                    'collections': {
+                        title: 'Arrays and Collections',
+                        category: 'Advanced',
+                        explanation: `<p><strong>Array:</strong> Your unit selection group [Tank1, Tank2, Tank3, Tank4, Tank5] - fixed size of 5 units</p>
+                        <p><strong>List:</strong> Your build queue that can grow and shrink dynamically</p>
+                        <p><strong>Dictionary:</strong> Your intelligence data mapping enemy players to their base locations</p>
+                        <div class="code-example">
+// Array - Fixed size
+const selectedUnits = new Array(5);
+selectedUnits[0] = tank1;
+selectedUnits[1] = tank2;
+
+// List - Dynamic
+const buildQueue = [];
+buildQueue.push("Tank");
+buildQueue.push("Infantry");
+
+// Dictionary
+const enemyBases = {
+    "Player1": { x: 100, y: 200 },
+    "Player2": { x: 500, y: 300 }
+};
+                        </div>`,
+                        visualize: (viz) => viz.visualizeArraysAndCollections()
+                    },
+                    'singleton': {
+                        title: 'The Ion Cannon (Singleton Pattern)',
+                        category: 'Special Weapons',
+                        explanation: `<p>You can only have <strong>ONE</strong> Ion Cannon uplink active - it's a singleton resource. Once built, it provides access to the orbital weapon system, but there's only one instance available to your entire force.</p>
+                        <div class="code-example">
+class IonCannon {
+    static #instance = null;
+    
+    static getInstance() {
+        if (!IonCannon.#instance) {
+            IonCannon.#instance = new IonCannon();
+        }
+        return IonCannon.#instance;
+    }
+    
+    constructor() {
+        if (IonCannon.#instance) {
+            throw new Error("Only one Ion Cannon allowed!");
+        }
+    }
+}
+                        </div>`,
+                        visualize: (viz) => viz.visualizeSingleton()
+                    },
+                    'debugging': {
+                        title: 'Debugging as Battlefield Intelligence',
+                        category: 'Special Weapons',
+                        explanation: `<p><strong>Hand Tracing:</strong> Planning your attack on paper before executing</p>
+                        <p><strong>Logging:</strong> EVA's constant status updates ("Building... Unit Ready... Insufficient Funds")</p>
+                        <p><strong>Breakpoints:</strong> Pausing the game to analyze the battlefield</p>
+                        <p><strong>Mental Tracing:</strong> Experienced commanders predicting battle outcomes</p>
+                        <div class="code-example">
+// Logging
+console.log("[10:01] Construction Complete");
+console.log("[10:02] Unit Ready");
+console.error("[10:03] Insufficient Funds");
+
+// Debugging state
+debugger; // Breakpoint - pause here
+console.log({
+    units: this.units.length,
+    credits: this.credits,
+    power: this.powerLevel
+});
+                        </div>`,
+                        visualize: (viz) => viz.visualizeDebugging()
+                    }
+                };
+                
+                this.conceptKeys = Object.keys(this.conceptData);
+                this.currentIndex = 0;
+                this.visualizer = null;
+                this.isScrolling = false;
+                this.loadedSections = new Set(['welcome']);
+                
+                this.initializeElements();
+                this.generateSections();
+                this.setupEventListeners();
+                this.initializeVisualizer();
+            }
+            
+            initializeElements() {
+                this.scrollContainer = document.getElementById('scrollContainer');
+                this.canvas = document.getElementById('gameCanvas');
+                this.progressBar = document.getElementById('progressBar');
+                this.navDots = document.getElementById('navDots');
+                this.sidebar = document.getElementById('sidebar');
+                this.sidebarBackdrop = document.getElementById('sidebarBackdrop');
+            }
+            
+            generateSections() {
+                // Generate navigation dots
+                this.navDots.innerHTML = `<div class="nav-dot active" data-index="-1" title="Welcome"></div>`;
+                this.conceptKeys.forEach((key, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'nav-dot';
+                    dot.dataset.index = index;
+                    dot.title = this.conceptData[key].title;
+                    this.navDots.appendChild(dot);
+                });
+                
+                // Generate concept sections
+                this.conceptKeys.forEach((key, index) => {
+                    const concept = this.conceptData[key];
+                    const section = document.createElement('div');
+                    section.className = 'concept-section';
+                    section.id = `section-${key}`;
+                    section.innerHTML = `
+                        <div class="concept-header">
+                            <div class="concept-title">${concept.title}</div>
+                            <div class="concept-category">${concept.category}</div>
+                        </div>
+                        <div class="canvas-container">
+                            <div class="loading" id="loading-${key}">Loading visualization...</div>
+                        </div>
+                        <div class="explanation-area">
+                            <div class="explanation-text">${concept.explanation}</div>
+                        </div>
+                    `;
+                    this.scrollContainer.appendChild(section);
+                });
+            }
+            
+            async initializeVisualizer() {
+                try {
+                    const spriteConfig = await fetch('../public/assets/sprites/sprite-config.json')
+                        .then(res => res.json())
+                        .catch(() => ({}));
+                    
+                    this.visualizer = new ConceptVisualizer(this.canvas, spriteConfig);
+                    await this.visualizer.init();
+                    
+                    this.showWelcome();
+                    this.updateProgress();
+                } catch (error) {
+                    console.error('Failed to initialize visualizer:', error);
+                    this.canvas.parentElement.innerHTML = '<div class="loading">Failed to load visualizer. Please refresh.</div>';
+                }
+            }
+            
+            showWelcome() {
+                if (!this.visualizer) return;
+                
+                this.visualizer.mapGen.clear();
+                this.visualizer.mapGen.drawTerrain();
+                this.visualizer.mapGen.drawText("WELCOME TO C&C PROGRAMMING", 200, 200, { 
+                    fontSize: 20, 
+                    color: '#00FF00' 
+                });
+                this.visualizer.mapGen.drawText("Scroll down to begin training", 220, 250, { 
+                    fontSize: 14, 
+                    color: '#FFD700' 
+                });
+            }
+            
+            loadConceptVisualization(conceptKey, targetElement) {
+                if (!this.visualizer || this.loadedSections.has(conceptKey)) return;
+                
+                const concept = this.conceptData[conceptKey];
+                const loadingElement = document.getElementById(`loading-${conceptKey}`);
+                
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                    targetElement.appendChild(this.canvas);
+                    
+                    // Visualize the concept
+                    if (concept.visualize) {
+                        concept.visualize(this.visualizer);
+                    }
+                    
+                    this.loadedSections.add(conceptKey);
+                }
+            }
+            
+            setupEventListeners() {
+                // Scroll handling with throttling
+                let scrollTimeout;
+                this.scrollContainer.addEventListener('scroll', () => {
+                    if (scrollTimeout) return;
+                    
+                    scrollTimeout = setTimeout(() => {
+                        this.handleScroll();
+                        scrollTimeout = null;
+                    }, 16); // ~60fps
+                });
+                
+                // Touch gesture support
+                let touchStart = null;
+                this.scrollContainer.addEventListener('touchstart', (e) => {
+                    touchStart = e.touches[0].clientY;
+                }, { passive: true });
+                
+                this.scrollContainer.addEventListener('touchmove', (e) => {
+                    if (!touchStart) return;
+                    
+                    const touchCurrent = e.touches[0].clientY;
+                    const diff = touchStart - touchCurrent;
+                    
+                    // Natural momentum scrolling is handled by CSS
+                }, { passive: true });
+                
+                // Navigation dots
+                this.navDots.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('nav-dot')) {
+                        const index = parseInt(e.target.dataset.index);
+                        this.scrollToSection(index);
+                    }
+                });
+                
+                // Sidebar controls
+                document.getElementById('menuBtn').addEventListener('click', () => {
+                    this.openSidebar();
+                });
+                
+                document.getElementById('closeSidebar').addEventListener('click', () => {
+                    this.closeSidebar();
+                });
+                
+                this.sidebarBackdrop.addEventListener('click', () => {
+                    this.closeSidebar();
+                });
+                
+                // Concept buttons in sidebar
+                document.querySelectorAll('.concept-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        this.scrollToSection(index);
+                        this.closeSidebar();
+                    });
+                });
+                
+                // FAB navigation
+                document.getElementById('prevBtn').addEventListener('click', () => {
+                    this.navigatePrevious();
+                });
+                
+                document.getElementById('nextBtn').addEventListener('click', () => {
+                    this.navigateNext();
+                });
+                
+                // Keyboard support
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                        this.navigatePrevious();
+                        e.preventDefault();
+                    } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                        this.navigateNext();
+                        e.preventDefault();
+                    } else if (e.key === 'Escape') {
+                        this.closeSidebar();
+                    }
+                });
+            }
+            
+            handleScroll() {
+                const scrollTop = this.scrollContainer.scrollTop;
+                const containerHeight = this.scrollContainer.clientHeight;
+                const totalHeight = this.scrollContainer.scrollHeight;
+                
+                // Update progress bar
+                const progress = (scrollTop / (totalHeight - containerHeight)) * 100;
+                this.progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+                
+                // Determine current section
+                const sections = this.scrollContainer.querySelectorAll('.concept-section');
+                let currentSectionIndex = -1;
+                
+                sections.forEach((section, index) => {
+                    const rect = section.getBoundingClientRect();
+                    const containerRect = this.scrollContainer.getBoundingClientRect();
+                    
+                    // Section is considered active if it's mostly visible
+                    if (rect.top < containerRect.height * 0.6 && rect.bottom > containerRect.height * 0.4) {
+                        section.classList.add('active');
+                        currentSectionIndex = index;
+                        
+                        // Lazy load visualization
+                        if (index > 0) {
+                            const conceptKey = this.conceptKeys[index - 1];
+                            const canvasContainer = section.querySelector('.canvas-container');
+                            this.loadConceptVisualization(conceptKey, canvasContainer);
+                        }
+                    } else if (rect.top < containerRect.height && rect.bottom > 0) {
+                        section.classList.add('in-view');
+                        section.classList.remove('active');
+                    } else {
+                        section.classList.remove('active', 'in-view');
+                    }
+                });
+                
+                this.currentIndex = currentSectionIndex;
+                this.updateNavDots();
+            }
+            
+            updateNavDots() {
+                const dots = this.navDots.querySelectorAll('.nav-dot');
+                dots.forEach((dot, index) => {
+                    const dotIndex = parseInt(dot.dataset.index);
+                    if (dotIndex === this.currentIndex) {
+                        dot.classList.add('active');
+                        dot.classList.remove('completed');
+                    } else if (dotIndex < this.currentIndex) {
+                        dot.classList.add('completed');
+                        dot.classList.remove('active');
+                    } else {
+                        dot.classList.remove('active', 'completed');
+                    }
+                });
+            }
+            
+            scrollToSection(index) {
+                const sections = this.scrollContainer.querySelectorAll('.concept-section');
+                if (index === -1) {
+                    // Welcome section
+                    this.scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (index >= 0 && index < sections.length) {
+                    const targetSection = sections[index];
+                    const offsetTop = targetSection.offsetTop;
+                    this.scrollContainer.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                }
+            }
+            
+            navigatePrevious() {
+                if (this.currentIndex > -1) {
+                    this.scrollToSection(this.currentIndex - 1);
+                }
+            }
+            
+            navigateNext() {
+                const maxIndex = this.conceptKeys.length - 1;
+                if (this.currentIndex < maxIndex) {
+                    this.scrollToSection(this.currentIndex + 1);
+                }
+            }
+            
+            openSidebar() {
+                this.sidebar.classList.add('open');
+                this.sidebarBackdrop.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            closeSidebar() {
+                this.sidebar.classList.remove('open');
+                this.sidebarBackdrop.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+            
+            updateProgress() {
+                // This could be expanded to track user progress through concepts
+                this.handleScroll();
+            }
+        }
+        
+        // Initialize the mobile app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileProgrammingApp();
+        });
+    </script>
+</body>
+</html>

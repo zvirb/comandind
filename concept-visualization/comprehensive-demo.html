@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command & Conquer: Complete RTS System Demo</title>
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            padding: 15px;
+            border-bottom: 2px solid #00ff00;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            font-size: clamp(18px, 4vw, 28px);
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #00ff00;
+            font-size: clamp(12px, 2.5vw, 14px);
+        }
+        
+        .stats-bar {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            color: #ffd700;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: min(350px, 30vw);
+            background: #111;
+            border-right: 2px solid #00ff00;
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        
+        .demo-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .tab {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #00ff00;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .tab:hover {
+            background: #2a2a2a;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .concept-list, .feature-list {
+            list-style: none;
+        }
+        
+        .concept-item, .feature-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-left: 3px solid #ffd700;
+            margin-bottom: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .concept-item:hover, .feature-item:hover {
+            background: #222;
+            border-left-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .concept-item.active, .feature-item.active {
+            background: #2a2a2a;
+            border-left-color: #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        .concept-item h3, .feature-item h3 {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .concept-item p, .feature-item p {
+            color: #999;
+            font-size: 11px;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        canvas {
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        button {
+            background: #1a1a1a;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 8px 16px;
+            font-family: inherit;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+        
+        button:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffd700;
+            font-size: clamp(16px, 4vw, 24px);
+            animation: pulse 1.5s infinite;
+            text-align: center;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .sprite-preview {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: none;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            max-width: 300px;
+        }
+        
+        .sprite-preview img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            border: 1px solid #333;
+        }
+        
+        .sprite-preview img.loaded {
+            border-color: #00ff00;
+        }
+        
+        .sprite-preview img.error {
+            border-color: #ff0000;
+            background: #330000;
+        }
+        
+        .mobile-toggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 8px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            max-width: 300px;
+            display: none;
+            font-size: 12px;
+        }
+        
+        .info-panel h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            background: #333;
+            height: 4px;
+            margin: 10px 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #00ff00;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 999;
+                width: 80vw;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .canvas-container {
+                padding: 10px;
+            }
+            
+            .controls {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                justify-content: center;
+            }
+            
+            .stats-bar {
+                position: static;
+                margin-top: 10px;
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .info-panel {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 10px 0;
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            button {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            
+            .tab {
+                font-size: 10px;
+                padding: 8px;
+            }
+            
+            .concept-item h3, .feature-item h3 {
+                font-size: 12px;
+            }
+            
+            .concept-item p, .feature-item p {
+                font-size: 10px;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (pointer: coarse) {
+            .concept-item, .feature-item, button, .tab {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .concept-item, .feature-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" id="mobileToggle">☰</button>
+    
+    <div class="header">
+        <h1>COMMAND & CONQUER: COMPLETE SYSTEM DEMO</h1>
+        <div class="subtitle">Integrated RTS Engine with Real-Time Map Generation</div>
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <span>Sprites:</span>
+                <span class="stat-value" id="spriteCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span>FPS:</span>
+                <span class="stat-value" id="fpsCounter">60</span>
+            </div>
+            <div class="stat-item">
+                <span>Memory:</span>
+                <span class="stat-value" id="memoryUsage">0MB</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar" id="sidebar">
+            <div class="demo-tabs">
+                <div class="tab active" data-tab="concepts">Concepts</div>
+                <div class="tab" data-tab="features">Features</div>
+                <div class="tab" data-tab="tests">Tests</div>
+            </div>
+            
+            <!-- Programming Concepts Tab -->
+            <div class="tab-content active" id="concepts">
+                <h2 style="color: #ffd700; margin-bottom: 15px; font-size: 16px;">Programming Concepts</h2>
+                <ul class="concept-list">
+                    <li class="concept-item" data-concept="classes-objects">
+                        <h3>Classes vs Objects</h3>
+                        <p>Blueprint vs Deployed Units</p>
+                    </li>
+                    <li class="concept-item" data-concept="inheritance">
+                        <h3>Inheritance</h3>
+                        <p>Unit Type Hierarchy</p>
+                    </li>
+                    <li class="concept-item" data-concept="polymorphism">
+                        <h3>Polymorphism</h3>
+                        <p>Same Command, Different Actions</p>
+                    </li>
+                    <li class="concept-item" data-concept="encapsulation">
+                        <h3>Encapsulation</h3>
+                        <p>Hidden Unit Mechanics</p>
+                    </li>
+                    <li class="concept-item" data-concept="abstraction">
+                        <h3>Abstraction</h3>
+                        <p>Simplified Controls</p>
+                    </li>
+                    <li class="concept-item" data-concept="events">
+                        <h3>Event-Driven Programming</h3>
+                        <p>Base Under Attack!</p>
+                    </li>
+                    <li class="concept-item" data-concept="loops">
+                        <h3>Loops & Iteration</h3>
+                        <p>Harvester Routes</p>
+                    </li>
+                    <li class="concept-item" data-concept="conditionals">
+                        <h3>Conditional Logic</h3>
+                        <p>AI Decision Making</p>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- RTS Features Tab -->
+            <div class="tab-content" id="features">
+                <h2 style="color: #ffd700; margin-bottom: 15px; font-size: 16px;">RTS Features</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" data-feature="map-generation">
+                        <h3>Map Generation</h3>
+                        <p>Procedural C&C-style maps</p>
+                    </li>
+                    <li class="feature-item" data-feature="sprite-system">
+                        <h3>Sprite System</h3>
+                        <p>2,762 authentic C&C sprites</p>
+                    </li>
+                    <li class="feature-item" data-feature="pathfinding">
+                        <h3>Pathfinding</h3>
+                        <p>A* algorithm implementation</p>
+                    </li>
+                    <li class="feature-item" data-feature="unit-selection">
+                        <h3>Unit Selection</h3>
+                        <p>Multi-unit selection system</p>
+                    </li>
+                    <li class="feature-item" data-feature="resource-economy">
+                        <h3>Resource Economy</h3>
+                        <p>Tiberium harvesting system</p>
+                    </li>
+                    <li class="feature-item" data-feature="ai-systems">
+                        <h3>AI Systems</h3>
+                        <p>TensorFlow.js integration</p>
+                    </li>
+                    <li class="feature-item" data-feature="mobile-responsive">
+                        <h3>Mobile Support</h3>
+                        <p>Touch controls & responsive UI</p>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- System Tests Tab -->
+            <div class="tab-content" id="tests">
+                <h2 style="color: #ffd700; margin-bottom: 15px; font-size: 16px;">System Tests</h2>
+                <ul class="feature-list">
+                    <li class="feature-item" data-test="sprite-loading">
+                        <h3>Sprite Loading Test</h3>
+                        <p>Verify all 2,762 sprites load</p>
+                    </li>
+                    <li class="feature-item" data-test="performance">
+                        <h3>Performance Test</h3>
+                        <p>FPS & memory monitoring</p>
+                    </li>
+                    <li class="feature-item" data-test="mobile-compatibility">
+                        <h3>Mobile Compatibility</h3>
+                        <p>Touch events & responsiveness</p>
+                    </li>
+                    <li class="feature-item" data-test="map-stress">
+                        <h3>Map Generation Stress</h3>
+                        <p>Generate 100 maps rapidly</p>
+                    </li>
+                    <li class="feature-item" data-test="memory-leak">
+                        <h3>Memory Leak Detection</h3>
+                        <p>Monitor memory over time</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <div class="loading" id="loading">
+                INITIALIZING COMMAND & CONQUER ENGINE...<br>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loadingProgress"></div>
+                </div>
+            </div>
+            
+            <canvas id="gameCanvas" style="display: none;"></canvas>
+            
+            <div class="sprite-preview" id="spritePreview">
+                <div style="width: 100%; color: #ffd700; margin-bottom: 5px; font-size: 11px;">Sprite Loading Status:</div>
+            </div>
+            
+            <div class="info-panel" id="infoPanel">
+                <h4>System Information</h4>
+                <div id="systemInfo">
+                    <div>Browser: <span id="browserInfo"></span></div>
+                    <div>Device: <span id="deviceInfo"></span></div>
+                    <div>Resolution: <span id="resolutionInfo"></span></div>
+                    <div>Memory: <span id="deviceMemory"></span></div>
+                </div>
+            </div>
+            
+            <div class="controls" style="display: none;" id="controls">
+                <button id="resetBtn">RESET</button>
+                <button id="regenerateBtn">NEW MAP</button>
+                <button id="showSpritesBtn">SPRITES</button>
+                <button id="performanceBtn">PERF</button>
+                <button id="fullscreenBtn">FULLSCREEN</button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import ConceptVisualizer from './js/ConceptVisualizer.js';
+        import ResponsiveCanvasManager from './js/ResponsiveCanvasManager.js';
+        
+        // Mobile responsiveness
+        const mobileToggle = document.getElementById('mobileToggle');
+        const sidebar = document.getElementById('sidebar');
+        const canvas = document.getElementById('gameCanvas');
+        const loading = document.getElementById('loading');
+        const controls = document.getElementById('controls');
+        const spritePreview = document.getElementById('spritePreview');
+        const infoPanel = document.getElementById('infoPanel');
+        const loadingProgress = document.getElementById('loadingProgress');
+        
+        // System monitoring
+        let frameCount = 0;
+        let lastTime = performance.now();
+        let spriteCount = 0;
+        
+        // Mobile toggle
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+        
+        // System info detection
+        function updateSystemInfo() {
+            document.getElementById('browserInfo').textContent = navigator.userAgent.split(' ').pop();
+            document.getElementById('deviceInfo').textContent = /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+            document.getElementById('resolutionInfo').textContent = `${window.innerWidth}x${window.innerHeight}`;
+            document.getElementById('deviceMemory').textContent = navigator.deviceMemory ? `${navigator.deviceMemory}GB` : 'Unknown';
+        }
+        
+        updateSystemInfo();
+        window.addEventListener('resize', updateSystemInfo);
+        
+        // Performance monitoring
+        function updatePerformanceStats() {
+            const now = performance.now();
+            frameCount++;
+            
+            if (now - lastTime >= 1000) {
+                const fps = Math.round((frameCount * 1000) / (now - lastTime));
+                document.getElementById('fpsCounter').textContent = fps;
+                frameCount = 0;
+                lastTime = now;
+                
+                // Memory usage (if available)
+                if (performance.memory) {
+                    const memoryMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                    document.getElementById('memoryUsage').textContent = `${memoryMB}MB`;
+                }
+            }
+            
+            requestAnimationFrame(updatePerformanceStats);
+        }
+        
+        updatePerformanceStats();
+        
+        // Progressive loading with visual feedback
+        function updateLoadingProgress(percentage, message) {
+            loadingProgress.style.width = `${percentage}%`;
+            if (message) {
+                loading.innerHTML = message + '<br><div class="progress-bar"><div class="progress-fill" style="width: ' + percentage + '%"></div></div>';
+            }
+        }
+        
+        // Initialize system
+        const responsiveManager = new ResponsiveCanvasManager(canvas);
+        const visualizer = new ConceptVisualizer(canvas);
+        
+        // Enhanced initialization with progress tracking
+        async function initializeSystem() {
+            try {
+                updateLoadingProgress(10, 'DETECTING DEVICE CAPABILITIES...');
+                
+                // Initialize responsive canvas (already initialized in constructor)
+                updateLoadingProgress(30, 'SETTING UP RESPONSIVE CANVAS...');
+                
+                // Initialize visualizer with progress callback
+                await visualizer.init((progress, message) => {
+                    updateLoadingProgress(30 + (progress * 0.6), message);
+                });
+                
+                updateLoadingProgress(95, 'FINALIZING SYSTEM...');
+                
+                // Show canvas and controls
+                loading.style.display = 'none';
+                canvas.style.display = 'block';
+                controls.style.display = 'flex';
+                infoPanel.style.display = 'block';
+                
+                updateLoadingProgress(100, 'SYSTEM READY!');
+                
+                // Default visualization
+                visualizer.visualizeClassesAndObjects();
+                
+                // Update sprite count
+                document.getElementById('spriteCount').textContent = '2762';
+                
+            } catch (error) {
+                console.error('Failed to initialize:', error);
+                loading.innerHTML = 'INITIALIZATION FAILED<br><div style="color: #ff0000; font-size: 12px;">' + error.message + '</div>';
+                loading.style.color = '#ff0000';
+            }
+        }
+        
+        initializeSystem();
+        
+        // Concept selection (Programming Concepts)
+        document.querySelectorAll('.concept-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.concept-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Load concept
+                const concept = item.dataset.concept;
+                switch(concept) {
+                    case 'classes-objects':
+                        visualizer.visualizeClassesAndObjects();
+                        break;
+                    case 'inheritance':
+                        visualizer.visualizeInheritance();
+                        break;
+                    case 'polymorphism':
+                        visualizer.visualizePolymorphism();
+                        break;
+                    case 'encapsulation':
+                        visualizer.visualizeEncapsulation();
+                        break;
+                    case 'abstraction':
+                        visualizer.visualizeAbstraction();
+                        break;
+                    case 'events':
+                        visualizer.visualizeEvents();
+                        break;
+                    case 'loops':
+                        visualizer.visualizeLoops();
+                        break;
+                    case 'conditionals':
+                        visualizer.visualizeConditionals();
+                        break;
+                    default:
+                        console.log(`Concept ${concept} visualization loading...`);
+                }
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+        
+        // Feature demonstrations
+        document.querySelectorAll('.feature-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const feature = item.dataset.feature;
+                console.log(`Demonstrating feature: ${feature}`);
+                
+                // Update active state
+                document.querySelectorAll('.feature-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+        
+        // System tests
+        document.querySelectorAll('[data-test]').forEach(item => {
+            item.addEventListener('click', () => {
+                const test = item.dataset.test;
+                console.log(`Running test: ${test}`);
+                
+                // Update active state
+                document.querySelectorAll('[data-test]').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+        
+        // Control buttons
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            const activeItem = document.querySelector('.concept-item.active, .feature-item.active');
+            if (activeItem) {
+                activeItem.click();
+            }
+        });
+        
+        document.getElementById('regenerateBtn').addEventListener('click', () => {
+            console.log('Regenerating map...');
+            visualizer.mapGen.generateTerrainMap();
+        });
+        
+        document.getElementById('showSpritesBtn').addEventListener('click', () => {
+            const isVisible = spritePreview.style.display !== 'none';
+            spritePreview.style.display = isVisible ? 'none' : 'flex';
+        });
+        
+        document.getElementById('performanceBtn').addEventListener('click', () => {
+            console.log('Performance analysis...');
+            // Could trigger performance tests
+        });
+        
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen();
+            }
+        });
+        
+        // Touch events for canvas
+        let touchStartTime = 0;
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+        }, { passive: true });
+        
+        canvas.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 500) { // Quick tap
+                console.log('Canvas tapped');
+            }
+        }, { passive: true });
+        
+        // Set first concept as active
+        setTimeout(() => {
+            document.querySelector('.concept-item').click();
+        }, 1000);
+        
+        // Handle orientation changes
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                updateSystemInfo();
+                if (responsiveManager) {
+                    responsiveManager.handleResize();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

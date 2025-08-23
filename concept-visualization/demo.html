@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&C Programming Concepts Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            padding: 15px;
+            border-bottom: 2px solid #00ff00;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #00ff00;
+            font-size: 14px;
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #111;
+            border-right: 2px solid #00ff00;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .concept-list {
+            list-style: none;
+        }
+        
+        .concept-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-left: 3px solid #ffd700;
+            margin-bottom: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .concept-item:hover {
+            background: #222;
+            border-left-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .concept-item.active {
+            background: #2a2a2a;
+            border-left-color: #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        .concept-item h3 {
+            color: #ffd700;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .concept-item p {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        canvas {
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            background: #1a1a1a;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            font-family: inherit;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffd700;
+            font-size: 24px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .sprite-test {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+        }
+        
+        .sprite-test img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>COMMAND & CONQUER: PROGRAMMING BATTLEFIELD</h1>
+        <div class="subtitle">Learn Programming Concepts Through Real-Time Strategy</div>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <h2 style="color: #ffd700; margin-bottom: 20px;">MISSION BRIEFING</h2>
+            <ul class="concept-list">
+                <li class="concept-item" data-concept="classes">
+                    <h3>Classes vs Objects</h3>
+                    <p>Blueprint vs Deployed Units</p>
+                </li>
+                <li class="concept-item" data-concept="inheritance">
+                    <h3>Inheritance</h3>
+                    <p>Unit Type Hierarchy</p>
+                </li>
+                <li class="concept-item" data-concept="polymorphism">
+                    <h3>Polymorphism</h3>
+                    <p>Same Command, Different Actions</p>
+                </li>
+                <li class="concept-item" data-concept="encapsulation">
+                    <h3>Encapsulation</h3>
+                    <p>Hidden Unit Mechanics</p>
+                </li>
+                <li class="concept-item" data-concept="abstraction">
+                    <h3>Abstraction</h3>
+                    <p>Simplified Controls</p>
+                </li>
+                <li class="concept-item" data-concept="variables">
+                    <h3>Variables & Data Types</h3>
+                    <p>Resource Management</p>
+                </li>
+                <li class="concept-item" data-concept="methods">
+                    <h3>Methods & Functions</h3>
+                    <p>Unit Abilities</p>
+                </li>
+                <li class="concept-item" data-concept="events">
+                    <h3>Event-Driven Programming</h3>
+                    <p>Base Under Attack!</p>
+                </li>
+                <li class="concept-item" data-concept="loops">
+                    <h3>Loops & Iteration</h3>
+                    <p>Harvester Routes</p>
+                </li>
+                <li class="concept-item" data-concept="conditions">
+                    <h3>Conditional Logic</h3>
+                    <p>AI Decision Making</p>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="canvas-container">
+            <div class="loading" id="loading">ESTABLISHING BATTLEFIELD CONTROL...</div>
+            <canvas id="gameCanvas" style="display: none;"></canvas>
+            
+            <div class="sprite-test" id="spriteTest" style="display: none;">
+                <img id="testSprite1" alt="Test 1">
+                <img id="testSprite2" alt="Test 2">
+                <img id="testSprite3" alt="Test 3">
+            </div>
+            
+            <div class="controls" style="display: none;" id="controls">
+                <button id="resetBtn">RESET</button>
+                <button id="animateBtn">ANIMATE</button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import ConceptVisualizer from './js/ConceptVisualizer.js';
+        
+        const canvas = document.getElementById('gameCanvas');
+        const loading = document.getElementById('loading');
+        const controls = document.getElementById('controls');
+        const spriteTest = document.getElementById('spriteTest');
+        
+        // Test sprite loading
+        function testSprites() {
+            const testPaths = [
+                '/public/assets/sprites/cnc-png/individual/mammoth-tank-0000.png',
+                '/public/assets/sprites/cnc-png/individual/construction-yard-0000.png',
+                '/public/assets/sprites/cnc-png/terrain/B1-0000.png'
+            ];
+            
+            testPaths.forEach((path, i) => {
+                const img = document.getElementById(`testSprite${i + 1}`);
+                img.src = path;
+                img.onerror = () => {
+                    console.error(`Failed to load: ${path}`);
+                    img.style.background = '#ff0000';
+                };
+                img.onload = () => {
+                    console.log(`Successfully loaded: ${path}`);
+                };
+            });
+        }
+        
+        // Initialize visualizer
+        const visualizer = new ConceptVisualizer(canvas);
+        
+        visualizer.init().then(() => {
+            loading.style.display = 'none';
+            canvas.style.display = 'block';
+            controls.style.display = 'flex';
+            spriteTest.style.display = 'flex';
+            
+            // Test sprites
+            testSprites();
+            
+            // Default visualization
+            visualizer.visualizeClassesAndObjects();
+        }).catch(error => {
+            console.error('Failed to initialize:', error);
+            loading.textContent = 'INITIALIZATION FAILED';
+            loading.style.color = '#ff0000';
+        });
+        
+        // Concept selection
+        document.querySelectorAll('.concept-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.concept-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Load concept
+                const concept = item.dataset.concept;
+                switch(concept) {
+                    case 'classes':
+                        visualizer.visualizeClassesAndObjects();
+                        break;
+                    case 'inheritance':
+                        visualizer.visualizeInheritance();
+                        break;
+                    case 'polymorphism':
+                        visualizer.visualizePolymorphism();
+                        break;
+                    case 'encapsulation':
+                        visualizer.visualizeEncapsulation();
+                        break;
+                    case 'abstraction':
+                        visualizer.visualizeAbstraction();
+                        break;
+                    case 'variables':
+                        visualizer.visualizeVariables();
+                        break;
+                    case 'methods':
+                        visualizer.visualizeMethods();
+                        break;
+                    case 'events':
+                        visualizer.visualizeEvents();
+                        break;
+                    case 'loops':
+                        visualizer.visualizeLoops();
+                        break;
+                    case 'conditions':
+                        visualizer.visualizeConditionalLogic();
+                        break;
+                    default:
+                        console.log(`Concept ${concept} not implemented yet`);
+                }
+            });
+        });
+        
+        // Controls
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            const activeItem = document.querySelector('.concept-item.active');
+            if (activeItem) {
+                activeItem.click();
+            }
+        });
+        
+        document.getElementById('animateBtn').addEventListener('click', () => {
+            // Trigger animation for current concept
+            console.log('Animation triggered');
+        });
+        
+        // Set first concept as active
+        document.querySelector('.concept-item').click();
+    </script>
+</body>
+</html>

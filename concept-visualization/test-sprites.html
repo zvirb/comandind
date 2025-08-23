@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&C Sprite Test</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+        }
+        .sprite-container {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #00ff00;
+            text-align: center;
+        }
+        .sprite-container img {
+            display: block;
+            margin: 0 auto 5px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        h1 { color: #ffd700; }
+        h2 { color: #00ff00; }
+    </style>
+</head>
+<body>
+    <h1>Command & Conquer - Real Sprite Test</h1>
+    
+    <h2>Units</h2>
+    <div id="units"></div>
+    
+    <h2>Buildings</h2>
+    <div id="buildings"></div>
+    
+    <h2>Terrain</h2>
+    <div id="terrain"></div>
+
+    <script>
+        // Test sprite paths
+        const sprites = {
+            units: [
+                { name: 'Mammoth Tank', path: '../public/assets/sprites/cnc-png/individual/mammoth-tank-0000.png' },
+                { name: 'Medium Tank', path: '../public/assets/sprites/cnc-png/individual/medium-tank-0000.png' },
+                { name: 'Light Tank', path: '../public/assets/sprites/cnc-png/individual/light-tank-0000.png' },
+                { name: 'Recon Bike', path: '../public/assets/sprites/cnc-png/individual/recon-bike-0000.png' }
+            ],
+            buildings: [
+                { name: 'Construction Yard', path: '../public/assets/sprites/cnc-png/individual/construction-yard-0000.png' },
+                { name: 'Barracks', path: '../public/assets/sprites/cnc-png/individual/barracks-0000.png' },
+                { name: 'Power Plant', path: '../public/assets/sprites/cnc-png/individual/power-plant-0000.png' },
+                { name: 'Obelisk', path: '../public/assets/sprites/cnc-png/individual/obelisk-0000.png' }
+            ],
+            terrain: [
+                { name: 'Clear', path: '../public/assets/sprites/cnc-png/terrain/CLEAR1-0000.png' },
+                { name: 'Sand D01', path: '../public/assets/sprites/cnc-png/terrain/D01-0000.png' },
+                { name: 'Sand S01', path: '../public/assets/sprites/cnc-png/terrain/S01-0000.png' },
+                { name: 'Rock', path: '../public/assets/sprites/cnc-png/terrain/ROCK1-0000.png' }
+            ]
+        };
+
+        function loadSprites(category, containerId) {
+            const container = document.getElementById(containerId);
+            
+            sprites[category].forEach(sprite => {
+                const div = document.createElement('div');
+                div.className = 'sprite-container';
+                
+                const img = document.createElement('img');
+                img.src = sprite.path;
+                img.alt = sprite.name;
+                img.width = 64;
+                img.height = 64;
+                img.onerror = function() {
+                    this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect width="64" height="64" fill="%23333"/%3E%3Ctext x="32" y="32" text-anchor="middle" fill="%23999" font-size="10"%3EMissing%3C/text%3E%3C/svg%3E';
+                };
+                
+                const label = document.createElement('div');
+                label.textContent = sprite.name;
+                
+                div.appendChild(img);
+                div.appendChild(label);
+                container.appendChild(div);
+            });
+        }
+
+        // Load all sprites
+        loadSprites('units', 'units');
+        loadSprites('buildings', 'buildings');
+        loadSprites('terrain', 'terrain');
+    </script>
+</body>
+</html>

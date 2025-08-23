@@ -1,0 +1,550 @@
+/* Mobile-First Responsive Design for C&C Programming Concepts */
+
+/* Base mobile styles (320px and up) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #00FF00;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* Header - Mobile First */
+header {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 3px solid #00FF00;
+    box-shadow: 0 2px 10px rgba(0, 255, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+h1 {
+    font-size: 1.5em;
+    text-shadow: 0 0 10px #00FF00;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #FFD700;
+    font-size: 0.9em;
+}
+
+/* Main scrollable container */
+.scroll-container {
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+}
+
+/* Concept sections - mobile stacked */
+.concept-section {
+    min-height: 100vh;
+    padding: 20px 15px;
+    border-bottom: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
+    background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+}
+
+.concept-section.active {
+    opacity: 1;
+}
+
+.concept-section.in-view {
+    opacity: 0.8;
+}
+
+/* Concept header */
+.concept-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FFD700;
+}
+
+.concept-title {
+    color: #FFD700;
+    font-size: 1.4em;
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px #FFD700;
+}
+
+.concept-category {
+    color: #00FFFF;
+    font-size: 0.8em;
+    text-transform: uppercase;
+}
+
+/* Canvas container - mobile responsive */
+.canvas-container {
+    width: 100%;
+    height: 250px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #00FF00;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#gameCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    border: 1px solid #444;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+    touch-action: pan-x pan-y;
+}
+
+/* Explanation area - mobile optimized */
+.explanation-area {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #FFD700;
+    padding: 15px;
+    border-radius: 5px;
+    flex: 1;
+}
+
+.explanation-text {
+    color: #FFFFFF;
+    line-height: 1.5;
+    font-size: 0.9em;
+}
+
+.explanation-text p {
+    margin-bottom: 12px;
+}
+
+.explanation-text strong {
+    color: #00FF00;
+}
+
+.explanation-text em {
+    color: #FFD700;
+}
+
+.code-example {
+    background: #1a1a1a;
+    border: 1px solid #444;
+    padding: 10px;
+    margin: 12px 0;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    color: #00FF00;
+    font-size: 0.8em;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Progress indicator */
+.progress-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00FF00 0%, #FFD700 100%);
+    z-index: 101;
+    transition: width 0.3s ease;
+}
+
+/* Navigation dots */
+.nav-dots {
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid #00FF00;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+}
+
+.nav-dot.active {
+    background: #00FF00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.nav-dot.completed {
+    background: #FFD700;
+    border-color: #FFD700;
+}
+
+/* Touch-friendly buttons */
+.touch-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #003300 0%, #006600 100%);
+    border: 2px solid #00FF00;
+    color: #00FF00;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    touch-action: manipulation;
+}
+
+.touch-btn:hover, .touch-btn:focus {
+    background: linear-gradient(135deg, #006600 0%, #00AA00 100%);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.touch-btn:active {
+    transform: scale(0.95);
+}
+
+/* Floating action buttons */
+.fab-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #AA0000 0%, #FF0000 100%);
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    font-size: 1.2em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+}
+
+.fab:hover, .fab:focus {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+}
+
+.fab:active {
+    transform: scale(0.9);
+}
+
+/* Loading states */
+.loading {
+    text-align: center;
+    color: #FFD700;
+    font-size: 1.2em;
+    padding: 40px 20px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Collapsible sidebar for larger screens */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    border-right: 2px solid #00FF00;
+    z-index: 200;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sidebar-overlay.open {
+    left: 0;
+}
+
+.sidebar-content {
+    padding: 20px;
+}
+
+.sidebar-header {
+    color: #FFD700;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #FFD700;
+}
+
+.concept-list {
+    list-style: none;
+}
+
+.concept-list li {
+    margin-bottom: 10px;
+}
+
+.concept-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #003300 0%, #006600 100%);
+    border: 1px solid #00FF00;
+    color: #00FF00;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    text-align: left;
+    border-radius: 3px;
+    min-height: 44px;
+    touch-action: manipulation;
+}
+
+.concept-btn:hover, .concept-btn:focus {
+    background: linear-gradient(135deg, #006600 0%, #00AA00 100%);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.concept-btn.active {
+    background: linear-gradient(135deg, #AA0000 0%, #FF0000 100%);
+    border-color: #FFD700;
+    color: #FFD700;
+}
+
+.category-header {
+    color: #00FFFF;
+    margin: 15px 0 8px 0;
+    font-size: 0.9em;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #00FFFF;
+    text-transform: uppercase;
+}
+
+/* Backdrop for sidebar */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-backdrop.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Tablet styles (768px and up) */
+@media (min-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+    
+    .subtitle {
+        font-size: 1em;
+    }
+    
+    .concept-section {
+        padding: 30px 25px;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 30px;
+    }
+    
+    .concept-content {
+        flex: 1;
+    }
+    
+    .canvas-container {
+        height: 350px;
+        flex: 1;
+        margin-bottom: 0;
+    }
+    
+    .explanation-area {
+        flex: 1;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .concept-title {
+        font-size: 1.6em;
+    }
+    
+    .explanation-text {
+        font-size: 1em;
+    }
+    
+    .nav-dots {
+        right: 20px;
+    }
+    
+    .nav-dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Desktop styles (1024px and up) */
+@media (min-width: 1024px) {
+    header {
+        padding: 25px;
+    }
+    
+    h1 {
+        font-size: 2.5em;
+    }
+    
+    .subtitle {
+        font-size: 1.2em;
+    }
+    
+    .concept-section {
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .canvas-container {
+        height: 400px;
+        max-width: 600px;
+    }
+    
+    .concept-title {
+        font-size: 1.8em;
+    }
+    
+    .explanation-text {
+        font-size: 1.1em;
+        line-height: 1.6;
+    }
+    
+    .code-example {
+        font-size: 0.9em;
+    }
+    
+    .nav-dots {
+        right: 30px;
+    }
+    
+    .nav-dot {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+/* Large desktop styles (1440px and up) */
+@media (min-width: 1440px) {
+    .concept-section {
+        max-width: 1400px;
+        gap: 50px;
+    }
+    
+    .canvas-container {
+        height: 500px;
+        max-width: 700px;
+    }
+    
+    .explanation-area {
+        max-height: 500px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+    body {
+        background: #000000;
+    }
+    
+    .concept-section {
+        background: #000000;
+        border-bottom-color: #FFFFFF;
+    }
+    
+    .canvas-container,
+    .explanation-area {
+        border-color: #FFFFFF;
+    }
+}
+
+/* Dark mode support (explicit) */
+@media (prefers-color-scheme: dark) {
+    /* Already optimized for dark theme */
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .nav-dots,
+    .fab-container,
+    .sidebar-overlay {
+        display: none;
+    }
+    
+    .concept-section {
+        page-break-inside: avoid;
+        margin-bottom: 2cm;
+    }
+}
+
+/* Focus styles for accessibility */
+*:focus {
+    outline: 2px solid #FFD700;
+    outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

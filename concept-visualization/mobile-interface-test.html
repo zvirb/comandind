@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mobile Interface Test - C&C RTS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        .test-header {
+            background: #1a1a1a;
+            padding: 10px;
+            border-bottom: 2px solid #00ff00;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            color: #ffd700;
+            font-size: clamp(14px, 4vw, 20px);
+        }
+        
+        .device-info {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .test-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 60px);
+        }
+        
+        .test-section {
+            border: 1px solid #333;
+            margin: 5px;
+            padding: 10px;
+            background: #111;
+        }
+        
+        .test-section h3 {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .touch-test-area {
+            background: #222;
+            border: 2px dashed #666;
+            height: 120px;
+            position: relative;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .touch-indicator {
+            width: 20px;
+            height: 20px;
+            background: #00ff00;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .touch-indicator.active {
+            opacity: 1;
+        }
+        
+        .test-button {
+            background: #1a1a1a;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 12px 20px;
+            margin: 5px;
+            font-family: inherit;
+            cursor: pointer;
+            font-size: 12px;
+            min-height: 44px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        .test-button:active {
+            background: #00ff00;
+            color: #000;
+            transform: scale(0.98);
+        }
+        
+        .test-button.success {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.2);
+        }
+        
+        .test-button.error {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.2);
+        }
+        
+        .canvas-test {
+            flex: 1;
+            position: relative;
+            background: #222;
+            margin: 5px;
+            border: 1px solid #333;
+        }
+        
+        .test-canvas {
+            width: 100%;
+            height: 100%;
+            border: none;
+            image-rendering: pixelated;
+            touch-action: none;
+        }
+        
+        .controls-overlay {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .status-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border: 1px solid #00ff00;
+            font-size: 11px;
+            color: #00ff00;
+        }
+        
+        .gesture-log {
+            background: #111;
+            height: 80px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 5px;
+            font-size: 10px;
+            margin: 5px 0;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px;
+        }
+        
+        .log-entry.touch { color: #00ff00; }
+        .log-entry.pan { color: #ffd700; }
+        .log-entry.pinch { color: #ff6600; }
+        .log-entry.tap { color: #00ffff; }
+        .log-entry.error { color: #ff0000; }
+        
+        .orientation-test {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            background: #222;
+            margin: 5px 0;
+            border: 1px solid #333;
+        }
+        
+        .orientation-indicator {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .orientation-indicator.active {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.2);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .test-section {
+                margin: 2px;
+                padding: 8px;
+            }
+            
+            .test-button {
+                padding: 10px 15px;
+                font-size: 11px;
+            }
+        }
+        
+        @media (orientation: landscape) {
+            .test-container {
+                flex-direction: row;
+            }
+            
+            .test-section {
+                flex: 1;
+            }
+            
+            .canvas-test {
+                flex: 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>Mobile Interface Test</h1>
+        <div class="device-info" id="deviceInfo">
+            <div id="screenInfo"></div>
+            <div id="orientationInfo"></div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <!-- Touch Input Tests -->
+        <div class="test-section">
+            <h3>Touch Input Tests</h3>
+            
+            <div class="touch-test-area" id="touchArea">
+                <div>Touch, Pan, Pinch Test Area</div>
+                <small>Multi-touch gestures supported</small>
+                <div class="touch-indicator" id="touchIndicator1"></div>
+                <div class="touch-indicator" id="touchIndicator2"></div>
+            </div>
+            
+            <div class="gesture-log" id="gestureLog">
+                <div class="log-entry">Gesture log will appear here...</div>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                <button class="test-button" id="testTap">Test Tap</button>
+                <button class="test-button" id="testHold">Test Hold</button>
+                <button class="test-button" id="clearLog">Clear Log</button>
+            </div>
+        </div>
+        
+        <!-- Responsive Canvas Test -->
+        <div class="canvas-test">
+            <canvas class="test-canvas" id="testCanvas"></canvas>
+            <div class="status-display" id="statusDisplay">
+                FPS: <span id="fpsDisplay">0</span><br>
+                Touch: <span id="touchStatus">None</span><br>
+                Scale: <span id="scaleDisplay">1.0</span>
+            </div>
+            <div class="controls-overlay">
+                <button class="test-button" id="resetCanvas">Reset</button>
+                <button class="test-button" id="generateMap">Generate</button>
+                <button class="test-button" id="toggleFullscreen">Fullscreen</button>
+            </div>
+        </div>
+        
+        <!-- Orientation & Performance Tests -->
+        <div class="test-section">
+            <h3>Orientation & Performance</h3>
+            
+            <div class="orientation-test">
+                <div class="orientation-indicator" id="portraitIndicator">
+                    <div>PORT</div>
+                </div>
+                <div class="orientation-indicator" id="landscapeIndicator">
+                    <div>LAND</div>
+                </div>
+            </div>
+            
+            <div style="font-size: 11px; line-height: 1.4;">
+                <div>Memory: <span id="memoryInfo">Unknown</span></div>
+                <div>Viewport: <span id="viewportInfo">0x0</span></div>
+                <div>DPR: <span id="dprInfo">1</span></div>
+                <div>Touch Support: <span id="touchSupport">Unknown</span></div>
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <button class="test-button" id="performanceTest">Run Performance Test</button>
+                <button class="test-button" id="memoryTest">Memory Test</button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import ResponsiveCanvasManager from './js/ResponsiveCanvasManager.js';
+        
+        class MobileInterfaceTest {
+            constructor() {
+                this.canvas = document.getElementById('testCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gestureLog = document.getElementById('gestureLog');
+                this.touchArea = document.getElementById('touchArea');
+                this.statusDisplay = document.getElementById('statusDisplay');
+                
+                // Initialize responsive canvas manager
+                this.canvasManager = new ResponsiveCanvasManager(this.canvas, {
+                    enableTouch: true,
+                    enableMouse: true,
+                    performanceMode: 'auto'
+                });
+                
+                // Test state
+                this.testState = {
+                    touchCount: 0,
+                    gestureCount: 0,
+                    performanceScore: 0,
+                    frameCount: 0,
+                    lastFrameTime: 0,
+                    currentScale: 1.0
+                };
+                
+                this.setupEventListeners();
+                this.updateDeviceInfo();
+                this.startCanvasAnimation();
+                
+                this.log('System initialized', 'touch');
+            }
+            
+            setupEventListeners() {
+                // Canvas manager input handlers
+                this.canvasManager.setInputHandler('click', (pos) => {
+                    this.log(`Canvas click at ${pos.x.toFixed(0)}, ${pos.y.toFixed(0)}`, 'tap');
+                    this.drawClickIndicator(pos.x, pos.y);
+                });
+                
+                this.canvasManager.setInputHandler('pan', (data) => {
+                    this.log(`Pan: δx=${data.deltaX.toFixed(0)}, δy=${data.deltaY.toFixed(0)}`, 'pan');
+                    document.getElementById('touchStatus').textContent = 'Panning';
+                });
+                
+                this.canvasManager.setInputHandler('pinch', (data) => {
+                    this.testState.currentScale *= data.scale;
+                    this.testState.currentScale = Math.max(0.5, Math.min(3.0, this.testState.currentScale));
+                    this.log(`Pinch: scale=${data.scale.toFixed(2)}`, 'pinch');
+                    document.getElementById('scaleDisplay').textContent = this.testState.currentScale.toFixed(2);
+                });
+                
+                this.canvasManager.setInputHandler('longPress', (pos) => {
+                    this.log(`Long press at ${pos.x.toFixed(0)}, ${pos.y.toFixed(0)}`, 'tap');
+                    this.drawLongPressIndicator(pos.x, pos.y);
+                });
+                
+                // Touch area tests
+                this.setupTouchAreaTests();
+                
+                // Button handlers
+                document.getElementById('testTap').addEventListener('click', () => {
+                    this.runTapTest();
+                });
+                
+                document.getElementById('testHold').addEventListener('click', () => {
+                    this.runHoldTest();
+                });
+                
+                document.getElementById('clearLog').addEventListener('click', () => {
+                    this.clearLog();
+                });
+                
+                document.getElementById('resetCanvas').addEventListener('click', () => {
+                    this.resetCanvas();
+                });
+                
+                document.getElementById('generateMap').addEventListener('click', () => {
+                    this.generateTestMap();
+                });
+                
+                document.getElementById('toggleFullscreen').addEventListener('click', () => {
+                    this.toggleFullscreen();
+                });
+                
+                document.getElementById('performanceTest').addEventListener('click', () => {
+                    this.runPerformanceTest();
+                });
+                
+                document.getElementById('memoryTest').addEventListener('click', () => {
+                    this.runMemoryTest();
+                });
+                
+                // Orientation change
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        this.updateDeviceInfo();
+                        this.log('Orientation changed', 'touch');
+                    }, 100);
+                });
+                
+                // Resize
+                window.addEventListener('resize', () => {
+                    this.updateDeviceInfo();
+                });
+            }
+            
+            setupTouchAreaTests() {
+                const touchArea = this.touchArea;
+                const indicator1 = document.getElementById('touchIndicator1');
+                const indicator2 = document.getElementById('touchIndicator2');
+                
+                let activeTouches = new Map();
+                
+                touchArea.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    
+                    for (let touch of e.changedTouches) {
+                        const rect = touchArea.getBoundingClientRect();
+                        const x = touch.clientX - rect.left;
+                        const y = touch.clientY - rect.top;
+                        
+                        activeTouches.set(touch.identifier, { x, y });
+                        
+                        const indicator = activeTouches.size === 1 ? indicator1 : indicator2;
+                        indicator.style.left = x + 'px';
+                        indicator.style.top = y + 'px';
+                        indicator.classList.add('active');
+                        
+                        this.log(`Touch start #${touch.identifier} at ${x.toFixed(0)}, ${y.toFixed(0)}`, 'touch');
+                    }
+                    
+                    this.testState.touchCount++;
+                });
+                
+                touchArea.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    
+                    for (let touch of e.changedTouches) {
+                        if (activeTouches.has(touch.identifier)) {
+                            const rect = touchArea.getBoundingClientRect();
+                            const x = touch.clientX - rect.left;
+                            const y = touch.clientY - rect.top;
+                            
+                            activeTouches.set(touch.identifier, { x, y });
+                            
+                            const touchArray = Array.from(activeTouches.values());
+                            if (touchArray.length >= 1) {
+                                indicator1.style.left = touchArray[0].x + 'px';
+                                indicator1.style.top = touchArray[0].y + 'px';
+                            }
+                            if (touchArray.length >= 2) {
+                                indicator2.style.left = touchArray[1].x + 'px';
+                                indicator2.style.top = touchArray[1].y + 'px';
+                            }
+                        }
+                    }
+                });
+                
+                touchArea.addEventListener('touchend', (e) => {
+                    for (let touch of e.changedTouches) {
+                        activeTouches.delete(touch.identifier);
+                        this.log(`Touch end #${touch.identifier}`, 'touch');
+                    }
+                    
+                    if (activeTouches.size === 0) {
+                        indicator1.classList.remove('active');
+                        indicator2.classList.remove('active');
+                    } else if (activeTouches.size === 1) {
+                        indicator2.classList.remove('active');
+                    }
+                });
+            }
+            
+            startCanvasAnimation() {
+                const animate = (timestamp) => {
+                    // Calculate FPS
+                    if (this.testState.lastFrameTime) {
+                        const fps = 1000 / (timestamp - this.testState.lastFrameTime);
+                        document.getElementById('fpsDisplay').textContent = fps.toFixed(0);
+                    }
+                    this.testState.lastFrameTime = timestamp;
+                    this.testState.frameCount++;
+                    
+                    // Clear canvas
+                    this.ctx.fillStyle = '#1a1a1a';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    // Draw test pattern
+                    this.drawTestPattern();
+                    
+                    // Reset touch status
+                    if (this.testState.frameCount % 60 === 0) {
+                        document.getElementById('touchStatus').textContent = 'None';
+                    }
+                    
+                    requestAnimationFrame(animate);
+                };
+                
+                requestAnimationFrame(animate);
+            }
+            
+            drawTestPattern() {
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                
+                // Draw grid
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                
+                for (let x = 0; x < this.canvas.width; x += 32) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y < this.canvas.height; y += 32) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+                
+                // Draw center circle that scales with touch
+                this.ctx.strokeStyle = '#00ff00';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(centerX, centerY, 50 * this.testState.currentScale, 0, Math.PI * 2);
+                this.ctx.stroke();
+                
+                // Draw touch indicators
+                if (this.touchIndicators) {
+                    this.touchIndicators.forEach((indicator, index) => {
+                        if (Date.now() - indicator.time < 1000) {
+                            const alpha = 1 - (Date.now() - indicator.time) / 1000;
+                            this.ctx.fillStyle = `rgba(0, 255, 0, ${alpha})`;
+                            this.ctx.beginPath();
+                            this.ctx.arc(indicator.x, indicator.y, 10, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                    });
+                    
+                    // Clean up old indicators
+                    this.touchIndicators = this.touchIndicators.filter(i => Date.now() - i.time < 1000);
+                }
+            }
+            
+            drawClickIndicator(x, y) {
+                if (!this.touchIndicators) this.touchIndicators = [];
+                this.touchIndicators.push({ x, y, time: Date.now(), type: 'click' });
+            }
+            
+            drawLongPressIndicator(x, y) {
+                if (!this.touchIndicators) this.touchIndicators = [];
+                this.touchIndicators.push({ x, y, time: Date.now(), type: 'longpress' });
+                
+                // Draw special indicator for long press
+                this.ctx.strokeStyle = '#ff6600';
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, 20, 0, Math.PI * 2);
+                this.ctx.stroke();
+            }
+            
+            updateDeviceInfo() {
+                // Screen info
+                document.getElementById('screenInfo').textContent = 
+                    `${screen.width}x${screen.height}`;
+                
+                // Viewport info
+                document.getElementById('viewportInfo').textContent = 
+                    `${window.innerWidth}x${window.innerHeight}`;
+                
+                // Orientation
+                const orientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+                document.getElementById('orientationInfo').textContent = orientation;
+                
+                // Update orientation indicators
+                document.getElementById('portraitIndicator').classList.toggle('active', orientation === 'portrait');
+                document.getElementById('landscapeIndicator').classList.toggle('active', orientation === 'landscape');
+                
+                // Device pixel ratio
+                document.getElementById('dprInfo').textContent = window.devicePixelRatio || 1;
+                
+                // Touch support
+                document.getElementById('touchSupport').textContent = 
+                    'ontouchstart' in window ? 'Yes' : 'No';
+                
+                // Memory info
+                if (navigator.deviceMemory) {
+                    document.getElementById('memoryInfo').textContent = navigator.deviceMemory + 'GB';
+                } else {
+                    document.getElementById('memoryInfo').textContent = 'Unknown';
+                }
+            }
+            
+            log(message, type = 'touch') {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${type}`;
+                logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                
+                this.gestureLog.appendChild(logEntry);
+                this.gestureLog.scrollTop = this.gestureLog.scrollHeight;
+                
+                // Keep log size manageable
+                while (this.gestureLog.children.length > 50) {
+                    this.gestureLog.removeChild(this.gestureLog.firstChild);
+                }
+            }
+            
+            clearLog() {
+                this.gestureLog.innerHTML = '<div class="log-entry">Log cleared</div>';
+            }
+            
+            resetCanvas() {
+                this.testState.currentScale = 1.0;
+                document.getElementById('scaleDisplay').textContent = '1.0';
+                this.touchIndicators = [];
+                this.log('Canvas reset', 'touch');
+            }
+            
+            generateTestMap() {
+                this.log('Generating test map...', 'touch');
+                // Simulate map generation with some visual feedback
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const x = Math.random() * this.canvas.width;
+                        const y = Math.random() * this.canvas.height;
+                        this.drawClickIndicator(x, y);
+                    }, i * 100);
+                }
+            }
+            
+            toggleFullscreen() {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                    this.log('Exited fullscreen', 'touch');
+                } else {
+                    document.documentElement.requestFullscreen();
+                    this.log('Entered fullscreen', 'touch');
+                }
+            }
+            
+            runTapTest() {
+                this.log('Running tap test...', 'tap');
+                const button = document.getElementById('testTap');
+                button.classList.add('success');
+                setTimeout(() => button.classList.remove('success'), 1000);
+            }
+            
+            runHoldTest() {
+                this.log('Running hold test...', 'tap');
+                const button = document.getElementById('testHold');
+                button.classList.add('success');
+                
+                // Simulate long press
+                setTimeout(() => {
+                    this.log('Hold test completed', 'tap');
+                    button.classList.remove('success');
+                }, 2000);
+            }
+            
+            runPerformanceTest() {
+                this.log('Starting performance test...', 'tap');
+                const startTime = performance.now();
+                let iterations = 0;
+                
+                const testLoop = () => {
+                    for (let i = 0; i < 1000; i++) {
+                        Math.random() * Math.random();
+                    }
+                    iterations++;
+                    
+                    if (iterations < 100) {
+                        requestAnimationFrame(testLoop);
+                    } else {
+                        const duration = performance.now() - startTime;
+                        const score = Math.round(100000 / duration);
+                        this.testState.performanceScore = score;
+                        this.log(`Performance score: ${score}`, 'tap');
+                    }
+                };
+                
+                requestAnimationFrame(testLoop);
+            }
+            
+            runMemoryTest() {
+                this.log('Running memory test...', 'tap');
+                
+                if (performance.memory) {
+                    const memMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                    this.log(`Memory usage: ${memMB}MB`, 'tap');
+                } else {
+                    this.log('Memory info not available', 'error');
+                }
+                
+                // Create some temporary objects to test memory
+                const testData = new Array(10000).fill(0).map(() => ({ x: Math.random(), y: Math.random() }));
+                setTimeout(() => {
+                    testData.length = 0; // Clear the array
+                    this.log('Memory test completed', 'tap');
+                }, 1000);
+            }
+        }
+        
+        // Initialize the test when the page loads
+        window.addEventListener('load', () => {
+            new MobileInterfaceTest();
+        });
+    </script>
+</body>
+</html>

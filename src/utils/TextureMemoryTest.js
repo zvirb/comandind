@@ -368,4 +368,4 @@ export class TextureMemoryTest {
 export async function runTextureMemoryTest() {
     const test = new TextureMemoryTest();
     return await test.runAllTests();
-}"
+}
