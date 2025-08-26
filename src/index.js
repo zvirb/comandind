@@ -129,7 +129,11 @@ class CommandAndIndependentThought {
             this.world.addSystem(this.selectionSystem);
             this.world.addSystem(new CombatSystem(this.world));
             this.world.addSystem(new AISystem(this.world));
-            this.world.addSystem(new RenderingSystem(this.world, this.application.stage));
+            // Pass the Application instance so the RenderingSystem can place
+            // sprites into the correct rendering layers instead of directly on
+            // the root stage. This ensures buildings, units and UI render with
+            // proper z-order.
+            this.world.addSystem(new RenderingSystem(this.world, this.application));
             
             this.updateLoadingProgress(90, "Creating test sprites...");
             
