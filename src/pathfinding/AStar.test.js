@@ -109,11 +109,12 @@ describe("AStar", () => {
     describe("findPath", () => {
         test("should find straight path in empty grid", () => {
             const path = pathfinder.findPath(32, 32, 160, 32);
-      
+
             expect(path).toBeDefined();
             expect(path.length).toBeGreaterThan(0);
-            expect(path[0]).toMatchObject({ x: 32, y: 32 });
-            expect(path[path.length - 1]).toMatchObject({ x: 160, y: 32 });
+            // The pathfinder returns the center point of each grid cell
+            expect(path[0]).toMatchObject({ x: 48, y: 48 });
+            expect(path[path.length - 1]).toMatchObject({ x: 176, y: 48 });
         });
 
         test("should find path around obstacles", () => {
