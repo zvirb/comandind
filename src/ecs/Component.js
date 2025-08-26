@@ -102,10 +102,18 @@ export class VelocityComponent extends Component {
  * Sprite Component - Visual representation
  */
 export class SpriteComponent extends Component {
-    constructor(texture, anchor = { x: 0.5, y: 0.5 }) {
+    constructor(texture, anchor = { x: 0.5, y: 0.5 }, layer = "units") {
         super();
         this.texture = texture;
         this.anchor = anchor;
+
+        // Sprites need to know which rendering layer they belong to so they can
+        // be inserted into the appropriate PIXI container. Without this the
+        // RenderingSystem added everything directly to the stage, causing UI,
+        // units and buildings to render in the wrong order. Default to the
+        // "units" layer to maintain existing behaviour.
+        this.layer = layer;
+
         this.sprite = null;
         this.visible = true;
         this.alpha = 1.0;

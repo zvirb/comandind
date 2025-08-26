@@ -189,10 +189,15 @@ export class MovementSystem extends System {
  * Rendering System - Updates sprite positions and visual properties
  */
 export class RenderingSystem extends System {
-    constructor(world, pixiStage) {
+    constructor(world, application) {
         super(world);
         this.requiredComponents = [TransformComponent, SpriteComponent];
-        this.pixiStage = pixiStage;
+
+        // Instead of adding sprites directly to the root stage, keep a
+        // reference to the Application so we can insert display objects into
+        // the correct rendering layer. This restores proper z-ordering between
+        // terrain, buildings, units, effects and UI elements.
+        this.application = application;
         this.priority = 10;
     }
     
@@ -203,7 +208,15 @@ export class RenderingSystem extends System {
             // The sprite is already created by the factory, just assign and add to stage
             spriteComp.sprite = spriteComp.texture;
             spriteComp.sprite.anchor.set(spriteComp.anchor.x, spriteComp.anchor.y);
-            this.pixiStage.addChild(spriteComp.sprite);
+
+            // Add sprite to the appropriate layer managed by the Application.
+            const layerName = spriteComp.layer || "units";
+            if (this.application && typeof this.application.addToLayer === "function") {
+                this.application.addToLayer(spriteComp.sprite, layerName);
+            } else if (this.application?.stage) {
+                // Fallback: add directly to stage if layer system unavailable
+                this.application.stage.addChild(spriteComp.sprite);
+            }
 
             // If it's an animated sprite, start playing it.
             if (spriteComp.sprite instanceof PIXI.AnimatedSprite) {
@@ -218,8 +231,8 @@ export class RenderingSystem extends System {
         if (spriteComp && spriteComp.sprite) {
             try {
                 // Properly cleanup PIXI sprite
-                if (this.pixiStage && spriteComp.sprite.parent) {
-                    this.pixiStage.removeChild(spriteComp.sprite);
+                if (spriteComp.sprite.parent) {
+                    spriteComp.sprite.parent.removeChild(spriteComp.sprite);
                 }
                 
                 // Destroy sprite resources
