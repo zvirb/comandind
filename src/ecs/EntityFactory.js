@@ -49,7 +49,9 @@ export class EntityFactory {
         // Add components
         entity.addComponent(new TransformComponent(x, y));
         entity.addComponent(new VelocityComponent(0, 0, unitInfo.speed || 50));
-        entity.addComponent(new SpriteComponent(sprite));
+        // Units should render above terrain but below UI, so assign them to the
+        // dedicated "units" layer.
+        entity.addComponent(new SpriteComponent(sprite, { x: 0.5, y: 0.5 }, "units"));
         entity.addComponent(new HealthComponent(unitInfo.health || 100));
         entity.addComponent(new UnitComponent(unitKey, faction, unitInfo.cost || 0));
         entity.addComponent(new MovementComponent());
@@ -96,7 +98,9 @@ export class EntityFactory {
         
         // Add components
         entity.addComponent(new TransformComponent(x, y));
-        entity.addComponent(new SpriteComponent(texture));
+        // Buildings belong to the "buildings" layer so they render beneath
+        // units but above terrain.
+        entity.addComponent(new SpriteComponent(texture, { x: 0.5, y: 0.5 }, "buildings"));
         entity.addComponent(new HealthComponent(buildingInfo.health || 200));
         entity.addComponent(new BuildingComponent(buildingKey, faction, buildingInfo.cost || 0));
         entity.addComponent(new SelectableComponent(5)); // Buildings have lower selection priority

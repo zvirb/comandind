@@ -74,12 +74,14 @@ export class TextureAtlasManager {
                 for (const [faction, entities] of Object.entries(categoryData)) {
                     for (const [entityName, entityData] of Object.entries(entities)) {
                         const key = `${faction}-${entityName}`;
-                        // Default to .png, but allow for exceptions for test assets.
-                        let extension = "png";
-                        if (key === "gdi-medium-tank") {
-                            extension = "svg"; // Our test asset is an SVG
-                        }
-                        const url = `${basePath}/${categoryName}/${faction}/${entityName}.${extension}`;
+                        // Use PNG assets by default. The previous code included a
+                        // hardcoded exception for the GDI medium tank which pointed
+                        // to an SVG placeholder. This prevented the real sprite
+                        // sheet from loading and resulted in a single static red
+                        // square instead of the full directional frames. Removing
+                        // the exception ensures we load the actual PNG sprite sheet
+                        // containing all animation frames.
+                        const url = `${basePath}/${categoryName}/${faction}/${entityName}.png`;
                         this.spriteConfigs[key] = { url, ...entityData };
                     }
                 }
@@ -427,14 +429,33 @@ export class TextureAtlasManager {
         
         const animation = config.animations[animationName];
         const frames = [];
-        
-        for (const frameIndex of animation.frames) {
-            const texture = this.getFrameTexture(spriteKey, frameIndex);
-            if (texture) {
-                frames.push(texture);
+
+        // Some sprite configurations (e.g. unit directional sets) use the
+        // string "directional" instead of an explicit array of frame indexes.
+        // Previously the code attempted to iterate over the string which
+        // yielded individual characters and resulted in no valid textures
+        // being returned. This meant animated sprites fell back to a single
+        // static texture. Detect the special keyword and expand it to the
+        // expected number of directional frames.
+        if (animation.frames === "directional") {
+            const directions = config.directions || 1;
+            for (let i = 0; i < directions; i++) {
+                const texture = this.getFrameTexture(spriteKey, i);
+                if (texture) {
+                    frames.push(texture);
+                }
             }
+        } else if (Array.isArray(animation.frames)) {
+            for (const frameIndex of animation.frames) {
+                const texture = this.getFrameTexture(spriteKey, frameIndex);
+                if (texture) {
+                    frames.push(texture);
+                }
+            }
+        } else {
+            console.warn(`Unsupported frame format for ${spriteKey} animation '${animationName}'`);
         }
-        
+
         return frames;
     }
     
