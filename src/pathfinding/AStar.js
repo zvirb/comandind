@@ -60,7 +60,10 @@ export class AStar {
         );
         
         // Smooth the path if enabled
-        if (this.smoothPath && worldPath.length > 2) {
+        // When diagonal movement is disabled, smoothing can incorrectly
+        // create diagonal shortcuts. Only apply smoothing when diagonal
+        // movement is allowed to respect the movement constraints.
+        if (this.smoothPath && this.allowDiagonal && worldPath.length > 2) {
             worldPath = this.smoothPathPoints(worldPath);
         }
         
