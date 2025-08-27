@@ -124,7 +124,7 @@
             } else {
                 // Fallback to check various storage keys
                 try {
-                    const sources = ['secure_errors_data', 'comandind_errors', 'emergency_errors'];
+                    const sources = ['secure_errors_data', 'commandind_errors', 'emergency_errors'];
                     sources.forEach(source => {
                         const stored = localStorage.getItem(source);
                         if (stored) {

@@ -259,7 +259,7 @@ class SecurityValidation {
             
             // Check if multiple error storage keys exist (should be consolidated)
             let legacyKeys = 0;
-            ['emergency_errors', 'game_errors_latest', 'game_errors_persistent', 'comandind_errors'].forEach(key => {
+            ['emergency_errors', 'game_errors_latest', 'game_errors_persistent', 'commandind_errors'].forEach(key => {
                 if (localStorage.getItem(key)) legacyKeys++;
             });
             
