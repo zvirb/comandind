@@ -144,7 +144,8 @@ export class NavigationGrid {
     }
     
     /**
-     * Get neighbors of a cell (8-directional)
+     * Get neighbors of a cell. Returns four cardinal neighbors by default,
+     * and includes diagonal neighbors when allowDiagonal is true.
      */
     getNeighbors(x, y, allowDiagonal = true) {
         const neighbors = [];
