@@ -503,7 +503,7 @@ class CommandAndIndependentThought {
 // Global error logging to localStorage
 function logError(error, context = "unknown") {
     try {
-        const errors = JSON.parse(localStorage.getItem("comandind_errors") || "[]");
+        const errors = JSON.parse(localStorage.getItem("commandind_errors") || "[]");
         errors.push({
             timestamp: new Date().toISOString(),
             message: error.message || "Unknown error",
@@ -518,7 +518,7 @@ function logError(error, context = "unknown") {
             errors.splice(0, errors.length - 10);
         }
         
-        localStorage.setItem("comandind_errors", JSON.stringify(errors));
+        localStorage.setItem("commandind_errors", JSON.stringify(errors));
         console.error(`[${context}] Error logged:`, error);
     } catch (logError) {
         console.error("Failed to log error:", logError);
