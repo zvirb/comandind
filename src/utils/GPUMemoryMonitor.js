@@ -100,8 +100,9 @@ export class GPUMemoryMonitor {
         let textureMemory = 0;
         let activeTextures = 0;
         
-        // Iterate through PIXI texture cache
-        for (const [url, texture] of PIXI.TextureCache) {
+        // Iterate through PIXI texture cache safely
+        const textureCache = PIXI.utils?.TextureCache || PIXI.TextureCache || {};
+        for (const texture of Object.values(textureCache)) {
             if (texture && texture.baseTexture && texture.baseTexture.valid) {
                 const baseTexture = texture.baseTexture;
                 const bytes = baseTexture.width * baseTexture.height * 4; // RGBA
@@ -137,6 +138,8 @@ export class GPUMemoryMonitor {
         
         // Trigger memory pressure callbacks if needed
         this.checkMemoryPressure(memoryPressure);
+
+        return this.memoryStats;
     }
     
     /**
