@@ -11,7 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "colyseus": "^0.16.4",
+    "colyseus": "^0.17.8",
     "express": "^5.1.0",
     "http": "^0.0.1-security"
   }
